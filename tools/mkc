@@ -11,6 +11,10 @@ opts:
 -s generate 1 or more subs
 -m generate a Makefile.am
 -o overwrite files
+
+subs will be generated thus:
+  a sub of unix would generate a file <component>/<component>_unix.[ch]
+  and functions <component>_unix...
 EOF
 
 use strict;
@@ -117,7 +121,7 @@ sub print_interface_h {
 EOF
   my $sub = "";
   foreach $sub (@{$DATA{SUBS}}){
-    print FILE "#include <$DATA{LOCALDIR}/$DATA{name}/$sub.h>", "\n";
+    print FILE "#include <$DATA{LOCALDIR}/$DATA{name}/$DATA{name}_$sub.h>", "\n";
   }
   print FILE <<EOF;
 #endif  /* _$DATA{NAME}_INTERFACE_H_ */
@@ -128,7 +132,7 @@ sub print_sub_h {
     my($sub, %DATA) = @_;
     my $SUB = $sub;
     $SUB =~ tr/a-z/A-Z/;
-    open(FILE, "> $DATA{name}/$sub.h") || die "Cannot open file $DATA{name}/$sub.c: $!";
+    open(FILE, "> $DATA{name}/$DATA{name}_$sub.h") || die "Cannot open file $DATA{name}/$DATA{name}_$sub.c: $!";
   print FILE <<EOF;
 #ifndef _$DATA{NAME}_${SUB}_H_
 #define _$DATA{NAME}_${SUB}_H_
@@ -141,7 +145,7 @@ sub print_sub_h {
 #endif /* __cplusplus */
 
 extern $DATA{name}_ty *
-$sub(void);
+$DATA{name}_$sub(void);
 
 #ifdef __cplusplus
 }
@@ -152,7 +156,7 @@ EOF
 }
 sub print_sub_c {
     my($sub, %DATA) = @_;
-    open(FILE, "> $DATA{name}/$sub.c") || die "Cannot open file $DATA{name}/$sub.c: $!";
+    open(FILE, "> $DATA{name}/$DATA{name}_$sub.c") || die "Cannot open file $DATA{name}/$DATA{name}_$sub.c: $!";
     print FILE <<EOF;
 
 #include "$DATA{name}_private.h"
@@ -167,7 +171,7 @@ static $DATA{name}_vtbl_ty vtbl = {
 };
 
 $DATA{name}_ty *
-$sub(void)
+$DATA{name}_$sub(void)
 {
     return $DATA{name}_new(&vtbl);
 }
@@ -196,9 +200,9 @@ EOF
     my $num = scalar(@{$DATA{SUBS}});
     foreach $sub (@{$DATA{SUBS}}){
 	if($num == 1){
-	    print FILE "		$sub.c", "\n";
+	    print FILE "		$DATA{name}_$sub.c", "\n";
 	}else{
-	    print FILE "		$sub.c \\", "\n";
+	    print FILE "		$DATA{name}_$sub.c \\", "\n";
 	}
 	$num--;
     }
@@ -213,9 +217,9 @@ EOF
     $num = scalar(@{$DATA{SUBS}});
     foreach $sub (@{$DATA{SUBS}}){
 	if($num == 1){
-	    print FILE "		$sub.h", "\n";
+	    print FILE "		$DATA{name}_$sub.h", "\n";
 	}else{
-	    print FILE "		$sub.h \\", "\n";
+	    print FILE "		$DATA{name}_$sub.h \\", "\n";
 	}
 	$num--;
     }
@@ -227,7 +231,7 @@ EOF
 }
 sub print_public_c {
     my ($file, %DATA) = @_;
-    open(CFILE, "> $file") || die "Cannot open file $name.c: $!";
+    open(CFILE, "> $file") || die "Cannot open file $file: $!";
     print CFILE <<EOF;
 
 #include "$name.h"
