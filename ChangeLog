@@ -1,4 +1,8 @@
-2004-06-21  Jason L. Shiffer <jshiffer@zerotao.org>
+2004-07-03  Jason L. Shiffer  <jshiffer@Ohmu.local>
+
+	* tools/authors.xml: initial version of authors.xml for svn2log	
+
+2004-06-21 Jason L. Shiffer <jshiffer@zerotao.org>
 
 	* ., aux, doc, libzt, libzt/t, libzt/zt_adt, libzt/zt_cfg,
 	  libzt/zt_log, replace, tools: added svn:ignore properties
