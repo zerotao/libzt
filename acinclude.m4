@@ -107,13 +107,13 @@ AC_DEFUN([AC_WITH_DIST_RELEASE],
 
 dnl AX_MSG_RESULT_YN(a)
 dnl results "yes" iff a==1, "no" else
-AC_DEFUN(AX_MSG_RESULT_YN, [x=no
+AC_DEFUN([AX_MSG_RESULT_YN], [x=no
 test "x$1" = "x1" && x=yes
 AC_MSG_RESULT($x)])
 
 dnl AX_EGREP(expr, file, action-if-found, action-if-not-found)
 dnl egrep for expr in file
-AC_DEFUN(AX_EGREP, [dnl
+AC_DEFUN([AX_EGREP], [dnl
 changequote(, )dnl
   if egrep "$1" $2 >/dev/null 2>&1; then
 changequote([, ])dnl
@@ -127,7 +127,7 @@ fi
 dnl AX_MACRO_STR(macro, file)
 dnl grep string #define out of header
 dnl result value in $ax_result
-AC_DEFUN(AX_MACRO_STR,
+AC_DEFUN([AX_MACRO_STR],
 [AC_REQUIRE_CPP()dnl
 cat > conftest.$ac_ext <<EOF
 [#]line __oline__ "configure"
@@ -144,12 +144,12 @@ ax_result=[$]2
 rm -f conftest*
 ])
 
-AC_DEFUN(AX_SAVE, [eval $1_AX_[$ax_stack]=[\"]$$1[\"]])
-AC_DEFUN(AX_RESTORE, [eval $1=[\"\$]{$1_AX_[$ax_stack]}[\"]])
+AC_DEFUN([AX_SAVE], [eval $1_AX_[$ax_stack]=[\"]$$1[\"]])
+AC_DEFUN([AX_RESTORE], [eval $1=[\"\$]{$1_AX_[$ax_stack]}[\"]])
 
 dnl AX_PUSH
 dnl save the contents of CFLAGS etc.
-AC_DEFUN(AX_PUSH, [dnl
+AC_DEFUN([AX_PUSH], [dnl
 ax_stack=`expr 0$ax_stack + 1`
 AX_SAVE(CFLAGS)
 AX_SAVE(CPPFLAGS)
@@ -159,7 +159,7 @@ AX_SAVE(LIBS)
 
 dnl AX_POP
 dnl restore the contents of CFLAGS etc.
-AC_DEFUN(AX_POP, [dnl
+AC_DEFUN([AX_POP], [dnl
 AX_RESTORE(CFLAGS)
 AX_RESTORE(CPPFLAGS)
 AX_RESTORE(LDFLAGS)
