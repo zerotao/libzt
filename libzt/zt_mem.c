@@ -18,30 +18,32 @@ static struct
 }GLOBAL_zmt = { malloc, free, realloc };
 
 static zt_list(pools);
+static zt_list(sets);
+
 //static long x_sys_page_size = 0;
 
 typedef struct zt_mem_elt {
-	zt_list		  free_elt_list;
-	struct zt_mem_page	 *parent_page;
+	zt_list			  free_elt_list;
+	struct zt_mem_page	* parent_page;
 	unsigned long		  data[0];
-}zt_mem_elt;
+} zt_mem_elt;
 
 struct zt_mem_heap {
-	char		 *name;
+	char		* name;
 	size_t		  size;
 	unsigned long	  heap[0];
 };
 
 typedef struct zt_mem_page {
-	zt_list	  	  page_list;
-	struct zt_mem_pool	 *parent_pool;
+	zt_list	  	  	  page_list;
+	struct zt_mem_pool	* parent_pool;
 	unsigned long		  num_free_elts;
 	unsigned long	 	  data[0];
-}zt_mem_page;
+} zt_mem_page;
 
 struct zt_mem_pool {
-	zt_list	  	  pool_list;
-	char		 	 *name;
+	zt_list	  	  	  pool_list;
+	char		 	* name;
 	long			  rcache;        /* requested elements in cache */
 	long			  ncache;        /* actual elements in cache */
 	long			  pcache;        /* pages in cache */
@@ -55,18 +57,21 @@ struct zt_mem_pool {
 	zt_page_release_test	  release_test_cb;
 	void			* release_test_cb_data;
 	int			  flags;
-	zt_list	  	  page_list;
-	zt_list		  free_elt_list;
+	zt_list			  page_list;
+	zt_list		  	  free_elt_list;
+};
+
+struct zt_mem_set_elt {
+	zt_list			  elt_list;
+	void			* elt;
 };
 
 struct zt_mem_set {
-	zt_list		  set_list;
+	zt_list		  	  set_list;
 	char			* name;
-	zt_list		  elt_list;
+	zt_list		  	  elt_list;
 };
 
-#define BLANK "%*s"
-#define INDENT(lvl) ((lvl) * 5), ""
 
 /* forward declarations */
 static char *zt_mem_strdup(char *str);
@@ -296,7 +301,7 @@ int
 zt_mem_pool_release_free_pages(zt_mem_pool *pool) 
 {
 	zt_list		* pages,
-		                * tpage;
+		        * tpage;
 	zt_mem_page	* page;
 	
 	zt_list_for_each_safe(&(pool)->page_list, pages, tpage) {
@@ -363,12 +368,23 @@ zt_mem_pool_get_stats(zt_mem_pool *pool, zt_mem_pool_stats *stats)
 void
 zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 {
-	zt_list *tmp;
-	zt_mem_page  *page;
-	
+	zt_list		* tmp;
+	zt_mem_page	* page;
+	long		  felts = 0;
+
+	zt_list_for_each(&pool->page_list, tmp) {
+		page = zt_list_entry(tmp, zt_mem_page, page_list);
+		felts += page->num_free_elts;
+	}
+
 	printf(BLANK "pool \"%s\" [%p] {\n"
+	       BLANK "Elements {\n"
 	       BLANK "elt cache requested: %ld elements\n"
 	       BLANK "elt cache actual: %ld elements\n"
+	       BLANK "total elts: %ld\n"
+	       BLANK "free elts: %ld\n"
+	       BLANK "}\n"
+	       BLANK "Pages {\n"
 	       BLANK "page cache: %ld page(s)\n"
 	       BLANK "free pages: %ld\n"
 	       BLANK "page size: %ld\n"
@@ -376,24 +392,33 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	       BLANK "total pages: %ld\n"
 	       BLANK "elements per page: %ld\n"
 	       BLANK "page allocs: %ld\n"
-	       BLANK "page frees: %ld\n"	       
+	       BLANK "page frees: %ld\n"
+	       BLANK "}\n"
+	       BLANK "Overall {\n"
 	       BLANK "element size: %ld bytes + overhead = %ld bytes \n"
 	       BLANK "page usage (num elts * elt size): %ld bytes\n"
-	       BLANK "page memory (page size * total pages): %ld bytes\n",
+	       BLANK "page memory (page size * total pages): %ld bytes\n"
+	       BLANK "}\n",
 	       INDENT(offset), pool->name, pool,
-	       INDENT(offset+1), pool->rcache,
-	       INDENT(offset+1), pool->ncache,
-	       INDENT(offset+1), pool->pcache,
-	       INDENT(offset+1), pool->nfree_pages,
-	       INDENT(offset+1), pool->page_size,	       
-	       INDENT(offset+1), (pool->npages - pool->nfree_pages),
-	       INDENT(offset+1), pool->npages,
-	       INDENT(offset+1), pool->elts_per_page,
-	       INDENT(offset+1), pool->page_allocs,
-	       INDENT(offset+1), pool->page_frees,	       
-	       INDENT(offset+1), (long)pool->elt_size, (unsigned long)(sizeof(zt_mem_elt) + pool->elt_size),
-	       INDENT(offset+1), (sizeof(zt_mem_elt) + pool->elt_size) * pool->elts_per_page,
-	       INDENT(offset+1), pool->page_size * pool->npages);
+	       INDENT(offset+1),
+	       INDENT(offset+2), pool->rcache,
+	       INDENT(offset+2), pool->ncache,
+	       INDENT(offset+2), (pool->elts_per_page * pool->npages),
+	       INDENT(offset+2), felts,
+	       INDENT(offset+1), INDENT(offset+1),
+	       INDENT(offset+2), pool->pcache,
+	       INDENT(offset+2), pool->nfree_pages,
+	       INDENT(offset+2), pool->page_size,	       
+	       INDENT(offset+2), (pool->npages - pool->nfree_pages),
+	       INDENT(offset+2), pool->npages,
+	       INDENT(offset+2), pool->elts_per_page,
+	       INDENT(offset+2), pool->page_allocs,
+	       INDENT(offset+2), pool->page_frees,
+	       INDENT(offset+1), INDENT(offset+1),
+	       INDENT(offset+2), (long)pool->elt_size, (unsigned long)(sizeof(zt_mem_elt) + pool->elt_size),
+	       INDENT(offset+2), (sizeof(zt_mem_elt) + pool->elt_size) * pool->elts_per_page,
+	       INDENT(offset+2), pool->page_size * pool->npages,
+               INDENT(offset+1));
 
 	if(flags & DISPLAY_POOL_FREE_LIST) {
 		printf(BLANK "free_list {\n", INDENT(offset+1));
@@ -428,21 +453,70 @@ zt_mem_pools_display(int offset, int flags)
 	printf("}\n");
 }
 
-zt_mem_set *
-zt_mem_range_init(char *name)
+zt_mem_pool *
+zt_mem_pool_get(char *name)
 {
+	int	  nlen;
+	zt_list	* tmp;
+	
+	if(!name) {
+		return 0;
+	}
+
+	nlen = strlen(name);
+	
+	zt_list_for_each(&pools, tmp)
+	{
+		zt_mem_pool	* pool;
+		int		  olen;
+		
+		pool = zt_list_entry(tmp, zt_mem_pool, pool_list);
+		olen = strlen(pool->name);
+		
+		if(olen == nlen && (strncmp(name, pool->name, nlen) == 0)) {
+			return pool;
+		}
+	}
+
 	return 0;
 }
 
-int
-zt_mem_range_add(zt_mem_set *set, void *d)
+zt_mem_set *
+zt_mem_set_init(char *name)
 {
+	zt_mem_set	* set;
+	
+	if((set = GLOBAL_zmt.alloc(sizeof(zt_mem_set))) == 0) {
+		return NULL;
+	}
+	
+	zt_list_reset(&set->set_list);
+	zt_list_reset(&set->elt_list);
+			 
+	set->name = zt_mem_strdup(name ? name : "*unknown*");
+
+	return set;
+}
+
+int
+zt_mem_set_add(zt_mem_set *set, void *d)
+{
+	struct zt_mem_set_elt	* elt;
+
+	/* alloc a new elt wrapper
+	 * assign d to the data element
+	 * return true
+	 */
 	return -1;
 }
 
 int
-zt_mem_range_release(zt_mem_set *set)
+zt_mem_set_release(zt_mem_set *set)
 {
+	/*
+	 * release the elt and release the wrapper
+	 */
+	
 	return 0;
 }
 
