@@ -135,7 +135,7 @@ log_gen_fmt ( log, fmt, level, opts )
       nlen += strlen(log->function);
       nlen += 10;			/* length of a int to str */
       nbuff = XCALLOC(char, nlen); //mem_calloc(nlen, sizeof(char));
-      sprintf(nbuff, ": in %s at (%s:%d)", log->file, log->function, log->line);
+      sprintf(nbuff, ": in %s at (%s:%d)", log->function, log->file, log->line);
       len += nlen;
       buff = XREALLOC(char, buff, len);
       strcat (buff, nbuff);
