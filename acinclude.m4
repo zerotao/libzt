@@ -59,7 +59,7 @@ AC_DEFUN([AC_WITH_PROFILING],
   [  --with-profiling[=flags]  Enable profiling.
   --without-profiling	  Disable profiling(default). ],
   [
-	case "$with_debug" in
+	case "$with_profiling" in
 	     no)
 		AC_MSG_RESULT(no)
 		;;
