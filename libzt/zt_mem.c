@@ -61,6 +61,12 @@ struct zt_mem_pool {
 	zt_list		  	  free_elt_list;
 };
 
+struct zt_mem_pool_group {
+	zt_list		  group_list;
+	int		  npools;
+	zt_mem_pool	**pools;
+};
+
 struct zt_mem_set_elt {
 	zt_list			  elt_list;
 	void			* elt;
@@ -164,15 +170,15 @@ zt_mem_pool_init(char *name, long elts,
 		 size_t size, zt_page_release_test release_test,
 		 void *cb_data, int flags)
 {
-	zt_mem_pool	 *pool;
-	zt_mem_page	 *page;
+	zt_mem_pool	* pool;
+	zt_mem_page	* page;
 
-	long			  epp;
-	long			  npage_size;
-	long			  npages;
-	long			  pcache;
+	long		  epp;
+	long		  npage_size;
+	long		  npages;
+	long		  pcache;
 
-	x_calculate_page_data(elts, size, &npage_size, &epp, &npages);
+	x_calculate_page_data(elts ? elts : 1, size, &npage_size, &epp, &npages);
 
 	if(elts > 0) {
 		if(elts < epp) {
@@ -444,14 +450,29 @@ zt_mem_pools_display(int offset, int flags)
 	zt_list *tmp;
 	zt_mem_pool *pool;
 
-	printf("Pools { \n");       
+	printf(BLANK "Pools { \n", INDENT(offset));
 	zt_list_for_each(&pools, tmp)
 	{
 		pool = zt_list_entry(tmp, zt_mem_pool, pool_list);
 		zt_mem_pool_display(offset + 1, pool, flags);
 	}
-	printf("}\n");
+	printf(BLANK "}\n", INDENT(offset));
 }
+
+void
+zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags)
+{
+	int	  len, i;
+
+	len = group->npools;
+	
+	printf(BLANK "Group {\n", INDENT(offset));
+	for(i = 0; i < len; i++) {
+		zt_mem_pool_display(offset + 1, group->pools[i], flags);
+	}
+	printf(BLANK "}\n", INDENT(offset));
+}	
+
 
 zt_mem_pool *
 zt_mem_pool_get(char *name)
@@ -481,6 +502,72 @@ zt_mem_pool_get(char *name)
 	return 0;
 }
 
+zt_mem_pool_group *
+zt_mem_pool_group_init(zt_mem_pool_desc	* group, int len)
+{
+	zt_mem_pool_group	* ngroup;
+	int			  i;
+
+	if((ngroup = XCALLOC(zt_mem_pool_group, 1)) == NULL) {
+		return 0;
+	}
+	
+	if((ngroup->pools = XCALLOC(zt_mem_pool *, len)) == NULL) {
+		return 0;
+	}
+	zt_list_reset(&ngroup->group_list);
+	ngroup->npools = len;
+	
+	for(i = 0; i < len && group[i].name; i++) {
+		ngroup->pools[i] = zt_mem_pool_init(group[i].name,
+						    group[i].elts,
+						    group[i].size,
+						    group[i].release_test,
+						    group[i].cb_data,
+						    group[i].flags);
+		if(!ngroup->pools[i]) {
+			while(--i) {
+				zt_mem_pool_destroy(&ngroup->pools[i]);
+			}
+			return 0;
+		}
+	}
+
+	return ngroup;
+}
+
+void *
+zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size) 
+{
+	int	  len, i;
+	
+	len = group->npools;
+
+	for(i = 0; i < len; i++) {
+		if(size < group->pools[i]->elt_size) {
+			return zt_mem_pool_alloc(group->pools[i]);
+		}
+	}
+	
+	return 0;
+}
+
+int
+zt_mem_pool_group_destroy(zt_mem_pool_group * group)
+{
+	int	  len, i, ret = 0;
+
+	len = group->npools;
+
+	for(i = 0; i < len; i++) {
+		if(zt_mem_pool_destroy(&group->pools[i]) != 0) {
+			ret = -1;
+		}
+	}
+
+	return ret;
+}
+
 zt_mem_set *
 zt_mem_set_init(char *name)
 {
@@ -501,7 +588,7 @@ zt_mem_set_init(char *name)
 int
 zt_mem_set_add(zt_mem_set *set, void *d)
 {
-	struct zt_mem_set_elt	* elt;
+	/* struct zt_mem_set_elt	* elt; */
 
 	/* alloc a new elt wrapper
 	 * assign d to the data element

@@ -59,6 +59,9 @@ extern "C" {
 	((type *)((char *)(ptr) - offsetof(type, member)))
 #endif	/* container_of */
 
+#define BLANK "%*s"
+#define INDENT(lvl) ((lvl) * 5), ""
+
 #ifdef __cplusplus
 }
 #endif

@@ -32,6 +32,31 @@
 typedef struct zt_mem_heap zt_mem_heap;
 typedef struct zt_mem_pool zt_mem_pool;
 typedef struct zt_mem_set zt_mem_set;
+typedef struct zt_mem_pool_group zt_mem_pool_group;
+
+/**
+ * Can be called whenever a page is about to be released.
+ * @param total_pages total number of pages currently allocated
+ * @param free_pages # of currently free pages
+ * @param cache_size current size of the page_cache
+ * @param flags the mem_pool's flags
+ * @param cb_data callback data registered with the pool
+ */
+typedef int(*zt_page_release_test)(int	  total_pages,
+				   int 	  free_pages,
+				   int 	  cache_size,
+				   int 	  flags,
+				   void	* cb_data);
+
+typedef struct zt_mem_pool_desc {
+	char			* name;
+	long			  elts;
+	size_t			  size;	
+	zt_page_release_test	  release_test;
+	void			* cb_data;
+	int			  flags	;
+	
+} zt_mem_pool_desc;
 
 typedef struct zt_mem_pool_stats {
 	long		  requested_elts;
@@ -85,20 +110,6 @@ char *zt_mem_heap_get_name(zt_mem_heap *heap);
  */
 
 /**
- * Can be called whenever a page is about to be released.
- * @param total_pages total number of pages currently allocated
- * @param free_pages # of currently free pages
- * @param cache_size current size of the page_cache
- * @param flags the mem_pool's flags
- * @param cb_data callback data registered with the pool
- */
-typedef int(*zt_page_release_test)(int	  total_pages,
-				   int 	  free_pages,
-				   int 	  cache_size,
-				   int 	  flags,
-				   void	* cb_data);
-
-/**
  * initialize a new mem pool.
  * @param name name of the pool
  * @param elts estimated number of elts desired per page
@@ -147,6 +158,34 @@ zt_mem_pool_release_free_pages(zt_mem_pool *pool);
 int
 zt_mem_pool_destroy(zt_mem_pool **pool);
 
+/**
+ * initialize a new mem pool group.
+ * @param group array of zt_mem_pool_desc (NULL ended)
+ * @return NULL on failure zt_mem_pool_group * on success
+ */
+zt_mem_pool_group * zt_mem_pool_group_init(zt_mem_pool_desc * group, int len);
+
+/**
+ * allocate memory from a mem pool group.
+ * @param group pointer to a mem_pool_group (NULL ended)
+ * @param size size of the pointer to allocate
+ * @return pointer to a datum at least of size size or NULL
+ */
+void *zt_mem_pool_group_alloc(zt_mem_pool_group * group, size_t size);
+
+/**
+ * release memory allocated with zt_mem_pool_group_alloc.
+ * @param data address of the datum allocated with zt_mem_pool_group_alloc
+ */
+#define zt_mem_pool_group_release zt_mem_pool_release
+/* void zt_mem_pool_group_release(void **data); */
+
+/**
+ * destroy a zt_mem_pool_group created by zt_mem_pool_group_init
+ * @param group pointer to a zt_mem_pool_group (NULL ended)
+ * @return -1 on error 0 on success
+ */
+int zt_mem_pool_group_destroy(zt_mem_pool_group group[]);
 
 #define DISPLAY_POOL_HEADER_ONLY 0
 #define DISPLAY_POOL_FREE_LIST 	 1
@@ -168,6 +207,22 @@ zt_mem_pool_destroy(zt_mem_pool **pool);
  */
 void
 zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags);
+
+/**
+ * display one pool group.
+ * flags are:
+ * DISPLAY_POOL_HEADER_ONLY display only the header
+ * DISPLAY_POOL_FREE_LIST display the free elt list
+ * DISPLAY_POOL_PAGES display the page information
+ * DISPLAY_POOL_ALL both FREE_LIST and PAGES and HEADER.
+ *
+ * @param offset to begin printing the pool
+ * @param group the pool group to display
+ * @param flags see above
+ * @return void
+ */
+void
+zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags);
 
 /**
  * display all of the pools.

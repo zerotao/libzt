@@ -11,6 +11,7 @@
  */
 #include <stdio.h>
 
+#include <libzt/zt.h>
 #include <libzt/zt_mem.h>
 
 struct pool_test {
@@ -21,14 +22,27 @@ struct pool_test {
 
 #define NPTEST 100
 
+#define NSIZE(x) (sizeof(char) * x)
+zt_mem_pool_desc pool_group[] = {
+	{ "64", 0, NSIZE(64), 0, 0, 0 },
+	{ "128", 0, NSIZE(128), 0, 0, 0 },
+	{ "256", 0, NSIZE(256), 0, 0, 0 },
+	{ "512", 0, NSIZE(512), 0, 0, 0 },
+	{ "1024", 0, NSIZE(1024), 0, 0, 0 },
+	{ "2048", 0, NSIZE(2048), 0, 0, 0 },
+	{ "4096", 0, NSIZE(4096), 0, 0, 0 },
+	{ 0, 0, 0, 0, 0, 0 }
+};
+
 int
 main(int argc, char *argv[])
 {
-	struct zt_mem_heap	*heap;
-	struct zt_mem_pool	*pool;
-	struct zt_mem_pool	*tpool;
-	struct pool_test	*data[NPTEST];
-	int			 i;
+	struct zt_mem_heap		* heap;
+	struct zt_mem_pool		* pool;
+	struct zt_mem_pool		* tpool;
+	struct zt_mem_pool_group	* group;
+	struct pool_test		* data[NPTEST];
+	int			 	  i;
 	
 	heap = zt_mem_heap_init("testheap", 1024 * sizeof(char));
 	
@@ -39,12 +53,43 @@ main(int argc, char *argv[])
 		printf("failed to alloc a heap\n");
 		return -1;
 	}
+
+	group = zt_mem_pool_group_init(pool_group, sizeof_array(pool_group)-1);
+	if(!group) {
+		printf("group alloc failed");
+	} else {
+		void	* elt,
+			* elt2,
+			* elt3;
+		elt = zt_mem_pool_group_alloc(group, sizeof(char) * 257);
+		zt_mem_pool_group_display(0, group, 0);
+
+		elt2 = zt_mem_pool_group_alloc(group, sizeof(char));
+		elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
+
+		if(elt3) {
+			printf("Error returned elt where datum is too large\n");
+			exit(1);
+		}
+		zt_mem_pool_group_display(0, group, 0);
+
+		zt_mem_pool_group_release(&elt);
+		zt_mem_pool_group_release(&elt2);
+		zt_mem_pool_group_destroy(group);
+	}
 	
 	tpool = zt_mem_pool_init("testpool", 4092, sizeof(struct pool_test), NULL, NULL, 0);
 	
 	/* element size is > normal system page size*/
 	pool = zt_mem_pool_init("pool2", 3, sizeof(struct pool_test)+4092, NULL, NULL, 0);
 	printf("*INIT*\n");
+
+	printf("pool lookup: ");
+	if (tpool == zt_mem_pool_get("testpool")) {
+		printf("success\n");
+	}else {
+		printf("failed\n");
+	}
 	
 	zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
 	

@@ -6,7 +6,7 @@ SUBDIRS = 		\
 	t 
 #	cfg 
 
-lib_LTLIBRARIES = libzt.la
+lib_LTLIBRARIES = libzt.la 
 
 libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
