@@ -377,14 +377,14 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 		felts += page->num_free_elts;
 	}
 
-	printf(BLANK "pool \"%s\" [%p] {\n"
-	       BLANK "Elements {\n"
+	printf(BLANK "pool: \"%s\" [%p] {\n"
+	       BLANK "elements: {\n"
 	       BLANK "elt cache requested: %ld elements\n"
 	       BLANK "elt cache actual: %ld elements\n"
 	       BLANK "total elts: %ld\n"
 	       BLANK "free elts: %ld\n"
 	       BLANK "}\n"
-	       BLANK "Pages {\n"
+	       BLANK "pages: {\n"
 	       BLANK "page cache: %ld page(s)\n"
 	       BLANK "free pages: %ld\n"
 	       BLANK "page size: %ld\n"
@@ -394,7 +394,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	       BLANK "page allocs: %ld\n"
 	       BLANK "page frees: %ld\n"
 	       BLANK "}\n"
-	       BLANK "Overall {\n"
+	       BLANK "overall: {\n"
 	       BLANK "element size: %ld bytes + overhead = %ld bytes \n"
 	       BLANK "page usage (num elts * elt size): %ld bytes\n"
 	       BLANK "page memory (page size * total pages): %ld bytes\n"
