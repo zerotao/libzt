@@ -2,7 +2,6 @@ SUBDIRS = 		\
 	zt_adt		\
 	zt_cfg 		\
 	zt_log 		\
-	zt_event 	\
 	.		\
 	t 
 #	cfg 
@@ -13,8 +12,7 @@ libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
 	zt_log/libzt_log.la		\
 	zt_cfg/libzt_cfg.la		\
-	zt_adt/libzt_adt.la		\
-	zt_event/libzt_event.la
+	zt_adt/libzt_adt.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release

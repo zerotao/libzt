@@ -300,7 +300,6 @@ doc/Makefile
 libzt/Makefile
 libzt/zt_log/Makefile
 libzt/zt_cfg/Makefile
-libzt/zt_event/Makefile
 libzt/zt_adt/Makefile
 libzt/t/Makefile
 tools/project.spec
