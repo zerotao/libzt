@@ -53,7 +53,7 @@ pkginclude_HEADERS = \
 	zt_common.h 	\
 	zt_daemon.h 	\
 	zt_except.h	\
-	zt_hash.h	\
+	zt_chash.h	\
 	zt_list.h	\
 	zt_log.h 	\
 	zt_mem.h	\
