@@ -248,7 +248,7 @@ zt_mem_pool_alloc(zt_mem_pool *pool)
 
 	tmp = zt_list_get_next(&pool->free_elt_list);
 	zt_list_remove(tmp);
-	elt = zt_list_entry(free_elt_list, tmp, zt_mem_elt);
+	elt = zt_list_entry(tmp, zt_mem_elt, free_elt_list);
 
 	--elt->parent_page->num_free_elts;
 	
