@@ -106,9 +106,12 @@ log_set_debug_info ( log, file, line, func )
      int line;
      char *func;
 {
-  log->file = file;
-  log->line = line;
-  log->function = func;
+	if(!log)
+		log = log_logger(NULL);
+
+	log->file = file;
+	log->line = line;
+	log->function = func;
 }
 
 void
@@ -118,9 +121,12 @@ log_get_debug_info ( log, file, line, func )
      int *line;
      char **func;
 {
-  *file = log->file;
-  *line = log->line;
-  *func = log->function;
+	if(!log)
+		log = log_logger(NULL);
+	
+	*file = log->file;
+	*line = log->line;
+	*func = log->function;
 }
 
 void

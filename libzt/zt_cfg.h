@@ -2,6 +2,7 @@
 #define _ZT_CFG_H_
 
 #include <libzt/zt.h>
+#include <libzt/zt_log.h>
 
 #ifdef __cplusplus
 #define extern "C" {
@@ -26,8 +27,10 @@ typedef struct cfg_ty cfg_ty;
  * @usage: 
  * cfg_close(cfg);
  */
-void
-cfg_close _(( cfg_ty * ));
+void cfg_close _(( cfg_ty * ));
+#define cfg_close( cfg ) 	\
+	LOG_NDEBUG_INFO(NULL);	\
+	cfg_close( cfg )
 
 /** f
  * get a variable from a cfg_ty
@@ -40,8 +43,10 @@ cfg_close _(( cfg_ty * ));
  * @usage: 
  * cfg_get ( cfg, "main", "test1", &local_test, cfg_int );
  */
-int
-cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
+int cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
+#define cfg_get( cfg, block, name, addr, type )	\
+	LOG_NDEBUG_INFO(NULL);			\
+	cfg_get(cfg, block, name, addr, type)
 
 /** f
  * set a variable in cfg
@@ -54,8 +59,10 @@ cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
  * @usage: 
  * 
  */
-int
-cfg_set _(( cfg_ty *, char *, char *, void *, cfg_type ));
+int cfg_set _(( cfg_ty *, char *, char *, void *, cfg_type ));
+#define cfg_set( cfg, block, name, addr, type )	\
+	LOG_NDEBUG_INFO(NULL);			\
+	cfg_set(cfg, block, name, addr, type)
 
 #ifdef __cplusplus
 }

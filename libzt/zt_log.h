@@ -63,10 +63,10 @@ extern void log_lprintf _(( log_ty *, log_level, char *, ... ));
 extern void log_lvprintf _(( log_ty *, log_level, char *, va_list ));
 
 #define log_printf( level, fmt, args... ) \
-log_lprintf( NULL, level, fmt, ##args )
+	log_lprintf( NULL, level, fmt, ##args )
 
 #define log_vprintf( level, fmt, ap ) \
-log_lprintf ( NULL, level, fmt, ap )
+	log_lvprintf ( NULL, level, fmt, ap )
 
 extern void _log_debug _(( char *, ... ));
 extern void _log_vdebug _(( char *, va_list ));
@@ -74,13 +74,19 @@ extern void _log_vdebug _(( char *, va_list ));
 extern void log_close _(( log_ty *log ));
 
 #define LOG_NDEBUG_INFO( log ) \
-log_set_debug_info ( log, __FILE__, __LINE__, __FUNCTION__ )
+	log_set_debug_info ( log, __FILE__, __LINE__, __FUNCTION__ )
 
-#ifdef DEBUG
+#define log_dprintf( level, fmt, args... )\
+	LOG_NDEBUG_INFO ( NULL ); log_printf( level, fmt, ##args )
+
+#define log_dvprintf( level, fmt, ap ) \
+	log_vprintf( level, fmt, ap)
+
+#ifndef NDEBUG
 #  define LOG_NDEBUG( fmt, args... ) \
-  LOG_NDEBUG_INFO ( log_debug_logger(NULL) ), _log_debug ( fmt , ##args )
+	LOG_NDEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
 #  define LOG_VDEBUG( fmt, ap ) \
-  LOG_NDEBUG_INFO ( log_debug_logger(NULL) ), _log_debug ( fmt , ap )
+	LOG_NDEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
 #else
 #  define LOG_NDEBUG( fmt, args... ) 
 #  define LOG_VDEBUG( fmt, ap ) 

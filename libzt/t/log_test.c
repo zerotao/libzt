@@ -10,8 +10,6 @@
  * Description: 
  */
 
-#define DEBUG
-
 #include <string.h>
 
 #include <libzt/zt_log.h>
