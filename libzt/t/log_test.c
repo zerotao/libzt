@@ -11,7 +11,7 @@
  */
 
 #include <string.h>
-
+#define DEBUG
 #include <libzt/zt_log.h>
 #include <libzt/zt_progname.h>
 
@@ -62,8 +62,8 @@ main( argc, argv )
   log_set_opts(lfile, (LOG_RAW));
 
   /* these need to be on the same line for the test to work */
-  sprintf(position1, "(%s:%d)", __FUNCTION__, __LINE__); LOG_NDEBUG( "LOG_DEBUG" );
-  sprintf(position2, "(%s:%d)", __FUNCTION__, __LINE__); LOG_NDEBUG_INFO(lfile), log_lprintf(lfile, log_debug, "lprintf with debugging");
+  sprintf(position1, "(%s:%d)", __FILE__, __LINE__); LOG_XDEBUG( "LOG_DEBUG" );
+  sprintf(position2, "(%s:%d)", __FILE__, __LINE__); LOG_DEBUG_INFO(lfile), log_lprintf(lfile, log_debug, "lprintf with debugging");
 
   log_close(lfile);
 
@@ -105,10 +105,10 @@ main( argc, argv )
     items = fscanf(file, "%s %d %s %s %[a-zA-Z_-][%d]: %s\n", month, &date, time, sysname, progname, &pid, msg);
     TEST("log[8]: ", ((items == 7) &&
 		      (!strcmp(msg, "LOG_EMU_SYSLOG"))));
-    items = fscanf(file, "LOG_DEBUG: in log_test.c at %s\n", msg);
+    items = fscanf(file, "LOG_DEBUG: in main at %s\n", msg);
     TEST("log[9]: ", ((items == 1) &&
 		      (!strcmp(msg, position1))));
-    items = fscanf(file, "lprintf with debugging: in log_test.c at %s\n", msg);
+    items = fscanf(file, "lprintf with debugging: in main at %s\n", msg);
     TEST("log[10]: ", ((items == 1) &&
 		      (!strcmp(msg, position2))));
     fclose(file);

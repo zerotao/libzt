@@ -29,7 +29,7 @@ typedef struct cfg_ty cfg_ty;
  */
 void cfg_close _(( cfg_ty * ));
 #define cfg_close( cfg ) 	\
-	LOG_NDEBUG_INFO(NULL);	\
+	LOG_DEBUG_INFO(NULL);	\
 	cfg_close( cfg )
 
 /** f
@@ -45,7 +45,7 @@ void cfg_close _(( cfg_ty * ));
  */
 int cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
 #define cfg_get( cfg, block, name, addr, type )	\
-	LOG_NDEBUG_INFO(NULL);			\
+	LOG_DEBUG_INFO(NULL);			\
 	cfg_get(cfg, block, name, addr, type)
 
 /** f
@@ -61,7 +61,7 @@ int cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
  */
 int cfg_set _(( cfg_ty *, char *, char *, void *, cfg_type ));
 #define cfg_set( cfg, block, name, addr, type )	\
-	LOG_NDEBUG_INFO(NULL);			\
+	LOG_DEBUG_INFO(NULL);			\
 	cfg_set(cfg, block, name, addr, type)
 
 #ifdef __cplusplus

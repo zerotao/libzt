@@ -54,27 +54,27 @@ Handlers:
   Remove Handlers: Pass
   Multiple installed but call only once (should be 1): 1 
   Exit from Handler: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[263]:main
-key+datum(1+8) == 9	Pass
-key+datum(6+3) == 9	Pass
 key+datum(0+9) == 9	Pass
+key+datum(6+3) == 9	Pass
+key+datum(2+7) == 9	Pass
 key+datum(5+4) == 9	Pass
-key+datum(3+6) == 9	Pass
-key+datum(7+2) == 9	Pass
 key+datum(4+5) == 9	Pass
 key+datum(9+0) == 9	Pass
-key+datum(2+7) == 9	Pass
+key+datum(1+8) == 9	Pass
+key+datum(3+6) == 9	Pass
+key+datum(7+2) == 9	Pass
 key+datum(8+1) == 9	Pass
 num items == 10	Pass
 lookup 5	Pass
 Testing strings
 key+datum(2+7) == 9	Pass
-key+datum(4+5) == 9	Pass
-key+datum(6+3) == 9	Pass
-key+datum(8+1) == 9	Pass
-key+datum(9+0) == 9	Pass
-key+datum(0+9) == 9	Pass
-key+datum(1+8) == 9	Pass
 key+datum(7+2) == 9	Pass
-key+datum(3+6) == 9	Pass
+key+datum(0+9) == 9	Pass
+key+datum(4+5) == 9	Pass
 key+datum(5+4) == 9	Pass
+key+datum(8+1) == 9	Pass
+key+datum(3+6) == 9	Pass
+key+datum(6+3) == 9	Pass
+key+datum(1+8) == 9	Pass
+key+datum(9+0) == 9	Pass
 num items == 10	Pass

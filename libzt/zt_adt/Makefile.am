@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libzt_adt.la
 
 libzt_adt_la_SOURCES = 	\
-	zt_chash.c	\
+	zt_hash.c	\
 	zt_table.c
 
 DEFS = @DEFS@ -I/usr/include -I. -I$(srcdir) -I../..

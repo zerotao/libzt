@@ -15,19 +15,20 @@ TEST_APPS = 		\
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)	\
 	types_test	\
-	chash_test	\
-	chash64_test	\
 	mem_tools_test	\
 	mem_tools_test2
+
+# 	chash_test	
+# 	chash64_test	
 
 types_test_SOURCES = 	\
 	types_test.c
 
-chash_test_SOURCES = 	\
-	chash_test.c
+# chash_test_SOURCES = 
+# 	chash_test.c
 
-chash64_test_SOURCES = 	\
-	chash64_test.c
+# chash64_test_SOURCES = 
+# 	chash64_test.c
 
 table_test_SOURCES = 	\
 	table_test.c
@@ -110,7 +111,7 @@ test: $(TEST_APPS)
 	done)
 	@(diff test.out out.test > diff.out 2>&1; \
 	  F=`grep Fail test.out`; \
-	  if ! [ -s diff.out -a -n "$F" ]; then \
+	  if ! [ -s diff.out -o -n "$F" ]; then \
 	    echo "All Tests Passed!"; \
 	  else \
 	    echo "Some Tests Failed!  See test.out for details."; \

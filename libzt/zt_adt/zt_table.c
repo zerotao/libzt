@@ -1,7 +1,7 @@
 /*
  * zt_table.c        ZeroTao Tablees
  *
- * Copyright (C) 2002-2004, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
+ * Copyright (C) 2002-2005, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id$
@@ -146,7 +146,7 @@ table_set(zt_table *h, void *key, void *datum)
 {
 	unsigned long	  nkey = h->func(key, 1, h->nbits);
 	
-	LOG_NDEBUG("for key %d hash key is: %d", (int)key, nkey);
+	LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
 	
 	struct table_node *node =(struct table_node *)zt_mem_pool_alloc(h->node_pool);
 
@@ -195,8 +195,8 @@ table_for_each(zt_table *h, table_iterator iterator, void *param)
 /* common hash functions */
 unsigned long table_hash_int(unsigned char *key, unsigned long prev, unsigned long maxbits)
 {
-	unsigned long nkey = zt_hash((unsigned char *)&key, sizeof(int), prev);
-	nkey = (nkey & zt_hashmask(maxbits));
+	unsigned long nkey = zt_hash32_buff(&key, sizeof(int), prev);
+	ZT_HASH_SUB32_MASK(nkey, maxbits);
 	return nkey;
 }
 
@@ -210,8 +210,8 @@ int table_compare_int(void *x, void *y)
 
 unsigned long table_hash_string(unsigned char *key, unsigned long prev, unsigned long maxbits)
 {
-	unsigned long nkey = zt_hash(key, strlen((char *)key), prev);
-	nkey = (nkey & zt_hashmask(maxbits));
+	unsigned long nkey = zt_hash32_cstr(key, prev);
+	ZT_HASH_SUB32_MASK(nkey, maxbits);
 	return nkey;
 }
 

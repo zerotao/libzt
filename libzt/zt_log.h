@@ -1,7 +1,7 @@
 /*
  * zt_log.h        ZeroTao Logging
  *
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: log.h,v 1.3 2003/06/10 03:56:57 jshiffer Exp $
@@ -73,23 +73,35 @@ extern void _log_vdebug _(( char *, va_list ));
 
 extern void log_close _(( log_ty *log ));
 
-#define LOG_NDEBUG_INFO( log ) \
+#define LOG_DEBUG_INFO( log ) \
 	log_set_debug_info ( log, __FILE__, __LINE__, __FUNCTION__ )
 
 #define log_dprintf( level, fmt, args... )\
-	LOG_NDEBUG_INFO ( NULL ); log_printf( level, fmt, ##args )
+	LOG_DEBUG_INFO ( NULL ); log_printf( level, fmt, ##args )
 
 #define log_dvprintf( level, fmt, ap ) \
 	log_vprintf( level, fmt, ap)
 
+/* normal debugging logging */
+#ifdef DEBUG
+#  define LOG_XDEBUG( fmt, args... ) \
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
+#  define LOG_XDEBUGV( fmt, ap ) \
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
+#else
+#  define LOG_XDEBUG( fmt, args... ) 
+#  define LOG_XDEBUGV( fmt, ap ) 
+#endif
+
+/* associated with assert */
 #ifndef NDEBUG
 #  define LOG_NDEBUG( fmt, args... ) \
-	LOG_NDEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
-#  define LOG_VDEBUG( fmt, ap ) \
-	LOG_NDEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
+#  define LOG_NDEBUGV( fmt, ap ) \
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
 #else
 #  define LOG_NDEBUG( fmt, args... ) 
-#  define LOG_VDEBUG( fmt, ap ) 
+#  define LOG_NDEBUGV( fmt, ap ) 
 #endif
 
 #ifdef __cplusplus
