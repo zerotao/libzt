@@ -1,5 +1,5 @@
 #include <libzt/zt.h>
-#include <libzt/zt_hash.h>
+#include <libzt/zt_chash.h>
 
 #include "test.h"
 
@@ -12,7 +12,7 @@ void driver1()
 
 	for (i=0; i<256; ++i) 
 	{
-		h = zt_hash64(buf,i,h);
+		h = zt_chash64(buf,i,h);
 	}
 }
 
@@ -50,10 +50,10 @@ void driver2()
 						/* have a and b be two keys differing in only one bit */
 						a[i] ^= (k<<j);
 						a[i] ^= (k>>(8-j));
-						c[0] = zt_hash64(a, hlen, m);
+						c[0] = zt_chash64(a, hlen, m);
 						b[i] ^= ((k+1)<<j);
 						b[i] ^= ((k+1)>>(8-j));
-						d[0] = zt_hash64(b, hlen, m);
+						d[0] = zt_chash64(b, hlen, m);
 						/* check every bit is 1, 0, set, and not set at least once */
 						for (l=0; l<HASHSTATE; ++l)
 						{
@@ -106,21 +106,21 @@ void driver3()
 	unsigned long long h,i,j,ref,x,y;
 
 	printf("Endianness.  These should all be the same:\n");
-	h = zt_hash64(q+0, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(q+0, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(qq+1, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(qq+1, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(qqq+2, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(qqq+2, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(qqqq+3, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(qqqq+3, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(o+4, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(o+4, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(oo+5, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(oo+5, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(ooo+6, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(ooo+6, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
-	h = zt_hash64(oooo+7, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
+	h = zt_chash64(oooo+7, (unsigned long long)(sizeof(q)-1), (unsigned long long)0);
 	printf("%.8lx%.8lx\n", (unsigned long)h, (unsigned long)(h>>32));
 	printf("\n");
 	for (h=0, b=buf+1; h<8; ++h, ++b)
@@ -131,11 +131,11 @@ void driver3()
 			for (j=0; j<i; ++j) *(b+j)=0;
 
 			/* these should all be equal */
-			ref = zt_hash64(b, len, (unsigned long long)1);
+			ref = zt_chash64(b, len, (unsigned long long)1);
 			*(b+i)=(unsigned char)~0;
 			*(b-1)=(unsigned char)~0;
-			x = zt_hash64(b, len, (unsigned long long)1);
-			y = zt_hash64(b, len, (unsigned long long)1);
+			x = zt_chash64(b, len, (unsigned long long)1);
+			y = zt_chash64(b, len, (unsigned long long)1);
 			if ((ref != x) || (ref != y)) 
 			{
 				printf("alignment error: %.8lx %.8lx %.8lx %ld %ld\n",
@@ -157,7 +157,7 @@ void driver4()
 	printf("These should all be different\n");
 	for (i=0, h=0; i<8; ++i)
 	{
-		h = zt_hash64(buf, (unsigned long long)0, h);
+		h = zt_chash64(buf, (unsigned long long)0, h);
 		printf("%2ld  0-byte strings, hash is  %.8lx%.8lx\n", (unsigned long)i,
 		       (unsigned long)h,(unsigned long)(h>>32));
 	}

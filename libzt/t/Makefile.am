@@ -15,19 +15,19 @@ TEST_APPS = 		\
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)	\
 	types_test	\
-	hash_test	\
-	hash64_test	\
+	chash_test	\
+	chash64_test	\
 	mem_tools_test	\
 	mem_tools_test2
 
 types_test_SOURCES = 	\
 	types_test.c
 
-hash_test_SOURCES = 	\
-	hash_test.c
+chash_test_SOURCES = 	\
+	chash_test.c
 
-hash64_test_SOURCES = 	\
-	hash64_test.c
+chash64_test_SOURCES = 	\
+	chash64_test.c
 
 table_test_SOURCES = 	\
 	table_test.c

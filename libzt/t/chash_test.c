@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include <libzt/zt.h>
-#include <libzt/zt_hash.h>
+#include <libzt/zt_chash.h>
 
 #include "test.h"
 
@@ -15,7 +15,7 @@ void driver1()
 	for (i=0; i<256; ++i) 
 	{
 
-		h = zt_hash(buf,i,h);
+		h = zt_chash(buf,i,h);
 	}
 }
 
@@ -54,10 +54,10 @@ void driver2()
 						/* have a and b be two keys differing in only one bit */
 						a[i] ^= (k<<j);
 						a[i] ^= (k>>(8-j));
-						c[0] = zt_hash(a, hlen, m);
+						c[0] = zt_chash(a, hlen, m);
 						b[i] ^= ((k+1)<<j);
 						b[i] ^= ((k+1)>>(8-j));
-						d[0] = zt_hash(b, hlen, m);
+						d[0] = zt_chash(b, hlen, m);
 						/* check every bit is 1, 0, set, and not set at least once */
 						for (l=0; l<HASHSTATE; ++l)
 						{
@@ -106,10 +106,10 @@ void driver3()
 	unsigned long h,i,j,ref,x,y;
 
 	printf("Endianness.  These should all be the same:\n");
-	printf("%.8lx\n", (unsigned long int)zt_hash(q, sizeof(q)-1, (unsigned long)0));
-	printf("%.8lx\n", (unsigned long int)zt_hash(qq+1, sizeof(q)-1, (unsigned long)0));
-	printf("%.8lx\n", (unsigned long int)zt_hash(qqq+2, sizeof(q)-1, (unsigned long)0));
-	printf("%.8lx\n", (unsigned long int)zt_hash(qqqq+3, sizeof(q)-1, (unsigned long)0));
+	printf("%.8lx\n", (unsigned long int)zt_chash(q, sizeof(q)-1, (unsigned long)0));
+	printf("%.8lx\n", (unsigned long int)zt_chash(qq+1, sizeof(q)-1, (unsigned long)0));
+	printf("%.8lx\n", (unsigned long int)zt_chash(qqq+2, sizeof(q)-1, (unsigned long)0));
+	printf("%.8lx\n", (unsigned long int)zt_chash(qqqq+3, sizeof(q)-1, (unsigned long)0));
 	printf("\n");
 	for (h=0, b=buf+1; h<8; ++h, ++b)
 	{
@@ -119,11 +119,11 @@ void driver3()
 			for (j=0; j<i; ++j) *(b+j)=0;
 
 			/* these should all be equal */
-			ref = zt_hash(b, len, (unsigned long)1);
+			ref = zt_chash(b, len, (unsigned long)1);
 			*(b+i)=(unsigned char)~0;
 			*(b-1)=(unsigned char)~0;
-			x = zt_hash(b, len, (unsigned long)1);
-			y = zt_hash(b, len, (unsigned long)1);
+			x = zt_chash(b, len, (unsigned long)1);
+			y = zt_chash(b, len, (unsigned long)1);
 			if ((ref != x) || (ref != y)) 
 			{
 				printf("alignment error: %.8lx %.8lx %.8lx %ld %ld\n",
@@ -146,7 +146,7 @@ void driver4()
 	printf("These should all be different\n");
 	for (i=0, h=0; i<8; ++i)
 	{
-		h = zt_hash(buf, (unsigned long)0, h);
+		h = zt_chash(buf, (unsigned long)0, h);
 
 		printf("%2ld  0-byte strings, hash is  %.8lx\n", (unsigned long) i, (unsigned long)h);
 	}
