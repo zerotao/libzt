@@ -141,8 +141,20 @@ get_type(char* value, void* nvalue)
 		*(short int*)nvalue = 0;		
 		return cfg_bool;
 	}
+
+	if(value[0] == '\'' || value[0] == '\"')
+	{
+		int	  len = strlen(&value[1]);
+		if(value[len] != '\'' || value[len] != '\"')
+		{
+			/* error  */
+		}
+		value[len] = '\0';
+		*(char **)nvalue = strdup(&value[1]);
+	} else {
+		*(char **)nvalue = strdup(value);
+	}
 	
-	*(char **)nvalue = strdup(value);
 	return cfg_string;
 }
 
@@ -184,7 +196,7 @@ int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv)
 
 int cfg_priv_set ( cfg, block_name, variable_name, var, type )
      cfg_ty *cfg;
-	 char *block_name;
+     char *block_name;
      char *variable_name;
      void *var;
      cfg_type type;
@@ -226,7 +238,7 @@ int cfg_priv_set ( cfg, block_name, variable_name, var, type )
 
 int cfg_priv_get ( cfg, block_name, variable_name, var, type )
      cfg_ty *cfg;
-	 char *block_name;
+     char *block_name;
      char *variable_name;
      void *var;
      cfg_type type;

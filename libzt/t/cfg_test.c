@@ -37,7 +37,7 @@ main ( argc, argv )
   TEST("cfg[0]: ", (b == 1));
   TEST("cfg[1]: ", (i == 1));
   TEST("cfg[3]: ", (f == 99.999));
-  TEST("cfg[4]: ", (!strcmp(s, "'This is a string'")));  
+  TEST("cfg[4]: ", (!strcmp(s, "This is a string")));
 
   f = f + 100.00;
   
