@@ -18,7 +18,7 @@
 #include <libzt/zt_cfg.h>
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 

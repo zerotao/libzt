@@ -28,7 +28,7 @@
 #define LOG_EMU_SYSLOG    (LOG_WITH_DATE | LOG_WITH_SYSNAME | LOG_WITH_PROGNAME | LOG_WITH_PID)
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 

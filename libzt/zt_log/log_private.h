@@ -19,7 +19,7 @@
 #include <libzt/zt_log.h>
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 

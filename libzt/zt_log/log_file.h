@@ -17,7 +17,7 @@
 #define LOG_FILE_APPEND    1
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
