@@ -1,17 +1,88 @@
-2004-07-03  Jason L. Shiffer  <jshiffer@Ohmu.local>
+2004-07-04  Jason L. Shiffer  <jshiffer@zerotao.org>
+
+	* tools/mkc: use getopts
+	cleanup to support the current definition method
+	undo some of the previous changes
+
+	* libzt/Makefile.am: added support for the new zt_event interface
+	
+	* libzt/zt_event/Makefile.am: build support
+	
+	* libzt/zt_event/zt_event_unix.c,
+	libzt/zt_event/zt_event_unix.h: added interface to unix io
+	events
+	
+	* libzt/zt_event/zt_event_signal.c,
+	libzt/zt_event/zt_event_signal.h: added interface to signal
+	events
+	
+	* libzt/zt_event/zt_event_timer.c,
+	libzt/zt_event/zt_event_timer.h: added interface to timer events
+
+	* libzt/zt_event/zt_event_net.c,
+	libzt/zt_event/zt_event_net.h: added interface to network io
+	events
+
+	* libzt/zt_event/zt_event_private.c,
+	libzt/zt_event/zt_event_private.h: added private interface to
+	zt_events
+
+	* libzt/zt_event.c, libzt/zt_event.h,
+	libzt/zt_event/zt_event_interface.h: added public interface to
+	zt_events.
+
+
+2004-07-03  Jason L. Shiffer  <jshiffer@zerotao.org>
 
 	* tools/authors.xml: initial version of authors.xml for svn2log	
+
+2004-07-02  Jason L. Shiffer <jshiffer@zerotao.org>
+
+	* libzt/t/cfg_test.c, libzt/zt_cfg/cfg_private.c:	
+	I do not know how this lasted but the cfg_ini interface would
+	export strings to C in quotes such that: cfg.ini foo = 'this is
+	a test' was noly satisfied by !strcmp(s, "'this is a test'")
+	fix, quotes and double quotes are now striped
+    
+
+	* libzt/zt_cfg/cfg_lisp.c, libzt/zt_cfg/cfg_lisp.h: 
+	These are being moved into zlisp
+
+	* libzt/Makefile.am: Increased the library version of libzt    
 
 2004-06-21 Jason L. Shiffer <jshiffer@zerotao.org>
 
 	* ., aux, doc, libzt, libzt/t, libzt/zt_adt, libzt/zt_cfg,
-	  libzt/zt_log, replace, tools: added svn:ignore properties
+	libzt/zt_log, replace, tools: added svn:ignore properties
 
 2004-06-20  Jason L. Shiffer <jshiffer@zerotao.org>
-	
+
 	* libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the 
 	argument changes.  Funny that it got checked in as it would not
 	even build.
+	
+	* trunk/aux, trunk, trunk/libzt/zt_cfg, trunk/tools, 
+	trunk/libzt/zt_log, trunk/libzt, trunk/doc, 
+	trunk/libzt/t, trunk/libzt/zt_adt, trunk/replace: 
+	Added svn:ignore properties to ignore:
+	Makefile
+	Makefile.in
+	any generated files
+    
+
+	* trunk/libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the 
+	argument changes.  Funny that it got checked in as it would not
+	even build.
+    
+
+	* trunk/libzt/Makefile.am, trunk/configure.ac: 
+	Ticket #1
+	In the import I seem included the interim changes for zt_event.
+	These have been removed and the build should work again.
+
+2004-06-19  Jason L. Shiffer <jshiffer@zerotao.org>
+
+	* all: Importing in an attempt to clean up my tree
 	
 2003-06-10  Jason L. Shiffer  <jshiffer@zerotao.org>
 
