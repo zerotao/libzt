@@ -1,3 +1,14 @@
+2004-06-21  Jason L. Shiffer <jshiffer@zerotao.org>
+
+	* ., aux, doc, libzt, libzt/t, libzt/zt_adt, libzt/zt_cfg,
+	  libzt/zt_log, replace, tools: added svn:ignore properties
+
+2004-06-20  Jason L. Shiffer <jshiffer@zerotao.org>
+	
+	* libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the 
+	argument changes.  Funny that it got checked in as it would not
+	even build.
+	
 2003-06-10  Jason L. Shiffer  <jshiffer@zerotao.org>
 
 	* log_test.c: using the new LOG_NDEBUG et el.
