@@ -14,24 +14,28 @@ opts:
 EOF
 
 use strict;
+use Getopt::Std;
 
 if(@ARGV < 1){
     print $USAGE;
     exit;
 }
 
-while(($ARGV[0]) && (($_ = $ARGV[0]) =~ /^-/)){
-    shift;
-    (/-h/) && do { print $USAGE; exit 0; };
-    (/-p/) && do { $CDATA{PUBLIC} = 1; next;  };
-    (/-c/) && do { $CDATA{GENCOMP} = 1; next; };
-    (/-s/) && do { $CDATA{GENSUBS} = 1; next; };
-    (/-m/) && do { $CDATA{GENMAKE} = 1; next; };
-    (/-o/) && do { $CDATA{OVERWRITE} = 1; next; };
+my %options = ();
 
+getopts("hpcsmo", \%options);
+
+if(defined $options{h}) {
     print $USAGE;
-    exit;
+    exit 0;
 }
+
+$CDATA{PUBLIC} = $options{p} if defined $options{p};
+$CDATA{GENCOMP} = $options{c} if defined $options{c};
+$CDATA{GENSUBS} = $options{s} if defined $options{s};
+$CDATA{GENMAKE} = $options{m} if defined $options{m};
+$CDATA{OVERWRITE} = $options{o} if defined $options{o};
+
 
 $CDATA{LOCALDIR} = $ENV{PWD};
 $CDATA{LOCALDIR} =~ s/.*\/(\w+)/$1/;
@@ -83,9 +87,9 @@ sub mk_component {
     if($DATA{GENCOMP}){
       print_public_c("$name.c", %DATA);
       print_public_h("$name.h", %DATA);
-      print_private_c("$name/private.c", %DATA);
-      print_private_h("$name/private.h", %DATA);
-      print_interface_h("$name/interface.h", %DATA);
+      print_private_c("$name/$name" . "_private.c", %DATA);
+      print_private_h("$name/$name" . "_private.h", %DATA);
+      print_interface_h("$name/$name" . "_interface.h", %DATA);
     }
 
     if($DATA{GENSUBS}){
@@ -137,7 +141,7 @@ sub print_sub_h {
 #endif /* __cplusplus */
 
 extern $DATA{name}_ty *
-$DATA{name}_$sub ( void );
+$sub(void);
 
 #ifdef __cplusplus
 }
@@ -151,13 +155,10 @@ sub print_sub_c {
     open(FILE, "> $DATA{name}/$sub.c") || die "Cannot open file $DATA{name}/$sub.c: $!";
     print FILE <<EOF;
 
-#include "private.h"
+#include "$DATA{name}_private.h"
 
-static void destructor ( $DATA{name} )
-    $DATA{name}_ty *$DATA{name};
-{
-    return;
-}
+/* local declarations */
+static void destructor($DATA{name}_ty *$DATA{name});
 
 /* component data */
 static $DATA{name}_vtbl_ty vtbl = {
@@ -166,9 +167,16 @@ static $DATA{name}_vtbl_ty vtbl = {
 };
 
 $DATA{name}_ty *
-$DATA{name}_$sub( void )
+$sub(void)
 {
     return $DATA{name}_new(&vtbl);
+}
+
+/* local definitions */
+static void 
+destructor($DATA{name}_ty *$DATA{name})
+{
+    return;
 }
 
 EOF
@@ -183,7 +191,7 @@ sub print_makefile_am {
 noinst_LTLIBRARIES = lib$DATA{name}.la
 
 lib$DATA{name}_la_SOURCES = \\
-		private.c \\
+		$DATA{name}_private.c \\
 EOF
     my $num = scalar(@{$DATA{SUBS}});
     foreach $sub (@{$DATA{SUBS}}){
@@ -200,7 +208,7 @@ DEFS := \@DEFS\@ -I/usr/include -I. -I\$(srcdir) -I../..
 
 pkgincludedir = \${includedir}/$DATA{name}
 pkginclude_HEADERS = \\
-		private.h \\
+		$DATA{name}_private.h \\
 EOF
     $num = scalar(@{$DATA{SUBS}});
     foreach $sub (@{$DATA{SUBS}}){
@@ -247,7 +255,7 @@ $DATA{PUBLIC_INTERFACE}
 }
 #endif
 
-#include <$DATA{LOCALDIR}/$DATA{name}/interface.h>
+#include <$DATA{LOCALDIR}/$DATA{name}/$DATA{name}_interface.h>
 
 #endif  /* _$DATA{NAME}_H_ */
 EOF
@@ -258,12 +266,11 @@ sub print_private_c {
     my ($file, %DATA) = @_;
     open(FILE, "> $file") || die "Cannot open file $file: $!";
     print FILE <<EOF;
-#include <malloc.h>
-#include "private.h"
+#include <stdlib.h>
+#include "$DATA{name}_private.h"
 
 ${name}_ty*
-${name}_new ( vptr )
-  ${name}_vtbl_ty *vptr;
+${name}_new (${name}_vtbl_ty *vptr)
 {
   ${name}_ty *result;
   result = calloc(1, vptr->size);
