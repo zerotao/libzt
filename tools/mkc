@@ -140,7 +140,7 @@ sub print_sub_h {
 #include <$DATA{LOCALDIR}/$DATA{name}.h>
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
@@ -271,7 +271,7 @@ sub print_public_h {
 #define _$DATA{NAME}_H_
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
@@ -324,7 +324,7 @@ sub print_private_h {
 #include <$DATA{LOCALDIR}/${name}.h>
 
 #ifdef __cplusplus
-#define extern "C" {
+extern "C" {
 #pragma }
 #endif /* __cplusplus */
 

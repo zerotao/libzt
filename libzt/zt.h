@@ -34,7 +34,7 @@
 #    define volatile	__volatile
 #  endif
 #else
-#  ifdef __STDC__
+#  if defined(__STDC__) || defined(__STDC_HOSTED__)
 #    undef  signed
 #    define signed
 #    undef  volatile
@@ -42,14 +42,16 @@
 #  endif
 #endif
 
-#ifdef __STDC__
-#define STR(x)		#x
-#define CONC(x, y)	x##y
-typedef void* void_p;
+#if defined(__STDC__) || defined(__STDC_HOSTED__)
+# define STR(x)		#x
+# define CONC(x, y)	x##y
+# define CONC3(x,y,z)   x##y##z
+  typedef void* void_p;
 #else
-#define STR(x)		"x"
-#define CONC(x, y)	x/**/y
-typedef char* void_p;
+# define STR(x)		"x"
+# define CONC(x, y)	x/**/y
+# define CONC3(x, y)	x/**/y/**/z
+  typedef char* void_p;
 #endif
 
 #ifndef EXIT_SUCCESS
@@ -58,7 +60,7 @@ typedef char* void_p;
 #endif
 
 #ifndef _
-# ifdef __STDC__
+# if defined(__STDC__) || defined(__STDC_HOSTED__)
 #  define _(x) x
 # else
 #  define _(x) ()
