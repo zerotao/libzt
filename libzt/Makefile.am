@@ -2,7 +2,6 @@ SUBDIRS = 		\
 	zt_adt		\
 	zt_cfg 		\
 	zt_log 		\
-	zt_event	\
 	.		\
 	t 
 #	cfg 
