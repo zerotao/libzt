@@ -1,0 +1,29 @@
+2003-06-10  Jason L. Shiffer  <jshiffer@zerotao.org>
+
+	* log_test.c: using the new LOG_NDEBUG et el.
+
+	* syslog.c, syslog.h: appears that I forgot to merge the syslog
+	branch oops!!
+
+2003-06-09  Jason L. Shiffer  <jshiffer@zerotao.org>
+
+	* file.c, stderr.c: fixed a small memory leak that would only
+	show up under multiple logging target changes.
+
+	* libzt/log.h: LOG_DEBUG/LOG_DEBUG_INFO changed to LOG_NDEBUG...
+
+	* bootstrap: removed -i flag from automake (don't know how that
+	got left there.
+
+	* Makefile.am: forgot to add dummy.c as a dependency for
+	libreplace so it was not included in make dist.
+
+	* libzt/t/log_test.c: silly me I moved a couple of lines
+	during code cleanup that actually caused the log tests to fail.
+	Fixed.
+
+	* configure.in: updated patchlevel version to 2
+
+	* Makefile.am: changed back to includeing libzt/t in
+	default build as it brakes the build otherwise.
+

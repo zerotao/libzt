@@ -1,0 +1,80 @@
+chomp[1]: 	Pass
+strip[1]: 	Pass
+rstrspn[1]: 	Pass
+rstrcspn[1]: 	Pass
+basename2[1]: 	Pass
+basename2[2]: 	Pass
+dirname[1]: 	Pass
+ABS[1]: 	Pass
+CLAMP[1]: 	Pass
+CLAMP[2]: 	Pass
+MAX[1]: 	Pass
+MAX[2]: 	Pass
+MIN[1]: 	Pass
+MIN[2]: 	Pass
+sizeof_array[1]: 	Pass
+endof_array[1]: 	Pass
+assert[1]:      Pass
+assert[2]:      Pass
+progname[1]: 	Pass
+progname[2]: 	Pass
+progname[3]: 	Pass
+log[0]: 	Pass
+log[1]: 	Pass
+log[2]: 	Pass
+log[3]: 	Pass
+log[4]: 	Pass
+log[5]: 	Pass
+log[6]: 	Pass
+log[7]: 	Pass
+log[8]: 	Pass
+log[9]: 	Pass
+log[10]: 	Pass
+cfg[0]: 	Pass
+cfg[1]: 	Pass
+cfg[3]: 	Pass
+cfg[4]: 	Pass
+cfg[5]: 	Pass
+cfg[6]: 	Pass
+cfg[7]: 	Pass
+opts[1]:        Pass
+Alternate Syntax: Pass
+END_TRY w/o ELSE_TRY: Pass
+Empty Unwind: Pass
+Nesting: Pass
+TRY_RETURN from CATCH: Pass
+TRY_RETURN from WIND: Pass
+Domains: Pass
+Rethrow: Pass
+Unwind_protect: Pass
+CATCH escape: Pass
+Catch in Try Block: Pass
+Handlers: 
+  Multiple calls (should be 1 2): 1 2 
+  Remove Handlers: Pass
+  Multiple installed but call only once (should be 1): 1 
+  Exit from Handler: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[263]:main
+key+datum(1+8) == 9	Pass
+key+datum(6+3) == 9	Pass
+key+datum(0+9) == 9	Pass
+key+datum(5+4) == 9	Pass
+key+datum(3+6) == 9	Pass
+key+datum(7+2) == 9	Pass
+key+datum(4+5) == 9	Pass
+key+datum(9+0) == 9	Pass
+key+datum(2+7) == 9	Pass
+key+datum(8+1) == 9	Pass
+num items == 10	Pass
+lookup 5	Pass
+Testing strings
+key+datum(2+7) == 9	Pass
+key+datum(4+5) == 9	Pass
+key+datum(6+3) == 9	Pass
+key+datum(8+1) == 9	Pass
+key+datum(9+0) == 9	Pass
+key+datum(0+9) == 9	Pass
+key+datum(1+8) == 9	Pass
+key+datum(7+2) == 9	Pass
+key+datum(3+6) == 9	Pass
+key+datum(5+4) == 9	Pass
+num items == 10	Pass

@@ -1,0 +1,38 @@
+<!-- -*- sgml -*- -->
+<section id="path">
+ <title>Path</title>
+ <para>
+  Included here you will find function to manipulate filesystem and 
+  enviroment paths.  Access to these functions if gained thru the header file
+  <filename class=headerfile>libzt/path.h</filename>.
+ </para>
+<funcsynopsis>
+  <funcprototype>
+    <funcdef>char * <function>basename</function></funcdef>
+    <paramdef>char *<parameter>buffer</parameter></paramdef>
+    <paramdef>int<parameter>length</parameter></paramdef>
+    <paramdef>const char *<parameter>path</parameter></paramdef>
+    <paramdef>const char *<parameter>extention</parameter></paramdef>
+  </funcprototype>
+  <funcsynopsisinfo>
+   This function acts like the shell version of basename.
+  </funcsynopsisinfo>
+ </funcsynopsis> 
+ <funcsynopsis>
+  <funcprototype>
+   <funcdef>char * <function>dirname</function></funcdef>
+   <paramdef>char * <parameter>buffer</parameter></paramdef>
+   <paramdef>int <parameter>length</parameter></paramdef>
+   <paramdef>const char * <parameter>path</parameter></paramdef>
+  </funcprototype>
+  <funcsynopsisinfo>
+   This function acts like the shell version of dirname.
+  </funcsynopsisinfo>
+ </funcsynopsis>
+</section>
+
+<!-- Local Variables: -->
+<!-- sgml-indent-step: 1 -->
+<!-- sgml-indent-data: 1 -->
+<!-- sgml-parent-document: "extentions.sgml" -->
+<!-- End: -->

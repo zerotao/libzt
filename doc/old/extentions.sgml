@@ -1,0 +1,15 @@
+<!-- -*- sgml -*- -->
+ <chapter id="extentions">
+  <title>Extentions</title>
+  <para>
+   Extentions to the core ZeroTao functionality.
+  </para>
+  &pathsgml;
+  &prognamesgml;
+ </chapter>
+
+<!-- Local Variables: -->
+<!-- sgml-indent-step: 1 -->
+<!-- sgml-indent-data: 1 -->
+<!-- sgml-parent-document: "libzt.sgml" -->
+<!-- End: -->

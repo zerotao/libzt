@@ -1,0 +1,35 @@
+variables can have multiple names
+command line options are/can be stored in superDomain _clo
+config variables are stored in superDomain _cfg
+
+when the config system is setup you determine the superdomain search
+order.
+
+
+application (me)
+system (the rest of the system)
+
+
+_clo.
+
+api
+cfg_cfg(cfg, search_path, opts)
+cfg_get(cfg, "variable", &val, type)
+
+objects
+
+struct cfg_vtbl_ty {
+       size_t size;
+       void (* destructor)(cfg_data *);
+       void (* set)(void *);
+       void *(* get)(void);
+       int (* lock)(void);
+       int (* unlock)(void);
+       char *(* dump)(void);
+}
+
+struct cfg_data {
+       struct cfg_vtbl_ty *vtbl;
+       char *name;
+       cfg_data *parent;
+};

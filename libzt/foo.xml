@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<!DOCTYPE comment_db [
+<!ELEMENT files (file)+>
+<!ELEMENT file (comments)+>
+<!ATTLIST file id CDATA #REQUIRED>
+<!ELEMENT comments (comment)+>
+<!ELEMENT comment (author|version|since|deprecated|see|return|exception|throws|param|usage|example)+>
+<!ATTLIST comment id CDATA #REQUIRED>
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT since (#PCDATA)>
+<!ELEMENT deprecated (#PCDATA)>
+<!ELEMENT see (#PCDATA)>
+<!ELEMENT return (#PCDATA)>
+<!ELEMENT exception (#PCDATA)>
+<!ELEMENT throws (#PCDATA)>
+<!ELEMENT param (#PCDATA)>
+<!ELEMENT usage (#PCDATA)>
+<!ELEMENT example (#PCDATA)>
+]>
+<comment_db>
+ <files>
+ <file id="assert.h">
+  <comments>
+   <comment id="assert(c) ((void)((c) ? 0 : _assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__)) ">
+    <params>
+     <param id="c">expression to be tested</param>
+    </params>
+    <usage>
+assert("This would pass");
+assert(!"But this would fail")
+assert(foo == 1);
+    </usage>
+    <desc>If NDEBUG is defined then assert on failure of c</desc>
+   </comment>
+  </comments>
+ </file>
+ <file id="daemon.c">
+  <comments>
+  </comments>
+ </file>
+ </files></comment_db>

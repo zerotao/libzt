@@ -1,0 +1,342 @@
+#!/usr/bin/perl -w
+
+my %CDATA = ();
+my $USAGE = <<EOF;
+usage:
+$0 [opts] [component] [[sub][...]]
+
+opts:
+-p generate a component with a public interface (for optimizations)
+-c generate the main component
+-s generate 1 or more subs
+-m generate a Makefile.am
+-o overwrite files
+EOF
+
+use strict;
+
+if(@ARGV < 1){
+    print $USAGE;
+    exit;
+}
+
+while(($ARGV[0]) && (($_ = $ARGV[0]) =~ /^-/)){
+    shift;
+    (/-h/) && do { print $USAGE; exit 0; };
+    (/-p/) && do { $CDATA{PUBLIC} = 1; next;  };
+    (/-c/) && do { $CDATA{GENCOMP} = 1; next; };
+    (/-s/) && do { $CDATA{GENSUBS} = 1; next; };
+    (/-m/) && do { $CDATA{GENMAKE} = 1; next; };
+    (/-o/) && do { $CDATA{OVERWRITE} = 1; next; };
+
+    print $USAGE;
+    exit;
+}
+
+$CDATA{LOCALDIR} = $ENV{PWD};
+$CDATA{LOCALDIR} =~ s/.*\/(\w+)/$1/;
+
+my $name = shift;
+if($name){
+    my @sub_modules = ();
+    if(@ARGV){
+	@sub_modules = @ARGV;
+    }
+    $CDATA{name} = $name;
+    $CDATA{NAME} = $name;
+    $CDATA{NAME} =~ tr/a-z/A-Z/;
+    $CDATA{SUBS} = \@sub_modules;
+    mk_component(%CDATA);
+}else{
+    print $USAGE;
+exit 1;
+}
+exit;
+
+sub mk_component {
+    my (%DATA) = @_;
+    my $name = $DATA{name};
+
+    if(!$DATA{OVERWRITE}){
+      # test for the files and directories that we need
+      if(-e $name){ print "A file or directory named \"$name\" already exists! exiting\n"; exit; }
+      if(-e "$name.c"){ print "A file named \"$name.c\" already exists! exiting\n"; exit; }
+      if(-e "$name.h"){ print "A file named \"$name.h\" already exists! exiting\n"; exit; }
+    }
+
+    # create the directory
+    if(! -d $name){mkdir $name, 0777;}
+
+    my $PRIVATE = gen_private_interface($name);
+    my $PUBLIC = gen_public_interface($name);
+    my $WARNING = gen_opt_warning($name);
+
+    if($DATA{PUBLIC}){
+	$DATA{PUBLIC_INTERFACE} = "$WARNING $PUBLIC $PRIVATE";
+	$DATA{PRIVATE_INTERFACE} = "";
+    }else{
+	$DATA{PUBLIC_INTERFACE} = "$PUBLIC";
+	$DATA{PRIVATE_INTERFACE} = "$PRIVATE";
+    }
+
+    # make the main files
+    if($DATA{GENCOMP}){
+      print_public_c("$name.c", %DATA);
+      print_public_h("$name.h", %DATA);
+      print_private_c("$name/private.c", %DATA);
+      print_private_h("$name/private.h", %DATA);
+      print_interface_h("$name/interface.h", %DATA);
+    }
+
+    if($DATA{GENSUBS}){
+      my $sub = "";
+      foreach $sub (@{$DATA{SUBS}}){
+	print_sub_h($sub, %DATA);
+	print_sub_c($sub, %DATA);
+      }
+    }
+
+    if($DATA{GENMAKE}){
+      print_makefile_am(%DATA);
+    }
+}
+
+sub print_interface_h {
+  my ($file, %DATA) = @_;
+  open(FILE, "> $file") || die "Cannot open file $file: $!";
+  print FILE <<EOF;
+#ifndef _$DATA{NAME}_INTERFACE_H_
+#define _$DATA{NAME}_INTERFACE_H_
+
+#include <$DATA{LOCALDIR}/$DATA{name}.h>
+
+EOF
+  my $sub = "";
+  foreach $sub (@{$DATA{SUBS}}){
+    print FILE "#include <$DATA{LOCALDIR}/$DATA{name}/$sub.h>", "\n";
+  }
+  print FILE <<EOF;
+#endif  /* _$DATA{NAME}_INTERFACE_H_ */
+EOF
+}
+
+sub print_sub_h {
+    my($sub, %DATA) = @_;
+    my $SUB = $sub;
+    $SUB =~ tr/a-z/A-Z/;
+    open(FILE, "> $DATA{name}/$sub.h") || die "Cannot open file $DATA{name}/$sub.c: $!";
+  print FILE <<EOF;
+#ifndef _$DATA{NAME}_${SUB}_H_
+#define _$DATA{NAME}_${SUB}_H_
+
+#include <$DATA{LOCALDIR}/$DATA{name}.h>
+
+#ifdef __cplusplus
+#define extern "C" {
+#pragma }
+#endif /* __cplusplus */
+
+extern $DATA{name}_ty *
+$DATA{name}_$sub ( void );
+
+#ifdef __cplusplus
+}
+#endif
+#endif  /* _$DATA{NAME}_${SUB}_H_ */
+EOF
+    close(FILE);
+}
+sub print_sub_c {
+    my($sub, %DATA) = @_;
+    open(FILE, "> $DATA{name}/$sub.c") || die "Cannot open file $DATA{name}/$sub.c: $!";
+    print FILE <<EOF;
+
+#include "private.h"
+
+static void destructor ( $DATA{name} )
+    $DATA{name}_ty *$DATA{name};
+{
+    return;
+}
+
+/* component data */
+static $DATA{name}_vtbl_ty vtbl = {
+  sizeof($DATA{name}_ty),
+  destructor,
+};
+
+$DATA{name}_ty *
+$DATA{name}_$sub( void )
+{
+    return $DATA{name}_new(&vtbl);
+}
+
+EOF
+    close(FILE);
+}
+
+sub print_makefile_am {
+    my (%DATA) = @_;
+    my $sub = "";
+    open(FILE, "> $DATA{name}/Makefile.am") || die "Cannot open file $DATA{name}/Makefile.am: $!";
+    print FILE <<EOF;
+noinst_LTLIBRARIES = lib$DATA{name}.la
+
+lib$DATA{name}_la_SOURCES = \\
+		private.c \\
+EOF
+    my $num = scalar(@{$DATA{SUBS}});
+    foreach $sub (@{$DATA{SUBS}}){
+	if($num == 1){
+	    print FILE "		$sub.c", "\n";
+	}else{
+	    print FILE "		$sub.c \\", "\n";
+	}
+	$num--;
+    }
+    print FILE <<EOF;
+
+DEFS := \@DEFS\@ -I/usr/include -I. -I\$(srcdir) -I../..
+
+pkgincludedir = \${includedir}/$DATA{name}
+pkginclude_HEADERS = \\
+		private.h \\
+EOF
+    $num = scalar(@{$DATA{SUBS}});
+    foreach $sub (@{$DATA{SUBS}}){
+	if($num == 1){
+	    print FILE "		$sub.h", "\n";
+	}else{
+	    print FILE "		$sub.h \\", "\n";
+	}
+	$num--;
+    }
+    print FILE <<EOF;
+
+include \$(top_srcdir)/Makefile.extra
+EOF
+    close(FILE);
+}
+sub print_public_c {
+    my ($file, %DATA) = @_;
+    open(CFILE, "> $file") || die "Cannot open file $name.c: $!";
+    print CFILE <<EOF;
+
+#include "$name.h"
+
+EOF
+    close(CFILE);
+}
+
+sub print_public_h {
+  my ($file, %DATA) = @_;
+  open(FILE, "> $file") || die "Cannot open file $file: $!";
+
+  print FILE <<EOF;
+#ifndef _$DATA{NAME}_H_
+#define _$DATA{NAME}_H_
+
+#ifdef __cplusplus
+#define extern "C" {
+#pragma }
+#endif /* __cplusplus */
+
+$DATA{PUBLIC_INTERFACE}
+
+#ifdef __cplusplus
+}
+#endif
+
+#include <$DATA{LOCALDIR}/$DATA{name}/interface.h>
+
+#endif  /* _$DATA{NAME}_H_ */
+EOF
+close(FILE);
+}
+
+sub print_private_c {
+    my ($file, %DATA) = @_;
+    open(FILE, "> $file") || die "Cannot open file $file: $!";
+    print FILE <<EOF;
+#include <malloc.h>
+#include "private.h"
+
+${name}_ty*
+${name}_new ( vptr )
+  ${name}_vtbl_ty *vptr;
+{
+  ${name}_ty *result;
+  result = calloc(1, vptr->size);
+  result->vtbl = vptr;
+  return(result);
+}
+EOF
+    close(FILE);
+}
+
+sub print_private_h {
+  my ($file, %DATA) = @_;
+  my $name = $DATA{name};
+
+  open(FILE, "> $file") || die "Cannot open file $file: $!";
+  print FILE <<EOF;
+/* Private interface to $name
+ * You should NOT access this directly
+ * unless you are extending the component
+ */
+#ifndef _$DATA{NAME}_PRIVATE_H_
+#define _$DATA{NAME}_PRIVATE_H_
+
+#include <stdlib.h>
+#include <$DATA{LOCALDIR}/${name}.h>
+
+#ifdef __cplusplus
+#define extern "C" {
+#pragma }
+#endif /* __cplusplus */
+
+$DATA{PRIVATE_INTERFACE}
+
+${name}_ty *${name}_new (${name}_vtbl_ty *);
+#ifdef __cplusplus
+}
+#endif
+#endif  /* _$DATA{NAME}_PRIVATE_H_ */
+EOF
+    close(FILE);
+}
+
+sub gen_private_interface {
+  $name = shift;
+  my $INTERFACE = <<EOF;
+struct ${name}_ty {
+  struct ${name}_vtbl_ty *vtbl;
+  /* rest of opts */
+};
+  
+typedef struct ${name}_vtbl_ty ${name}_vtbl_ty;
+struct ${name}_vtbl_ty {
+  size_t size;
+  /* virtual function pointers */
+  void (* destructor)(${name}_ty *);
+};
+EOF
+  return ($INTERFACE);
+}
+
+sub gen_public_interface {
+  my $name = shift;
+  my $INTERFACE = "typedef struct ${name}_ty ${name}_ty;";
+  return $INTERFACE;
+}
+
+sub gen_opt_warning {
+  my $name = shift;
+  my $WARNING = <<EOF;
+/* This is here for optimization purposes
+ * you should not access this directly unless
+ * you are extending the component
+ */
+EOF
+return $WARNING;
+}

@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+my $USAGE = <<EOT;
+usage: $0 [opts] <specfile1> <specfile2> <specfile...>
+    builds rpms for all of the spec files.
+    -h         This help screen
+    -r release The release to use when building the files
+    -a         Build Architeture specific ie. i686 if pentium II
+EOT
+
+my $REL = "";
+while ($_ = $ARGV[0], /^-/) {
+    shift;
+    last if /^--$/;
+    if (/^-h/){ print $USAGE; exit; }
+    if (/^-r/){ 
+	$REL = shift; 
+	$REL = "--with-release=0";
+    }
+    if (/^-a/){
+	$ARCH=1;
+    }
+}
+
+$COMMAND = "$REL";
+
+if ( ! -f "configure" ) {
+    print "Creating build enviroment\n";
+    system "./autogen.sh $COMMAND";
+}
+
+while($_ = $ARGV[0]){
+    my %spec = ();
+    my $file = $_;
+    $_ =~ s/(\w+)\.spec/$1/;
+    $spec{ Name } = $_;
+    $spec{ Version } = `grep Version: $file`;
+    chomp( $spec{ Version } );
+    $spec{ Version } =~ s/.*: (.*)/$1/;
+    $spec{ SrcDir } = `rpm --showrc | egrep ": _topdir"`;
+    $spec{ SrcDir } =~ s/-[0-9]+: _topdir(\W+)(.*)/\/$2\/SOURCES/;
+    make_rpm(%spec);
+    shift;
+}
+
+sub make_rpm () {
+    my %spec = @_;
+    system "make dist";
+    system "mv $spec{ Name }-$spec{ Version }.tar.gz $spec{ SrcDir }";
+    system "rpm -ba $spec{ Name }.spec";
+}
+

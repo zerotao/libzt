@@ -1,0 +1,36 @@
+#! /bin/sh
+# bootstrap        Bootstrap Script
+# Copyright (C) 2000, 2002, 2003, ETG, Inc. All Rights Reserved.
+#
+# This file is proprietary and confidential and must not be distributed without the 
+# express permission of the copyright holder.
+#
+# See file COPYING for details.
+# 
+# $Id: bootstrap,v 1.2 2003/06/10 03:53:34 jshiffer Exp $
+# 
+# 
+# History:  -jshiffer 12/19/00 3:53pm: Created.
+
+
+(test -d aux) || {
+ mkdir -p aux;
+}
+
+# libtoolize generates support for libtool
+# autoheader generates config.h.in by scanning acconfig.h
+# aclocal generates aclocal.m4 by scanning configure.in
+# automake generates Makefile.in by scanning Makefile.am
+# autoconf generates configure by scanning configure.in
+
+set -x
+if [ -f /usr/bin/glibtoolize ]; then
+ LIBTOOLIZE=glibtoolize
+else
+ LIBTOOLIZE=libtoolize
+fi
+${LIBTOOLIZE} --automake --copy --force && \
+aclocal -I aux && \
+autoheader && \
+autoconf && \
+automake --add-missing --copy --foreign

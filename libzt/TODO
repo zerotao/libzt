@@ -1,0 +1,6 @@
+daemon.c: add support setsid for thost that do not have it
+
+Types for u8,16,32,64
+  work out a better type system then what I currently have here
+  too much is expected to be put into zt_common.h
+  how much can I rely on inttypes and ISO C

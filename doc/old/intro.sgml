@@ -1,0 +1,21 @@
+<!-- -*- sgml -*- -->
+ <chapter id="intro">
+  <title>
+   The LibZt development library
+  </title>
+  
+  <para>
+   &lzt; is a software developers library targeted at rapid prototyping 
+   and development of robust applications.
+  </para>
+  
+  <para>
+   This copy of &lzt; was built on &builddate;.
+  </para>
+ </chapter>
+
+<!-- Local Variables: -->
+<!-- sgml-indent-step: 1 -->
+<!-- sgml-indent-data: 1 -->
+<!-- sgml-parent-document: "libzt.sgml" -->
+<!-- End: -->

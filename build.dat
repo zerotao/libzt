@@ -1,0 +1,12 @@
+PACKAGE_LIST="libzt"
+
+STYLE=gnu
+CONFIGURE_OPTS="--disable-shared"
+
+pre_package () {
+    
+    FAKE_ROOT=$PWD/fake_root
+
+    testing make DESTDIR=$FAKE_ROOT install
+
+}
