@@ -156,6 +156,7 @@ EOF
 }
 sub print_sub_c {
     my($sub, %DATA) = @_;
+    my $sub_ty = $sub . "_ty";
     open(FILE, "> $DATA{name}/$DATA{name}_$sub.c") || die "Cannot open file $DATA{name}/$DATA{name}_$sub.c: $!";
     print FILE <<EOF;
 
@@ -165,7 +166,21 @@ sub print_sub_c {
 static void destructor($DATA{name}_ty *$DATA{name});
 
 /* component data */
+/* Uncomment to create a private data section
+ * also check $DATA{name}_vtbl_ty
+ *
+ * typedef struct $DATA{name}_$sub $DATA{name}_$sub;
+ * struct $DATA{name}_$sub {
+ *   $DATA{name}_ty      inherited;
+ */
+     /* private data */
+ /* };
+  */
 static $DATA{name}_vtbl_ty vtbl = {
+/* for private data uncomment the following line and
+ * remove the $DATA{name}_ty
+ * sizeof($DATA{name}_$sub_ty), 
+ */
   sizeof($DATA{name}_ty),
   destructor,
 };
@@ -173,7 +188,14 @@ static $DATA{name}_vtbl_ty vtbl = {
 $DATA{name}_ty *
 $DATA{name}_$sub(void)
 {
-    return $DATA{name}_new(&vtbl);
+    $DATA{name}_ty	* result;
+    /* $DATA{name}_$sub_ty * $sub; */
+
+    result = $DATA{name}_new(&vtbl);
+    /* $sub = ($DATA{name}_$sub_ty *)result; */
+    /* do local work here */
+
+    return result;
 }
 
 /* local definitions */
