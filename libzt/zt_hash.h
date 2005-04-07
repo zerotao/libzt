@@ -18,8 +18,8 @@
 #define ZT_HASH64_INIT ((u_int64_t)0xcbf29ce484222325ULL)
 #define ZT_HASH32_INIT ((u_int32_t)0x811c9dc5)
 
-#define ZT_HASH32_PRIME ((u_int32_t)0x01000193)
-#define ZT_HASH64_PRIME ((u_int64_t)0x01000193)
+#define ZT_HASH32_PRIME ((u_int32_t)0x01000193U)
+#define ZT_HASH64_PRIME ((u_int64_t)0x100000001b3ULL)
 
 u_int32_t zt_hash32_buff(void *buf, size_t len, u_int32_t init);
 u_int32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
