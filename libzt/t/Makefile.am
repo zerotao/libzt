@@ -80,29 +80,28 @@ test: $(TEST_APPS)
 	@echo Beginning Test Run
 	@$(RM) -f test.out diff.out assert.out core
 	@(for program in $^; do \
-	  echo "Running $$program"; \
 	  if [ "$$program" = "opts_test" ]; then \
 	    ./$$program --int 1 --bool=t --string hello --flag > opts_test.out; \
 	    F=`cat opts_test.out`; \
 	    if [ "$$F" = "integer = 1, bool = 1, string = hello flag = 1" ]; then \
-	      echo "opts[1]:        Pass" >> test.out; \
+	      echo "opts[1]:                                     => success" | tee -a test.out; \
 	    fi; \
 	  elif [ "$$program" = "assert_test" ]; then \
-	    ./$$program > assert.out 2>&1; \
+	    ./$$program  > assert.out 2>&1 ; \
 	    F=`cat assert.out | awk -F\[ '{ print $$1 }'`; \
 	    if [ "$$F" = "Error: Assertion \"1==0\" failed at: assert_test.c" ]; then \
-	      echo "assert[1]:      Pass" >> test.out; \
+	      echo "assert[1]:                                   => success" | tee -a test.out; \
 	    else \
-	      echo "assert[1]:      Fail" >> test.out; \
+	      echo "assert[1]:                                   => failure" | tee -a test.out; \
 	    fi; \
 	    if [ -f core -o -d /cores ]; then \
-	      echo "assert[2]:      Pass" >> test.out; \
+	      echo "assert[2]:                                   => success" | tee -a test.out; \
 	      rm -f core; \
             else \
-              echo "assert[2]:      Fail" >> test.out; \
+              echo "assert[2]:                                   => failure" | tee -a test.out; \
 	    fi; \
 	  else \
-	    ./$$program >> test.out 2>&1; \
+	    ./$$program 2>&1 | tee -a test.out; \
 	    if [ -f core ]; then \
 	      echo "$$program failed with a core dump"; \
 	      exit 255; \

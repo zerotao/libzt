@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id$
@@ -12,56 +12,55 @@
 
 #include <stdio.h>
 #include <libzt/zt_except.h>
+#include "test.h"
 
+char	* Pass = "Pass";
+char	* Fail = "Fail";
 int main(int argc, char *argv[]){
-	
 	{
-		char *do_try = "Fail";
-		printf("Alternate Syntax: ");
-		
+		char *do_try = Fail;
 		DO_TRY
 			THROW(do_try);
 		ELSE_TRY
-			CATCH(do_try, do_try = "Pass";);
+			CATCH(do_try, do_try = Pass;);
 		END_TRY;
-		printf("%s\n", do_try);
+		
+		TEST("Alternate Syntax:", do_try == Pass);
 
-		do_try = "Fail";
-		printf("END_TRY w/o ELSE_TRY: ");
+		do_try = Fail;
 		DO_TRY
 			DO_TRY
 			   THROW(do_try);
 		        END_TRY
 		ELSE_TRY
-			CATCH(do_try, do_try = "Pass";);
+			CATCH(do_try, do_try = Pass;);
 		END_TRY
-		printf("%s\n", do_try);
+			
+                TEST("END_TRY w/o ELSE_TRY: ", do_try == Pass);
 	}
 	
 	{
-		char *do_try = "failed";
-		printf("Empty Unwind: ");
+		char *do_try = Fail;
 		TRY(
 		    {
 			    TRY(THROW(do_try)); 
 		    },{
-			    CATCH(do_try, do_try = "Pass";);
+			    CATCH(do_try, do_try = Pass;);
 		    });
-		printf("%s\n", do_try);
+		TEST("Empty Unwind: ", do_try == Pass);		
 	}
 
 		
 	/*Test Nesting*/
 	{
-		char *nest = "Fail";
-		printf("Nesting: ");
+		char *nest = Fail;
 		TRY({
 			    TRY(TRY(TRY(TRY(TRY(THROW(nest))))));
 		    },
 		    {
-			    CATCH(nest, { nest = "Pass"; });
+			    CATCH(nest, { nest = Pass; });
 		    });
-		printf("%s\n", nest);
+		TEST("Nesting: ", nest == Pass);
 	}
 
 	/* TRY_RETURN */
@@ -72,29 +71,29 @@ int main(int argc, char *argv[]){
 			TRY({
 				    if(i == 0)
 					    THROW(f);
-				    TRY_RETURN "Pass";
+				    TRY_RETURN Pass;
 			    },
 			    {
-				    CATCH(f, TRY_RETURN "Pass";);
+				    CATCH(f, TRY_RETURN Pass;);
 			    });
-			return "Fail";
+			return Fail;
 		}
-		printf("TRY_RETURN from CATCH: ");
+		
 		TRY({
 			    foo = f(0);
 			    THROW(foo);
 		    },
 		    {
-			    CATCH(foo, printf("%s\n", foo); );
+			    CATCH(foo, TEST("TRY_RETURN from CATCH: ", foo == Pass););
 		    });
 		
-		printf("TRY_RETURN from WIND: ");
+
 		TRY({
 			    foo = f(1);
 			    THROW(foo);
 		    },
 		    {
-			    CATCH(foo, printf("%s\n", foo); );
+			    CATCH(foo, TEST("TRY_RETURN from WIND: ", foo == Pass););
 		    });
 		
 	}
@@ -110,85 +109,85 @@ int main(int argc, char *argv[]){
 			char *domain_child;
 		}domain;
     
-		printf("Domains: ");
+		
 		TRY({  
-			    domain.subdomain.child = "Fail";
+			    domain.subdomain.child = Fail;
 			    TRY({
 					TRY({ THROW(domain.subdomain.child); },{});
 				},{ 
 					CATCH(domain.subdomain,
 					      {
-						      domain.subdomain.child = "Pass";
+						      domain.subdomain.child = Pass;
 					      });
 					THROW(domain.subdomain.i_child2);
 				});
 		    },{
-			    CATCH(domain, {	printf("%s\n", domain.subdomain.child); });
+			    CATCH(domain, { TEST("Domains:", domain.subdomain.child == Pass); });
 		    });
 	}
 	{
-		char *rethrow = "Fail";
-		printf("Rethrow: ");
+		char *rethrow = Fail;
+		
 		DO_TRY
 		{
 			DO_TRY
 			{
 				THROW(rethrow);
 			} ELSE_TRY {
-				CATCH(rethrow, rethrow = "Fail";);
+				CATCH(rethrow, rethrow = Fail;);
 				RETHROW();
 			}
 			END_TRY;
 		}
 		ELSE_TRY
 		{
-			CATCH(printf, rethrow = "Fail";);
-			CATCH(rethrow, rethrow = "Pass";);
+			CATCH(printf, rethrow = Fail;);
+			CATCH(rethrow, rethrow = Pass;);
 		}
 		END_TRY;
-		printf("%s\n", rethrow);
+		TEST("Rethrow: ", rethrow == Pass);
 	}
 	
 		
 	/*Test Unwind Protect*/
 	{
-		char *unwind = "Fail";
-		printf("Unwind_protect: ");
+		char *unwind = Fail;
+		
 		DO_TRY
 			UNWIND_PROTECT({
-					       unwind = "Fail";
+					       unwind = Fail;
 					       THROW(unwind);
 				       },{
-					       unwind = "Pass";
+					       unwind = Pass;
 				       });
 		ELSE_TRY
 			CATCH(unwind, {});
 		END_TRY
-		printf("%s\n", unwind);
+		TEST("Unwind_protect: ", unwind == Pass);
 	}
 
 	/*Test CATCH escape*/
 	{
-		char *catch = "Fail";
-		printf("CATCH escape: ");
+		char *catch = Fail;
+		
 		TRY({
 			    TRY({
 					THROW(catch);
 				},{
-					CATCH(catch, catch = "Pass";);
+					CATCH(catch, catch = Pass;);
 				});
 		    },{
-			    CATCH(catch, catch="Fail";);
+			    CATCH(catch, catch = Fail;);
 		    });
-		printf("%s\n", catch);
+		TEST("CATCH escape:", catch == Pass);
 	}
 
 	/*Test CATCH in wind*/
 	{
-		char *domain="Pass";
-		printf("Catch in Try Block: ");
-		TRY({ CATCH(domain, domain="Fail";); },{ });
-		printf("%s\n", domain);
+		char *domain=Pass;
+		
+		TRY({ CATCH(domain, domain=Fail;); },{ });
+		TEST("Catch in Try Block:", domain == Pass);
 	}
 
 	{

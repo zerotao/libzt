@@ -1,7 +1,7 @@
 /*
  * test.h        test macros
  *
- * Copyright (C) 2000, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000, 2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: test.h,v 1.1 2002/11/10 23:36:59 jshiffer Exp $
@@ -41,18 +41,22 @@
 #define _TEST_H_
 
 #include <stdio.h>
+#include <libzt/zt.h>
 
 #ifdef __cplusplus
 extern "C" {
 #pragma }
 #endif
 
-#define TEST(n, t) \
-    printf(n);           \
-    if(t)                \
-      printf("\tPass\n");         \
-    else                 \
-      printf("\tFail\n");
+#define TEST(n, t)	 							\
+	do{									\
+		int offset = 0;							\
+		offset = printf(n);						\
+		if(t)								\
+			printf(BLANK "=> success\n", INDENT_TO(45, 5, offset)); \
+		else								\
+			printf(BLANK "=> failure\n", INDENT_TO(45, 5, offset)); \
+	}while(0)
 
 #ifdef __cplusplus
 }

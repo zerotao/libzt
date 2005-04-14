@@ -1,80 +1,80 @@
-chomp[1]: 	Pass
-strip[1]: 	Pass
-rstrspn[1]: 	Pass
-rstrcspn[1]: 	Pass
-basename2[1]: 	Pass
-basename2[2]: 	Pass
-dirname[1]: 	Pass
-ABS[1]: 	Pass
-CLAMP[1]: 	Pass
-CLAMP[2]: 	Pass
-MAX[1]: 	Pass
-MAX[2]: 	Pass
-MIN[1]: 	Pass
-MIN[2]: 	Pass
-sizeof_array[1]: 	Pass
-endof_array[1]: 	Pass
-assert[1]:      Pass
-assert[2]:      Pass
-progname[1]: 	Pass
-progname[2]: 	Pass
-progname[3]: 	Pass
-log[0]: 	Pass
-log[1]: 	Pass
-log[2]: 	Pass
-log[3]: 	Pass
-log[4]: 	Pass
-log[5]: 	Pass
-log[6]: 	Pass
-log[7]: 	Pass
-log[8]: 	Pass
-log[9]: 	Pass
-log[10]: 	Pass
-cfg[0]: 	Pass
-cfg[1]: 	Pass
-cfg[3]: 	Pass
-cfg[4]: 	Pass
-cfg[5]: 	Pass
-cfg[6]: 	Pass
-cfg[7]: 	Pass
-opts[1]:        Pass
-Alternate Syntax: Pass
-END_TRY w/o ELSE_TRY: Pass
-Empty Unwind: Pass
-Nesting: Pass
-TRY_RETURN from CATCH: Pass
-TRY_RETURN from WIND: Pass
-Domains: Pass
-Rethrow: Pass
-Unwind_protect: Pass
-CATCH escape: Pass
-Catch in Try Block: Pass
+chomp[1]:                                    => success
+strip[1]:                                    => success
+rstrspn[1]:                                  => success
+rstrcspn[1]:                                 => success
+basename2[1]:                                => success
+basename2[2]:                                => success
+dirname[1]:                                  => success
+ABS[1]:                                      => success
+CLAMP[1]:                                    => success
+CLAMP[2]:                                    => success
+MAX[1]:                                      => success
+MAX[2]:                                      => success
+MIN[1]:                                      => success
+MIN[2]:                                      => success
+sizeof_array[1]:                             => success
+endof_array[1]:                              => success
+assert[1]:                                   => success
+assert[2]:                                   => success
+progname[1]:                                 => success
+progname[2]:                                 => success
+progname[3]:                                 => success
+log[0]:                                      => success
+log[1]:                                      => success
+log[2]:                                      => success
+log[3]:                                      => success
+log[4]:                                      => success
+log[5]:                                      => success
+log[6]:                                      => success
+log[7]:                                      => success
+log[8]:                                      => success
+log[9]:                                      => success
+log[10]:                                     => success
+cfg[0]:                                      => success
+cfg[1]:                                      => success
+cfg[3]:                                      => success
+cfg[4]:                                      => success
+cfg[5]:                                      => success
+cfg[6]:                                      => success
+cfg[7]:                                      => success
+opts[1]:                                     => success
+Alternate Syntax:                            => success
+END_TRY w/o ELSE_TRY:                        => success
+Empty Unwind:                                => success
+Nesting:                                     => success
+TRY_RETURN from CATCH:                       => success
+TRY_RETURN from WIND:                        => success
+Domains:                                     => success
+Rethrow:                                     => success
+Unwind_protect:                              => success
+CATCH escape:                                => success
+Catch in Try Block:                          => success
 Handlers: 
   Multiple calls (should be 1 2): 1 2 
   Remove Handlers: Pass
   Multiple installed but call only once (should be 1): 1 
-  Exit from Handler: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[263]:main
-key+datum(0+9) == 9	Pass
-key+datum(6+3) == 9	Pass
-key+datum(2+7) == 9	Pass
-key+datum(5+4) == 9	Pass
-key+datum(4+5) == 9	Pass
-key+datum(9+0) == 9	Pass
-key+datum(1+8) == 9	Pass
-key+datum(3+6) == 9	Pass
-key+datum(7+2) == 9	Pass
-key+datum(8+1) == 9	Pass
-num items == 10	Pass
-lookup 5	Pass
+  Exit from Handler: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[262]:main
+key+datum(0+9) == 9                          => success
+key+datum(6+3) == 9                          => success
+key+datum(2+7) == 9                          => success
+key+datum(5+4) == 9                          => success
+key+datum(4+5) == 9                          => success
+key+datum(9+0) == 9                          => success
+key+datum(1+8) == 9                          => success
+key+datum(3+6) == 9                          => success
+key+datum(7+2) == 9                          => success
+key+datum(8+1) == 9                          => success
+num items == 10                              => success
+lookup 5                                     => success
 Testing strings
-key+datum(2+7) == 9	Pass
-key+datum(7+2) == 9	Pass
-key+datum(0+9) == 9	Pass
-key+datum(4+5) == 9	Pass
-key+datum(5+4) == 9	Pass
-key+datum(8+1) == 9	Pass
-key+datum(3+6) == 9	Pass
-key+datum(6+3) == 9	Pass
-key+datum(1+8) == 9	Pass
-key+datum(9+0) == 9	Pass
-num items == 10	Pass
+key+datum(2+7) == 9                          => success
+key+datum(7+2) == 9                          => success
+key+datum(0+9) == 9                          => success
+key+datum(4+5) == 9                          => success
+key+datum(5+4) == 9                          => success
+key+datum(8+1) == 9                          => success
+key+datum(3+6) == 9                          => success
+key+datum(6+3) == 9                          => success
+key+datum(1+8) == 9                          => success
+key+datum(9+0) == 9                          => success
+num items == 10                              => success

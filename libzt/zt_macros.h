@@ -1,7 +1,7 @@
 /*
  * zt_macros.h        ZeroTao Macros
  *
- * Copyright (C) 2000-2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2002, 2004, 2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: macros.h,v 1.2 2003/06/09 13:42:13 jshiffer Exp $
@@ -60,7 +60,14 @@ extern "C" {
 #endif	/* container_of */
 
 #define BLANK "%*s"
-#define INDENT(lvl) ((lvl) * 5), ""
+
+#define INDENT(lvl) INDENT_PAD((lvl), 5, 0)
+#define INDENT_TO(tgt, step, start) 			\
+	INDENT_PAD((((tgt) - (start)) / (step)),	\
+		   (step),				\
+		   (((tgt) - (start)) % (step)))
+
+#define INDENT_PAD(lvl,step,pad) (((lvl) * step) + (pad)), ""
 
 #ifdef __cplusplus
 }
