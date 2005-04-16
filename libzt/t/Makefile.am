@@ -10,7 +10,8 @@ TEST_APPS = 		\
 	opts_test 	\
 	except_test	\
 	list_test	\
-	table_test
+	table_test	\
+	bytearray_test
 
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)	\
@@ -29,6 +30,9 @@ types_test_SOURCES = 	\
 
 # chash64_test_SOURCES = 
 # 	chash64_test.c
+
+bytearray_test_SOURCES = \
+	bytearray_test.c
 
 table_test_SOURCES = 	\
 	table_test.c

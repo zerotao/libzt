@@ -49,6 +49,7 @@ pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
 	zt.h		\
 	zt_assert.h 	\
+	zt_bytearray.h	\
 	zt_cfg.h 	\
 	zt_common.h 	\
 	zt_daemon.h 	\

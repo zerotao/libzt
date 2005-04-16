@@ -23,8 +23,8 @@ int main(int argc, char *argv[]){
 			THROW(do_try);
 		ELSE_TRY
 			CATCH(do_try, do_try = Pass;);
-		END_TRY;
-		
+		END_TRY
+			
 		TEST("Alternate Syntax:", do_try == Pass);
 
 		do_try = Fail;
@@ -32,17 +32,18 @@ int main(int argc, char *argv[]){
 			DO_TRY
 			   THROW(do_try);
 		        END_TRY
+		
 		ELSE_TRY
 			CATCH(do_try, do_try = Pass;);
-		END_TRY
+                END_TRY
+			
 			
                 TEST("END_TRY w/o ELSE_TRY: ", do_try == Pass);
 	}
 	
 	{
 		char *do_try = Fail;
-		TRY(
-		    {
+		TRY({
 			    TRY(THROW(do_try)); 
 		    },{
 			    CATCH(do_try, do_try = Pass;);
@@ -82,8 +83,7 @@ int main(int argc, char *argv[]){
 		TRY({
 			    foo = f(0);
 			    THROW(foo);
-		    },
-		    {
+		    },{
 			    CATCH(foo, TEST("TRY_RETURN from CATCH: ", foo == Pass););
 		    });
 		
@@ -91,8 +91,7 @@ int main(int argc, char *argv[]){
 		TRY({
 			    foo = f(1);
 			    THROW(foo);
-		    },
-		    {
+		    },{
 			    CATCH(foo, TEST("TRY_RETURN from WIND: ", foo == Pass););
 		    });
 		

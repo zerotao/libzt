@@ -1,7 +1,7 @@
 /*
  * zt_except.c        excption handler for C
  *
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id:
@@ -10,6 +10,7 @@
 #include <stdio.h>
 
 #include "zt_except.h"
+#include "zt_log.h"
 
 struct except_Handler {
 	struct except_Handler	 *next;
@@ -21,9 +22,10 @@ struct except_Handlers {
 	struct except_Handler	 *handlers;
 	struct except_Handlers	 *next;
 };
-  
+
 struct except_Frame *_except_Stack = NULL;
 struct except_Handlers _except_Handlers_Stack = { NULL, NULL, NULL };
+
 
 void _except_install_handler(void *e, except_handler h){
 	struct except_Handlers *stack = &_except_Handlers_Stack;
@@ -31,7 +33,7 @@ void _except_install_handler(void *e, except_handler h){
 	/* make space for a new handler */
 	struct except_Handler *newh = calloc(1, sizeof(struct except_Handler));
 	if(!newh){
-		fprintf(stderr, "Could not calloc space for new handler\n");
+		log_printf(log_crit, "Could not calloc space for new handler");
 		exit(255);
 	}
 	newh->next = NULL;
@@ -50,7 +52,7 @@ void _except_install_handler(void *e, except_handler h){
 	if((stack->next == NULL) && (stack->e != e)){
 		stack->next = calloc(1, sizeof(struct except_Handlers));
 		if(!stack->next){
-			fprintf(stderr, "Could not calloc space for new handler\n");
+			log_printf(log_crit, "Could not calloc space for new handler");
 			exit(255);
 		}
 		stack->next->e = e;
@@ -91,13 +93,13 @@ void _except_remove_handler(void *e, except_handler h){
 			prev->next = handler->next;
 			free(handler);
 		}else{
-			fprintf(stderr, "Attempt to remove a non installed exception Handler.\n");
+			log_printf(log_crit, "Attempt to remove a non installed exception Handler.");
 		} 
 		if(stack->handlers == NULL){
 			stack->e = NULL;
 		}
 	}else{
-		fprintf(stderr, "Attempt to remove a non installed exception Handler.\n");
+		log_printf(log_crit, "Attempt to remove a non installed exception Handler.");
 	}
 }
 
@@ -105,6 +107,9 @@ void _except_call_handlers(struct except_Frame *estack)
 {
 	struct except_Handlers *hstack = &_except_Handlers_Stack;
 	struct except_Handler *handler;
+
+	if(!estack) {
+	}
 	
 	while((hstack->e != estack->exception) && hstack->next != NULL)
 	{
@@ -130,10 +135,10 @@ void _except_call_handlers(struct except_Frame *estack)
 					continue;
 					break;
 				default:
-					fprintf( stderr,
+					log_printf(log_crit,
 						 "Exception handler for '%s' has "
 						 "requested an exit for exception "
-						 "'%s' @ %s[%d]:%s\n",
+						 "'%s' @ %s[%d]:%s",
 						 estack->etext,
 						 estack->etext,
 						 estack->efile,
@@ -144,13 +149,18 @@ void _except_call_handlers(struct except_Frame *estack)
 			}
 		}
 	}else{
-		fprintf(stderr,
-			"Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s\n",
-			estack->etext,
-			estack->efile,
-			estack->eline,
-			estack->efunc);
-		abort();
+		_except_unhandled_exception(estack->etext,
+					    estack->efile,
+					    estack->eline,
+					    estack->efunc);
 	}
 }
 
+
+void _except_unhandled_exception(char *etext, char *efile, unsigned int eline, char *efunc)
+{
+	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
+		etext, efile, eline, efunc);
+	abort();
+}
+	

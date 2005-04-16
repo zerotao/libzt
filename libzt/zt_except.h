@@ -1,7 +1,7 @@
 /*
  * exception hander for c
  *
- * Copyright (C) 2000-2004 Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005 Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id:
@@ -44,6 +44,8 @@ extern struct except_Frame *_except_Stack;
 extern void _except_install_handler(void*, except_handler h);
 extern void _except_remove_handler(void*, except_handler);
 extern void _except_call_handlers(struct except_Frame *);
+extern void _except_unhandled_exception(char *etext, char *efile, unsigned int eline, char *efunc);
+
 
 /* exported macros */
 #define INSTALL_EXCEPT_HANDLER(EXCEPTION, HANDLER)			\
@@ -57,6 +59,12 @@ extern void _except_call_handlers(struct except_Frame *);
 
 #define THROW_TYPED(EXCEPTION, TYPE)					\
 	do {								\
+		if(!_except_Stack) {					\
+			_except_unhandled_exception(#EXCEPTION,		\
+						    __FILE__,		\
+						    __LINE__,		\
+						    __FUNCTION__);	\
+		}							\
 		_except_Stack->etext = #EXCEPTION;			\
 		_except_Stack->efile = __FILE__;			\
 		_except_Stack->efunc = __FUNCTION__;			\
@@ -68,7 +76,10 @@ extern void _except_call_handlers(struct except_Frame *);
 			longjmp(_except_Stack->env, 1);			\
 		}							\
 	} while(0)
-	
+
+#define TRY_THROW(EXCEPTION)						\
+	TRY(THROW(EXCEPTION))
+
 #define THROW(EXCEPTION)						\
 	THROW_TYPED(EXCEPTION, EXCEPTION);
 
