@@ -55,7 +55,7 @@ extern "C" {
 		if(t)								\
 			printf(BLANK "=> success\n", INDENT_TO(45, 5, offset)); \
 		else								\
-			printf(BLANK "=> failure\n", INDENT_TO(45, 5, offset)); \
+			printf(BLANK "=> failure @%s:%d\n", INDENT_TO(45, 5, offset), __FILE__, __LINE__); \
 	}while(0)
 
 #ifdef __cplusplus

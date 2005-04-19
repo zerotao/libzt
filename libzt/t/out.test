@@ -1,10 +1,29 @@
-chomp[1]:                                    => success
-strip[1]:                                    => success
-rstrspn[1]:                                  => success
-rstrcspn[1]:                                 => success
-basename2[1]:                                => success
-basename2[2]:                                => success
-dirname[1]:                                  => success
+str_chomp[1]:                                => success
+str_strip[1]:                                => success
+str_rspn[1]:                                 => success
+str_rcspn[1]:                                => success
+str_basename2[1]:                            => success
+str_basename2[2]:                            => success
+str_dirname[1]:                              => success
+str_sub[1]:                                  => success
+str_sub[2]:                                  => success
+str_sub[3]:                                  => success
+str_sub[4]:                                  => success
+str_sub[5]:                                  => success
+str_catv[1]:                                 => success
+str_cat[1]:                                  => success
+str_map[1]:                                  => success
+str_reverse[1]:                              => success
+str_dup[1]:                                  => success
+str_dup[2]:                                  => success
+str_find[1]:                                 => success
+str_find[2]:                                 => success
+str_rfind[1]:                                => success
+str_rfind[2]:                                => success
+str_pos[1]:                                  => success
+str_len[1]:                                  => success
+str_cmp[1]:                                  => success
+str_cmp[2]:                                  => success
 ABS[1]:                                      => success
 CLAMP[1]:                                    => success
 CLAMP[2]:                                    => success
@@ -38,22 +57,6 @@ cfg[5]:                                      => success
 cfg[6]:                                      => success
 cfg[7]:                                      => success
 opts[1]:                                     => success
-Alternate Syntax:                            => success
-END_TRY w/o ELSE_TRY:                        => success
-Empty Unwind:                                => success
-Nesting:                                     => success
-TRY_RETURN from CATCH:                       => success
-TRY_RETURN from WIND:                        => success
-Domains:                                     => success
-Rethrow:                                     => success
-Unwind_protect:                              => success
-CATCH escape:                                => success
-Catch in Try Block:                          => success
-Handlers: 
-  Multiple calls (should be 1 2): 1 2 
-  Remove Handlers: Pass
-  Multiple installed but call only once (should be 1): 1 
-  Exit from Handler: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[262]:main
 key+datum(0+9) == 9                          => success
 key+datum(6+3) == 9                          => success
 key+datum(2+7) == 9                          => success
@@ -78,3 +81,25 @@ key+datum(6+3) == 9                          => success
 key+datum(1+8) == 9                          => success
 key+datum(9+0) == 9                          => success
 num items == 10                              => success
+fmt_sprintf & fmt_vsprintf[1]:               => success
+fmt_sprintf & fmt_vsprintf[2]:               => success
+fmt_register[1]:                             => success
+fmt_register[2]:                             => success
+fmt_strprintf[1]:                            => success
+fmt_strprintf[2]:                            => success
+Alternate Syntax:                            => success
+END_TRY w/o ELSE_TRY:                        => success
+Empty Unwind:                                => success
+Nesting:                                     => success
+TRY_RETURN from CATCH:                       => success
+TRY_RETURN from WIND:                        => success
+Domains:                                     => success
+Rethrow:                                     => success
+Unwind_protect:                              => success
+CATCH escape:                                => success
+Catch in Try Block:                          => success
+Handlers: 
+  Multiple calls (should be 1 2): 1 2 
+  Remove Handlers: Pass
+  Multiple installed but call only once (should be 1): 1 
+  Exit from Handler: Critical: Exception handler for 'fooexit' has requested an exit for exception 'fooexit' @ except_test.c[261]:main

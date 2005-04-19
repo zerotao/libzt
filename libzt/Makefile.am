@@ -29,6 +29,7 @@ libzt_la_SOURCES = 		\
 	zt_cfg.c 		\
 	zt_daemon.c		\
 	zt_except.c 		\
+	zt_format.c		\
 	zt_log.c 		\
 	zt_malloc.c 		\
 	zt_mem.c		\
@@ -49,11 +50,11 @@ pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
 	zt.h		\
 	zt_assert.h 	\
-	zt_bytearray.h	\
 	zt_cfg.h 	\
 	zt_common.h 	\
 	zt_daemon.h 	\
 	zt_except.h	\
+	zt_format.h	\
 	zt_hash.h	\
 	zt_list.h	\
 	zt_log.h 	\
@@ -64,6 +65,8 @@ pkginclude_HEADERS = \
 	zt_table.h	\
 	zt_time.h	\
         zt_macros.h
+
+#	zt_bytearray.h
 
 #noinst_HEADERS = \
 #	mem.h

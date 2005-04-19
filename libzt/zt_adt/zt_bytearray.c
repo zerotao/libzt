@@ -1,6 +1,10 @@
 #include "../zt_bytearray.h"
 #include "../zt_assert.h"
 
+
+
+
+
 #define SET_DATA(_this_,_data_,_size_)				\
 	do {							\
 		void 		* _data = (void *)(_data_);	\
@@ -86,6 +90,14 @@ zt_byteArray *zt_byteArray_newCopy(zt_byteArray *this)
 	SET_DATA(new, (this->data), (this->size));
 
 	return new;
+}
+
+zt_byteArray *
+zt_byteArray_newWithOffset(zt_byteArray *this, int start, int end)
+{
+	zt_byteArray	* new;
+
+	
 }
 
 

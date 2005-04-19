@@ -15,34 +15,42 @@
 
 BEGIN_C_DECLS
 
-typedef struct zt_byteArray zt_byteArray;
-
-struct zt_byteArray {
-	char		  bytes_per_char;
-	size_t		  size;
-	unsigned char 	* offset;
+typedef struct byte_array byte_array;
+struct byte_array {
 	unsigned char	* data;
+	size_t		  size;
 };
 
-zt_byteArray *zt_byteArray_new(void);
-zt_byteArray *zt_byteArray_newWithSize(size_t size);
+extern byte_array *byte_array_init(unsigned char *data, int len);
 
+extern byte_array *byte_array_sub(byte_array *ba, int i, int j);
+extern char *byte_array_dup(const byte_array *s, int i, int j, int n);
+extern char *byte_array_cat(const byte_array *s1, int i1, int j1,
+			    const byte_array *s2, int i2, int j2);
+extern char *byte_array_catv(const byte_array *s, ...);
+extern char *byte_array_reverse(const byte_array *s, int i, int j);
+extern char *byte_array_map(const byte_array *s, int i, int j,
+			    const byte_array *from, const byte_array *to);
+extern int byte_array_pos(const byte_array *s, int i);
+extern int byte_array_len(const byte_array *s, int i, int j);
+extern int byte_array_cmp(const byte_array *s1, int i1, int j1,
+			  const byte_array *s2, int i2, int j2);
+extern int byte_array_chr(const byte_array *s, int i, int j, int c);
+extern int byte_array_rchr(const byte_array *s, int i, int j, int c);
 
-zt_byteArray *zt_byteArray_newWithCstring(const char *data);
-zt_byteArray *zt_byteArray_newWithCstring_size(const char *data, size_t size);
-zt_byteArray *zt_byteArray_newCopy(zt_byteArray *this);
+extern int byte_array_upto(const byte_array *s, int i, int j, const byte_array *set);
+extern int byte_array_rupto(const byte_array *s, int i, int j, const byte_array *set);
+extern int byte_array_find(const byte_array *s, int i, int j, const byte_array *str);
+extern int byte_array_rfind(const byte_array *s, int i, int j, const byte_array *str);
+extern int byte_array_any(const byte_array *s, int i, const byte_array *set);
+extern int byte_array_many(const byte_array *s, int i, int j, const byte_array *set);
+extern int byte_array_rmany(const byte_array *s, int i, int j, const byte_array *set);
+extern int byte_array_match(const byte_array *s, int i, int j, const byte_array *str);
+extern int byte_array_rmatch(const byte_array *s, int i, int j, const byte_array *str);
+extern int byte_array_format(int code, va_list	*app,
+			     int put(int c, void *cl), void *cl,
+			     unsigned char flags[], int width, int precision);
 
-
-void zt_byteArray_free(zt_byteArray **this);
-size_t zt_byteArray_length(zt_byteArray *this);
-size_t zt_byteArray_memUse(zt_byteArray *this);
-
-void zt_byteArray_append(zt_byteArray *this,
-			 zt_byteArray *new);
-
-void zt_byteArray_toCstring(unsigned char *buf,
-			    zt_byteArray *this,
-			    char rep);
 
 
 

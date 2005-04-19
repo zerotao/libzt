@@ -8,11 +8,12 @@ TEST_APPS = 		\
 	log_test 	\
 	cfg_test 	\
 	opts_test 	\
-	except_test	\
 	list_test	\
 	table_test	\
-	bytearray_test
+	format_test	\
+	except_test
 
+#	bytearray_test
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)	\
 	types_test	\
@@ -30,6 +31,9 @@ types_test_SOURCES = 	\
 
 # chash64_test_SOURCES = 
 # 	chash64_test.c
+
+format_test_SOURCES = \
+	format_test.c
 
 bytearray_test_SOURCES = \
 	bytearray_test.c

@@ -21,8 +21,7 @@ int main(int argc, char *argv[])
 
 	zt_byteArray_toCstring(buf, ba1, 0);
 
-
-	TEST("basic operations (newWithCstring, append, toCstring)", strcmp(buf, data) == 0);
+	TEST("(newWithCstring, append, toCstring)", strcmp(buf, data) == 0);
 	
 	zt_byteArray_free(&ba1);
 	zt_byteArray_free(&ba2);
