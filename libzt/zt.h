@@ -1,16 +1,12 @@
-/*
- * zt.h        ZeroTao definitions
+/****h* libZT/Main
+ * DESCRIPTION
  *
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
+ * COPYRIGHT
+ *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
  *
- * $Id: zt.h,v 1.3 2003/06/09 16:55:09 jshiffer Exp $
- *
- */
-
-/*
- * Description: 
- */
+ ****/
 
 #ifndef _ZT_H_
 #define _ZT_H_
@@ -114,7 +110,6 @@
 #endif
 
 /* local defines */
-
 #define ZT_FAIL 0
 #define ZT_PASS 1
 

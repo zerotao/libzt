@@ -1,16 +1,12 @@
-/*
- * zt_cfg.c        config file abstraction
- *
- * Copyright (C) 2000-2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
- *
- * $Id: cfg.c,v 1.2 2003/06/09 13:42:13 jshiffer Exp $
- *
- */
-
-/*
- * Description: 
- */
+/****ih* Cfg/IMPL
+ * NAME
+ *   zt_cfg.c
+ * DESCRIPTION
+ *   config file abstraction
+ * COPYRIGHT
+ *   Copyright (C) 2000-2002, 2004-2005, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
+ *   See file COPYING for details.
+ ****/
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

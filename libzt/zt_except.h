@@ -1,25 +1,23 @@
-/*
- * exception hander for c
+/****h* libZT/Exceptions
+ * DESCRIPTION
+ *   exception hander for c
  *
- * Copyright (C) 2000-2005 Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
+ * COPYRIGHT
+ *   Copyright (C) 2000-2005 Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
  *
- * $Id:
- */
+ ****/
 
 #ifndef _ZT_EXCEPT_H_
 #define _ZT_EXCEPT_H_
 
+#include <libzt/zt.h>
 #include <setjmp.h>
 #include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#pragma }
-#endif
+BEGIN_C_DECLS
 
-
-/* exported types */
 struct except_Frame {
 	struct except_Frame	 *prev;
 	int 		  	  phase;
@@ -41,22 +39,51 @@ enum { except_WindPhase = 0, except_UnWindPhase };
 extern struct except_Frame *_except_Stack;
 
 /* exported functions */
-extern void _except_install_handler(void*, except_handler h);
-extern void _except_remove_handler(void*, except_handler);
-extern void _except_call_handlers(struct except_Frame *);
 extern void _except_unhandled_exception(char *etext, char *efile, unsigned int eline, char *efunc);
+extern void _except_call_handlers(struct except_Frame *);
 
-
-/* exported macros */
+/****d* Exceptions/INSTALL_EXCEPT_HANDLER
+ * NAME
+ *   INSTALL_EXCEPT_HANDLER
+ *
+ * SOURCE
+ */
+extern void _except_install_handler(void*, except_handler h);
 #define INSTALL_EXCEPT_HANDLER(EXCEPTION, HANDLER)			\
 	_except_install_handler(&EXCEPTION, HANDLER)
 
+/*** INSTALL_EXCEPT_HANDLER ***/
+
+
+/****d* Exceptions/REMOVE_EXCEPT_HANDLER
+ * NAME
+ *   REMOVE_EXCEPT_HANDLER
+ *
+ * SOURCE
+ */
+extern void _except_remove_handler(void*, except_handler);
 #define REMOVE_EXCEPT_HANDLER(EXCEPTION, HANDLER)			\
 	_except_remove_handler(&EXCEPTION, HANDLER)
 
+/*** REMOVE_EXCEPT_HANDLER ***/
+
+/****d* Exceptions/RETHROW
+ *  NAME
+ *    RETHROW
+ *
+ *  SOURCE
+ */
 #define RETHROW()							\
 		_except_Stack->caught = 0
 
+/************ RETHROW */
+
+/****d* Exceptions/THROW_TYPED
+ *  NAME
+ *    THROW_TYPED
+ *
+ *  SOURCE
+ */
 #define THROW_TYPED(EXCEPTION, TYPE)					\
 	do {								\
 		if(!_except_Stack) {					\
@@ -77,12 +104,36 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 		}							\
 	} while(0)
 
+/************ THROW_TYPED */
+
+/****d* Exceptions/TRY_THROW
+ *  NAME
+ *    TRY_THROW
+ *
+ *  SOURCE
+ */
 #define TRY_THROW(EXCEPTION)						\
 	TRY(THROW(EXCEPTION))
 
+/************ TRY_THROW */
+
+/****d* Exceptions/THROW
+ *  NAME
+ *    THROW
+ *
+ *  SOURCE
+ */
 #define THROW(EXCEPTION)						\
 	THROW_TYPED(EXCEPTION, EXCEPTION);
 
+/************ THROW */
+
+/****d* Exceptions/CATCH
+ *  NAME
+ *    CATCH
+ *
+ *  SOURCE
+ */
 #define CATCH(EXCEPTION, DATA)								\
 	if(_except_Stack->phase == except_UnWindPhase){					\
 		void *e = _except_Stack->exception;					\
@@ -93,6 +144,14 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 		}									\
 	}
 
+/************ CATCH */
+
+/****d* Exceptions/_PUSH_FRAME_DATA
+ *  NAME
+ *    _PUSH_FRAME_DATA
+ *
+ *  SOURCE
+ */
 #define _PUSH_FRAME_DATA(x)				\
 	(x)->prev->exception = (x)->exception;		\
 	(x)->prev->type = (x)->type;			\
@@ -100,7 +159,14 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 	(x)->prev->efile = (x)->efile;			\
 	(x)->prev->efunc = (x)->efunc;			\
 	(x)->prev->eline = (x)->eline
+/************ _PUSH_FRAME_DATA */
 
+/****d* Exceptions/DO_TRY
+ *  NAME
+ *    DO_TRY
+ *
+ *  SOURCE
+ */
 #define DO_TRY										\
 	do{										\
 		struct except_Frame Frame;						\
@@ -109,11 +175,27 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 		_except_Stack = &Frame;							\
 		switch(setjmp(_except_Stack->env)){					\
 			case 0:
+/************ DO_TRY */
+
+/****d* Exceptions/ELSE_TRY
+ *  NAME
+ *    ELSE_TRY
+ *
+ *  SOURCE
+ */
 #define ELSE_TRY									\
                         break;								\
 	                case 1:								\
 			_except_Stack->phase = except_UnWindPhase;
 
+/************ ELSE_TRY */
+
+/****d* Exceptions/END_TRY
+ *  NAME
+ *    END_TRY
+ *
+ *  SOURCE
+ */
 #define END_TRY										\
                         default:							\
 			if((_except_Stack->exception) &&				\
@@ -132,6 +214,14 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 	}while(0);
 
 
+/************ END_TRY */
+
+/****d* Exceptions/TRY
+ *  NAME
+ *    TRY
+ *
+ *  SOURCE
+ */
 #define TRY(WIND_DATA, UNWIND_DATA...)						\
 	DO_TRY									\
 	{ WIND_DATA }								\
@@ -139,10 +229,26 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 	{ UNWIND_DATA }								\
 	END_TRY
 
+/************ TRY */
+
+/****d* Exceptions/TRY_RETURN
+ *  NAME
+ *    TRY_RETURN
+ *
+ *  SOURCE
+ */
 #define TRY_RETURN								\
 	_except_Stack = _except_Stack->prev;					\
 	return
 
+/************ TRY_RETURN */
+
+/****d* Exceptions/UNWIND_PROTECT
+ *  NAME
+ *    UNWIND_PROTECT
+ *
+ *  SOURCE
+ */
 #define UNWIND_PROTECT(WIND_DATA, UNWIND_DATA)					\
 	 do {									\
 		 static void *_unwind_protect;					\
@@ -158,8 +264,9 @@ extern void _except_unhandled_exception(char *etext, char *efile, unsigned int e
 			     RETHROW();						\
 		     });							\
 	 }while(0)
+/*** UNWIND_PROTECT ***/
 
-#ifdef __cplusplus
-#endif
+END_C_DECLS
 
 #endif /* _ZT_EXCEPT_H_ */
+

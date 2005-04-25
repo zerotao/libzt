@@ -1,14 +1,34 @@
+/****h* libZT/Cfg
+ * NAME
+ *   zt_cfg.h
+ * DESCRIPTION
+ *   generic configuration file support
+ * COPYRIGHT
+ *   Copyright (C) 2000-2002, 2004-2005 Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
+ *   See file COPYING for details.
+ ****/
 #ifndef _ZT_CFG_H_
 #define _ZT_CFG_H_
 
 #include <libzt/zt.h>
 #include <libzt/zt_log.h>
 
-#ifdef __cplusplus
-extern "C" {
-#pragma }
-#endif /* __cplusplus */
+BEGIN_C_DECLS
 
+/****t* Cfg/cfg_ty
+ * NAME
+ *   cfg_ty - opaque type associated with a config file/style
+ * SOURCE
+ */
+typedef struct cfg_ty cfg_ty;
+/*** Cfg/cfg_ty ***/
+
+
+/****t* Cfg/cfg_type
+ * NAME
+ *   cfg_type - enumeration of supported variable types
+ * SOURCE
+ */
 typedef enum cfg_type cfg_type;
 enum cfg_type {
   cfg_bool = 0,
@@ -17,57 +37,89 @@ enum cfg_type {
   cfg_string,
   cfg_ref
 };
+/*** Cfg/cfg_type ***/
 
-typedef struct cfg_ty cfg_ty;
 
-/** f
- * closes an open config
- * @param: cfg_ty * : pointer to a valid cfg_ty
- * @return: void 
- * @usage: 
- * cfg_close(cfg);
+/****f* Cfg/cfg_close [1.0]
+ * NAME
+ *   cfg_close - close the config associated with cfg
+ * SYNOPSIS
+ *   void = cfg_close(cfg)
+ * INPUTS
+ *  o cfg - pointer to a void cfg_ty
+ * RESULT
+ *   void
+ * SEE ALSO
+ *   cfg_get, cfg_set
+ * NOTES
+ *   the interface that users of this function get is initially a macro
+ *   which expands to a call to the function of the same name after
+ *   setting debug information for logging. 
+ ****
  */
-void cfg_close _(( cfg_ty * ));
+void cfg_close ( cfg_ty * );
 #define cfg_close( cfg ) 	\
 	LOG_DEBUG_INFO(NULL);	\
 	cfg_close( cfg )
 
-/** f
- * get a variable from a cfg_ty
- * @param: cfg_ty * : pointer to a valid cfg_ty
- * @param: char * : string with the name of a block
- * @param: char * : string with the name of a variable
- * @param: void * : address of a variable to fill with the value 
- * @param: cfg_type : type of the expected variable
- * @return: 0 on success 1 on failure 
- * @usage: 
- * cfg_get ( cfg, "main", "test1", &local_test, cfg_int );
+/****f* Cfg/cfg_get
+ * NAME
+ *   cfg_get - fetch the value of a config variable
+ * SYNOPSIS
+ *   error = cfg_get(cfg, space, name, value, type)
+ *
+ * DESCRIPTION
+ *
+ * INPUTS
+ *   * cfg    - pointer to a valid cfg_ty
+ *   * space  - string representation of a namespace to search for name
+ *   * name   - string representation of a variable to get
+ *   * value  - address of a variable to fill with the value
+ *   * type   - type of the expected variable
+ * RESULT
+ *   error - return 0 on failure and >0 on success
+ * SEE ALSO
+ *   cfg_set, cfg_close
+ * NOTES
+ *   the interface that users of this function get is initially a macro
+ *   which expands to a call to the function of the same name after
+ *   setting debug information for logging.
+ ****
  */
-int cfg_get _(( cfg_ty *, char *, char *, void *, cfg_type ));
+int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
 #define cfg_get( cfg, block, name, addr, type )	\
 	LOG_DEBUG_INFO(NULL);			\
 	cfg_get(cfg, block, name, addr, type)
 
-/** f
- * set a variable in cfg
- * @param: cfg_ty * : pointer to a valid cfg_ty structure
- * @param: char * : string with the name of a block
- * @param: char * : string with the name of a variable
- * @param: void * : address of a variable to fill the value with
- * @param: cfg_type : type of the expected variable
- * @return: 0 on success 1 on failure 
- * @usage: 
- * 
+
+/****f* Cfg/cfg_set
+ * NAME
+ *   cfg_set - set the value of a config variable
+ * SYNOPSIS
+ *   error = cfg_set(cfg, space, name, value, type)
+ * INPUTS
+ *   o cfg    - pointer to a valid cfg_ty 
+ *   o space  - string representation of a namespace to use for name
+ *   o name   - string representation of a variable to get
+ *   o value  - address of a variable to to set from
+ *   o type   - type of the expected variable
+ * RESULT
+ *   error - return 0 on failure and >0 on success
+ * SEE ALSO
+ *   cfg_get, cfg_close
+ * NOTES
+ *   the interface that users of this function get is initially a macro
+ *   which expands to a call to the function of the same name after
+ *   setting debug information for logging.
+ ****
  */
-int cfg_set _(( cfg_ty *, char *, char *, void *, cfg_type ));
+
+int cfg_set ( cfg_ty *, char *, char *, void *, cfg_type );
 #define cfg_set( cfg, block, name, addr, type )	\
 	LOG_DEBUG_INFO(NULL);			\
 	cfg_set(cfg, block, name, addr, type)
 
-#ifdef __cplusplus
-}
-#endif
-
+END_C_DECLS
 #include <libzt/zt_cfg/cfg_interface.h>
 
 #endif  /* _ZT_CFG_H_ */

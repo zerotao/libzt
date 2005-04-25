@@ -18,6 +18,8 @@ SRC   = builddate $(MAIN) $(SECTS) $(MAIN).sed $(addsufix .sed,$(SECTS) Makefile
 #genindex.sgml
 
 all: 
+	@robodoc --rc robodoc.rc --html
+#	@robodoc --rc robodoc.rc --latex
 #$(DOC).ps $(DOC)
 
 genindex.sgml:

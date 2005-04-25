@@ -1,12 +1,13 @@
-/*
- * zt_progname.h        ZeroTao program name functions
+/****h* libZT/ProgName
  *
- * Copyright (C) 2000-2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
+ * DESCRIPTION
+ *   program name functions
  *
- * $Id: progname.h,v 1.2 2003/06/09 13:42:13 jshiffer Exp $
+ * COPYRIGHT
+ *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ *   See file COPYING for details.
  *
- */
+ ****/
 
 /*
  * Description: 
@@ -17,17 +18,15 @@
 
 #include <libzt/zt.h>
 
+/****d* ProgName/STRIP_DIR
+ *  NAME
+ *    STRIP_DIR
+ *****/
 #define STRIP_DIR 1
 
-#ifdef __cplusplus
-extern "C" {
-#pragma }
-#endif
+BEGIN_C_DECLS
 
 extern char *progname _((char *, int));
 
-#ifdef __cplusplus
-}
-#endif
-
+END_C_DECLS
 #endif /* _ZT_PROGNAME_H_ */

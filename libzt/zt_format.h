@@ -1,11 +1,12 @@
-/*!
+/****h* libZT/Format
+ * DESCRIPTION
  *
- */
-
-/*
- * Copyright (C) 2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
- */
+ * COPYRIGHT
+ *   Copyright (C) 2005, Jason L. Shiffer <jshiffer@zerotao.org>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
+ *
+ ****/
 #ifndef _ZT_FORMAT_H_
 #define _ZT_FORMAT_H_
 
@@ -46,6 +47,35 @@ extern int fmt_putd(const char *str, int len,
 extern int fmt_puts(const char *str, int len,
 		     int put(int c, void *cl), void *cl,
 		     unsigned char flags[256], int width, int precision);
+
+extern int fmt_cvt_c(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_d(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_f(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_o(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_p(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_s(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_u(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+extern int fmt_cvt_x(int code, va_list *app,
+		     int put(int c, void *cl), void *cl,
+		     unsigned char flags[], int width, int precision);
+
+extern int fmt_outc(int c, void *cl);
+extern int fmt_insert(int c, void *cl);
+extern int fmt_append(int c, void *cl);
 
 
 END_C_DECLS

@@ -1,11 +1,12 @@
-/*
- * zt_table.h        ZeroTao Tablees
+/****h* libZT/HashTable
+ * DESCRIPTION
  *
- * Copyright (C) 2002-2004, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
- * See file COPYING for details.
+ * COPYRIGHT
+ *   Copyright (C) 2002-2005, Jason L. Shiffer <jshiffer@zerotao.org>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
  *
- * $Id$
- */
+ ****/
 #ifndef _ZT_TABLE_H_
 #define _ZT_TABLE_H_
 
@@ -13,6 +14,8 @@
 
 #include <libzt/zt.h>
 
+
+BEGIN_C_DECLS
 typedef int (*table_compare)(void *x, void *y);
 typedef unsigned long (*table_func)(unsigned char *,
 				    unsigned long prev,
@@ -21,6 +24,10 @@ typedef int (*table_iterator)(void *, void *, void *);
 
 typedef struct zt_table zt_table;
 
+/****d* HashTable/TABLE_SIZE_USE_HINT
+ *  NAME
+ *    TABLE_SIZE_USE_HINT
+ *****/
 #define TABLE_SIZE_USE_HINT 1
 
 zt_table*	table_init(char *name,
@@ -50,4 +57,5 @@ unsigned long table_hash_string(unsigned char *key,
 int table_compare_string(void *x, void *y);
 int table_compare_string_case(void *x, void *y);
 
+END_C_DECLS
 #endif /* _ZT_TABLE_H_ */

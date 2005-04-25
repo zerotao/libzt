@@ -1,0 +1,40 @@
+items:
+  NAME
+  SOURCE
+  DESCRIPTION
+  EXAMPLES
+  EXAMPLE
+  COPYRIGHT
+  INPUTS
+  OUTPUTS
+  SEE ALSO
+  SYNOPSIS
+
+ignore items:
+  COPYRIGHT
+  
+ignore files:
+  .svn
+  .deps
+  .libs
+  back
+  *.back
+  *~
+  t
+  *.la
+  *.lo
+  *.o
+  *.a
+  *.so
+  Makefile
+  
+
+options:
+  --singledoc 
+  --index
+  --toc
+  --sections
+  --nogeneratedwith
+  --src ../libzt
+  --doc ./gen
+

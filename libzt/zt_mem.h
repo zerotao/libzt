@@ -1,31 +1,44 @@
+/****h* libZT/Memory
+ * DESCRIPTION
+ *   mem_tools defines a group of functions for managing memory as
+ *   heaps, pools(or slabs), and sets.
+ *
+ *   a heap is mearly awrapper around malloc and are the basis for pools
+ * 
+ *   pools are page oriented allocators they are intended to be used
+ *   when there are many allocations of the same size.  They provide some
+ *   referential locality and vast speedups, up to an order of magnitude, when
+ *   they have been tuned properly.  They also provide a framework for gathering
+ *   statistics of system use.
+ *
+ *   mem stets provide a group of pools that can be treated as a single entity
+ *   thus you can have a set of various sizes and a request from that set will
+ *   provide an allocation from the pool whose elements are the closest size
+ *   to the request.
+ * 
+ *   ranges provide a mechanism for releasing a number of associated memory allocations
+ *   all at once.  They are used when you allocate a number of items from pools
+ *   (either the same pool or various pools) and want them to be released at the same
+ *   time.
+ *
+ * COPYRIGHT
+ *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
+ *
+ ****/
 #ifndef _ZT_MEM_H_
 #define _ZT_MEM_H_
 
 /*
- * mem_tools defines a group of functions for managing memory as
- * heaps, pools(or slabs), and sets.
- *
- * a heap is mearly awrapper around malloc and are the basis for pools
- * 
- * pools are page oriented allocators they are intended to be used
- * when there are many allocations of the same size.  They provide some
- * referential locality and vast speedups, up to an order of magnitude, when
- * they have been tuned properly.  They also provide a framework for gathering
- * statistics of system use.
- *
- * mem stets provide a group of pools that can be treated as a single entity
- * thus you can have a set of various sizes and a request from that set will
- * provide an allocation from the pool whose elements are the closest size
- * to the request.
- * 
- * ranges provide a mechanism for releasing a number of associated memory allocations
- * all at once.  They are used when you allocate a number of items from pools
- * (either the same pool or various pools) and want them to be released at the same
- * time.
  *
  */
 
 
+/****d* Memory/POOL_NEVER_FREE
+ *  NAME
+ *    POOL_NEVER_FREE
+ *****/
 #define POOL_NEVER_FREE		1
 
 /* forward declarations */
@@ -34,14 +47,17 @@ typedef struct zt_mem_pool zt_mem_pool;
 typedef struct zt_mem_set zt_mem_set;
 typedef struct zt_mem_pool_group zt_mem_pool_group;
 
-/**
- * Can be called whenever a page is about to be released.
- * @param total_pages total number of pages currently allocated
- * @param free_pages # of currently free pages
- * @param cache_size current size of the page_cache
- * @param flags the mem_pool's flags
- * @param cb_data callback data registered with the pool
- */
+/****f* Memory/zt_page_release_test
+ * NAME
+ *   zt_page_release_test - Can be called whenever a page is about to be released.
+ *
+ * INPUTS
+ *   o total_pages - total number of pages currently allocated
+ *   o free_pages  - # of currently free pages
+ *   o cache_size  - current size of the page_cache
+ *   o flags       - the mem_pool's flags
+ *   o cb_data     - callback data registered with the pool
+ ****/
 typedef int(*zt_page_release_test)(int	  total_pages,
 				   int 	  free_pages,
 				   int 	  cache_size,
@@ -71,10 +87,6 @@ typedef struct zt_mem_pool_stats {
 	long		  page_frees;
 	int		  flags;
 }zt_mem_pool_stats;
-
-/**
- * Heaps
- */
 
 /**
  * Initialize a new heap with name and size.
@@ -177,6 +189,10 @@ void *zt_mem_pool_group_alloc(zt_mem_pool_group * group, size_t size);
  * release memory allocated with zt_mem_pool_group_alloc.
  * @param data address of the datum allocated with zt_mem_pool_group_alloc
  */
+/****d* Memory/zt_mem_pool_group_release
+ *  NAME
+ *    zt_mem_pool_group_release
+ *****/
 #define zt_mem_pool_group_release zt_mem_pool_release
 /* void zt_mem_pool_group_release(void **data); */
 
@@ -187,9 +203,28 @@ void *zt_mem_pool_group_alloc(zt_mem_pool_group * group, size_t size);
  */
 int zt_mem_pool_group_destroy(zt_mem_pool_group group[]);
 
+/****d* Memory/DISPLAY_POOL_HEADER_ONLY
+ *  NAME
+ *    DISPLAY_POOL_HEADER_ONLY
+ *****/
 #define DISPLAY_POOL_HEADER_ONLY 0
+
+/****d* Memory/DISPLAY_POOL_FREE_LIST
+ *  NAME
+ *    DISPLAY_POOL_FREE_LIST
+ *****/
 #define DISPLAY_POOL_FREE_LIST 	 1
+
+/****d* Memory/DISPLAY_POOL_PAGES
+ *  NAME
+ *    DISPLAY_POOL_PAGES
+ *****/
 #define DISPLAY_POOL_PAGES	 2
+
+/****d* Memory/DISPLAY_POOL_ALL
+ *  NAME
+ *    DISPLAY_POOL_ALL
+ *****/
 #define DISPLAY_POOL_ALL (DISPLAY_POOL_FREE_LIST | DISPLAY_POOL_PAGES)
 
 /**

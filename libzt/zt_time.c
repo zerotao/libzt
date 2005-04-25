@@ -1,3 +1,8 @@
+/****h* libZT/Time
+ * DESCRIPTION
+ *   Tools to manipulate time
+ ***
+ */
 #include <sys/time.h>
 #include <sys/resource.h>
 
@@ -5,8 +10,24 @@
 #include "zt_log.h"
 #include "zt_assert.h"
 
+
+/****f* Time/zt_diff_time
+ * NAME
+ *   zt_diff_time
+ *
+ * SYNOPSIS
+ *   struct timeval *zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2);
+ *
+ * DESCRIPTION
+ *   calculate the difference between 2 time vals and return the result in dt
+ *
+ * EXAMPLES
+ *
+ ****/
 struct timeval *
-zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2) 
+zt_diff_time(struct timeval *dt,
+	     struct timeval *t1,
+	     struct timeval *t2) 
 {
 	dt->tv_sec = t2->tv_sec - t1->tv_sec;
 	dt->tv_usec = t2->tv_usec = t1->tv_usec;
@@ -17,8 +38,28 @@ zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2)
 	return dt;
 }
 
+/****f* Time/zt_time_result_to_elapsed
+ * NAME
+ *   zt_time_result_to_elapsed
+ *
+ * DESCRIPTION
+ *   calculates the time in float of result and returns the results in usr, sys, total
+ *   the calculation used is specific to how zt_time calculates it's information.
+ *
+ * INPUTS
+ *   o result
+ *   o usr
+ *   o sys
+ *   o total
+ *
+ * SEE ALSO
+ *   zt_time
+ ****/
 void
-zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, float *total)
+zt_time_result_to_elapsed(struct time_result *result,
+			  float *usr,
+			  float *sys,
+			  float *total)
 {
 	assert(result);
 	assert(usr);
@@ -30,8 +71,29 @@ zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, fl
 	*total = *usr + *sys;	
 }
 
+
+/****f* Time/zt_time
+ * NAME
+ *   zt_time
+ *
+ * DESCRIPTION
+ *   prints a message about how long the function test took when called
+ *   with data.
+ *
+ * INPUTS
+ *   o n
+ *   o result
+ *   o test
+ *   o data
+ *
+ * SEE ALSO
+ *   zt_time_result_to_elapsed
+ ****/
 void *
-zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
+zt_time(int n,
+	struct time_result *tv,
+	void *(*test)(void *),
+	void *data)
 {
 	struct rusage	  rafter, rbefore;
 	int		  i;

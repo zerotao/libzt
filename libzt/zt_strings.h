@@ -1,16 +1,13 @@
-/*
- * zt_strings.h        Zerotao string manipulation functions
+/****h* libZT/CString
+ * DESCRIPTION
+ *   string manipulation functions
  *
- * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
- * See file COPYING for details.
- *
- * $Id: str.h,v 1.3 2003/06/09 16:55:09 jshiffer Exp $
- *
- */
+ * COPYRIGHT
+ *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.org>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
+ ****/
 
-/*
- * Description: 
- */
 
 #ifndef _ZT_STRINGS_H_
 #define _ZT_STRINGS_H_

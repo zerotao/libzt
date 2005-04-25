@@ -6,7 +6,7 @@
 #include "zt_format.h"
 #include "zt_assert.h"
 
-struct buf {
+struct fmt_obuf {
 	char	* buf;
 	char	* bp;
 	int	  size;
@@ -19,36 +19,6 @@ struct buf {
 			tlen += put((c), cl);		\
 		}					\
 	} while (0)
-
-
-static int cvt_c(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_d(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_f(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_o(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_p(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_s(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_u(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-static int cvt_x(int code, va_list *app,
-		  int put(int c, void *cl), void *cl,
-		  unsigned char flags[], int width, int precision);
-
-static int outc(int c, void *cl);
-static int insert(int c, void *cl);
-static int append(int c, void *cl);
 
 
 char *fmt_flags = "+- 0";
@@ -66,10 +36,10 @@ static fmt_ty cvt[256] = {
 	0,     0, 0,     0,     0,     0,     0,     0,/*  72 -  79 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*  80 -  87 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*  88 -  95 */
-	0,     0, 0, cvt_c, cvt_d, cvt_f, cvt_f, cvt_f,/*  96 - 103 */
-	0,     0, 0,     0,     0,     0,     0, cvt_o,/* 104 - 111 */
-	cvt_p, 0, 0, cvt_s,     0, cvt_u,     0,     0,/* 112 - 119 */
-	cvt_x, 0, 0,     0,     0,     0,     0,     0,/* 120 - 127 */
+	0,     0, 0, fmt_cvt_c, fmt_cvt_d, fmt_cvt_f, fmt_cvt_f, fmt_cvt_f,/*  96 - 103 */
+	0,     0, 0,     0,     0,     0,     0, fmt_cvt_o,/* 104 - 111 */
+	fmt_cvt_p, 0, 0, fmt_cvt_s,     0, fmt_cvt_u,     0,     0,/* 112 - 119 */
+	fmt_cvt_x, 0, 0,     0,     0,     0,     0,     0,/* 120 - 127 */
 };
 
 /* exported functions */
@@ -94,7 +64,7 @@ fmt_printf(const char *fmt, ...)
 	va_list	  ap;
 
 	va_start(ap, fmt);
-	tlen = fmt_vformat(outc, stdout, fmt, ap);
+	tlen = fmt_vformat(fmt_outc, stdout, fmt, ap);
 	va_end(ap);
 	
 	return tlen;
@@ -107,7 +77,7 @@ fmt_fprintf(FILE *stream, const char *fmt, ...)
 	va_list	  ap;
 
 	va_start(ap, fmt);
-	tlen = fmt_vformat(outc, stream, fmt, ap);
+	tlen = fmt_vformat(fmt_outc, stream, fmt, ap);
 	va_end(ap);
 
 	return tlen;
@@ -130,7 +100,7 @@ fmt_sprintf(char *buf, int size, const char *fmt, ...)
 int
 fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 {
-	struct buf	  cl;
+	struct fmt_obuf	  cl;
 
 	assert(buf);
 	assert(size > 0);
@@ -139,8 +109,8 @@ fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 	cl.buf = cl.bp = buf;
 	cl.size = size;
 
-	fmt_vformat(insert, &cl, fmt, ap);
-	insert(0, &cl);
+	fmt_vformat(fmt_insert, &cl, fmt, ap);
+	fmt_insert(0, &cl);
 	return cl.bp - cl.buf - 1;
 }
 
@@ -162,13 +132,13 @@ fmt_strprintf(const char *fmt, ...)
 char *
 fmt_vstrprintf(const char *fmt, va_list ap)
 {
-	struct buf	  cl;
+	struct fmt_obuf	  cl;
 
 	assert(fmt);
 	cl.size = 256;
 	cl.buf = cl.bp = XMALLOC(unsigned char, cl.size);
-	fmt_vformat(append, &cl, fmt, ap);
-	append(0, &cl);
+	fmt_vformat(fmt_append, &cl, fmt, ap);
+	fmt_append(0, &cl);
 	
 	return XREALLOC(unsigned char, cl.buf, cl.bp - cl.buf);
 }
@@ -387,15 +357,15 @@ fmt_register(int code, fmt_ty newcvt)
 
 /* local funcs */
 
-static int
-outc(int c, void *cl)	
+int
+fmt_outc(int c, void *cl)	
 {
 	FILE *f = cl;
 	return putc(c, f);
 }
 
-static int
-cvt_c(int code, va_list *app,
+int
+fmt_cvt_c(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -414,8 +384,8 @@ cvt_c(int code, va_list *app,
 }
 
 
-static int
-cvt_d(int code, va_list *app,
+int
+fmt_cvt_d(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -444,8 +414,8 @@ cvt_d(int code, va_list *app,
 }
 
 
-static int
-cvt_f(int code, va_list *app,
+int
+fmt_cvt_f(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -471,8 +441,8 @@ cvt_f(int code, va_list *app,
 			flags, width, precision);
 }
 
-static int
-cvt_o(int code, va_list *app,
+int
+fmt_cvt_o(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -487,8 +457,8 @@ cvt_o(int code, va_list *app,
 			put, cl, flags, width, precision);
 }
 
-static int
-cvt_p(int code, va_list *app,
+int
+fmt_cvt_p(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -507,8 +477,8 @@ cvt_p(int code, va_list *app,
 }
 
 
-static int
-cvt_s(int code, va_list *app,
+int
+fmt_cvt_s(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision) 
 {
@@ -519,8 +489,8 @@ cvt_s(int code, va_list *app,
 	return fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
-static int
-cvt_u(int code, va_list *app,
+int
+fmt_cvt_u(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -536,8 +506,8 @@ cvt_u(int code, va_list *app,
 			put, cl, flags, width, precision);
 }
 
-static int
-cvt_x(int code, va_list *app,
+int
+fmt_cvt_x(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -553,10 +523,10 @@ cvt_x(int code, va_list *app,
 			put, cl, flags, width, precision);
 }
 
-static int
-insert(int c, void *cl)
+int
+fmt_insert(int c, void *cl)
 {
-	struct buf	* p = cl;
+	struct fmt_obuf	* p = cl;
 
 	if (p->bp >= p->buf + p->size) {
 		TRY_THROW(fmt_overflow);
@@ -567,10 +537,10 @@ insert(int c, void *cl)
 	return c;
 }
 
-static int
-append(int c, void *cl)
+int
+fmt_append(int c, void *cl)
 {
-	struct buf	* p = (struct buf *)cl;
+	struct fmt_obuf	* p = (struct fmt_obuf *)cl;
 	
 	if(p->bp >= p->buf + p->size) {
 		XREALLOC(unsigned char, p->buf, 2*p->size);

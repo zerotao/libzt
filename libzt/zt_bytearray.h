@@ -1,11 +1,13 @@
-/**
- * byte array
+/****h* libZT/ByteArray
+ * DESCRIPTION
+ *   mutable array of bytes (expands and contracts)
  *
- * Copyright (C) 2005, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
- * See file COPYING for details.
+ * COPYRIGHT
+ *   Copyright (C) 2005, Jason L. Shiffer <jshiffer@zerotao.org>.
+ *   All Rights Reserved.
+ *   See file COPYING for details.
  *
- * mutable array of bytes (expands and contracts)
- */
+ ****/
 
 
 #ifndef _ZT_BYTEARRAY_H_
