@@ -19,46 +19,46 @@
 BEGIN_C_DECLS
 
 /* New additions */
-extern char *str_sub(const char *s, int i, int j);
-extern char *str_dup(const char *s, int i, int j, int n);
-extern char *str_cat(const char *s1, int i1, int j1,
+extern char *cstr_sub(const char *s, int i, int j);
+extern char *cstr_dup(const char *s, int i, int j, int n);
+extern char *cstr_cat(const char *s1, int i1, int j1,
 		     const char *s2, int i2, int j2);
-extern char *str_catv(const char *s, ...);
-extern char *str_reverse(const char *s, int i, int j);
-extern char *str_map(const char *s, int i, int j,
+extern char *cstr_catv(const char *s, ...);
+extern char *cstr_reverse(const char *s, int i, int j);
+extern char *cstr_map(const char *s, int i, int j,
 		     const char *from, const char *to);
-extern int str_pos(const char *s, int i);
-extern int str_len(const char *s, int i, int j);
-extern int str_cmp(const char *s1, int i1, int j1,
+extern int cstr_pos(const char *s, int i);
+extern int cstr_len(const char *s, int i, int j);
+extern int cstr_cmp(const char *s1, int i1, int j1,
 		   const char *s2, int i2, int j2);
-extern int str_chr(const char *s, int i, int j, int c);
-extern int str_rchr(const char *s, int i, int j, int c);
-extern int str_upto(const char *s, int i, int j, const char *set);
-extern int str_rupto(const char *s, int i, int j, const char *set);
-extern int str_find(const char *s, int i, int j, const char *str);
-extern int str_rfind(const char *s, int i, int j, const char *str);
-extern int str_any(const char *s, int i, const char *set);
-extern int str_many(const char *s, int i, int j, const char *set);
-extern int str_rmany(const char *s, int i, int j, const char *set);
-extern int str_match(const char *s, int i, int j, const char *str);
-extern int str_rmatch(const char *s, int i, int j, const char *str);
-extern int str_format(int code, va_list	*app,
+extern int cstr_chr(const char *s, int i, int j, int c);
+extern int cstr_rchr(const char *s, int i, int j, int c);
+extern int cstr_upto(const char *s, int i, int j, const char *set);
+extern int cstr_rupto(const char *s, int i, int j, const char *set);
+extern int cstr_find(const char *s, int i, int j, const char *str);
+extern int cstr_rfind(const char *s, int i, int j, const char *str);
+extern int cstr_any(const char *s, int i, const char *set);
+extern int cstr_many(const char *s, int i, int j, const char *set);
+extern int cstr_rmany(const char *s, int i, int j, const char *set);
+extern int cstr_match(const char *s, int i, int j, const char *str);
+extern int cstr_rmatch(const char *s, int i, int j, const char *str);
+extern int cstr_format(int code, va_list	*app,
 		      int put(int c, void *cl), void *cl,
 		      unsigned char flags[], int width, int precision);
 
 
-extern char *str_chomp(char *s);
-extern char *str_strip(char *s);
+extern char *cstr_chomp(char *s);
+extern char *cstr_strip(char *s);
 
 
 /* extensions of std C */
-extern size_t str_rspn ( const char *s, const char *accept );
-extern size_t str_rcspn ( const char *s, const char *reject );
+extern size_t cstr_rspn ( const char *s, const char *accept );
+extern size_t cstr_rcspn ( const char *s, const char *reject );
 
 
 /* Utility */
-extern char* str_basename ( char *, int, const char*, const char* );
-extern char* str_dirname ( char*, int, const char* );
+extern char* cstr_basename ( char *, int, const char*, const char* );
+extern char* cstr_dirname ( char*, int, const char* );
 
 
 

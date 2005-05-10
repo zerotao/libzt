@@ -49,7 +49,7 @@
 /*!
  * return a substring
  */
-char *str_sub(const char *s, int i, int j)
+char *cstr_sub(const char *s, int i, int j)
 {
 	char	* new;
 	char	* p;
@@ -70,7 +70,7 @@ char *str_sub(const char *s, int i, int j)
 /*!
  * return a string containing n cpoies of s[i:j] plus NUL
  */
-char *str_dup(const char *s, int i, int j, int n)
+char *cstr_dup(const char *s, int i, int j, int n)
 {
 	int	  k;
 	char	* new, *p;
@@ -96,7 +96,7 @@ char *str_dup(const char *s, int i, int j, int n)
 /*!
  *
  */
-char *str_cat(const char *s1, int i1, int j1,
+char *cstr_cat(const char *s1, int i1, int j1,
 	      const char *s2, int i2, int j2)
 {
 	char	* new,
@@ -122,7 +122,7 @@ char *str_cat(const char *s1, int i1, int j1,
 /*!
  * 
  */
-char *str_catv(const char *s, ...)
+char *cstr_catv(const char *s, ...)
 {
 	char		* new,
 		        * p;
@@ -165,7 +165,7 @@ char *str_catv(const char *s, ...)
 /*!
  * reverse s[i:j]
  */
-char *str_reverse(const char *s, int i, int j)
+char *cstr_reverse(const char *s, int i, int j)
 {
 	char	* new,
 		* p;
@@ -185,7 +185,7 @@ char *str_reverse(const char *s, int i, int j)
 /*!
  *
  */
-char *str_map(const char *s, int i, int j,
+char *cstr_map(const char *s, int i, int j,
 	      const char *from, const char *to)
 {
 	static char map[256] = { 0 };
@@ -222,7 +222,7 @@ char *str_map(const char *s, int i, int j,
 /*!
  *
  */
-int str_pos(const char *s, int i)
+int cstr_pos(const char *s, int i)
 {
 	int	  len;
 	
@@ -236,7 +236,7 @@ int str_pos(const char *s, int i)
 /*!
  *
  */
-int str_len(const char *s, int i, int j)
+int cstr_len(const char *s, int i, int j)
 {
 	CONVERT(s, i, j);
 	return j - i;
@@ -246,7 +246,7 @@ int str_len(const char *s, int i, int j)
  * return -1, 0, 1 if s1 is lexically less then, equal to or greater
  * then s2
  */
-int str_cmp(const char *s1, int i1, int j1,
+int cstr_cmp(const char *s1, int i1, int j1,
 	    const char *s2, int i2, int j2)
 {
 	CONVERT(s1, i1, j1);
@@ -269,7 +269,7 @@ int str_cmp(const char *s1, int i1, int j1,
 /*!
  * 
  */
-int str_chr(const char *s, int i, int j, int c)
+int cstr_chr(const char *s, int i, int j, int c)
 {
 	CONVERT(s, i, j);
 	for ( ; i < j; i++) {
@@ -283,7 +283,7 @@ int str_chr(const char *s, int i, int j, int c)
 /*!
  *
  */
-int str_rchr(const char *s, int i, int j, int c)
+int cstr_rchr(const char *s, int i, int j, int c)
 {
 	CONVERT(s, i, j);
 	while (j > i) {
@@ -298,7 +298,7 @@ int str_rchr(const char *s, int i, int j, int c)
 /*!
  *
  */
-int str_upto(const char *s, int i, int j, const char *set)
+int cstr_upto(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 	CONVERT(s, i, j);
@@ -314,7 +314,7 @@ int str_upto(const char *s, int i, int j, const char *set)
 /*!
  *
  */
-int str_rupto(const char *s, int i, int j, const char *set)
+int cstr_rupto(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -331,7 +331,7 @@ int str_rupto(const char *s, int i, int j, const char *set)
 /*!
  *
  */
-int str_find(const char *s, int i, int j, const char *str)
+int cstr_find(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -362,7 +362,7 @@ int str_find(const char *s, int i, int j, const char *str)
 /*!
  *
  */
-int str_rfind(const char *s, int i, int j, const char *str)
+int cstr_rfind(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -392,7 +392,7 @@ int str_rfind(const char *s, int i, int j, const char *str)
 /*!
  *
  */
-int str_any(const char *s, int i, const char *set)
+int cstr_any(const char *s, int i, const char *set)
 {
 	int	  len;
 
@@ -413,7 +413,7 @@ int str_any(const char *s, int i, const char *set)
 /*!
  *
  */
-int str_many(const char *s, int i, int j, const char *set)
+int cstr_many(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -432,7 +432,7 @@ int str_many(const char *s, int i, int j, const char *set)
 /*!
  *
  */
-int str_rmany(const char *s, int i, int j, const char *set)
+int cstr_rmany(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -451,7 +451,7 @@ int str_rmany(const char *s, int i, int j, const char *set)
 /*!
  *
  */
-int str_match(const char *s, int i, int j, const char *str)
+int cstr_match(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -475,7 +475,7 @@ int str_match(const char *s, int i, int j, const char *str)
 /*!
  *
  */
-int str_rmatch(const char *s, int i, int j, const char *str)
+int cstr_rmatch(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -501,7 +501,7 @@ int str_rmatch(const char *s, int i, int j, const char *str)
  *
  */
 int
-str_format(int code, va_list *app,
+cstr_format(int code, va_list *app,
 	   int put(int c, void *cl), void *cl,
 	   unsigned char flags[], int width, int precision)
 {
@@ -521,7 +521,7 @@ str_format(int code, va_list *app,
 
 /* strip the \n from the end of a string */
 char*
-str_chomp (char *str)
+cstr_chomp (char *str)
 {
 	assert(str);
 	{
@@ -535,7 +535,7 @@ str_chomp (char *str)
 
 /* Strip white space characters from the front and back of the string */
 char*
-str_strip (char *str)
+cstr_strip (char *str)
 {
 	assert(str);
 	{
@@ -548,7 +548,7 @@ str_strip (char *str)
 		/* strip whitespace from the end of the string */
 		if(index(str, '\n') != NULL)
 			nl = 1;
-		len = str_rspn(str, WHITESPACE "\n");
+		len = cstr_rspn(str, WHITESPACE "\n");
 		len = strlen(str) - len;
 		if(len){
 			if(nl)
@@ -560,7 +560,7 @@ str_strip (char *str)
 }
 
 size_t
-str_rspn (const char *s,
+cstr_rspn (const char *s,
 	 const char *accept)
 {
 	assert(s);
@@ -579,7 +579,7 @@ str_rspn (const char *s,
 }
 
 size_t
-str_rcspn (const char *s,
+cstr_rcspn (const char *s,
 	  const char *reject)
 {
 	assert(s);
@@ -598,7 +598,7 @@ str_rcspn (const char *s,
 }
 
 char*
-str_basename(char *npath,
+cstr_basename(char *npath,
 	  int len,
 	  const char *path,
 	  const char *suffix)
@@ -636,7 +636,7 @@ str_basename(char *npath,
 
 
 char *
-str_dirname (char *npath, int len, const char *path)
+cstr_dirname (char *npath, int len, const char *path)
 {
 	char *dirname = NULL;
 	int dir_len = 0;
