@@ -2,6 +2,7 @@ SUBDIRS = 		\
 	zt_adt		\
 	zt_cfg 		\
 	zt_log 		\
+	zt_stream	\
 	.		\
 	t 
 #	cfg 
@@ -12,7 +13,8 @@ libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
 	zt_log/libzt_log.la		\
 	zt_cfg/libzt_cfg.la		\
-	zt_adt/libzt_adt.la
+	zt_adt/libzt_adt.la		\
+	zt_stream/libzt_stream.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -35,7 +37,8 @@ libzt_la_SOURCES = 		\
 	zt_mem.c		\
 	zt_opts.c 		\
 	zt_progname.c 		\
-	zt_strings.c 		\
+	zt_stream.c		\
+	zt_cstr.c 		\
 	zt_time.c
 
 # 	zt_cfg/cfg_private.c 	
@@ -61,7 +64,8 @@ pkginclude_HEADERS = \
 	zt_mem.h	\
 	zt_opts.h 	\
 	zt_progname.h 	\
-	zt_strings.h 	\
+	zt_stream.h	\
+	zt_cstr.h 	\
 	zt_table.h	\
 	zt_time.h	\
         zt_macros.h

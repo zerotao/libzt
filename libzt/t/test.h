@@ -48,7 +48,7 @@ extern "C" {
 #pragma }
 #endif
 
-#define TEST(n, t)	 							\
+#define TEST(n, t)							\
 	do{									\
 		int offset = 0;							\
 		offset = printf(n);						\
@@ -57,6 +57,21 @@ extern "C" {
 		else								\
 			printf(BLANK "=> failure @%s:%d\n", INDENT_TO(45, 5, offset), __FILE__, __LINE__); \
 	}while(0)
+
+
+#define TEST_N(n, i, t)						\
+	do{							\
+		int offset = 0;					\
+		offset = printf("%s[%d]", n, i);		\
+		i += 1;						\
+		if(t)						\
+			printf(BLANK "=> success\n",		\
+			       INDENT_TO(45, 5, offset));	\
+		else						\
+			printf(BLANK "=> failure @%s:%d\n", 	\
+			       INDENT_TO(45, 5, offset),	\
+			       __FILE__, __LINE__);		\
+	} while(0)
 
 #ifdef __cplusplus
 }

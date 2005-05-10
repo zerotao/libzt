@@ -1,7 +1,7 @@
 LDADD = ../libzt.la
 
 TEST_APPS = 		\
-	str_test 	\
+	cstr_test 	\
 	macros_test 	\
 	assert_test 	\
 	progname_test 	\
@@ -35,8 +35,8 @@ types_test_SOURCES = 	\
 format_test_SOURCES = \
 	format_test.c
 
-bytearray_test_SOURCES = \
-	bytearray_test.c
+# bytearray_test_SOURCES = \
+# 	bytearray_test.c
 
 table_test_SOURCES = 	\
 	table_test.c
@@ -65,8 +65,8 @@ log_test_SOURCES = 	\
 progname_test_SOURCES = \
 	progname_test.c
 
-str_test_SOURCES = 	\
-	str_test.c
+cstr_test_SOURCES = 	\
+	cstr_test.c
 
 assert_test_SOURCES = 	\
 	assert_test.c

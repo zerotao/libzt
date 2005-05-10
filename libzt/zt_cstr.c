@@ -20,7 +20,7 @@
 #include <strings.h>
 #endif
 
-#include "zt_strings.h"
+#include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
 

@@ -23,7 +23,7 @@ main(int argc, char *argv[])
 	printf("c16  0x%hX\n", c16);
 	printf("s16  0x%hX\n", s16);
 	
-	printf("c32  0x%lX\n", c32);
+	printf("c32  0x%X\n", c32);
 	printf("l32  0x%lX\n", l32);
 	
 	printf("c64  0x%llX\n", c64);

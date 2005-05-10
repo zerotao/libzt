@@ -1,6 +1,6 @@
 #include <libzt/zt_assert.h>
 #include <libzt/zt_format.h>
-#include <libzt/zt_strings.h>
+#include <libzt/zt_cstr.h>
 
 #include "test.h"
 
@@ -25,12 +25,12 @@ main(int argc, char *argv[])
 	
 	fmt_sprintf(buf, 256, "%s: %d\n", "this is a test", 34);
 	TEST("fmt_sprintf & fmt_vsprintf[1]:",
-	     str_cmp(buf, 1, 0,
-		     "this is a test: 34\n", 1, 0) == 0);
+	     cstr_cmp(buf, 1, 0,
+		      "this is a test: 34\n", 1, 0) == 0);
 	
 	fmt_sprintf(buf, 256, "\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
 	TEST("fmt_sprintf & fmt_vsprintf[2]:",
-	     str_cmp(buf, 1, 0,
+	     cstr_cmp(buf, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);
 
 	
@@ -38,19 +38,19 @@ main(int argc, char *argv[])
 	
 	fmt_sprintf(buf, 256, "%S:\n", "this is a test");
 	TEST("fmt_register[2]:",
-	     str_cmp(buf, 1, 0,
+	     cstr_cmp(buf, 1, 0,
 		     "this is a test:\n", 1, 0) == 0);
 
 
 	str = fmt_strprintf("%s: %d\n", "this is a test", 34);
 	TEST("fmt_strprintf[1]:",
-	     str_cmp(str, 1, 0,
+	     cstr_cmp(str, 1, 0,
 		     "this is a test: 34\n", 1, 0) == 0);
 	XFREE(str);
 	
 	str = fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
 	TEST("fmt_strprintf[2]:",
-	     str_cmp(str, 1, 0,
+	     cstr_cmp(str, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);
 	XFREE(str);
 	
