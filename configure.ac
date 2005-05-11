@@ -301,8 +301,9 @@ doc/Makefile
 libzt/Makefile
 libzt/zt_log/Makefile
 libzt/zt_cfg/Makefile
-libzt/zt_adt/Makefile
-libzt/t/Makefile
+libzt/adt/Makefile
+libzt/zt_stream/Makefile
+libzt/test/Makefile
 tools/project.spec
 tools/libzt.pc
 project.list
