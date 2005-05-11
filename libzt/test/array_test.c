@@ -57,8 +57,21 @@ main(int argc, char *argv[])
 
 		TEST_N("array_copy", test, tt == n);
 	}
+	test = 0;
 	
-
+	array_free(&array);
+	array_free(&array2);
 	
+	{
+		char	* tmp = "This is a test";
+		
+		array = array_with_cstr(tmp);
+	
+		TEST_N("array_cstr", test, strcmp(tmp, array_data(array)) == 0);
+		
+		array_free(&array);
+	}
+	
+		
 	return 0;
 }

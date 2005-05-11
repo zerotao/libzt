@@ -85,8 +85,11 @@ EXTRA_DIST = 		\
 	out.test 	\
 	cfg_test.ini
 
-update: test
+update: test.out
 	cp test.out out.test
+
+test.out:
+	test
 
 test: $(TEST_APPS)
 	@echo Beginning Test Run

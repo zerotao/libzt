@@ -15,6 +15,7 @@ array_resize[0]                              => success
 array_copy[0]                                => success
 array_copy[1]                                => success
 array_copy[2]                                => success
+array_cstr[0]                                => success
 cstr_chomp[1]:                               => success
 cstr_strip[1]:                               => success
 cstr_rspn[1]:                                => success
