@@ -1,19 +1,19 @@
 SUBDIRS = 		\
-	zt_adt		\
+	adt		\
 	zt_cfg 		\
 	zt_log 		\
 	zt_stream	\
 	.		\
-	t 
+	test
 #	cfg 
 
 lib_LTLIBRARIES = libzt.la 
 
 libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
+	adt/libzt_adt.la		\
 	zt_log/libzt_log.la		\
 	zt_cfg/libzt_cfg.la		\
-	zt_adt/libzt_adt.la		\
 	zt_stream/libzt_stream.la
 
 #CURRENT[:REVISION[:AGE]]

@@ -17,39 +17,40 @@
 
 BEGIN_C_DECLS
 
-typedef struct string string;
-struct string {
+typedef struct bytevect bytevect;
+struct bytevect {
 	size_t		  size;
+	size_t		  memsize;
 	unsigned char	* data;
 };
 
-extern string *str_init(unsigned char *data, int len);
+extern bytevect *bytevect_init(unsigned char *data, int len);
 
-extern string *str_sub(string *ba, int i, int j);
-extern char *str_dup(const string *s, int i, int j, int n);
-extern char *str_cat(const string *s1, int i1, int j1,
-			    const string *s2, int i2, int j2);
-extern char *str_catv(const string *s, ...);
-extern char *str_reverse(const string *s, int i, int j);
-extern char *str_map(const string *s, int i, int j,
-			    const string *from, const string *to);
-extern int str_pos(const string *s, int i);
-extern int str_len(const string *s, int i, int j);
-extern int str_cmp(const string *s1, int i1, int j1,
-			  const string *s2, int i2, int j2);
-extern int str_chr(const string *s, int i, int j, int c);
-extern int str_rchr(const string *s, int i, int j, int c);
+extern bytevect *bytevect_sub(bytevect *ba, int i, int j);
+extern char *bytevect_dup(const bytevect *s, int i, int j, int n);
+extern char *bytevect_cat(const bytevect *s1, int i1, int j1,
+			    const bytevect *s2, int i2, int j2);
+extern char *bytevect_catv(const bytevect *s, ...);
+extern char *bytevect_reverse(const bytevect *s, int i, int j);
+extern char *bytevect_map(const bytevect *s, int i, int j,
+			    const bytevect *from, const bytevect *to);
+extern int bytevect_pos(const bytevect *s, int i);
+extern int bytevect_len(const bytevect *s, int i, int j);
+extern int bytevect_cmp(const bytevect *s1, int i1, int j1,
+			  const bytevect *s2, int i2, int j2);
+extern int bytevect_chr(const bytevect *s, int i, int j, int c);
+extern int bytevect_rchr(const bytevect *s, int i, int j, int c);
 
-extern int str_upto(const string *s, int i, int j, const string *set);
-extern int str_rupto(const string *s, int i, int j, const string *set);
-extern int str_find(const string *s, int i, int j, const string *str);
-extern int str_rfind(const string *s, int i, int j, const string *str);
-extern int str_any(const string *s, int i, const string *set);
-extern int str_many(const string *s, int i, int j, const string *set);
-extern int str_rmany(const string *s, int i, int j, const string *set);
-extern int str_match(const string *s, int i, int j, const string *str);
-extern int str_rmatch(const string *s, int i, int j, const string *str);
-extern int str_format(int code, va_list	*app,
+extern int bytevect_upto(const bytevect *s, int i, int j, const bytevect *set);
+extern int bytevect_rupto(const bytevect *s, int i, int j, const bytevect *set);
+extern int bytevect_find(const bytevect *s, int i, int j, const bytevect *bv);
+extern int bytevect_rfind(const bytevect *s, int i, int j, const bytevect *bv);
+extern int bytevect_any(const bytevect *s, int i, const bytevect *set);
+extern int bytevect_many(const bytevect *s, int i, int j, const bytevect *set);
+extern int bytevect_rmany(const bytevect *s, int i, int j, const bytevect *set);
+extern int bytevect_match(const bytevect *s, int i, int j, const bytevect *bv);
+extern int bytevect_rmatch(const bytevect *s, int i, int j, const bytevect *bv);
+extern int bytevect_format(int code, va_list	*app,
 			     int put(int c, void *cl), void *cl,
 			     unsigned char flags[], int width, int precision);
 
