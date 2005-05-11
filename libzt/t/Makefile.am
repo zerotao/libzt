@@ -1,6 +1,7 @@
 LDADD = ../libzt.la
 
 TEST_APPS = 		\
+	array_test	\
 	cstr_test 	\
 	macros_test 	\
 	assert_test 	\
@@ -31,6 +32,9 @@ types_test_SOURCES = 	\
 
 # chash64_test_SOURCES = 
 # 	chash64_test.c
+
+array_test_SOURCES = \
+	array_test.c
 
 format_test_SOURCES = \
 	format_test.c
