@@ -190,40 +190,39 @@ int main(int argc, char *argv[]){
 	}
 
 	{
+		int test_count = 0;
+		
 		int foo(void *e, void* t, char *et, char *f, char *ff, int l){
-			static int times = 1;
-			printf("%d ", times++);
+			test_count++;
 			return 0;
 		}
 		int bar(void *e, void* t, char *et, char *f, char *ff, int l){
-			static int times = 1;
-			printf("%d ", times++);
+			test_count++;
 			return 1;
 		}
 		int newbar(void *e, void* t, char *et, char *f, char *ff, int l){
-			printf("Pass\n");
+			test_count = 0xDEADBEEF;
 			return 0;
 		}
 		int fooexit(void *e, void* t, char *et, char *f, char *ff, int l){
 			return -1;
 		}
 
-		printf("Handlers: \n");
+/* 		printf("Handlers: \n"); */
 
 		/* call bar twice 
 		 * Here I am using the function as the exception
 		 */
 		INSTALL_EXCEPT_HANDLER(bar, bar);
 		INSTALL_EXCEPT_HANDLER(bar, bar);
-
-		printf("  Multiple calls (should be 1 2): ");
-    
+		test_count = 0;
+		
 		TRY({
 			    THROW(bar);
 		    },{});
-		printf("\n");
+		TEST("Multiple Handler Calls:", test_count == 2);
 
-		printf("  Remove Handlers: ");
+		
 		REMOVE_EXCEPT_HANDLER(bar, bar);
 		REMOVE_EXCEPT_HANDLER(bar, bar);
 		INSTALL_EXCEPT_HANDLER(bar, newbar);
@@ -231,7 +230,9 @@ int main(int argc, char *argv[]){
 			    THROW(bar);
 		    },{});
 		REMOVE_EXCEPT_HANDLER(bar, newbar);
-
+		TEST("Removing handlers:", test_count == 0xDEADBEEF);
+		test_count = 0;
+		
 		/* install foo 4 times however foo exits with 0 so only call once
 		 * Same as above with the exception being a function
 		 */
@@ -240,12 +241,12 @@ int main(int argc, char *argv[]){
 		INSTALL_EXCEPT_HANDLER(foo, foo);
 		INSTALL_EXCEPT_HANDLER(foo, foo);
 
-		printf("  Multiple installed but call only once (should be 1): ");
 		TRY({
 			    THROW(foo);
 		    },{});
-
-		printf("\n");
+		TEST("Multiple installed/Call once:", test_count == 1);
+		test_count = 0;
+		
 		fflush(stdout);
     
 		REMOVE_EXCEPT_HANDLER(foo, foo);
@@ -253,13 +254,14 @@ int main(int argc, char *argv[]){
 		REMOVE_EXCEPT_HANDLER(foo, foo);
 		REMOVE_EXCEPT_HANDLER(foo, foo);
 		//REMOVE_EXCEPT_HANDLER(foo, foo);
-    
-		fprintf(stderr, "  Exit from Handler: ");
-		INSTALL_EXCEPT_HANDLER(fooexit, fooexit);
-		TRY({ 
-			    THROW(fooexit);
-		    },{});
-		fprintf(stderr, "Fail\n");
+
+		/* FIXME: figure out how to test this ccorrectly */
+/* 		fprintf(stderr, "This should exit: "); */
+/* 		INSTALL_EXCEPT_HANDLER(fooexit, fooexit); */
+/* 		TRY({  */
+/* 			    THROW(fooexit); */
+/* 		    },{}); */
+/* 		fprintf(stderr, "Fail\n"); */
 	}
 	return 0;
 }

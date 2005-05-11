@@ -121,12 +121,16 @@ test: $(TEST_APPS)
 	  fi \
 	done)
 	@(diff test.out out.test > diff.out 2>&1; \
-	  F=`grep Fail test.out`; \
-	  if ! [ -s diff.out -o -n "$F" ]; then \
-	    echo "All Tests Passed!"; \
-	  else \
-	    echo "Some Tests Failed!  See test.out for details."; \
-	  fi \
+	  F=`grep failure test.out`; 	\
+	  if [ -n "$$F" ]; then 		\
+	    echo "Some Tests Failed!";	\
+	  else				\
+	    echo "All Tests Passed!"; 	\
+	  fi;				\
+	  if [ -s diff.out ]; then	\
+	    echo;			\
+	    echo "Test output does not match expected output.  See test.out and diff.out for details."; \
+	  fi; \
 	)
 
 noinst_DATA = \

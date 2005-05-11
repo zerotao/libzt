@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id$
@@ -42,13 +42,13 @@ main ( int argc, char *argv[] ){
   
 	table_for_each(table_int, int_iterator, NULL);
 
-	TEST("num items == 10", count == 10);
+	TEST("table_for_each, table_set[0]", count == 10);
 	
 	nn = (int)table_get ( table_int, (void *)5 );
-	TEST("lookup 5", nn == 4);
+	TEST("table_get[0]", nn == 4);
 
 	/* string test */
-	printf("Testing strings\n");
+	/* printf("Testing strings\n"); */
 	
 	count=0;		/* GLOBAL */
 	
@@ -60,7 +60,7 @@ main ( int argc, char *argv[] ){
 	}
 	
 	table_for_each(table_str, str_iterator, NULL);
-	TEST("num items == 10", count == 10);	
+	TEST("table_set, table_for_each[1]", count == 10);	
 
 	table_for_each(table_str, str_free, NULL);
 	
@@ -79,12 +79,11 @@ str_free(void *key, void *datum, void *param)
 static int
 str_iterator (void *key, void *datum, void *param)
 {
-	char	  buf[1024];
 	int 	  d = (int)datum;	
 	int 	  k = atoi((key + strlen(STR_TEST_PRE)));
+	static int	  cnt = 0;
 
-	sprintf(buf, "key+datum(%d+%d) == 9", k, d);
-	TEST(buf, (k + d == 9));
+	TEST_N("str_iterator", cnt, (k + d == 9));
 	
 	count++;		/* GLOBAL */
 	return 0;
@@ -93,13 +92,13 @@ str_iterator (void *key, void *datum, void *param)
 static int
 int_iterator (void *key, void *datum, void *param)
 {
-	char	  buf[1024];
 	int	  d = (int)datum;
 	int	  k = (int)key;
+	static int	  cnt = 0;
+	
 	
 
-	sprintf(buf, "key+datum(%d+%d) == 9", k, d);
-	TEST(buf, (k + d == 9));
+	TEST_N("int_iterator", cnt, (k + d == 9));
 	
 	count++;		/* GLOBAL */
 	return 0;
