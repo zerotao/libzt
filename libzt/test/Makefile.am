@@ -124,15 +124,22 @@ test: $(TEST_APPS)
 	  fi \
 	done)
 	@(diff test.out out.test > diff.out 2>&1; \
-	  F=`grep failure test.out`; 	\
+	  N=`cat test.out | wc -l | awk '{ print $$1 }'`;		\
+	  F=`grep failure test.out`; 		\
+	  FN=`echo $$F | wc -l | awk '{ print $$1 }'`;	\
+	  echo; 				\
 	  if [ -n "$$F" ]; then 		\
-	    echo "Some Tests Failed!";	\
-	  else				\
-	    echo "All Tests Passed!"; 	\
-	  fi;				\
-	  if [ -s diff.out ]; then	\
-	    echo;			\
-	    echo "Test output does not match expected output.  See test.out and diff.out for details."; \
+	    echo "$$FN of $$N tests Failed!";	\
+	    echo;				\
+	    echo "Failed tests were:";		\
+	    echo "$$F";				\
+	  else					\
+	    echo "$$N of $$N tests Passed!"; 	\
+	  fi;					\
+	  if [ -s diff.out ]; then		\
+	    echo;				\
+	    echo "Test output does not match expected output.";	\
+	    echo "See test.out and diff.out for details."; \
 	  fi; \
 	)
 
