@@ -18,8 +18,9 @@ struct zt_bstream {
 	struct zt_bstream_vtbl *vtbl;
 	
 	/* rest of opts */
-	int	  flags;
-	size_t	  offset;
+	int		  flags;
+	size_t		  offset;
+	zt_array	  data;
 };
 
 enum zt_bstream_flags {

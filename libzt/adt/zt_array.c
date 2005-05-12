@@ -5,7 +5,7 @@
 #include "zt_array.h"
 
 static void
-arrayrep_init(array_ty array, int len, int size, void *ary)
+arrayrep_init(zt_array array, int len, int size, void *ary)
 {
 	assert(array);
 	assert((ary && len > 0) ||
@@ -18,12 +18,12 @@ arrayrep_init(array_ty array, int len, int size, void *ary)
 }
 
 /* exported functions */
-array_ty
-array_new(int len, int size) 
+zt_array
+zt_array_new(int len, int size) 
 {
-	array_ty array;
+	zt_array array;
 	
-	array = XMALLOC(struct array_ty, 1);
+	array = XMALLOC(struct zt_array, 1);
 
 	if(len > 0) {
 		arrayrep_init(array, len, size,
@@ -36,19 +36,19 @@ array_new(int len, int size)
 }
 
 void
-array_free(array_ty *array)
+zt_array_free(zt_array *array)
 {
 	assert(array && *array);
 	XFREE((*array)->data);
 	XFREE(*array);
 }
 
-array_ty
-array_with(unsigned char *data, int len, int size, int copy)
+zt_array
+zt_array_with(unsigned char *data, int len, int size, int copy)
 {
-	array_ty	  array;
+	zt_array	  array;
 
-	array = XMALLOC(struct array_ty, 1);
+	array = XMALLOC(struct zt_array, 1);
 
 	if(copy) {
 		arrayrep_init(array, len, size,
@@ -61,14 +61,14 @@ array_with(unsigned char *data, int len, int size, int copy)
 	return array;
 }
 
-array_ty
-array_with_cstr(char *str) 
+zt_array
+zt_array_with_cstr(char *str) 
 {
-	return array_with(str, strlen(str), sizeof(char), 1);
+	return zt_array_with(str, strlen(str), sizeof(char), 1);
 }
 
 void
-array_resize(array_ty array, int len)
+zt_array_resize(zt_array array, int len)
 {
 	assert(array);
 	assert(len >= 0);
@@ -84,15 +84,15 @@ array_resize(array_ty array, int len)
 	array->length = len;
 }
 
-array_ty
-array_copy(array_ty array, int len)
+zt_array
+zt_array_copy(zt_array array, int len)
 {
-	array_ty	  copy;
+	zt_array	  copy;
 
 	assert(array);
 	assert(len >= 0);
 	
-	copy = array_new(len, array->size);
+	copy = zt_array_new(len, array->size);
 
 	if (array->length > 0 && copy->length > 0) {
 		memcpy(copy->data, array->data,
@@ -103,7 +103,7 @@ array_copy(array_ty array, int len)
 }
 
 int
-array_length(array_ty array)
+zt_array_length(zt_array array)
 {
 	assert(array);
 	return array->length;
@@ -111,14 +111,14 @@ array_length(array_ty array)
 
 
 int
-array_size(array_ty array)
+zt_array_size(zt_array array)
 {
 	assert(array);
 	return array->size;
 }
 
 unsigned char *
-array_data(array_ty array)
+zt_array_data(zt_array array)
 {
 	assert(array);
 	return array->data;
@@ -126,7 +126,7 @@ array_data(array_ty array)
 
 
 void *
-array_get(array_ty array, int offt)
+zt_array_get(zt_array array, int offt)
 {
 	assert(array);
 	assert(offt >= 0 && offt < array->length);
@@ -137,7 +137,7 @@ array_get(array_ty array, int offt)
 
 
 void *
-array_put(array_ty array, int offt, void *elem)
+zt_array_put(zt_array array, int offt, void *elem)
 {
 	assert(array);
 	assert(offt >= 0 && offt < array->length);

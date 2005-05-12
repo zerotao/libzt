@@ -9,67 +9,67 @@ int
 main(int argc, char *argv[]) 
 {
 	int	  i, n, *v;
-	array_ty array = array_new(10, sizeof(int));
-	array_ty array2;
+	zt_array array = zt_array_new(10, sizeof(int));
+	zt_array array2;
 	
 
-	TEST("array_new[0]", array != NULL);
+	TEST("zt_array_new[0]", array != NULL);
 	
 	n = sizeof_array(values);
 
-	TEST("array_length[0]", array_length(array) == sizeof_array(values));
+	TEST("zt_array_length[0]", zt_array_length(array) == sizeof_array(values));
 	
-	TEST("array_size[0]", array_size(array) == sizeof(int));
+	TEST("zt_array_size[0]", zt_array_size(array) == sizeof(int));
 
 	
 	for(i=0; i < n; i++) {
-		array_put(array, i, &values[i]);
+		zt_array_put(array, i, &values[i]);
 	}
 
 
 	test = 0;
 	for(i=0; i < n; i++) {
-		v = array_get(array, i);
+		v = zt_array_get(array, i);
 
-		TEST_N("array_get & array_put", test, *v == i);
+		TEST_N("zt_array_get & zt_array_put", test, *v == i);
 	}
 
 	
 	test = 0;
-	array_resize(array, array_length(array) * 2);
+	zt_array_resize(array, zt_array_length(array) * 2);
 
-	TEST("array_resize[0]", array_length(array) == n * 2);
+	TEST("zt_array_resize[0]", zt_array_length(array) == n * 2);
 
-	array2 = array_copy(array, array_length(array));
+	array2 = zt_array_copy(array, zt_array_length(array));
 	
 	test = 0;
-	TEST_N("array_copy", test, array_length(array) == array_length(array2));
-	TEST_N("array_copy", test, array_size(array) == array_size(array2));
+	TEST_N("zt_array_copy", test, zt_array_length(array) == zt_array_length(array2));
+	TEST_N("zt_array_copy", test, zt_array_size(array) == zt_array_size(array2));
 	{
 		int	  tt = 0;
 		
 		for(i=0; i < n * 2; i++) {
-			v = array_get(array2, i);
+			v = zt_array_get(array2, i);
 			if(*v == i) {
 				tt++;
 			}
 		}
 
-		TEST_N("array_copy", test, tt == n);
+		TEST_N("zt_array_copy", test, tt == n);
 	}
 	test = 0;
 	
-	array_free(&array);
-	array_free(&array2);
+	zt_array_free(&array);
+	zt_array_free(&array2);
 	
 	{
 		char	* tmp = "This is a test";
 		
-		array = array_with_cstr(tmp);
+		array = zt_array_with_cstr(tmp);
 	
-		TEST_N("array_cstr", test, strcmp(tmp, array_data(array)) == 0);
+		TEST_N("zt_array_cstr", test, strcmp(tmp, zt_array_data(array)) == 0);
 		
-		array_free(&array);
+		zt_array_free(&array);
 	}
 	
 		
