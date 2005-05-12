@@ -516,7 +516,7 @@ cstr_format(int code, va_list *app,
 
 	CONVERT(s, i, j);
 
-	fmt_puts(s + i, j - i, put, cl, flags, width, precision);
+	return fmt_puts(s + i, j - i, put, cl, flags, width, precision);
 }
 
 /* strip the \n from the end of a string */
