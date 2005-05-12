@@ -58,14 +58,12 @@ pkginclude_HEADERS = \
 	zt_daemon.h 	\
 	zt_except.h	\
 	zt_format.h	\
-	zt_hash.h	\
 	zt_log.h 	\
 	zt_mem.h	\
 	zt_opts.h 	\
 	zt_progname.h 	\
 	zt_stream.h	\
 	zt_cstr.h 	\
-	zt_table.h	\
 	zt_time.h	\
         zt_macros.h
 

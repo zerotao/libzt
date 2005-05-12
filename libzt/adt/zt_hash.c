@@ -1,4 +1,4 @@
-#include "../zt_hash.h"
+#include "zt_hash.h"
 
 u_int32_t
 zt_hash32_buff(void *buf, size_t len, u_int32_t hval)

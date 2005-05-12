@@ -13,6 +13,8 @@ DEFS = @DEFS@ -I/usr/include -I. -I$(srcdir) -I../..
 pkgincludedir = ${includedir}/libzt/zt_adt
 pkginclude_HEADERS =	\
 	zt_array.h	\
-	zt_list.h
+	zt_list.h	\
+	zt_hash.h	\
+	zt_table.h
 
 include $(top_srcdir)/Makefile.extra

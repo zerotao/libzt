@@ -14,9 +14,10 @@
 
 #include "../zt.h"
 #include "../zt_mem.h"
-#include "../zt_hash.h"
-#include "../zt_table.h"
 #include "../zt_log.h"
+#include "zt_hash.h"
+#include "zt_table.h"
+
 
 #define DEFAULT_BUCKETS 512
 static int
