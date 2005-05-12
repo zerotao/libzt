@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <libzt/zt_list.h>
+#include <libzt/adt/zt_list.h>
 #include "test.h"
 
 int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };

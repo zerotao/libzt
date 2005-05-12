@@ -59,7 +59,6 @@ pkginclude_HEADERS = \
 	zt_except.h	\
 	zt_format.h	\
 	zt_hash.h	\
-	zt_list.h	\
 	zt_log.h 	\
 	zt_mem.h	\
 	zt_opts.h 	\

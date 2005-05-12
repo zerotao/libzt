@@ -5,7 +5,7 @@
 
 #include "zt.h"
 #include "zt_mem.h"
-#include "zt_list.h"
+#include "adt/zt_list.h"
 
 /*
  * FIXME: threads will need these wrapped
