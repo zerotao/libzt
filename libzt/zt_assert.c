@@ -1,7 +1,7 @@
 /*
  * zt_assert.c        ZeroTao Assertions
  *
- * Copyright (C) 2000-2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: assert.c,v 1.1 2002/11/10 23:36:42 jshiffer Exp $
@@ -22,18 +22,19 @@
 #include "zt.h"
 #include "zt_assert.h"
 #include "zt_log.h"
+#include "zt_except.h"
+
+char *assertion_failed = "assertion_failed";
 
 void
-_assert_fail (s, file, line, func)
-     char *s;
-     char *file;
-     unsigned int line;
-     char *func;
+_assert_fail (char *s, char *file, unsigned int line,
+	      char *func, char fatal)
 {
   if(func)
-    log_printf(log_err, "Assertion \"%s\" failed at: %s[%d:%s]\n", s, file, line, func);
+    log_printf(log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, file, line, func);
   else
-    log_printf(log_err, "Assertion \"%s\" failed at: %s[%d]\n", s, file, line);
+    log_printf(log_err, "Assertion \"%s\" failed at: %s[%d]", s, file, line);
 
-  abort();
+  if(fatal)
+	  TRY_THROW(assertion_failed);
 }

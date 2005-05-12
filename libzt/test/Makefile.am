@@ -103,7 +103,7 @@ test: $(TEST_APPS)
 	    fi; \
 	  elif [ "$$program" = "assert_test" ]; then \
 	    ./$$program  > assert.out 2>&1 ; \
-	    F=`cat assert.out | awk -F\[ '{ print $$1 }'`; \
+	    F=`head -1 assert.out | awk -F\[ '{ print $$1 }'`; \
 	    if [ "$$F" = "Error: Assertion \"1==0\" failed at: assert_test.c" ]; then \
 	      echo "assert[1]:                                   => success" | tee -a test.out; \
 	    else \
