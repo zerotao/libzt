@@ -2,51 +2,33 @@
 #define _ZT_BSTREAM_H_
 
 #include <libzt/zt.h>
-#include <libzt/adt/zt_array.h>
 
 BEGIN_C_DECLS
 
-/* This is here for optimization purposes
- * you should not access this directly unless
- * you are extending the component
- */
-
 typedef struct zt_bstream zt_bstream;
-struct zt_bstream {
-	struct zt_bstream_vtbl *vtbl;
-	
-	/* rest of opts */
-	int		  flags;
-	zt_array	  data;
-};
-
 enum zt_bstream_flags {
-	stream_flip_endian = 0x01,
+	stream_flip_endian 	= 0x01,
+	stream_input 		= 0x02,
+	stream_output 		= 0x04,
+	stream_tagged		= 0x08,
+	stream_record		= 0x16,
 };
 
-typedef struct zt_bstream_vtbl zt_bstream_vtbl;
-struct zt_bstream_vtbl {
-	size_t size;
-	/* virtual function pointers */
-	void		(* close)(zt_bstream *);
-	int		(* truncate)(zt_bstream *);
-	int		(* empty)(zt_bstream *);
-	zt_bstream *	(* clone)(zt_bstream *);
-	size_t		(* read)(zt_bstream *, void *, size_t, char, char);
-	size_t		(* write)(zt_bstream *, void *, size_t, char, char);
-};
+
+/* predicates */
+extern int bstrea_is_input(zt_bstream *);
+extern int bstrea_is_output(zt_bstream *);
+extern int bstrea_is_tagged(zt_bstream *);
+extern int bstream_is_empty(zt_bstream *);
+extern int bstream_is_eos(zt_bstream *); /* end of stream */
+
 
 extern void bstream_close(zt_bstream *);
 extern int bstream_truncate(zt_bstream *);
-
-extern int bstream_empty(zt_bstream *);
-extern int bstream_eos(zt_bstream *); /* end of stream */
 extern zt_bstream * bstream_clone(zt_bstream *);
-
 extern size_t bstream_read(zt_bstream *, void *, size_t, char, char);
 extern size_t bstream_write(zt_bstream *, void *, size_t, char, char);
 
-/* writers */
 #define bstream_write_byte(bs, buf) \
 	bstream_write(bs, buf, 1, sizeof(unsigned char), 0)
 #define bstream_read_byte(bs, buf) \

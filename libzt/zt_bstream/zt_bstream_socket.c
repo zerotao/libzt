@@ -30,7 +30,7 @@ zt_bstream_socket(void)
     zt_bstream	* result;
     /* zt_bstream_socket * socket; */
 
-    result = zt_bstream_new(&vtbl);
+    result = zt_bstream_new(&vtbl, 0, 2048);
     /* socket = (zt_bstream_socket *)result; */
     /* do local work here */
 

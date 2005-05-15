@@ -1,5 +1,7 @@
 /* zt_common_h.in -- Process this file with configure to produce common.h */
 
+#define XCALLOCS(size, num)     (xcalloc ((num), size))
+#define XMALLOCS(size, num)     (xmalloc ((num), size))
 #define XCALLOC(type, num)	((type *) xcalloc ((num), sizeof(type)))
 #define XMALLOC(type, num)	((type *) xmalloc ((num) * sizeof(type)))
 #define XREALLOC(type, p, num)	((type *) xrealloc ((p), (num) * sizeof(type)))

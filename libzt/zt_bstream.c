@@ -1,6 +1,33 @@
 
 #include "zt_bstream.h"
+#include "zt_bstream/zt_bstream_private.h"
 #include "zt_assert.h"
+
+int bstrea_is_input(zt_bstream *bs)
+{
+	assert(bs);
+	return bs->flags & stream_input;
+}
+
+int bstrea_is_output(zt_bstream *bs)
+{
+	assert(bs);
+	return bs->flags & stream_output;
+}
+
+int bstrea_is_tagged(zt_bstream *bs)
+{
+	assert(bs);
+	return bs->flags & stream_tagged;
+}
+
+int bstream_is_eos(zt_bstream *bs)
+{
+	assert(bs);
+	if(assert_nf(bs->vtbl->eos)) {
+		bs->vtbl->eos(bs);
+	}
+}	
 
 void
 bstream_close(zt_bstream *bs) 
@@ -23,7 +50,7 @@ bstream_truncate(zt_bstream *bs)
 }
 
 int
-bstream_empty(zt_bstream *bs) 
+bstream_is_empty(zt_bstream *bs) 
 {
 	assert(bs);
 	if(assert_nf(bs->vtbl->empty)) {
