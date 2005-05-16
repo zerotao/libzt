@@ -12,7 +12,8 @@ TEST_APPS = 		\
 	list_test	\
 	table_test	\
 	format_test	\
-	except_test
+	except_test	\
+	bstream_test
 
 #	bytearray_test
 noinst_PROGRAMS = 	\
@@ -23,6 +24,9 @@ noinst_PROGRAMS = 	\
 
 # 	chash_test	
 # 	chash64_test	
+
+bstream_test_SOURCES = \
+	bstream_test.c
 
 types_test_SOURCES = 	\
 	types_test.c
@@ -99,21 +103,21 @@ test: $(TEST_APPS)
 	    ./$$program --int 1 --bool=t --string hello --flag > opts_test.out; \
 	    F=`cat opts_test.out`; \
 	    if [ "$$F" = "integer = 1, bool = 1, string = hello flag = 1" ]; then \
-	      echo "opts[1]:                                     => success" | tee -a test.out; \
+	      echo "opts[0]:                                                    => success" | tee -a test.out; \
 	    fi; \
 	  elif [ "$$program" = "assert_test" ]; then \
 	    ./$$program  > assert.out 2>&1 ; \
 	    F=`head -1 assert.out | awk -F\[ '{ print $$1 }'`; \
 	    if [ "$$F" = "Error: Assertion \"1==0\" failed at: assert_test.c" ]; then \
-	      echo "assert[1]:                                   => success" | tee -a test.out; \
+	      echo "assert[0]:                                                  => success" | tee -a test.out; \
 	    else \
-	      echo "assert[1]:                                   => failure" | tee -a test.out; \
+	      echo "assert[0]:                                                  => failure" | tee -a test.out; \
 	    fi; \
 	    if [ -f core -o -d /cores ]; then \
-	      echo "assert[2]:                                   => success" | tee -a test.out; \
+	      echo "assert[1]:                                                  => success" | tee -a test.out; \
 	      rm -f core; \
             else \
-              echo "assert[2]:                                   => failure" | tee -a test.out; \
+              echo "assert[1]:                                                  => failure" | tee -a test.out; \
 	    fi; \
 	  else \
 	    ./$$program 2>&1 | tee -a test.out; \
