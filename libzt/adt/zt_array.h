@@ -22,9 +22,13 @@ extern zt_array	zt_array_copy(zt_array array, int len);
 
 extern int	zt_array_length(zt_array array);
 extern int	zt_array_size(zt_array array);
+
 extern unsigned char *	zt_array_data(zt_array array);
 
-extern void *	zt_array_get(zt_array array, int i);
+extern int	zt_array_set_length(zt_array array, int len);
+extern void	zt_array_set_data(zt_array array, unsigned char *data, int len, int size, int copy);
+
+extern void *	zt_array_get(zt_array array, int i, void *elem);
 extern void *	zt_array_put(zt_array array, int i, void *elem);
 
 END_C_DECLS

@@ -43,13 +43,12 @@ zt_array_free(zt_array *array)
 	XFREE(*array);
 }
 
-zt_array
-zt_array_with(unsigned char *data, int len, int size, int copy)
+void
+zt_array_set_data(zt_array array, unsigned char *data,
+		  int len, int size, int copy)
 {
-	zt_array	  array;
-
-	array = XMALLOC(struct zt_array, 1);
-
+	assert(array);
+	
 	if(copy) {
 		arrayrep_init(array, len, size,
 			      XCALLOC(unsigned char, len*size));
@@ -57,6 +56,20 @@ zt_array_with(unsigned char *data, int len, int size, int copy)
 	} else {
 		arrayrep_init(array, len, size, data);
 	}
+}
+
+zt_array
+zt_array_with(unsigned char *data, int len, int size, int copy)
+{
+	zt_array	  array;
+
+	array = XMALLOC(struct zt_array, 1);
+	
+	if(array->data) {
+		XFREE(array->data);
+	}
+		
+	zt_array_set_data(array, data, len, size, copy);
 	
 	return array;
 }
@@ -109,6 +122,17 @@ zt_array_length(zt_array array)
 	return array->length;
 }
 
+int
+zt_array_set_length(zt_array array, int len)
+{
+	size_t	  olen;
+	assert(array);
+
+	olen = array->length;
+	
+	array->length = len;
+	return olen;
+}
 
 int
 zt_array_size(zt_array array)
@@ -126,12 +150,14 @@ zt_array_data(zt_array array)
 
 
 void *
-zt_array_get(zt_array array, int offt)
+zt_array_get(zt_array array, int offt, void *elem)
 {
 	assert(array);
 	assert(offt >= 0 && offt < array->length);
+	assert(elem);
 	
-	return array->data + offt * array->size;
+	memcpy(elem, array->data + offt * array->size, array->size);
+	return elem;
 }
 
 
@@ -142,6 +168,7 @@ zt_array_put(zt_array array, int offt, void *elem)
 	assert(array);
 	assert(offt >= 0 && offt < array->length);
 	assert(	elem);
+	
 	memcpy(array->data + offt * array->size, elem, array->size);
 
 	return elem;

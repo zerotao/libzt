@@ -8,7 +8,7 @@ int test = 0;
 int
 main(int argc, char *argv[]) 
 {
-	int	  i, n, *v;
+	int	  i, n, v;
 	zt_array array = zt_array_new(10, sizeof(int));
 	zt_array array2;
 	
@@ -29,9 +29,9 @@ main(int argc, char *argv[])
 
 	test = 0;
 	for(i=0; i < n; i++) {
-		v = zt_array_get(array, i);
+		zt_array_get(array, i, &v);
 
-		TEST_N("zt_array_get & zt_array_put", test, *v == i);
+		TEST_N("zt_array_get & zt_array_put", test, v == i);
 	}
 
 	
@@ -49,8 +49,8 @@ main(int argc, char *argv[])
 		int	  tt = 0;
 		
 		for(i=0; i < n * 2; i++) {
-			v = zt_array_get(array2, i);
-			if(*v == i) {
+			zt_array_get(array2, i, &v);
+			if(v == i) {
 				tt++;
 			}
 		}
