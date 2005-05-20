@@ -39,7 +39,7 @@ enum { except_WindPhase = 0, except_UnWindPhase };
 extern struct except_Frame *_except_Stack;
 
 /* exported functions */
-extern void _except_unhandled_exception(char *etext, char *efile, unsigned int eline, char *efunc);
+extern void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc);
 extern void _except_call_handlers(struct except_Frame *);
 
 /****d* Exceptions/INSTALL_EXCEPT_HANDLER

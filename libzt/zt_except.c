@@ -157,7 +157,7 @@ void _except_call_handlers(struct except_Frame *estack)
 }
 
 
-void _except_unhandled_exception(char *etext, char *efile, unsigned int eline, char *efunc)
+void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc)
 {
 	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
 		etext, efile, eline, efunc);

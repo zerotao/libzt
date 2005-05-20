@@ -28,7 +28,7 @@ char *assertion_failed = "assertion_failed";
 
 void
 _assert_fail (char *s, char *file, unsigned int line,
-	      char *func, char fatal)
+	      const char *func, char fatal)
 {
   if(func)
     log_printf(log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, file, line, func);

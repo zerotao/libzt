@@ -27,7 +27,7 @@ BEGIN_C_DECLS
  *
  ****/
 extern void _assert_fail (char *condition, char *file, 
-			  unsigned int line, char *function,
+			  unsigned int line, const char *function,
 			  char fatal);
 
 /****d* Assertion/assert
