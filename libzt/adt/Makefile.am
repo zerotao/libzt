@@ -11,7 +11,7 @@ libzt_adt_la_SOURCES = 	\
 
 DEFS = @DEFS@ -I/usr/include -I. -I$(srcdir) -I../..
 
-pkgincludedir = ${includedir}/libzt/zt_adt
+pkgincludedir = ${includedir}/libzt/adt
 pkginclude_HEADERS =	\
 	zt_array.h	\
 	zt_list.h	\
