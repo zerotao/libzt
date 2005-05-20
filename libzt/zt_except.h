@@ -93,8 +93,8 @@ extern void _except_remove_handler(void*, except_handler);
 						    __FUNCTION__);	\
 		}							\
 		_except_Stack->etext = #EXCEPTION;			\
-		_except_Stack->efile = __FILE__;			\
-		_except_Stack->efunc = __FUNCTION__;			\
+		_except_Stack->efile = (char *)__FILE__;		\
+		_except_Stack->efunc = (char *)__FUNCTION__;		\
 		_except_Stack->eline = __LINE__;			\
 		_except_Stack->caught = 0;				\
 		if(_except_Stack->phase == except_WindPhase){		\
