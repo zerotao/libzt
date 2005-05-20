@@ -137,3 +137,5 @@ zt_bstream_write_uint32 & zt_bstream_read_uint32[0]         => success
 zt_bstream_write_uint64 & zt_bstream_read_uint64[0]         => success
 zt_bstream_write_float & zt_bstream_read_float[0]           => success
 zt_bstream_write_double & zt_bstream_read_double[0]         => success
+zt_bstream_clone                                            => success
+flip_endian                                                 => success
