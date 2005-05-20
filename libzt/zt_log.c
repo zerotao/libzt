@@ -1,7 +1,7 @@
 /*
  * zt_log.c        Zerotao functions for logging
  *
- * Copyright (C) 2000, 2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000, 2002, 2004, 2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: log.c,v 1.1 2002/11/10 23:36:59 jshiffer Exp $
@@ -102,9 +102,9 @@ log_get_opts( log )
 void
 log_set_debug_info ( log, file, line, func )
      log_ty *log;
-     char *file;
+     const char *file;
      int line;
-     char *func;
+     const char *func;
 {
 	if(!log)
 		log = log_logger(NULL);
