@@ -80,7 +80,7 @@ extern log_level log_get_level _(( log_ty *log ));
 extern unsigned int log_set_opts _(( log_ty *log, unsigned int opts ));
 extern unsigned int log_get_opts _(( log_ty *log ));
 
-extern void log_set_debug_info _(( log_ty *, char *, int, char * ));
+extern void log_set_debug_info _(( log_ty *, const char *, int, const char * ));
 extern void log_get_debug_info _(( log_ty *, char **, int *, char ** ));
 
 extern log_ty *log_logger _(( log_ty * ));
