@@ -109,9 +109,9 @@ log_set_debug_info ( log, file, line, func )
 	if(!log)
 		log = log_logger(NULL);
 
-	log->file = file;
+	log->file = (char *)file;
 	log->line = line;
-	log->function = func;
+	log->function = (char *)func;
 }
 
 void
