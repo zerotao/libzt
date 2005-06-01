@@ -10,6 +10,37 @@
 #include "zt_log.h"
 #include "zt_assert.h"
 
+struct timeval *
+zt_add_time(struct timeval *at,
+	    struct timeval *t1,
+	    struct timeval *t2)
+{
+	at->tv_sec = t1->tv_sec + t2->tv_sec;
+	at->tv_usec = t1->tv_usec + t2->tv_usec;
+	if(at->tv_usec >= 1000000) {
+		at->tv_sec++;
+		at->tv_usec -= 1000000;
+	}
+	
+	return at;
+}
+
+
+struct timeval *
+zt_sub_time(struct timeval *st,
+	    struct timeval *t1,
+	    struct timeval *t2)
+{
+	st->tv_sec = t1->tv_sec - t2->tv_sec;
+	st->tv_usec = t1->tv_usec - t2->tv_usec;
+	if(st->tv_usec < 0) {
+		st->tv_sec--;
+		st->tv_usec += 1000000;
+	}	
+	
+	return st;
+}
+
 
 /****f* Time/zt_diff_time
  * NAME
@@ -37,6 +68,22 @@ zt_diff_time(struct timeval *dt,
 	}
 	return dt;
 }
+
+/* <0 , 0, >0  */
+long
+zt_cmp_time(struct timeval *t1,
+	    struct timeval *t2)
+{
+	long	  t = t1->tv_sec - t2->tv_sec;
+	
+	if(t) {
+		return t;
+	}
+	
+	return t1->tv_usec - t2->tv_usec;
+}
+
+
 
 /****f* Time/zt_time_result_to_elapsed
  * NAME

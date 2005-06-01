@@ -22,9 +22,23 @@ struct time_result {
 /*** time_result ***/
 
 struct timeval *
+zt_add_time(struct timeval *at,
+	    struct timeval *t1,
+	    struct timeval *t2);
+
+struct timeval *
+zt_sub_time(struct timeval *st,
+	    struct timeval *t1,
+	    struct timeval *t2);
+
+struct timeval *
 zt_diff_time(struct timeval *dt,
 	     struct timeval *t1,
 	     struct timeval *t2);
+
+long
+zt_cmp_time(struct timeval *t1,
+	    struct timeval *t2);
 
 void
 zt_time_result_to_elapsed(struct time_result *result,
