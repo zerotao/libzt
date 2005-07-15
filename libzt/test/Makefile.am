@@ -13,6 +13,7 @@ TEST_APPS = 		\
 	table_test	\
 	format_test	\
 	except_test	\
+	time_test	\
 	bstream_test
 
 #	bytearray_test
@@ -24,6 +25,9 @@ noinst_PROGRAMS = 	\
 
 # 	chash_test	
 # 	chash64_test	
+
+time_test_SOURCES = \
+	time_test.c
 
 bstream_test_SOURCES = \
 	bstream_test.c

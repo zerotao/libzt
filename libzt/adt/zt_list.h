@@ -5,58 +5,58 @@
  *   Copyright (C) 2002-2005, Jason L. Shiffer <jshiffer@zerotao.org>.  All Rights Reserved.
  *   See file COPYING for details.
  ****/
-#ifndef _ZT_LIST_H_
-#define _ZT_LIST_H_
+#ifndef _ZT_ELIST_H_
+#define _ZT_ELIST_H_
 
 #include <libzt/zt.h>
 
-typedef struct zt_list {
-	struct zt_list	*prev, *next;
-}zt_list;
+typedef struct zt_elist {
+	struct zt_elist	*prev, *next;
+}zt_elist;
 
-/****d* LinkedList/zt_list_init
+/****d* LinkedList/zt_elist_init
  *  NAME
- *    zt_list_init
+ *    zt_elist_init
  *****/
-#define zt_list_init(name) { &(name), &(name) }
+#define zt_elist_init(name) { &(name), &(name) }
 
-/****d* LinkedList/zt_list
+/****d* LinkedList/zt_elist
  *  NAME
- *    zt_list
+ *    zt_elist
  *****/
-#define zt_list(name) zt_list name = zt_list_init(name)
+#define zt_elist(name) zt_elist name = zt_elist_init(name)
 
-/****d* LinkedList/zt_list_reset
+/****d* LinkedList/zt_elist_reset
  *  NAME
- *    zt_list_reset
+ *    zt_elist_reset
  *****/
-#define zt_list_reset(p) do{			\
+#define zt_elist_reset(p) do{			\
 		(p)->prev = (p);		\
 		(p)->next = (p);		\
 	}while(0)
 
-/****d* LinkedList/zt_list_get_next
+/****d* LinkedList/zt_elist_get_next
  *  NAME
- *    zt_list_get_next
+ *    zt_elist_get_next
  *****/
-#define zt_list_get_next(p) ((p)->next)
+#define zt_elist_get_next(p) ((p)->next)
 
-/****d* LinkedList/zt_list_get_prev
+/****d* LinkedList/zt_elist_get_prev
  *  NAME
- *    zt_list_get_prev
+ *    zt_elist_get_prev
  *****/
-#define zt_list_get_prev(p) ((p)->prev)
+#define zt_elist_get_prev(p) ((p)->prev)
 
-/****d* LinkedList/zt_list_entry
+/****d* LinkedList/zt_elist_entry
  *  NAME
- *    zt_list_entry
+ *    zt_elist_entry
  *****/
-#define zt_list_entry(ptr, type, member) \
+#define zt_elist_entry(ptr, type, member) \
 	containerof(ptr, type, member)
 
-/****f* LinkedList/zt_list_add2
+/****f* LinkedList/zt_elist_add2
  *  NAME
- *    zt_list_add2
+ *    zt_elist_add2
  *
  * DESCRIPTION
  *   Insert a new entry between two known consecutive entries. 
@@ -65,9 +65,9 @@ typedef struct zt_list {
  *   the prev/next entries already!
  *
  *  SYNOPSIS
- *    static INLINE void zt_list_add2(zt_list * new, zt_list *prev, zt_list *next)
+ *    static INLINE void zt_elist_add2(zt_elist * new, zt_elist *prev, zt_elist *next)
  *****/
-static INLINE void zt_list_add2(zt_list * new, zt_list * prev, zt_list * next)
+static INLINE void zt_elist_add2(zt_elist * new, zt_elist * prev, zt_elist * next)
 {
         next->prev = new;
         new->next = next;
@@ -75,78 +75,78 @@ static INLINE void zt_list_add2(zt_list * new, zt_list * prev, zt_list * next)
         prev->next = new;
 }
 
-/****f* LinkedList/zt_list_add
+/****f* LinkedList/zt_elist_add
  *  NAME
- *    zt_list_add
+ *    zt_elist_add
  *  SYNOPSIS
- *    static INLINE void zt_list_add(zt_list *head, zt_list *new)
+ *    static INLINE void zt_elist_add(zt_elist *head, zt_elist *new)
  *****/
-static INLINE void zt_list_add(zt_list *head, zt_list *new)
+static INLINE void zt_elist_add(zt_elist *head, zt_elist *new)
 {
-        zt_list_add2(new, head, head->next);
+        zt_elist_add2(new, head, head->next);
 }
 
-/****f* LinkedList/zt_list_add_tail
+/****f* LinkedList/zt_elist_add_tail
  *  NAME
- *    zt_list_add_tail
+ *    zt_elist_add_tail
  *  SYNOPSIS
- *    static INLINE void zt_list_add_tail(zt_list *head, zt_list *new)
+ *    static INLINE void zt_elist_add_tail(zt_elist *head, zt_elist *new)
  *****/
-static INLINE void zt_list_add_tail(zt_list *head,
-				    zt_list *new)
+static INLINE void zt_elist_add_tail(zt_elist *head,
+				    zt_elist *new)
 {
-        zt_list_add2(new, head->prev, head);
+        zt_elist_add2(new, head->prev, head);
 }
 
-/****f* LinkedList/zt_list_remove2
+/****f* LinkedList/zt_elist_remove2
  *  NAME
- *    zt_list_remove2
+ *    zt_elist_remove2
  *  SYNOPSIS
- *    static INLINE void zt_list_remove2(zt_list * prev, zt_list *next)
+ *    static INLINE void zt_elist_remove2(zt_elist * prev, zt_elist *next)
  *****/
-static INLINE void zt_list_remove2(zt_list * prev,
-				   zt_list * next)
+static INLINE void zt_elist_remove2(zt_elist * prev,
+				   zt_elist * next)
 {
         next->prev = prev;
         prev->next = next;
 }
 
-/****f* LinkedList/zt_list_remove
+/****f* LinkedList/zt_elist_remove
  *  NAME
- *    zt_list_remove
+ *    zt_elist_remove
  *  SYNOPSIS
- *    static INLINE void zt_list_remove(zt_list *entry)
+ *    static INLINE void zt_elist_remove(zt_elist *entry)
  *****/
-static INLINE void zt_list_remove(zt_list *entry)
+static INLINE void zt_elist_remove(zt_elist *entry)
 {
-        zt_list_remove2(entry->prev, entry->next);
+        zt_elist_remove2(entry->prev, entry->next);
 }
 
-/****f* LinkedList/zt_list_empty
+/****f* LinkedList/zt_elist_empty
  *  NAME
- *    zt_list_empty
+ *    zt_elist_empty
  *  SYNOPSIS
- *    static INLINE int zt_list_empty(zt_list *head)
+ *    static INLINE int zt_elist_empty(zt_elist *head)
  *****/
-static INLINE int zt_list_empty(zt_list *head)
+static INLINE int zt_elist_empty(zt_elist *head)
 {
         return head->next == head;
 }
 
-/****f* LinkedList/zt_list_splice
+/****f* LinkedList/zt_elist_splice
  *  NAME
- *    zt_list_splice
+ *    zt_elist_splice
  *  SYNOPSIS
- *    static INLINE void zt_list_splice(zt_list *head, zt_list *list)
+ *    static INLINE void zt_elist_splice(zt_elist *head, zt_elist *list)
  *****/
-static INLINE void zt_list_splice(zt_list *head,
-				  zt_list *list)
+static INLINE void zt_elist_splice(zt_elist *head,
+				  zt_elist *list)
 {
-        zt_list *first = list->next;
+        zt_elist *first = list->next;
 
         if (first != list) {
-                zt_list *last = list->prev;
-                zt_list *at = head->next;
+                zt_elist *last = list->prev;
+                zt_elist *at = head->next;
 
                 first->prev = head;
                 head->next = first;
@@ -156,23 +156,23 @@ static INLINE void zt_list_splice(zt_list *head,
         }
 }
 
-/****d* LinkedList/zt_list_for_each
+/****d* LinkedList/zt_elist_for_each
  *  NAME
- *    zt_list_for_each
+ *    zt_elist_for_each
  * NOTES
- *   zt_list_for_each is NOT safe for removing entries from the list
- *   for this you need to use zt_list_for_each_safe or a counting loop.
+ *   zt_elist_for_each is NOT safe for removing entries from the list
+ *   for this you need to use zt_elist_for_each_safe or a counting loop.
  *****/
-#define zt_list_for_each(h, p)				\
+#define zt_elist_for_each(h, p)				\
 	for ((p) = (h)->next; (p) != (h); 		\
 	     (p) = (p)->next)
 
-/****d* LinkedList/zt_list_for_each_safe
+/****d* LinkedList/zt_elist_for_each_safe
  *  NAME
- *    zt_list_for_each_safe
+ *    zt_elist_for_each_safe
  *****/
-#define zt_list_for_each_safe(h, p, n)			\
+#define zt_elist_for_each_safe(h, p, n)			\
 	for ((p) = (h)->next, (n) = (p)->next;		\
 	     (p) != (h); (p) = (n), (n) = (p)->next)
 
-#endif	/* _ZT_LIST_H_ */
+#endif	/* _ZT_ELIST_H_ */

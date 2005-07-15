@@ -26,6 +26,19 @@ struct except_Handlers {
 struct except_Frame *_except_Stack = NULL;
 struct except_Handlers _except_Handlers_Stack = { NULL, NULL, NULL };
 
+char	* except_CatchAll = "except_CatchAll";
+
+except_handler _except_default_handler = NULL;
+
+except_handler
+_except_install_default_handler(except_handler h)
+{
+	except_handler	p = _except_default_handler;
+	
+	_except_default_handler = h;
+	
+	return p;
+}
 
 void _except_install_handler(void *e, except_handler h){
 	struct except_Handlers *stack = &_except_Handlers_Stack;
@@ -149,10 +162,19 @@ void _except_call_handlers(struct except_Frame *estack)
 			}
 		}
 	}else{
-		_except_unhandled_exception(estack->etext,
-					    estack->efile,
-					    estack->eline,
-					    estack->efunc);
+		if(_except_default_handler) {
+			_except_default_handler(estack->exception,
+					estack->type,
+					estack->etext,
+					estack->efile,
+					estack->efunc,
+					estack->eline);
+		} else {
+			_except_unhandled_exception(estack->etext,
+						    estack->efile,
+						    estack->eline,
+						    estack->efunc);
+		}
 	}
 }
 
@@ -160,7 +182,7 @@ void _except_call_handlers(struct except_Frame *estack)
 void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc)
 {
 	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
-		etext, efile, eline, efunc);
+		   etext, efile, eline, efunc);
 	abort();
 }
 	

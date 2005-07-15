@@ -188,7 +188,18 @@ int main(int argc, char *argv[]){
 		TRY({ CATCH(domain, domain=Fail;); },{ });
 		TEST("Catch in Try Block:", domain == Pass);
 	}
-
+	
+	{
+		char	* domain=Fail;
+		TRY({
+			    THROW(domain);
+		    },{
+			    CATCH(except_CatchAll, domain=Pass;);
+		    });
+		TEST("except_All:", domain == Pass);
+	}
+	
+			
 	{
 		int test_count = 0;
 		
@@ -255,6 +266,12 @@ int main(int argc, char *argv[]){
 		REMOVE_EXCEPT_HANDLER(foo, foo);
 		//REMOVE_EXCEPT_HANDLER(foo, foo);
 
+		test_count = 0;
+		INSTALL_DEFAULT_HANDLER(foo);
+		TRY_THROW(bar);
+
+		TEST("INSTALL_DEFAULT_HANDLER: ", test_count > 0);
+		
 		/* FIXME: figure out how to test this ccorrectly */
 /* 		fprintf(stderr, "This should exit: "); */
 /* 		INSTALL_EXCEPT_HANDLER(fooexit, fooexit); */

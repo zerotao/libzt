@@ -77,7 +77,7 @@ zt_array_with(unsigned char *data, int len, int size, int copy)
 zt_array
 zt_array_with_cstr(char *str) 
 {
-	return zt_array_with(str, strlen(str), sizeof(char), 1);
+	return zt_array_with((unsigned char *)str, strlen(str), sizeof(char), 1);
 }
 
 void

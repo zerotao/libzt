@@ -36,6 +36,7 @@ libzt_la_SOURCES = 		\
 	zt_opts.c 		\
 	zt_progname.c 		\
 	zt_cstr.c 		\
+	zt_coroutine.c		\
 	zt_time.c
 
 # 	zt_cfg/cfg_private.c 	
@@ -61,6 +62,7 @@ pkginclude_HEADERS = \
 	zt_progname.h 	\
 	zt_cstr.h 	\
 	zt_time.h	\
+	zt_coroutine.h	\
         zt_macros.h
 
 #	zt_bytearray.h

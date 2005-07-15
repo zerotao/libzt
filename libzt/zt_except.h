@@ -34,6 +34,7 @@ struct except_Frame {
 typedef int (*except_handler)(void *, void *, char *, char *, char *, int);
 
 enum { except_WindPhase = 0, except_UnWindPhase };
+extern char	* except_CatchAll;
 
 /* exported variables */
 extern struct except_Frame *_except_Stack;
@@ -41,6 +42,11 @@ extern struct except_Frame *_except_Stack;
 /* exported functions */
 extern void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc);
 extern void _except_call_handlers(struct except_Frame *);
+
+extern except_handler
+_except_install_default_handler(except_handler h);
+#define INSTALL_DEFAULT_HANDLER(HANDLER)	\
+	_except_install_default_handler(HANDLER)
 
 /****d* Exceptions/INSTALL_EXCEPT_HANDLER
  * NAME
@@ -138,7 +144,8 @@ extern void _except_remove_handler(void*, except_handler);
 	if(_except_Stack->phase == except_UnWindPhase){					\
 		void *e = _except_Stack->exception;					\
 		void *e2 = (void *)(&EXCEPTION);					\
-		if(e >= e2 && e2 <= (void *)((int)e + sizeof(EXCEPTION))){ 		\
+		if((e2 == (void *)&except_CatchAll) ||			\
+		   (e >= e2 && e2 <= (void *)((int)e + sizeof(EXCEPTION)))){ 		\
 			_except_Stack->caught = 1;					\
 			{ DATA };							\
 		}									\
