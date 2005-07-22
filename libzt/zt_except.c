@@ -181,8 +181,11 @@ void _except_call_handlers(struct except_Frame *estack)
 
 void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc)
 {
+	char	  bname[PATH_MAX];
+	cstr_basename(bname, PATH_MAX, efile, NULL);
+	
 	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
-		   etext, efile, eline, efunc);
+		   etext, bname, eline, efunc);
 	abort();
 }
 	
