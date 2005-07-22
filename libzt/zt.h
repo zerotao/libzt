@@ -96,11 +96,13 @@
 # define NORETURN  __attribute__((noreturn))
 # define CONST     __attribute__((const))
 # define UNUSED    __attribute__((unused))
+# define FORMAT(x) __attribute__((format x))
 # define INLINE    inline
 #else
 # define NORETURN  
 # define CONST     
-# define UNUSED    
+# define UNUSED
+# define FORMAT(x)
 # define INLINE    
 #endif
 
