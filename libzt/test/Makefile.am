@@ -94,14 +94,21 @@ EXTRA_DIST = 		\
 	out.test 	\
 	cfg_test.ini
 
+noinst_DATA = \
+	out.test \
+	cfg_test.ini
+
+DUMMY_TEST = $(addprefix $(srcdir)/,$(noinst_DATA))
+
 update: test.out
-	cp test.out out.test
+	cp test.out $(top_srcdir)/libzt/test/out.test
 
 test.out:
 	test
 
 test: $(TEST_APPS)
 	@echo Beginning Test Run
+	@cp -p $(DUMMY_TEST) $(top_builddir)/libzt/test
 	@$(RM) -f test.out diff.out assert.out core
 	@(for program in $^; do \
 	  if [ "$$program" = "opts_test" ]; then \
@@ -125,37 +132,39 @@ test: $(TEST_APPS)
               echo "assert[1]:                                                  => failure" | tee -a test.out; \
 	    fi; \
 	  else \
-	    ./$$program 2>&1 | tee -a test.out; \
-	    if [ -f core ]; then \
-	      echo "$$program failed with a core dump"; \
+	    ./$$program > $$program.out 2>&1		\
+	    EXIT=$$?; 					\
+	    cat $$program.out;				\
+	    cat $$program.out >> test.out; 		\
+	    if [ ! $$EXIT == 0 ]; then 			\
+	      echo "$$program exited with a non zero exitcode: $$EXIT"; \
 	      exit 255; \
 	    fi \
 	  fi \
 	done)
-	@(diff test.out $(top_srcdir)/libzt/test/out.test > diff.out 2>&1; \
-	  N=`cat test.out | wc -l | awk '{ print $$1 }'`;		\
-	  F=`grep failure test.out`; 		\
-	  FN=`echo $$F | wc -l | awk '{ print $$1 }'`;	\
-	  echo; 				\
-	  if [ -n "$$F" ]; then 		\
-	    echo "$$FN of $$N tests Failed!";	\
-	    echo;				\
-	    echo "Failed tests were:";		\
-	    echo "$$F";				\
-	  else					\
-	    echo "$$N of $$N tests Passed!"; 	\
-	  fi;					\
-	  if [ -s diff.out ]; then		\
-	    echo;				\
+	@(diff test.out out.test > diff.out 2>&1; \
+	  N=`cat test.out | wc -l | awk '{ print $$1 }'`; 	\
+	  N2=`cat out.test | wc -l | awk '{ print $$1 }'`; 	\
+	  F=`grep failure test.out`;				\
+	  FN=`echo $$F | wc -l | awk '{ print $$1 }'`;	 	\
+	  echo; 						\
+	  if [ -n "$$F" ]; then 				\
+	    echo "$$FN of $$N tests Failed!";			\
+	    echo;						\
+	    echo "Failed tests were:";				\
+	    echo "$$F";						\
+	  else							\
+	    echo "$$N of $$N tests Passed!"; 			\
+	  fi;							\
+	  if [ ! $$N == $$N2 ]; then				\
+	    echo "$$N tests run but $$N2 expected.";		\
+	  fi;							\
+	  if [ -s diff.out ]; then				\
+	    echo;						\
 	    echo "Test output does not match expected output.";	\
 	    echo "See test.out and diff.out for details."; \
 	  fi; \
 	)
-
-noinst_DATA = \
-	out.test \
-	cfg_test.ini
-
 
 include $(top_srcdir)/Makefile.extra
 
