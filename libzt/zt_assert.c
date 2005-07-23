@@ -23,6 +23,7 @@
 #include "zt_assert.h"
 #include "zt_log.h"
 #include "zt_except.h"
+#include "zt_cstr.h"
 
 char *assertion_failed = "assertion_failed";
 

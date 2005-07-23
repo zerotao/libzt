@@ -86,15 +86,15 @@ extern void log_get_debug_info _(( log_ty *, char **, int *, char ** ));
 extern log_ty *log_logger _(( log_ty * ));
 extern log_ty *log_debug_logger _(( log_ty * ));
 
-extern void log_lprintf _(( log_ty *, log_level, char *, ... ));
-extern void log_lvprintf _(( log_ty *, log_level, char *, va_list ));
+extern void log_lprintf _(( log_ty *, log_level, char *, ... )) FORMAT((printf, 3, 4));
+extern void log_lvprintf _(( log_ty *, log_level, char *, va_list )) FORMAT((printf, 3, 0));
 
 /****d* Logging/log_printf
  *  NAME
  *    log_printf
  *****/
 #define log_printf( level, fmt, args... ) \
-	log_lprintf( NULL, level, fmt, ##args )
+	log_lprintf( 0, level, fmt, ##args )
 
 /****d* Logging/log_vprintf
  *  NAME
@@ -103,8 +103,8 @@ extern void log_lvprintf _(( log_ty *, log_level, char *, va_list ));
 #define log_vprintf( level, fmt, ap ) \
 	log_lvprintf ( NULL, level, fmt, ap )
 
-extern void _log_debug _(( char *, ... ));
-extern void _log_vdebug _(( char *, va_list ));
+extern void _log_debug _(( char *, ... ))FORMAT((printf, 1, 2));
+extern void _log_vdebug _(( char *, va_list ))FORMAT((printf, 1, 0));
 
 extern void log_close _(( log_ty *log ));
 

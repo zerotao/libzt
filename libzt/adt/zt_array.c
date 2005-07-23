@@ -27,7 +27,7 @@ zt_array_new(int len, int size)
 
 	if(len > 0) {
 		arrayrep_init(array, len, size,
-			      XCALLOC(unsigned char, len*size));
+			      XCALLOC(char, len*size));
 	} else {
 		arrayrep_init(array, len, size, NULL);
 	}
@@ -44,14 +44,14 @@ zt_array_free(zt_array *array)
 }
 
 void
-zt_array_set_data(zt_array array, unsigned char *data,
+zt_array_set_data(zt_array array, char *data,
 		  int len, int size, int copy)
 {
 	assert(array);
 	
 	if(copy) {
 		arrayrep_init(array, len, size,
-			      XCALLOC(unsigned char, len*size));
+			      XCALLOC(char, len*size));
 		memcpy(array->data, data, len * size);
 	} else {
 		arrayrep_init(array, len, size, data);
@@ -59,7 +59,7 @@ zt_array_set_data(zt_array array, unsigned char *data,
 }
 
 zt_array
-zt_array_with(unsigned char *data, int len, int size, int copy)
+zt_array_with(char *data, int len, int size, int copy)
 {
 	zt_array	  array;
 
@@ -77,7 +77,7 @@ zt_array_with(unsigned char *data, int len, int size, int copy)
 zt_array
 zt_array_with_cstr(char *str) 
 {
-	return zt_array_with((unsigned char *)str, strlen(str), sizeof(char), 1);
+	return zt_array_with((char *)str, strlen(str), sizeof(char), 1);
 }
 
 void
@@ -87,9 +87,9 @@ zt_array_resize(zt_array array, int len)
 	assert(len >= 0);
 
 	if (array->length == 0) {
-		array->data = XCALLOC(unsigned char, len*array->size);
+		array->data = XCALLOC(char, len*array->size);
 	} else if (len > 0) {
-		array->data = XREALLOC(unsigned char, array->data, len*array->size);
+		array->data = XREALLOC(char, array->data, len*array->size);
 	} else {
 		XFREE(array->data);
 	}
@@ -141,7 +141,7 @@ zt_array_size(zt_array array)
 	return array->size;
 }
 
-unsigned char *
+char *
 zt_array_data(zt_array array)
 {
 	assert(array);

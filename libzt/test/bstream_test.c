@@ -29,7 +29,7 @@ main(int argc, char *argv[])
 	bs = zt_bstream_new();
 
 	zt_bstream_write(bs, test_string, strlen(test_string),
-			 sizeof(unsigned char), 0);
+			 sizeof(char), 0);
 
 	zt_bstream_write_float(bs, test_float);
 	zt_bstream_write_uint8(bs, test_uint8);
@@ -40,8 +40,8 @@ main(int argc, char *argv[])
 
 	zt_bstream_rewind(bs);
 	
-	zt_bstream_read(bs, (unsigned char *)&string_test, strlen(test_string),
-			sizeof(unsigned char), 0);
+	zt_bstream_read(bs, &string_test[0], strlen(test_string),
+			sizeof(char), 0);
 	zt_bstream_read_float(bs, &float_test);
 	zt_bstream_read_uint8(bs, &uint8_test);
 	zt_bstream_read_uint16(bs, &uint16_test);
@@ -75,8 +75,8 @@ main(int argc, char *argv[])
 
 	zt_bstream_rewind(clone);
 	
-	zt_bstream_read(clone, (unsigned char *)&string_test, strlen(test_string),
-			sizeof(unsigned char), 0);
+	zt_bstream_read(clone, &string_test[0], strlen(test_string),
+			sizeof(char), 0);
 	
 	TEST("zt_bstream_clone",
 	     strcmp(test_string, string_test) == 0);
@@ -87,13 +87,13 @@ main(int argc, char *argv[])
 	clone->flipendian = 1;
 	
 	zt_bstream_write(clone, test_string, strlen(test_string),
-			 sizeof(unsigned char), 0);
+			 sizeof(char), 0);
 
 	zt_bstream_rewind(clone);
 
 	memset(string_test, 0, 256);
-	zt_bstream_read(clone, (unsigned char *)string_test, strlen(test_string),
-			sizeof(unsigned char), 0);
+	zt_bstream_read(clone, string_test, strlen(test_string),
+			sizeof(char), 0);
 
 
 	TEST("flip_endian", strcmp(string_test, test_string) == 0);

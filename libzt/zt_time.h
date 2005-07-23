@@ -51,5 +51,7 @@ zt_time(int n,
 	void *(*test)(void *),
 	void *data);
 
+void
+zt_time_print_result(struct time_result *tr, char *name, int n);
 
 #endif /* _ZT_TIME_H_ */

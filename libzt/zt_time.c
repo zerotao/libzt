@@ -124,7 +124,7 @@ zt_time_result_to_elapsed(struct time_result *result,
  *   zt_time
  *
  * DESCRIPTION
- *   prints a message about how long the function test took when called
+ *   returns a struct time_result specifing how long the function test took when called
  *   with data.
  *
  * INPUTS
@@ -159,12 +159,24 @@ zt_time(int n,
 	zt_diff_time(&tv->usr_time, &rbefore.ru_utime, &rafter.ru_utime);
 	zt_diff_time(&tv->sys_time, &rbefore.ru_stime, &rafter.ru_stime);
 	
-/* 	if(n == 1) { */
-/* 		log_printf(log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total \n",name, uel, sel, elapsed); */
-/* 	} else { */
-/* 		log_printf(log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total \n",n, name, uel, sel, elapsed); */
-/* 	} */
-
 	return ret;
+}
+
+void
+zt_time_print_result(struct time_result *tr, char *name, int n)
+{
+	float usr, sys, total;
+	
+	assert(tr);
+	assert(name);
+	
+	zt_time_result_to_elapsed(tr, &usr, &sys, &total);
+
+	if(n <= 1) {
+		log_printf(log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total\n", name, usr, sys, total);
+	} else {
+		log_printf(log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total \n",n, name, usr, sys, total);
+	}
+	
 }
 

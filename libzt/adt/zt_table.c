@@ -58,7 +58,7 @@ struct zt_table {
 	struct table_node	**buckets;
 };
 
-struct Global {
+static struct Global {
 	zt_mem_pool	* table_mem_pool;
 }Global;
 

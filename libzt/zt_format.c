@@ -136,11 +136,11 @@ fmt_vstrprintf(const char *fmt, va_list ap)
 
 	assert(fmt);
 	cl.size = 256;
-	cl.buf = cl.bp = XMALLOC(unsigned char, cl.size);
+	cl.buf = cl.bp = XMALLOC(char, cl.size);
 	fmt_vformat(fmt_append, &cl, fmt, ap);
 	fmt_append(0, &cl);
 	
-	return XREALLOC(unsigned char, cl.buf, cl.bp - cl.buf);
+	return XREALLOC(char, cl.buf, cl.bp - cl.buf);
 }
 
 

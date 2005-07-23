@@ -11,6 +11,7 @@
 
 #include "zt_except.h"
 #include "zt_log.h"
+#include "zt_cstr.h"
 
 struct except_Handler {
 	struct except_Handler	 *next;

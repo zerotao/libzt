@@ -6,6 +6,9 @@ SUBDIRS = 		\
 	test
 #	cfg 
 
+tests:
+	$(MAKE) -C test test
+
 lib_LTLIBRARIES = libzt.la 
 
 libzt_la_LIBADD = 	\
@@ -23,6 +26,8 @@ libzt_la_LIBADD = 	\
 # check eev
 libzt_la_LDFLAGS = -version-info 1:0:0 \
 		-export-dynamic
+
+DEFS = @DEFS@ -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 libzt_la_SOURCES = 		\
 	zt_assert.c 		\

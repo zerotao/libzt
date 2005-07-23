@@ -9,7 +9,7 @@ libzt_adt_la_SOURCES = 	\
 
 #	zt_bytearray.c
 
-DEFS = @DEFS@ -I/usr/include -I. -I$(srcdir) -I../..
+DEFS = @DEFS@ -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 pkgincludedir = ${includedir}/libzt/adt
 pkginclude_HEADERS =	\

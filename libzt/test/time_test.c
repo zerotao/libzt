@@ -1,6 +1,7 @@
 
 #include <libzt/zt.h>
 #include <libzt/zt_time.h>
+#include <libzt/zt_log.h>
 #include "test.h"
 
 
@@ -13,11 +14,11 @@ main(int argc, char *argv[])
 	struct timeval	  tv4 = {2,0}; /* 2 second diff time */
 	struct timeval	  tgt;
 	
-
+	
 	gettimeofday(&tv1, NULL);
 	gettimeofday(&tv2, NULL);
-
-	TEST("zt_cmp_time", zt_cmp_time(&tv1, &tv2) < 0);
+	
+	TEST("zt_cmp_time", zt_cmp_time(&tv1, &tv2) <= 0);
 
 	zt_diff_time(&tgt, &tv1, &tv2);
 	TEST("zt_diff_time", zt_cmp_time(&tv4, &tgt) > 0);
@@ -27,8 +28,20 @@ main(int argc, char *argv[])
 
 	zt_add_time(&tgt, &tv1, &tv1);
 	TEST("zt_add_time", zt_cmp_time(&tgt, &tv1) > 0);
-	
-	
-	
+
+/*
+ *	{
+ *		struct time_result tr;
+ *		
+ *		void *test_fn(void * f) {
+ *			sleep(1);
+ *			return NULL;
+ *		}
+ *		
+ *		zt_time(1, &tr, test_fn, NULL);
+ *		zt_time_print_result(&tr, "test_fn", 1);
+ *	}
+ */
+
 	return 0;
 }

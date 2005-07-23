@@ -20,9 +20,7 @@ main ( argc, argv )
      int argc;
      char *argv[];
 {
-  assert(1==1);			/* will produce a warning: statement with no effect
-				   which is too true
-				 */
+  assert(1==1);			/* will produce a warning: statement with no effect which is too true */
   assert(1==0);
 
   return 0;
