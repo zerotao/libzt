@@ -1,10 +1,7 @@
 SUBDIRS = \
-	doc \
+	doc     \
 	replace \
 	libzt 
-
-docs:
-	(cd doc; make)
 
 MAINTAINERCLEANFILES = \
 	configure \
@@ -12,21 +9,19 @@ MAINTAINERCLEANFILES = \
 	stamp-h.in \
 	config.h.in \
 	Makefile.in \
-	aux/config.guess \
-	aux/config.sub \
-	aux/ltmain.sh \
-	aux/install-sh \
-	aux/mkinstalldirs \
-	aux/missing \
+	aux_files/config.guess \
+	aux_files/config.sub \
+	aux_files/ltmain.sh \
+	aux_files/install-sh \
+	aux_files/missing \
 	files.list
 
 EXTRA_DIST = \
-	aux/install-sh \
-	aux/mkinstalldirs \
-	aux/missing \
-	aux/config.sub \
-	aux/config.guess \
-	aux/ltmain.sh \
+	aux_files/install-sh \
+	aux_files/missing \
+	aux_files/config.sub \
+	aux_files/config.guess \
+	aux_files/ltmain.sh \
 	Makefile.extra \
 	tools/build-rpm \
 	tools/project.spec \
@@ -34,7 +29,6 @@ EXTRA_DIST = \
 	tools/libzt.pc \
 	tools/libzt.pc.in \
 	libzt.list
-
 
 pkg:
 	(mkdir @PACKAGE@_fakeinstall; \
