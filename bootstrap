@@ -1,6 +1,6 @@
 #! /bin/sh
 # bootstrap        Bootstrap Script
-# Copyright (C) 2000, 2002, 2003, ETG, Inc. All Rights Reserved.
+# Copyright (C) 2000, 2002, 2003, 2005, ETG, Inc. All Rights Reserved.
 #
 # This file is proprietary and confidential and must not be distributed without the 
 # express permission of the copyright holder.
@@ -22,15 +22,67 @@
 # aclocal generates aclocal.m4 by scanning configure.in
 # automake generates Makefile.in by scanning Makefile.am
 # autoconf generates configure by scanning configure.in
+progvar ()
+{
+    #
+    # see if the first choice exists
+    #
+    local VV=$1; shift
+    local i
+    local R
 
-set -x
-if [ -f /usr/bin/glibtoolize ]; then
- LIBTOOLIZE=glibtoolize
+    eval R=\\\$"$VV"
+    eval R=$R
+
+    if [ x${R} == x"" ]; then
+
+	for (( i=1; i<=$#; i++ )); do
+	    type $1 > /dev/null 2>&1
+	    if [[ $? = 0 ]]; then
+		V=$1
+	    fi
+	    shift;
+	done
+    else
+	# the environment alread sets it
+	return;
+    fi
+
+
+    eval $VV=$V
+    unset V
+}
+
+error () {
+    echo "$1: failed with $?"
+    exit 1
+}
+
+# find the apps and set if necessary
+progvar LIBTOOLIZE glibtoolize libtoolize
+progvar ACLOCAL aclocal
+progvar AUTOHEADER autoheader
+progvar AUTOCONF autoconf
+progvar AUTOMAKE automake
+progvar AUTORECONF autoreconf
+
+
+
+if [ -f configure -a -n ${AUTORECONF} ]; then
+    set -x
+    ${AUTORECONF} || error "${AUTORECONF}"
 else
- LIBTOOLIZE=libtoolize
+    set -x
+    ${LIBTOOLIZE} --automake --copy --force || error "${LIBTOOLIZE}"
+    ${ACLOCAL} -I aux_files || error "${ACLOCAL}"
+    ${AUTOHEADER} || error "${AUTOHEADER}"
+    ${AUTOCONF} || error "${AUTOCONF}"
+    ${AUTOMAKE} --add-missing --copy --foreign -Wall || error "${AUTOMAKE}"
 fi
-${LIBTOOLIZE} --automake --copy --force && \
-aclocal -I aux && \
-autoheader && \
-autoconf && \
-automake --add-missing --copy --foreign
+
+# set +x
+# if [ x${AUTOMAKE} == x"unsermake" ]; then
+#     set -x
+#     unsermake -c || error "unsermake"
+# fi
+
