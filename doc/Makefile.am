@@ -18,7 +18,7 @@ SRC   = builddate $(MAIN) $(SECTS) $(MAIN).sed $(addsufix .sed,$(SECTS) Makefile
 #genindex.sgml
 
 all: 
-	@robodoc --rc robodoc.rc --html
+#	@robodoc --rc robodoc.rc --html
 #	@robodoc --rc robodoc.rc --latex
 #$(DOC).ps $(DOC)
 
@@ -49,7 +49,7 @@ builddate:
 	date "+%e %B %Y" > $@
 
 %.sed: %
-	fold -w 72 $< | \
+	fold -w 72 $^ | \
 	  sed -e "s/$$(echo x | tr x \\t)/        /g" \
 	      -e "s/&/\\&amp;/g" \
 	      -e "s/</\\&lt;/g"  \
@@ -57,12 +57,12 @@ builddate:
 	      -e "s/--/\\&mdash;/g" > $@
 
 %.eps: %.fig
-	fig2dev -Leps $< $@
+	fig2dev -Leps $^ $@
 
 %.jpeg: %.fig
-	fig2dev -Ljpeg $< $@
+	fig2dev -Ljpeg $^ $@
 
-.PHONY: all builddate
+.PHONY: builddate
 
 
 clean-local:
@@ -72,4 +72,4 @@ include $(top_srcdir)/Makefile.extra
 
 MAINTAINERCLEANFILES += HTML.index genindex.sgml
 CLEANFILES += *.log *.dvi *.aux *.tex *.sed *.ps builddate $(G_IMG)
-DISTCLEANFILES += *.tar.gz 
+
