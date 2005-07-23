@@ -5,7 +5,7 @@ AC_PREREQ(2.13)
 AC_INIT(libzt, 1.0.4, jshiffer@zerotao.org)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR(libzt/Makefile.am)
-AC_CONFIG_AUX_DIR(aux)
+AC_CONFIG_AUX_DIR(aux_files)
 
 AC_CANONICAL_SYSTEM
 
@@ -13,7 +13,6 @@ AM_INIT_AUTOMAKE([foreign])
 
 
 dnl AM_MAINTAINER_MODE
-
 dnl AM_DISABLE_SHARED
 dnl AM_DISABLE_STATIC
 dnl AC_LIBLTDL_INSALLABLE
@@ -30,7 +29,6 @@ fi
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-dnl AC_PROG_RANLIB
 
 AM_PROG_LIBTOOL
 
@@ -39,15 +37,16 @@ case $host in
 		CFLAGS="$CFLAGS -no-cpp-precomp -flat_namespace"
 	;;
 esac
+
 dnl Checks for libraries.
-dnl Replace `main' with a function in -lpcap:
 dnl AC_CHECK_LIB(foo, foo_init)
 
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(string.h strings.h, break)
-AC_CHECK_HEADERS(stdlib.h unistd.h errno.h assert.h syslog.h)
+AC_CHECK_HEADERS(strings.h, break)
+AC_CHECK_HEADERS(errno.h assert.h syslog.h)
+AC_CHECK_HEADERS(limits.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -150,6 +149,15 @@ _EOF_
       echo '  extern int errno;' >> $tmpfile
       echo '#endif' >> $tmpfile
     fi
+
+# limits.h
+    if test x$ac_cv_header_limits_h = xyes; then
+      echo '#include <limits.h>' >> $tmpfile
+    fi
+
+    echo '#ifndef PATH_MAX' >> $tmpfile
+    echo '# define PATH_MAX 1024' >> $tmpfile
+    echo '#endif' >> $tmpfile
 
 # string/strings.h
     if test x$ac_cv_header_strings_h = xyes; then
@@ -267,6 +275,7 @@ _EOF_
 # headers
   ac_cv_header_assert_h=$ac_cv_header_assert_h
   ac_cv_header_errno_h=$ac_cv_header_errno_h
+  ac_cv_header_limits_h=$ac_cv_header_limits_h
   ac_cv_header_stdlib_h=$ac_cv_header_stdlib_h
   ac_cv_header_stdarg_h=$ac_cv_header_stdarg_h
   ac_cv_header_string_h=$ac_cv_header_string_h
