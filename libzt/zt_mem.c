@@ -23,7 +23,7 @@ static zt_elist(sets);
 //static long x_sys_page_size = 0;
 
 typedef struct zt_mem_elt {
-	zt_elist			  free_elt_list;
+	zt_elist		  free_elt_list;
 	struct zt_mem_page	* parent_page;
 	unsigned long		  data[0];
 } zt_mem_elt;
@@ -35,14 +35,14 @@ struct zt_mem_heap {
 };
 
 typedef struct zt_mem_page {
-	zt_elist	  	  	  page_list;
+	zt_elist	  	  page_list;
 	struct zt_mem_pool	* parent_pool;
 	unsigned long		  num_free_elts;
 	unsigned long	 	  data[0];
 } zt_mem_page;
 
 struct zt_mem_pool {
-	zt_elist	  	  	  pool_list;
+	zt_elist	  	  pool_list;
 	char		 	* name;
 	long			  rcache;        /* requested elements in cache */
 	long			  ncache;        /* actual elements in cache */
@@ -57,25 +57,25 @@ struct zt_mem_pool {
 	zt_page_release_test	  release_test_cb;
 	void			* release_test_cb_data;
 	int			  flags;
-	zt_elist			  page_list;
-	zt_elist		  	  free_elt_list;
+	zt_elist		  page_list;
+	zt_elist		  free_elt_list;
 };
 
 struct zt_mem_pool_group {
-	zt_elist		  group_list;
+	zt_elist	  group_list;
 	int		  npools;
 	zt_mem_pool	**pools;
 };
 
 struct zt_mem_set_elt {
-	zt_elist			  elt_list;
-	void			* elt;
+	zt_elist	  elt_list;
+	void		* elt;
 };
 
 struct zt_mem_set {
-	zt_elist		  	  set_list;
-	char			* name;
-	zt_elist		  	  elt_list;
+	zt_elist	  set_list;
+	char		* name;
+	zt_elist	  elt_list;
 };
 
 
@@ -253,7 +253,8 @@ zt_mem_pool_alloc(zt_mem_pool *pool)
 		/* alloc a new page */
 		zt_mem_page	 *page;
 		page = zt_mem_page_alloc(pool);
-		zt_elist_add_tail(&page->page_list, &pool->page_list);
+		/*  */
+		zt_elist_add_tail(&pool->page_list, &page->page_list);
 		pool->page_allocs++;
 	}
 
@@ -374,7 +375,7 @@ zt_mem_pool_get_stats(zt_mem_pool *pool, zt_mem_pool_stats *stats)
 void
 zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 {
-	zt_elist		* tmp;
+	zt_elist	* tmp;
 	zt_mem_page	* page;
 	long		  felts = 0;
 
