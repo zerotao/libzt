@@ -41,16 +41,17 @@ unsigned long powers_of_2[] = {2,4,8,
 			       2147483648UL, UINT_MAX};
 		 
 struct table_node {
-	void		 *datum;
-	void		 *key;
-	struct table_node *next;
+	void		  * datum;
+	void		  * key;
+	struct table_node * next;
 };
 
 struct zt_table {
 	char			* name;
 	table_compare 		  cmp;
-	table_func    		  func;
+	table_hash_func    	  func;
 	int			  nbits;
+	int			  flags;
 	unsigned long		  num_buckets;
 	unsigned int 		  filled;
 	zt_mem_pool		* node_pool;
@@ -63,15 +64,14 @@ static struct Global {
 }Global;
 
 zt_table *
-table_init(char *name, table_func func, table_compare cmp, size_t hint, int flags)
+table_init(char *name, table_hash_func func, table_compare cmp, size_t hint, int flags)
 {
 	zt_table 	* table;
 	int		  nbuckets = 0;
 	char		  tname[1024];
 
 	if( (func == NULL) ||
-	    (cmp == NULL) ||
-	    (name == NULL))
+	    (cmp == NULL))
 	{
 		return NULL;
 	}
@@ -85,6 +85,8 @@ table_init(char *name, table_func func, table_compare cmp, size_t hint, int flag
 		return NULL;
 	}
 
+	table->flags = flags;
+	
 	if(flags & TABLE_SIZE_USE_HINT) {
 		nbuckets = hint;
 	} else {
@@ -98,15 +100,20 @@ table_init(char *name, table_func func, table_compare cmp, size_t hint, int flag
 			}
 		}
 	}
-
+	
 	table->nbits = nbits(nbuckets-1);
 	
 	table->table_heap = zt_mem_heap_init(0, nbuckets * sizeof(struct table_node *));
 
 	table->buckets = zt_mem_heap_get_data(table->table_heap);
 	memset(table->buckets, 0, nbuckets * sizeof(struct table_node *));
+
+	if(name) {
+		table->name = XSTRDUP(name);
+	} else {
+		table->name = XSTRDUP("anonymous");
+	}
 	
-	table->name = XSTRDUP(name);
 	
 	snprintf(tname, sizeof_array(tname), "%s (table node pool)", name);
 	table->node_pool = zt_mem_pool_init(tname, nbuckets,
@@ -143,27 +150,40 @@ table_destroy(zt_table *h)
 }
 
 int
-table_set(zt_table *h, void *key, void *datum)
+table_set(zt_table *h, const void *key, const void *datum)
 {
-	unsigned long	  nkey = h->func(key, 1, h->nbits);
+	unsigned long	  	  nkey = h->func((unsigned char *)key);
+	struct table_node	* node;
+	struct table_node	* nn;
 	
+	ZT_HASH_SUB32_MASK(nkey, h->nbits);
 	LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
-	
-	struct table_node *node =(struct table_node *)zt_mem_pool_alloc(h->node_pool);
 
+	nn = h->buckets[nkey];
+	if(! (h->flags & TABLE_ALLOW_DUP_KEYS)) {
+		while(nn)
+		{
+			if(h->cmp ((void *)nn->key, key))
+				return 1;
+			nn = nn->next;
+		}
+	}
+
+	node = (struct table_node *)zt_mem_pool_alloc(h->node_pool);
+	
 	node->next = h->buckets[nkey];
 	h->buckets[nkey] = node;
-	node->key = key;
-	node->datum = datum;
+	node->key = (void *)key;
+	node->datum = (void *)datum;
 
 	return 0;
 }
 
 void *
-table_get(zt_table *h, void *key)
+table_get(zt_table *h, const void *key)
 {
-	int nkey = h->func (key, 1, h->nbits);
-	
+	int nkey = h->func ((unsigned char *)key);
+	ZT_HASH_SUB32_MASK(nkey, h->nbits);	
 	struct table_node *node = h->buckets[nkey];
 	while(node)
 	{
@@ -174,10 +194,64 @@ table_get(zt_table *h, void *key)
 	return NULL;
 }
 
+void *
+table_del(zt_table *h, const void *key)
+{
+	struct table_node 	* node;
+	struct table_node	* prev;
+	int 			  nkey = h->func ((unsigned char *)key);
+	
+	ZT_HASH_SUB32_MASK(nkey, h->nbits);
+
+	
+	prev = node = h->buckets[nkey];
+	
+	while(node)
+	{
+		if(h->cmp ((void *)node->key, key)) {
+			void	* datum = node->datum;
+			
+			if(prev == node) {
+				h->buckets[nkey] = node->next;
+			} else {
+				prev->next = node->next;
+			}
+
+			zt_mem_pool_release((void **)&node);
+			return datum;
+		}
+		
+		node = node->next;
+	}
+	return NULL;
+}
+
+int
+table_cpy(zt_table *t1, zt_table *t2)
+{
+	int	  i;
+	int	  any = 0;
+  
+	for(i=0; i < t1->num_buckets; i++)
+	{
+		struct table_node *node = t1->buckets[i];
+		while(node)
+		{
+			any = 1;
+			/* if(!table_get(t2, node->key)) { */
+			table_set(t2, node->key, node->datum);
+			node = node->next;
+		}
+	}
+	
+	return any;
+}
+
 int
 table_for_each(zt_table *h, table_iterator iterator, void *param)
 {
-	int i;
+	int 	  i;
+	int	  res;
   
 	for(i=0; i < h->num_buckets; i++)
 	{
@@ -186,7 +260,10 @@ table_for_each(zt_table *h, table_iterator iterator, void *param)
 		while(tn)
 		{
 			struct table_node *next = tn->next;
-			iterator (tn->key, tn->datum, param);
+			if((res = iterator(tn->key, tn->datum, param)) != 0) {
+				return res;
+			}
+			
 			tn = next;
 		}
 	}
@@ -194,14 +271,15 @@ table_for_each(zt_table *h, table_iterator iterator, void *param)
 }
 
 /* common hash functions */
-unsigned long table_hash_int(unsigned char *key, unsigned long prev, unsigned long maxbits)
+unsigned long
+table_hash_int(unsigned char *key)
 {
-	unsigned long nkey = zt_hash32_buff(&key, sizeof(int), prev);
-	ZT_HASH_SUB32_MASK(nkey, maxbits);
+	unsigned long nkey = zt_hash32_buff(&key, sizeof(int), ZT_HASH32_INIT);
 	return nkey;
 }
 
-int table_compare_int(void *x, void *y)
+int
+table_compare_int(const void *x, const void *y)
 {
 	if((int)x == (int)y) {
 		return 1;
@@ -209,14 +287,15 @@ int table_compare_int(void *x, void *y)
 	return 0;
 }
 
-unsigned long table_hash_string(unsigned char *key, unsigned long prev, unsigned long maxbits)
+unsigned long
+table_hash_string(unsigned char *key)
 {
-	unsigned long nkey = zt_hash32_cstr(key, prev);
-	ZT_HASH_SUB32_MASK(nkey, maxbits);
+	unsigned long nkey = zt_hash32_cstr(key, ZT_HASH32_INIT);
 	return nkey;
 }
 
-int table_compare_string(void *x, void *y)
+int
+table_compare_string(const void *x, const void *y)
 {
 	if(strcmp((char *)x, (char *)y) == 0) {
 		return 1;
@@ -224,7 +303,8 @@ int table_compare_string(void *x, void *y)
 	return 0;
 }
 
-int table_compare_string_case(void *x, void *y)
+int
+table_compare_string_case(const void *x, const void *y)
 {
 	if(strcasecmp((char *)x, (char *)y) == 0) {
 		return 1;
