@@ -4,7 +4,8 @@ libzt_adt_la_SOURCES = 	\
 	zt_hash.c	\
 	zt_table.c	\
 	zt_array.c	\
-	zt_bstream.c
+	zt_bstream.c	\
+	zt_set.c
 
 
 #	zt_bytearray.c
@@ -15,8 +16,11 @@ pkgincludedir = ${includedir}/libzt/adt
 pkginclude_HEADERS =	\
 	zt_array.h	\
 	zt_list.h	\
+	zt_stack.h	\
+	zt_queue.h	\
 	zt_hash.h	\
 	zt_table.h	\
+	zt_set.h	\
 	zt_bstream.h
 
 include $(top_srcdir)/Makefile.extra
