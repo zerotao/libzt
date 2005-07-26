@@ -22,7 +22,6 @@ static int str_iterator (void *key, void *datum, void *param);
 static int int_iterator (void *key, void *datum, void *param);
 static int str_free(void *key, void *datum, void *param);
 
-
 int
 main ( int argc, char *argv[] ){
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id$
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
 	timetest("pool_alloc_small", NPLOOP, test_pool, (void *)&td_small);
 	timetest("pool_alloc_large", NPLOOP, test_pool, (void *)&td_large);
 
-	//	zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
+	zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
 
 	zt_mem_pool_destroy(&td_small.pool);
 	zt_mem_pool_destroy(&td_large.pool);

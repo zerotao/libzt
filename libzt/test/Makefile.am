@@ -15,7 +15,9 @@ TEST_APPS = 		\
 	format_test	\
 	except_test	\
 	time_test	\
-	bstream_test
+	stack_test	\
+	bstream_test	\
+	set_test
 
 #	bytearray_test
 noinst_PROGRAMS = 	\
