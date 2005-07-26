@@ -260,7 +260,7 @@ zt_mem_pool_alloc(zt_mem_pool *pool)
 
 	tmp = zt_elist_get_next(&pool->free_elt_list);
 	zt_elist_remove(tmp);
-	elt = zt_elist_entry(tmp, zt_mem_elt, free_elt_list);
+	elt = zt_elist_data(tmp, zt_mem_elt, free_elt_list);
 
 	--elt->parent_page->num_free_elts;
 	
@@ -278,7 +278,7 @@ zt_mem_pool_release(void **data){
 	zt_mem_pool 	 *pool;
 	zt_mem_page 	 *page;
 
-	elt = zt_elist_entry(*data, zt_mem_elt, data);
+	elt = zt_elist_data(*data, zt_mem_elt, data);
 	page = elt->parent_page;
 	pool = page->parent_pool;
 	
@@ -312,7 +312,7 @@ zt_mem_pool_release_free_pages(zt_mem_pool *pool)
 	zt_mem_page	* page;
 	
 	zt_elist_for_each_safe(&(pool)->page_list, pages, tpage) {
-		page = zt_elist_entry(pages, zt_mem_page, page_list);
+		page = zt_elist_data(pages, zt_mem_page, page_list);
 
 		if(page->num_free_elts == pool->elts_per_page) {
 			zt_mem_page_destroy(page);
@@ -329,7 +329,7 @@ zt_mem_pool_destroy(zt_mem_pool **pool) {
 	zt_mem_page	* page;	
 
 	zt_elist_for_each_safe(&(*pool)->page_list, tmp, ptmp) {
-		page = zt_elist_entry(tmp, zt_mem_page, page_list);
+		page = zt_elist_data(tmp, zt_mem_page, page_list);
 		
 		/* sanity checking */
 		if(page->num_free_elts < (*pool)->elts_per_page) {
@@ -380,7 +380,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	long		  felts = 0;
 
 	zt_elist_for_each(&pool->page_list, tmp) {
-		page = zt_elist_entry(tmp, zt_mem_page, page_list);
+		page = zt_elist_data(tmp, zt_mem_page, page_list);
 		felts += page->num_free_elts;
 	}
 
@@ -436,7 +436,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	if(flags & DISPLAY_POOL_PAGES) {
 		printf(BLANK "pages {\n", INDENT(offset+1));
 		zt_elist_for_each(&pool->page_list, tmp){
-			page = zt_elist_entry(tmp, zt_mem_page, page_list);
+			page = zt_elist_data(tmp, zt_mem_page, page_list);
 			zt_mem_page_display(offset+2, page);
 		}
 		printf(BLANK "}\n", INDENT(offset+1));
@@ -454,7 +454,7 @@ zt_mem_pools_display(int offset, int flags)
 	printf(BLANK "Pools { \n", INDENT(offset));
 	zt_elist_for_each(&pools, tmp)
 	{
-		pool = zt_elist_entry(tmp, zt_mem_pool, pool_list);
+		pool = zt_elist_data(tmp, zt_mem_pool, pool_list);
 		zt_mem_pool_display(offset + 1, pool, flags);
 	}
 	printf(BLANK "}\n", INDENT(offset));
@@ -492,7 +492,7 @@ zt_mem_pool_get(char *name)
 		zt_mem_pool	* pool;
 		int		  olen;
 		
-		pool = zt_elist_entry(tmp, zt_mem_pool, pool_list);
+		pool = zt_elist_data(tmp, zt_mem_pool, pool_list);
 		olen = strlen(pool->name);
 		
 		if(olen == nlen && (strncmp(name, pool->name, nlen) == 0)) {
@@ -708,7 +708,7 @@ zt_mem_elt_list_display(int offset, zt_elist *head)
 	i = 0;
 	zt_elist_for_each(head, tmp)
 	{
-		elt = zt_elist_entry(tmp, zt_mem_elt, free_elt_list);
+		elt = zt_elist_data(tmp, zt_mem_elt, free_elt_list);
 		if(i){ printf("\n"); }
 		printf(BLANK "elt: %p  parent_page: %p  data: %p", INDENT(offset), elt, elt->parent_page, elt->data);
 		i = 1;
