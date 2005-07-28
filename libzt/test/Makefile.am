@@ -17,7 +17,8 @@ TEST_APPS = 		\
 	time_test	\
 	stack_test	\
 	bstream_test	\
-	set_test
+	set_test	\
+	tree_test
 
 #	bytearray_test
 noinst_PROGRAMS = 	\
@@ -28,6 +29,9 @@ noinst_PROGRAMS = 	\
 
 # 	chash_test	
 # 	chash64_test	
+
+tree_test_SOURCES = \
+	tree_test.c
 
 time_test_SOURCES = \
 	time_test.c
