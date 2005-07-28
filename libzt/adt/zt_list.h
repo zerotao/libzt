@@ -41,7 +41,7 @@ typedef zt_elist zt_elist_elt;
 
 #define zt_elist_for_each_safe(h, p, n)			\
 	for ((p) = (h)->next, (n) = (p)->next;		\
-	     (p) != (h); (p) = (n), (n) = (p)->next)
+	     (p) != (h); (p) = (n), (n) = (n)->next)
 
 static INLINE int
 zt_elist_empty(zt_elist *head)
