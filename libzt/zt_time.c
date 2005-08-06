@@ -17,7 +17,8 @@ zt_add_time(struct timeval *at,
 {
 	at->tv_sec = t1->tv_sec + t2->tv_sec;
 	at->tv_usec = t1->tv_usec + t2->tv_usec;
-	if(at->tv_usec >= 1000000) {
+	
+	while(at->tv_usec >= 1000000) {
 		at->tv_sec++;
 		at->tv_usec -= 1000000;
 	}
@@ -33,7 +34,8 @@ zt_sub_time(struct timeval *st,
 {
 	st->tv_sec = t1->tv_sec - t2->tv_sec;
 	st->tv_usec = t1->tv_usec - t2->tv_usec;
-	if(st->tv_usec < 0) {
+	
+	while(st->tv_usec < 0) {
 		st->tv_sec--;
 		st->tv_usec += 1000000;
 	}	
@@ -61,15 +63,18 @@ zt_diff_time(struct timeval *dt,
 	     struct timeval *t2) 
 {
 	dt->tv_sec = t2->tv_sec - t1->tv_sec;
-	dt->tv_usec = t2->tv_usec = t1->tv_usec;
-	if(dt->tv_usec < 0){
+	dt->tv_usec = t2->tv_usec - t1->tv_usec;
+	
+	while(dt->tv_usec < 0){
 		dt->tv_usec += 1000000.0;
 		dt->tv_sec -= 1.0;
 	}
 	return dt;
 }
 
-/* <0 , 0, >0  */
+/*    <0, 0, >0
+ * t1  <, =, >  t2
+ */
 long
 zt_cmp_time(struct timeval *t1,
 	    struct timeval *t2)
