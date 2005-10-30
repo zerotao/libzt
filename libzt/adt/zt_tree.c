@@ -362,6 +362,10 @@ zt_rbt_find(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_no
 zt_rbt_node *
 zt_rbt_next(zt_rbt_node *elm)
 {
+	if(!elm) {
+		return NULL;
+	}
+	
 	if (zt_rbt_right(elm)) {
 		elm = zt_rbt_right(elm);
 		while (zt_rbt_left(elm)) {
