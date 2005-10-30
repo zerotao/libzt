@@ -50,8 +50,8 @@ extern void _assert_fail (char *condition, char *file,
 # define assert(c) (1)
 # define assert_nf(c) (1)
 #else
-# define assert(c) (((c) ? 1 : _assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0))
-# define assert_nf(c) (((c) ? 1 : _assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 0), 0))
+# define assert(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0)))
+# define assert_nf(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 0), 0)))
 #endif 
 
 
