@@ -18,7 +18,10 @@ TEST_APPS = 		\
 	stack_test	\
 	bstream_test	\
 	set_test	\
-	tree_test
+	tree_test	\
+	event_test	\
+	coro_test	\
+	cothread_test
 
 #	bytearray_test
 noinst_PROGRAMS = 	\
@@ -29,6 +32,9 @@ noinst_PROGRAMS = 	\
 
 # 	chash_test	
 # 	chash64_test	
+
+event_test_SOURCES = \
+	event_test.c
 
 tree_test_SOURCES = \
 	tree_test.c

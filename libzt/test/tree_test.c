@@ -113,7 +113,7 @@ main (int argc, char *argv[])
 	
 	
 	/* now iterate over each item in order clearing them as we go. */
-	zt_rbt_for_each_safe(iter, &br_root, next) {
+	zt_rbt_for_each_safe(&br_root, iter, next) {
 		struct int_set	* x = zt_rbt_data(iter, struct int_set, node);
 		ordered_dataset[x->i] = 0;
 		iter = zt_rbt_remove(&br_root, iter);
