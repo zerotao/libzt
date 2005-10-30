@@ -54,4 +54,5 @@ zt_time(int n,
 void
 zt_time_print_result(struct time_result *tr, char *name, int n);
 
+#define zt_copy_timeval(x, y) ((x)->tv_sec = (y)->tv_sec, (x)->tv_usec = (y)->tv_usec)
 #endif /* _ZT_TIME_H_ */
