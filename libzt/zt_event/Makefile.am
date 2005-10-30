@@ -11,7 +11,7 @@ libzt_event_la_SOURCES = \
 
 DEFS = @DEFS@ -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
-pkgincludedir = ${includedir}/libzt/zt_log
+pkgincludedir = ${includedir}/libzt/zt_event
 pkginclude_HEADERS = \
 		private.h \
 		interface.h

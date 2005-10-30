@@ -16,20 +16,20 @@
 #include "gtimer.h"
 
 struct zt_event_elt {
-	zt_rbt_node	  node;
+	zt_rbt_node		  node;
 	
-	zt_event_enum	  type;
-	int	  	  fd;
+	zt_event_enum		  type;
+	int	  		  fd;
 	
-	long		  tod;
+	long			  tod;
 	
-	zt_event_io_cb	* read_cb;
-	zt_event_io_cb	* write_cb;
-	zt_event_io_cb	* except_cb;
+	zt_event_io_cb		* read_cb;
+	zt_event_io_cb		* write_cb;
+	zt_event_io_cb		* except_cb;
 	
-	void		* read_data;
-	void		* write_data;
-	void		* except_data;
+	void			* read_data;
+	void			* write_data;
+	void			* except_data;
 };
 
 static int elt_cmp(zt_rbt_node *n1, zt_rbt_node *n2);
@@ -183,7 +183,7 @@ remove_signal(zt_event_sys sys, int signal, zt_event_signal_cb cb, void *data)
 
 	
 static int
-register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data)
+register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data, zt_event_timer_flags flags)
 {
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
 	struct zt_timer_node		* new;
@@ -192,20 +192,27 @@ register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, voi
 	
 	assert(ess);
 	assert(time);
-	
-	zt_add_time(&ntime, &sys->tod, time);
+
+	if(flags & ZT_EVENT_TIMER_ABSOLUTE) {
+		zt_copy_timeval(&ntime, time);
+		/* absolute timers are always one shot timers */
+		flags |= ZT_EVENT_TIMER_ONCE;
+		
+	} else {
+		zt_add_time(&ntime, &sys->tod, time);
+	}
 		    
-	new = gtimer_new(&ntime, cb, data);
+	new = gtimer_new(&ntime, time, cb, data, flags);
 		    
 	nodep = zt_rbt_insert(&ess->timer_events, &new->node, gtimer_cmp);
+	
 	if(nodep != NULL) {
 		gtimer_free(new);
 		return -1;
 	}
 
-	if(zt_cmp_time(&sys->min_timeout, time) > 0) {		
-		sys->min_timeout.tv_sec = time->tv_sec;
-		sys->min_timeout.tv_usec = time->tv_usec;
+	if(zt_cmp_time(&sys->min_timeout, time) > 0) {
+		zt_copy_timeval(&sys->min_timeout, time);
 	}
 	
 	return 0;
@@ -336,17 +343,20 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 			zt_rbt_for_each_safe(&ess->timer_events, nodep, nextp) {
 				struct zt_timer_node	* te;
 				te = zt_rbt_data(nodep, struct zt_timer_node, node);
-				
-				if((te->when.tv_sec <= sec) ||
+				if((te->when.tv_sec < sec) ||
 				   ((te->when.tv_sec == sec) &&
 				    (te->when.tv_usec <= usec))) {
-					zt_rbt_remove(&ess->timer_events, nodep);
 					/* execute  */
 					te->cb(sys, &te->when, te->data);
-					recalc_min_interval(sys);
-					gtimer_free(te);
+					
+					if(te->flags & ZT_EVENT_TIMER_ONCE) {
+						zt_rbt_remove(&ess->timer_events, nodep);
+						sys->num_events--;
+						gtimer_free(te);
+					}
 				}
 			}
+			recalc_min_interval(sys);
 		}
 		
 		if(run_once) {
@@ -362,7 +372,6 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 	
 	return 0;
 }
-
 
 static zt_event_vtbl vtbl = {
 	sizeof(zt_event_sys_select),
@@ -425,6 +434,18 @@ static int gtimer_cmp(zt_rbt_node *n1, zt_rbt_node *n2)
 	if(g1->when.tv_usec < g2->when.tv_usec) {
 		return -1;
 	} else if (g1->when.tv_usec > g2->when.tv_usec) {
+		return 1;
+	}
+
+	if(g1->cb > g2->cb) {
+		return -1;
+	} else if (g1->cb < g2->cb) {
+		return 1;
+	}
+
+	if(g1->data > g2->data) {
+		return -1;
+	} else if (g1->data < g2->data) {
 		return 1;
 	}
 	

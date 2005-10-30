@@ -12,12 +12,16 @@ struct zt_timer_node {
 	zt_rbt_node		  node;
 
 	struct timeval		  when;
+	struct timeval		  otime;
+	
+	zt_event_timer_flags	  flags;
+
 	zt_event_timer_cb	* cb;
 	void			* data;
 };
 
 extern struct zt_timer_node *
-gtimer_new(struct timeval *when, zt_event_timer_cb *cb, void *data);
+gtimer_new(struct timeval *when, struct timeval *otime, zt_event_timer_cb *cb, void *data, zt_event_timer_flags flags);
 
 void
 gtimer_free(struct zt_timer_node *node);

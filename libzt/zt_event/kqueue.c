@@ -36,7 +36,7 @@ remove_signal(zt_event_sys sys, int signal, zt_event_signal_cb cb, void *data)
 
 	
 static int
-register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data)
+register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data, zt_event_timer_flags flags)
 {
 	return 0;
 }

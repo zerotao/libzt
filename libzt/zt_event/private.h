@@ -28,14 +28,17 @@ typedef struct zt_event_vtbl {
 	int (* register_signal)(zt_event_sys sys, int signal, zt_event_signal_cb cb, void *data);
 	int (* remove_signal)(zt_event_sys sys, int signal, zt_event_signal_cb cb, void *data);
 	
-	int (* register_timer)(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data);
+	int (* register_timer)(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data, zt_event_timer_flags flags);
 	int (* remove_timer)(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void *data);
-
+	
 	int  (* handle_events)(zt_event_sys sys, zt_event_flags flags);
 	void (* destroy)(zt_event_sys sys);
+
 } zt_event_vtbl;
 
 zt_event_sys zt_event_new(zt_event_vtbl *vtbl);
+long zt_event_num_events(zt_event_sys sys);
+struct timeval *zt_event_tod(zt_event_sys sys);
 
 END_C_DECLS
 #endif /* _EVENT_PRIVATE_H_ */
