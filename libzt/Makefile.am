@@ -2,6 +2,7 @@ SUBDIRS = 		\
 	adt		\
 	zt_cfg 		\
 	zt_log 		\
+	zt_event	\
 	.		\
 	test
 #	cfg 
@@ -15,7 +16,8 @@ libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
 	adt/libzt_adt.la		\
 	zt_log/libzt_log.la		\
-	zt_cfg/libzt_cfg.la
+	zt_cfg/libzt_cfg.la		\
+	zt_event/libzt_event.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -41,39 +43,31 @@ libzt_la_SOURCES = 		\
 	zt_opts.c 		\
 	zt_progname.c 		\
 	zt_cstr.c 		\
-	zt_coroutine.c		\
-	zt_time.c
-
-# 	zt_cfg/cfg_private.c 	
-# 	zt_cfg/ini.c 		
-# 	zt_log/file.c		
-# 	zt_log/log_private.c 	
-# 	zt_log/stderr.c 	
-# 	zt_log/syslog.c 
-#	mem.c 
+	zt_coro.c		\
+	zt_time.c		\
+	zt_event.c		\
+	zt_cothread.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
-	zt.h		\
-	zt_assert.h 	\
-	zt_cfg.h 	\
-	zt_common.h 	\
-	zt_daemon.h 	\
-	zt_except.h	\
-	zt_format.h	\
-	zt_log.h 	\
-	zt_mem.h	\
-	zt_opts.h 	\
-	zt_progname.h 	\
-	zt_cstr.h 	\
-	zt_time.h	\
-	zt_coroutine.h	\
-        zt_macros.h
+	zt.h			\
+	zt_assert.h		\
+	zt_cfg.h		\
+	zt_common.h		\
+	zt_daemon.h		\
+	zt_except.h		\
+	zt_format.h		\
+	zt_log.h		\
+	zt_mem.h		\
+	zt_opts.h		\
+	zt_progname.h		\
+	zt_cstr.h		\
+	zt_time.h		\
+	zt_coro.h		\
+        zt_macros.h		\
+	zt_event.h		\
+	zt_cothread.h
 
-#	zt_bytearray.h
-
-#noinst_HEADERS = \
-#	mem.h
 
 # The following is required in the Makefile.am for common.h
 # Regenerate common.h with config.status whenever common-h.in changes.
