@@ -2,8 +2,9 @@ AUTOMAKE_OPTIONS=foreign
 
 SUBDIRS = \
 	doc     \
+	tools	\
 	replace \
-	libzt 
+	libzt
 
 MAINTAINERCLEANFILES = \
 	configure \
@@ -37,7 +38,3 @@ pkg:
 	 make prefix=@srcdir@/@PACKAGE@_fakeinstall@prefix@ install; \
 	 mkepmlist -g root -u root @PACKAGE@_fakeinstall > files.list; \
 	 mkepm -f native @PACKAGE@.list;)
-
-pkgconfigdir = $(libdir)/pkgconfig/
-pkgconfig_DATA = \
-	tools/libzt.pc

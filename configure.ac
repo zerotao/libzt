@@ -313,6 +313,7 @@ libzt/zt_cfg/Makefile
 libzt/zt_event/Makefile
 libzt/adt/Makefile
 libzt/test/Makefile
+tools/Makefile
 tools/project.spec
 tools/libzt.pc
 project.list
