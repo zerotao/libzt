@@ -256,15 +256,18 @@ static void reset_fd_sets(fd_set *read_set, fd_set *orig_read_set,
 	FD_ZERO(except_set);
 	
 	if(flags & ZT_READ_EVENTS) {
-		FD_COPY(orig_read_set, read_set);
+	  *read_set = *orig_read_set;
+		/* FD_COPY(orig_read_set, read_set); */
 	}
 
 	if(flags & ZT_WRITE_EVENTS) {
-		FD_COPY(orig_write_set, write_set);
+	  *write_set = *orig_write_set;
+		/* FD_COPY(orig_write_set, write_set); */
 	}
 
 	if(flags & ZT_EXCEPT_EVENTS) {
-		FD_COPY(orig_except_set, except_set);
+	  *except_set = *orig_except_set;
+		/* FD_COPY(orig_except_set, except_set); */
 	}
 
 }

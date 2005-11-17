@@ -9,7 +9,9 @@ libzt_event_la_SOURCES = \
 		devpoll.c \
 		gtimer.c
 
-DEFS = @DEFS@ -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+DEFS = @DEFS@ 
+
+CPPFLAGS = -I${top_builddir} -I${top_builddir}/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 pkgincludedir = ${includedir}/libzt/zt_event
 pkginclude_HEADERS = \

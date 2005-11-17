@@ -6,7 +6,9 @@ libzt_log_la_SOURCES = \
 		log_syslog.c \
 		log_file.c
 
-DEFS = @DEFS@ -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+DEFS = @DEFS@ 
+
+CPPFLAGS = -I${top_builddir} -I${top_builddir}/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 pkgincludedir = ${includedir}/libzt/zt_log
 pkginclude_HEADERS = \

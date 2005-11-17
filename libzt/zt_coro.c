@@ -208,7 +208,8 @@ zt_coro *zt_coro_create(void *(*func)(void*), void *stack, int size)
 	
 	if(_setup_context(co->ctx.ctx, _coro_run, stack, size - CORO_STACK_SIZE) < 0) {
 		if(alloc) {
-			free(co);
+		  alloc = 0;
+		  free(co);
 		}
 		return NULL;
 	}
@@ -224,7 +225,8 @@ void zt_coro_delete(zt_coro *co)
 	}
 
 	if(co->alloc){
-		free(co);
+	  co->alloc = 0;
+	  free(co);
 	}
 }
 

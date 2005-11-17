@@ -92,13 +92,18 @@ main(int argc, char *argv[])
 	
 	co = zt_coro_create(_call1, 0, ZT_CORO_MIN_STACK_SIZE);
 
+	if(co == NULL) {
+	  exit(1);
+	}
 	i = (int)zt_coro_call(co, (void *)1);
 	TEST("zt_coro_call[4]", i == 4);
 	
 	i = (int)zt_coro_call(co, (void *)5);
 	TEST("zt_coro_call[8]", i == 8);
 	
-	zt_coro_delete(co);
+	/* the coroutine exited it's self
+	   no need to delete it */
+	/* zt_coro_delete(co); */
 
 
 	read_coro = zt_coro_create(_call_read, 0, ZT_CORO_MIN_STACK_SIZE);
@@ -115,13 +120,13 @@ main(int argc, char *argv[])
 	 * r2.bsize = sizeof(b2);
          */
 	
-	while(1) {
-		struct io_request	* res;		
-		res = zt_coro_call(read_coro, &r1);
-		if(res->result == 0 && res->rlen > 0){
-			printf("result: %s", res->buffer);
-		}
-	}
+/* 	while(1) { */
+/* 		struct io_request	* res; */
+/* 		res = zt_coro_call(read_coro, &r1); */
+/* 		if(res->result == 0 && res->rlen > 0){ */
+/* 			printf("result: %s", res->buffer); */
+/* 		} */
+/* 	} */
 	return 0;
 }
 

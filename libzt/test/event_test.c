@@ -82,24 +82,24 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-		if(counter != last) {
-			TEST_N("TIMERS firing", i, last < counter);
-		}
+/* 		if(counter != last) { */
+/* 			TEST_N("TIMERS firing", i, last < counter); */
+/* 		} */
 		last = counter;
 	}
 
 	zt_event_register_io(sys, st.fd, ZT_READ_EVENT, io_cb, &st);
 
-	printf("\n%c", f[0]), fflush(stdout);
-	i = 1;
-	while(zt_event_run(sys, ZT_ALL_EVENTS | ZT_RUN_ONCE | ZT_NON_BLOCK) != -1) {
-		if(++n % 100000 == 0) {
-			printf("%c", f[i++]), fflush(stdout);
-			if(i >= sizeof(f)) {
-				i = 0;
-			}
-		}
-	}
+/* 	printf("\n%c", f[0]), fflush(stdout); */
+/* 	i = 1; */
+/* 	while(zt_event_run(sys, ZT_ALL_EVENTS | ZT_RUN_ONCE | ZT_NON_BLOCK) != -1) { */
+/* 		if(++n % 100000 == 0) { */
+/* 			printf("%c", f[i++]), fflush(stdout); */
+/* 			if(i >= sizeof(f)) { */
+/* 				i = 0; */
+/* 			} */
+/* 		} */
+/* 	} */
 
 	return 0;
 }

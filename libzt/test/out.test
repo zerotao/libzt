@@ -52,7 +52,7 @@ MIN[2]:                                                     => success
 sizeof_array[1]:                                            => success
 endof_array[1]:                                             => success
 assert[0]:                                                  => success
-assert[1]:                                                  => success
+assert[1]:                                                  => failure
 progname[1]:                                                => success
 progname[2]:                                                => success
 progname[3]:                                                => success
@@ -197,3 +197,47 @@ difference[9]                                               => success
 is_subset[0]                                                => success
 is_subset[1]                                                => success
 is_equal[0]                                                 => success
+zt_rbt_insert[0]                                            => success
+zt_rbt_insert[1]                                            => success
+zt_rbt_insert[2]                                            => success
+zt_rbt_insert[3]                                            => success
+zt_rbt_insert[4]                                            => success
+zt_rbt_insert[5]                                            => success
+zt_rbt_insert[6]                                            => success
+zt_rbt_insert[7]                                            => success
+zt_rbt_insert[8]                                            => success
+zt_rbt_insert[9]                                            => success
+zt_rbt_remove[0]                                            => success
+zt_rbt_remove[1]                                            => success
+zt_rbt_insert[10]                                           => success
+zt_rbt_for_each_safe[0]                                     => success
+zt_rbt_for_each_safe[1]                                     => success
+zt_rbt_for_each_safe[2]                                     => success
+zt_rbt_for_each_safe[3]                                     => success
+zt_rbt_for_each_safe[4]                                     => success
+zt_rbt_for_each_safe[5]                                     => success
+zt_rbt_for_each_safe[6]                                     => success
+zt_rbt_for_each_safe[7]                                     => success
+zt_rbt_for_each_safe[8]                                     => success
+zt_rbt_for_each_safe[9]                                     => success
+10000 timers                                                => success
+zt_coro_call[1]                                             => success
+zt_coro_call[2]                                             => success
+zt_coro_call[3]                                             => success
+zt_coro_call[4]                                             => success
+zt_coro_call[5]                                             => success
+zt_coro_call[6]                                             => success
+zt_coro_call[7]                                             => success
+zt_coro_call[8]                                             => success
+Testing 1000 co_threads
+Init Complete
+main: waiting on 1000 cothreads...
+main: waiting on 1000 cothreads...
+main: waiting on 992 cothreads...
+main: waiting on 991 cothreads...
+main: waiting on 992 cothreads...
+main: waiting on 1000 cothreads...
+main: waiting on 1000 cothreads...
+main: waiting on 991 cothreads...
+16008 events registered
+16008 events handled

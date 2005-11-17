@@ -1,5 +1,9 @@
 LDADD = ../libzt.la
-CFLAGS = -I$(top_srcdir)
+
+DEFS = @DEFS@
+CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+
+
 
 TEST_APPS = 		\
 	array_test	\
@@ -155,8 +159,8 @@ test: $(TEST_APPS)
 	  fi \
 	done)
 	@(diff test.out out.test > diff.out 2>&1; \
-	  N=`cat test.out | wc -l | awk '{ print $$1 }'`; 	\
-	  N2=`cat out.test | wc -l | awk '{ print $$1 }'`; 	\
+	  N=`grep '=>' test.out | wc -l | awk '{ print $$1 }'`; 	\
+	  N2=`grep '=>' out.test | wc -l | awk '{ print $$1 }'`; 	\
 	  F=`grep failure test.out`;				\
 	  FN=`echo $$F | wc -l | awk '{ print $$1 }'`;	 	\
 	  echo; 						\
