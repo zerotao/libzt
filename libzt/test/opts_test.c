@@ -53,7 +53,7 @@ main(int argc, char* argv[])
 			{ 'f', "func", "func test", opt_func, func, NULL},
 			{ 'o', "ofunc", "ofunc test", opt_ofunc, ofunc, NULL},
 			{ 'f', "rfunc", "rfunc test", opt_rfunc, rfunc, NULL},
-			{ 'F', "flag", "flag test", opt_flag, &flag, NULL},			
+			{ 'F', "flag", "flag test", opt_flag, &flag, NULL},
 			{ 0,0,0,0 }
 		};
 				

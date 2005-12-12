@@ -201,7 +201,7 @@ void *zt_mem_pool_group_alloc(zt_mem_pool_group * group, size_t size);
  * @param group pointer to a zt_mem_pool_group (NULL ended)
  * @return -1 on error 0 on success
  */
-int zt_mem_pool_group_destroy(zt_mem_pool_group group[]);
+int zt_mem_pool_group_destroy(zt_mem_pool_group *group);
 
 /****d* Memory/DISPLAY_POOL_HEADER_ONLY
  *  NAME

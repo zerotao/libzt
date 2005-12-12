@@ -68,7 +68,7 @@ char *cstr_sub(const char *s, int i, int j)
 }
 
 /*!
- * return a string containing n cpoies of s[i:j] plus NUL
+ * return a string containing n copies of s[i:j] plus NUL
  */
 char *cstr_dup(const char *s, int i, int j, int n)
 {

@@ -34,9 +34,6 @@ progname ( name, opts )
 		memset(_progname, '\0', PATH_MAX);
 		if(opts == STRIP_DIR){
 			cstr_basename(_progname, PATH_MAX, name, NULL);
-			//char *nname = basename(name);
-			//memcpy(_progname, nname, strlen(name));
-			//basename(_progname, PATH_MAX, name, NULL);
 		} else {
 			memcpy(_progname, name, MIN(PATH_MAX, strlen(name)));
 		}

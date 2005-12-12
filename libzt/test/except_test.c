@@ -16,6 +16,38 @@
 
 char	* Pass = "Pass";
 char	* Fail = "Fail";
+
+int test_count = 0;
+
+static char *f1(int i)
+{
+	TRY({
+			if(i == 0)
+				THROW(f1);
+			TRY_RETURN Pass;
+		},
+		{
+			CATCH(f1, TRY_RETURN Pass;);
+		});
+	return Fail;
+}
+
+int foo(void *e, void* t, char *et, char *f, char *ff, int l){
+	test_count++;
+	return 0;
+}
+int bar(void *e, void* t, char *et, char *f, char *ff, int l){
+	test_count++;
+	return 1;
+}
+int newbar(void *e, void* t, char *et, char *f, char *ff, int l){
+	test_count = 0xDEADBEEF;
+	return 0;
+}
+int fooexit(void *e, void* t, char *et, char *f, char *ff, int l){
+	return -1;
+}
+
 int main(int argc, char *argv[]){
 	{
 		char *do_try = Fail;
@@ -67,21 +99,9 @@ int main(int argc, char *argv[]){
 	/* TRY_RETURN */
 	{
 		char *foo;
-		char *f(int i)
-		{
-			TRY({
-				    if(i == 0)
-					    THROW(f);
-				    TRY_RETURN Pass;
-			    },
-			    {
-				    CATCH(f, TRY_RETURN Pass;);
-			    });
-			return Fail;
-		}
 		
 		TRY({
-			    foo = f(0);
+			    foo = f1(0);
 			    THROW(foo);
 		    },{
 			    CATCH(foo, TEST("TRY_RETURN from CATCH: ", foo == Pass););
@@ -89,7 +109,7 @@ int main(int argc, char *argv[]){
 		
 
 		TRY({
-			    foo = f(1);
+			    foo = f1(1);
 			    THROW(foo);
 		    },{
 			    CATCH(foo, TEST("TRY_RETURN from WIND: ", foo == Pass););
@@ -201,23 +221,8 @@ int main(int argc, char *argv[]){
 	
 			
 	{
-		int test_count = 0;
+		test_count = 0;
 		
-		int foo(void *e, void* t, char *et, char *f, char *ff, int l){
-			test_count++;
-			return 0;
-		}
-		int bar(void *e, void* t, char *et, char *f, char *ff, int l){
-			test_count++;
-			return 1;
-		}
-		int newbar(void *e, void* t, char *et, char *f, char *ff, int l){
-			test_count = 0xDEADBEEF;
-			return 0;
-		}
-		int fooexit(void *e, void* t, char *et, char *f, char *ff, int l){
-			return -1;
-		}
 
 /* 		printf("Handlers: \n"); */
 
@@ -279,6 +284,7 @@ int main(int argc, char *argv[]){
 /* 			    THROW(fooexit); */
 /* 		    },{}); */
 /* 		fprintf(stderr, "Fail\n"); */
-	}
+		
+			 }
 	return 0;
 }
