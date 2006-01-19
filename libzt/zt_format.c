@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <ctype.h>
 #include <float.h>
+#include <string.h>
 
 #include "zt_format.h"
 #include "zt_assert.h"
