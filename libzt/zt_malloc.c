@@ -9,6 +9,8 @@
  */
 
 
+#include <string.h>
+
 #include "zt.h"
 #include "zt_log.h"
 #include "zt_except.h"
