@@ -1,6 +1,6 @@
+#include <string.h>
+
 #include "zt_cothread.h"
-
-
 
 static int _schedule(zt_cothread_sched *);
 static void _add_req(zt_cothread_sched *, struct event_req *, int, ...);
