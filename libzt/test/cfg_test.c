@@ -12,6 +12,8 @@
  * Description: 
  */
 
+#include <string.h>
+
 #include "test.h"
 #include <libzt/zt_cfg.h>
 
