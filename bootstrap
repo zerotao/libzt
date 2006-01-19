@@ -77,7 +77,7 @@ else
     ${ACLOCAL} -I aux_files || error "${ACLOCAL}"
     ${AUTOHEADER} || error "${AUTOHEADER}"
     ${AUTOCONF} || error "${AUTOCONF}"
-    ${AUTOMAKE} --add-missing --copy --foreign -Wall || error "${AUTOMAKE}"
+    ${AUTOMAKE} --add-missing --copy --foreign || error "${AUTOMAKE}"
 fi
 
 # set +x
