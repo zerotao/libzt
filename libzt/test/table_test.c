@@ -9,6 +9,7 @@
 /*
  * Description: 
  */
+#include <string.h>
 #include <stdio.h>
 #include <libzt/adt/zt_table.h>
 
