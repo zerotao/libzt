@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <libzt/zt.h>
 #include <libzt/zt_event.h>
 #include <libzt/zt_event/private.h>

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <libzt/zt.h>
 #include <libzt/adt/zt_set.h>
 #include "test.h"

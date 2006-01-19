@@ -9,6 +9,8 @@
 /*
  * Description: tree tests
  */
+#include <string.h>
+
 #include <libzt/zt.h>
 #include <libzt/adt/zt_tree.h>
 

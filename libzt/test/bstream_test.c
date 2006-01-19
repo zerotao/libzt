@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <libzt/adt/zt_bstream.h>
 #include <libzt/adt/zt_array.h>
 #include "test.h"

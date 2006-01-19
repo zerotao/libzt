@@ -32,9 +32,11 @@ AC_PROG_MAKE_SET
 
 AM_PROG_LIBTOOL
 
+CFLAGS="-fno-strict-aliasing"
+
 case $host in
 	*-*-darwin*)
-		CFLAGS="$CFLAGS -no-cpp-precomp -flat_namespace"
+		CFLAGS="$CFLAGS -no-cpp-precomp -flat_namespace "
 	;;
 esac
 

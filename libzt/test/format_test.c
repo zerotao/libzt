@@ -1,3 +1,4 @@
+#include <string.h>
 #include <libzt/zt_assert.h>
 #include <libzt/zt_format.h>
 #include <libzt/zt_cstr.h>

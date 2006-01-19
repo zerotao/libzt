@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <stdarg.h>
 #include <libzt/zt_cothread.h>
 #include "test.h"
@@ -20,6 +22,7 @@ static void *test1(va_list args) {
 	}
 	//printf("%s: dying\n", str);
 	zt_cothread_wait(glbl.cts, 0);
+        return NULL;
 }
 
 
@@ -41,6 +44,7 @@ static void *test2(va_list args) {
 	}
 	printf("%s: dying\n", str);
 	zt_cothread_wait(glbl.cts, 0);
+        return NULL;
 }
 
 #define CORO_N 1000
@@ -76,11 +80,11 @@ int main(int argc, char **argv) {
 	glbl.cts->event_flags &= ~(ZT_NON_BLOCK);
 
 	while(zt_event_num_events(glbl.cts->sys) > 0) {
-	  printf("main: waiting on %d cothreads...\n", zt_event_num_events(glbl.cts->sys));
+	  printf("main: waiting on %ld cothreads...\n", zt_event_num_events(glbl.cts->sys));
 		zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, 3000);
 	}
-	printf("%d events registered\n", glbl.cts->revents);
-	printf("%d events handled\n", glbl.cts->hevents);
+	printf("%ld events registered\n", glbl.cts->revents);
+	printf("%ld events handled\n", glbl.cts->hevents);
 }
 
 
