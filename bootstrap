@@ -13,8 +13,8 @@
 # History:  -jshiffer 12/19/00 3:53pm: Created.
 
 
-(test -d aux) || {
- mkdir -p aux;
+(test -d aux_files) || {
+ mkdir -p aux_files;
 }
 
 # libtoolize generates support for libtool
