@@ -1,7 +1,7 @@
 /*
  * zt_except.c        excption handler for C
  *
- * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2006, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id:
@@ -24,6 +24,7 @@ struct except_Handlers {
 	struct except_Handlers	 *next;
 };
 
+/* FIXME: these need to become thread safe */
 struct except_Frame *_except_Stack = NULL;
 struct except_Handlers _except_Handlers_Stack = { NULL, NULL, NULL };
 
@@ -174,19 +175,29 @@ void _except_call_handlers(struct except_Frame *estack)
 			_except_unhandled_exception(estack->etext,
 						    estack->efile,
 						    estack->eline,
-						    estack->efunc);
+						    estack->efunc,
+                                                    1);
 		}
 	}
 }
 
+void except_unhandled_exception(struct except_Frame *stack, int flags)
+{
+        _except_unhandled_exception(stack->etext,
+                                    stack->efile,
+                                    stack->eline,
+                                    stack->efunc,
+                                    flags);
+}
 
-void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc)
+void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
 {
 	char	  bname[PATH_MAX];
 	cstr_basename(bname, PATH_MAX, efile, NULL);
 	
 	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
 		   etext, bname, eline, efunc);
-	abort();
+        if(flags) {
+                abort();
+        }
 }
-	

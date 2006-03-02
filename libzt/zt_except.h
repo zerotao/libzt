@@ -3,7 +3,7 @@
  *   exception hander for c
  *
  * COPYRIGHT
- *   Copyright (C) 2000-2005 Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   Copyright (C) 2000-2006 Jason L. Shiffer <jshiffer@zerotao.com>.
  *   All Rights Reserved.
  *   See file COPYING for details.
  *
@@ -40,7 +40,8 @@ extern char	* except_CatchAll;
 extern struct except_Frame *_except_Stack;
 
 /* exported functions */
-extern void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc);
+extern void except_unhandled_exception(struct except_Frame *stack, int flags);
+extern void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc, int flags);
 extern void _except_call_handlers(struct except_Frame *);
 
 extern except_handler
@@ -96,7 +97,8 @@ extern void _except_remove_handler(void*, except_handler);
 			_except_unhandled_exception(#EXCEPTION,		\
 						    __FILE__,		\
 						    __LINE__,		\
-						    __FUNCTION__);	\
+						    __FUNCTION__,       \
+                                                    1);                 \
 		}							\
 		_except_Stack->etext = #EXCEPTION;			\
 		_except_Stack->efile = (char *)__FILE__;		\
@@ -152,7 +154,13 @@ extern void _except_remove_handler(void*, except_handler);
 	}
 
 /************ CATCH */
-
+#define _COPY_FRAME_DATA(x,y)                           \
+	(y)->exception = (x)->exception;		\
+	(y)->type = (x)->type;			        \
+	(y)->etext = (x)->etext;			\
+	(y)->efile = (x)->efile;			\
+	(y)->efunc = (x)->efunc;			\
+	(y)->eline = (x)->eline
 /****d* Exceptions/_PUSH_FRAME_DATA
  *  NAME
  *    _PUSH_FRAME_DATA
@@ -160,12 +168,7 @@ extern void _except_remove_handler(void*, except_handler);
  *  SOURCE
  */
 #define _PUSH_FRAME_DATA(x)				\
-	(x)->prev->exception = (x)->exception;		\
-	(x)->prev->type = (x)->type;			\
-	(x)->prev->etext = (x)->etext;			\
-	(x)->prev->efile = (x)->efile;			\
-	(x)->prev->efunc = (x)->efunc;			\
-	(x)->prev->eline = (x)->eline
+        _COPY_FRAME_DATA(x, x->prev)
 /************ _PUSH_FRAME_DATA */
 
 /****d* Exceptions/DO_TRY

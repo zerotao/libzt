@@ -12,6 +12,9 @@
 #define CORO_STACK_ALIGN 256
 #define CORO_STACK_SIZE ((sizeof(zt_coro) + CORO_STACK_ALIGN - 1) & ~(CORO_STACK_ALIGN - 1))
 
+char    * zt_coro_except_exit = "CoroExit";
+
+/* FIXME: these need to be thread safe */
 static zt_coro coro_main;
 static zt_coro *coro_current = &coro_main;
 static zt_coro *coro_helper;
@@ -167,11 +170,11 @@ static int _setup_context(jmp_buf buf, void (*func)(void), void *stack, size_t s
   return 0;
 }
 
-static void _switch_context(zt_coro_ctx *old, zt_coro_ctx *new)
+static void _switch_context(zt_coro *old, zt_coro *new)
 {
-	if(!setjmp(old->ctx)) {
-		longjmp(new->ctx, 1);
-	}
+        if(!setjmp(old->ctx.ctx)) {
+                longjmp(new->ctx.ctx, 1);
+        }
 }
 
 #endif	/* HAS_UCONTEXT */
@@ -179,11 +182,35 @@ static void _switch_context(zt_coro_ctx *old, zt_coro_ctx *new)
 
 static void _coro_run(void) 
 {
-	zt_coro	*co = coro_current;
+	zt_coro	                * co = coro_current;
 
-	co->target = co->caller;
-	co->func(co->data);
-	zt_coro_exit(co->data);
+	co->target = co->caller;        
+        
+        DO_TRY
+        {
+                co->except_stack = _except_Stack;
+                co->func(co->data);
+        }
+        ELSE_TRY
+        {
+                CATCH(except_CatchAll,
+                      {
+                              if(_except_Stack->exception != &zt_coro_except_exit) {
+                                      if(co->target->except_stack == NULL) {
+                                              except_unhandled_exception(_except_Stack, 1);
+                                      } else {
+                                              /* copy the exception for propigation */
+                                              _COPY_FRAME_DATA(_except_Stack, co->target->except_stack);
+                                              co->target->except_stack->caught = -1;
+                                      }
+                              }
+                              
+                      });
+                
+        }
+        END_TRY;
+        
+        zt_coro_exit(co->data);
 }
 
 
@@ -191,8 +218,12 @@ zt_coro *zt_coro_create(void *(*func)(void*), void *stack, int size)
 {
 	int	  alloc = 0;
 	zt_coro	* co;
-
+        
 	assert((size &= ~(sizeof(int) - 1)) >= ZT_CORO_MIN_STACK_SIZE);
+
+        if(coro_main.overflow == 0) {
+                coro_main.overflow = 0xDEADBEEF;
+        }
 
 	if(!stack) {
 		size = size + CORO_STACK_SIZE;
@@ -202,6 +233,8 @@ zt_coro *zt_coro_create(void *(*func)(void*), void *stack, int size)
 
 	co = stack;
 	stack = (char *) stack + CORO_STACK_SIZE;
+        co->size = size;
+        co->overflow = 0xDEADBEEF;
 	co->alloc = alloc;
 	co->func = func;
 	co->data = 0;
@@ -234,14 +267,29 @@ void zt_coro_delete(zt_coro *co)
 void *zt_coro_call(zt_coro *co, void *data)
 {
 	zt_coro	*old = coro_current;
-	
+        
+        ZT_CORO_CHECK_STACK(co);
+        
 	co->caller = coro_current;
 	coro_current = co;
 	
 	co->data = data;
-	
-	_switch_context(&old->ctx, &co->ctx);
-	
+
+        old->except_stack = _except_Stack;
+        _except_Stack = co->except_stack;
+        
+	_switch_context(old, co);
+        
+        _except_Stack = old->except_stack;
+        
+        if(_except_Stack &&
+           _except_Stack->caught == -1) {
+                /* RETHROW the exception */
+                _except_Stack->caught = 0;
+                longjmp(_except_Stack->env, 1);
+        }
+        
+        
 	return old->data;
 }
 
@@ -282,7 +330,7 @@ void zt_coro_exit_to(zt_coro *co, void *data)
 		printf("Unable to create delete helper coroutine\n");
 		exit(1);
 	}
-	
+        
 	coro_helper = co;
 	zt_coro_call(helper, data);
 	printf("stale corotine called\n");
