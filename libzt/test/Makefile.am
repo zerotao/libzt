@@ -25,7 +25,8 @@ TEST_APPS = 		\
 	tree_test	\
 	event_test	\
 	coro_test	\
-	cothread_test
+	cothread_test	\
+	int_test
 
 #	bytearray_test
 noinst_PROGRAMS = 	\
@@ -36,6 +37,9 @@ noinst_PROGRAMS = 	\
 
 # 	chash_test	
 # 	chash64_test	
+
+int_test_SOURCES = \
+	int_test.c
 
 event_test_SOURCES = \
 	event_test.c

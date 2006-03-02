@@ -51,32 +51,49 @@ void *_call_read(void *data)
 
 void *_call2(void *data) 
 {
-	int	  i = (int) data;
-
+	int	                  i = (int) data;
+        struct except_Frame     * stack = _except_Stack;
+        
 	TEST("zt_coro_call[2]", i == 2);
 	i = (int)zt_coro_yield((void *)3);
 	
 	TEST("zt_coro_call[6]", i == 6);
 
+        i = 7;
+        TEST("_call2 local except stack[1]", stack == _except_Stack);
+        
+        THROW(i);
 	zt_coro_exit((void *)7);
 }
 
 void *_call1(void *data) 
 {
-	int	  i = (int) data;
-	zt_coro	* co = zt_coro_create(_call2, 0, ZT_CORO_MIN_STACK_SIZE);
-	
+	int	                  i = (int) data;
+	zt_coro	                * co = zt_coro_create(_call2, 0, ZT_CORO_MIN_STACK_SIZE);
+        struct except_Frame     * stack = _except_Stack;
+
 	TEST("zt_coro_call[1]", i == 1);
 	
 	i = (int)zt_coro_call(co, (void *)2);
 	TEST("zt_coro_call[3]", i == 3);
-	
-	i = (int)zt_coro_yield((void *)4);
+        
+        i = (int)zt_coro_yield((void *)4);
 	TEST("zt_coro_call[5]", i == 5);
 
-	i = (int)zt_coro_call(co, (void *)6);
+        DO_TRY
+        {
+                i = (int)zt_coro_call(co, (void *)6);
+        }
+        ELSE_TRY
+        {
+                CATCH(except_CatchAll, i = 7;);
+                /* RETHROW(); */
+        }
+        END_TRY;
+        
+             
 	TEST("zt_coro_call[7]", i == 7);
-
+        TEST("_call1 local except stack[1]", stack == _except_Stack);
 	zt_coro_exit((void *)8);
 }
 
@@ -90,24 +107,35 @@ main(int argc, char *argv[])
 	struct io_request	  r2;
 	char			  b1[1024];
 	char			  b2[1024];
-		
-	
-	co = zt_coro_create(_call1, 0, ZT_CORO_MIN_STACK_SIZE);
-
+        struct except_Frame     * stack = _except_Stack;
+        
+        /* Stacks using the "Default" minimum stack size should not
+         * make any use of zt_except (it expects alot more stack to be available
+         */
+	co = zt_coro_create(_call1, 0, ZT_CORO_MIN_STACK_SIZE + 2048);
 	if(co == NULL) {
 	  exit(1);
 	}
+        
 	i = (int)zt_coro_call(co, (void *)1);
 	TEST("zt_coro_call[4]", i == 4);
-	
-	i = (int)zt_coro_call(co, (void *)5);
-	TEST("zt_coro_call[8]", i == 8);
+        
+        DO_TRY
+        {
+                i = (int)zt_coro_call(co, (void *)5);
+                TEST("zt_coro_call[8]", i == 8);
+        }
+        ELSE_TRY
+        {
+                CATCH(except_CatchAll,{});
+        }
+        END_TRY
 	
 	/* the coroutine exited it's self
 	   no need to delete it */
 	/* zt_coro_delete(co); */
-
-
+        TEST("main local except stack[1]", stack == _except_Stack);
+        
 	read_coro = zt_coro_create(_call_read, 0, ZT_CORO_MIN_STACK_SIZE);
 
 	r1.fd = 0;
