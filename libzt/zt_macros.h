@@ -2,7 +2,7 @@
  * DESCRIPTION
  *
  * COPYRIGHT
- *   Copyright (C) 2000-2002, 2004, 2005, Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   Copyright (C) 2000-2002, 2004, 2005, 2006, Jason L. Shiffer <jshiffer@zerotao.com>.
  *   All Rights Reserved.
  *   See file COPYING for details.
  *
@@ -111,6 +111,12 @@ BEGIN_C_DECLS
  *   INDENT_PAD
  *****/
 #define INDENT_PAD(lvl,step,pad) (((lvl) * step) + (pad)), ""
+
+/******
+ * Apply macros
+ *****/
+#define MACRO_APPLY(FUNC, ARGS, NEXT) FUNC ARGS NEXT
+#define MACRO_APPLY_STOP(FUNC, ARGS, NEXT) FUNC ARGS
 
 END_C_DECLS
 #endif /*_ZT_MACROS_H_*/
