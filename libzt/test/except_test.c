@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2006, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id$
@@ -11,7 +11,9 @@
  */
 
 #include <stdio.h>
+#define EXCEPT_DEFINE
 #include <libzt/zt_except.h>
+
 #include "test.h"
 
 char	* Pass = "Pass";
@@ -144,6 +146,32 @@ int main(int argc, char *argv[]){
 			    CATCH(domain, { TEST("Domains:", domain.subdomain.child == Pass); });
 		    });
 	}
+
+	{
+		static int	  tmp = 0;
+		INSTALL_DEFAULT_HANDLER(domain_default_except_handler);
+		
+		EXCEPT_DESC(domain2, "domain2",
+		  EXCEPT_GROUP(subdomain, "subdomain",
+		    EXCEPTION(child, "child")));
+
+		TRY({  
+			    TRY({
+					TRY({ THROW(domain2.subdomain.child); },{});
+				},{ 
+					CATCH(domain2.subdomain,
+					      {
+						      tmp = 1;
+					      });
+					THROW(domain2.subdomain);
+				});
+		    },{
+				CATCH(domain2, { TEST("Domains2:", tmp != 0); });
+		    });
+		
+	}
+
+	
 	{
 		char *rethrow = Fail;
 		

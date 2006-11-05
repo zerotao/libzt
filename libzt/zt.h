@@ -2,7 +2,7 @@
  * DESCRIPTION
  *
  * COPYRIGHT
- *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.
+ *   Copyright (C) 2000-2006, Jason L. Shiffer <jshiffer@zerotao.com>.
  *   All Rights Reserved.
  *   See file COPYING for details.
  *

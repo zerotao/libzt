@@ -193,11 +193,16 @@ void except_unhandled_exception(struct except_Frame *stack, int flags)
 void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
 {
 	char	  bname[PATH_MAX];
-	cstr_basename(bname, PATH_MAX, efile, NULL);
+	zt_cstr_basename(bname, PATH_MAX, efile, NULL);
 	
 	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
 		   etext, bname, eline, efunc);
         if(flags) {
                 abort();
         }
+}
+
+int domain_default_except_handler(void *exc, void *type, char *etext, char *file, char *func, int line) 
+{
+	_except_unhandled_exception(*(char **)exc, file, line, func, 1);
 }

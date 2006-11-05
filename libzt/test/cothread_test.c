@@ -2,6 +2,7 @@
 
 #include <stdarg.h>
 #include <libzt/zt_cothread.h>
+#include <stdlib.h>
 #include "test.h"
 
 
@@ -59,10 +60,10 @@ int main(int argc, char **argv) {
 	 */
 	glbl.cts->event_flags |= ZT_NON_BLOCK;
 
-	printf("Testing %d co_threads\n", CORO_N);	
+	printf("Testing %d co_threads\n", CORO_N);
 	for(i=0; i < CORO_N; i++) {
 		sprintf(name[i], "test[%d]", i);
-		zt_cothread_new(glbl.cts, test1, 32768, name[i], 15);
+		zt_cothread_new(glbl.cts, test1, 32768, name[i], rand()%15);
 	}	
 	/* 
          * cothread_new(test1, "test1a", 10);

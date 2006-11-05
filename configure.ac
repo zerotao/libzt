@@ -40,6 +40,14 @@ case $host in
 	;;
 esac
 
+dnl Because recent automake complains about AS, set it here.
+CCAS="$CC"
+AC_SUBST(CCAS)
+
+dnl Because recent automake complains about CCASFLAGS, set it here.
+CCASFLAGS='$(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)'
+AC_SUBST(CCASFLAGS)
+
 dnl Checks for libraries.
 dnl AC_CHECK_LIB(foo, foo_init)
 
@@ -66,18 +74,21 @@ AC_CHECK_TYPE(u_int16_t, unsigned short)
 AC_CHECK_TYPE(u_int8_t, unsigned char)
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(bzero memset, break)
+AC_CHECK_FUNCS(bzero memset break)
 AC_CHECK_FUNCS(calloc strchr strrchr strdup)
 AC_CHECK_FUNCS(getopt_long)
 
 dnl replace functions missing in the local libraries
 dnl you need to add the replacement in replace/FUNCTION.c
-AC_REPLACE_FUNCS(basename)
-AC_REPLACE_FUNCS(vsyslog)
+AC_REPLACE_FUNCS(basename vsyslog)
 
 AC_MSG_CHECKING(for basename in string.h)
 AC_EGREP_HEADER(basename, string.h, zt_cv_func_basename=yes, zt_cv_func_basename=no)
 AC_MSG_RESULT($zt_cv_func_basename)
+
+AC_MSG_CHECKING(for swapcontext in ucontext.h)
+AC_EGREP_HEADER(swapcontext, ucontext.h, zt_cv_func_ucontext=yes, zt_cv_func_ucontext=no)
+AC_MSG_RESULT($zt_cv_func_ucontext)
 
 AC_MSG_CHECKING(for vsyslog in syslog.h)
 AC_EGREP_HEADER(vsyslog, syslog.h, zt_cv_func_vsyslog=yes , zt_cv_func_vsyslog=no)
@@ -99,6 +110,7 @@ AC_OUTPUT_COMMANDS([
     # automake rules (which always set one or the other to empty).
     CONFIG_OTHER=${CONFIG_OTHER-${common_dir}/zt_common.h}
   fi
+
   case "$CONFIG_OTHER" in
   *${common_dir}/zt_common.h*)
     outfile=${common_dir}/zt_common.h
@@ -314,6 +326,7 @@ libzt/zt_log/Makefile
 libzt/zt_cfg/Makefile
 libzt/zt_event/Makefile
 libzt/adt/Makefile
+libzt/ucontext/Makefile
 libzt/test/Makefile
 tools/Makefile
 tools/project.spec

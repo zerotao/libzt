@@ -13,10 +13,99 @@
 #define _ZT_EXCEPT_H_
 
 #include <libzt/zt.h>
+#include <libzt/zt_macros.h>
+
 #include <setjmp.h>
 #include <stdlib.h>
 
+
 BEGIN_C_DECLS
+
+#define _MACRO_EVAL_1A(OP, F1, F2, ARGS) OP(F1, ARGS, _MACRO_EVAL_1B)
+#define _MACRO_EVAL_1B(OP, F1, F2, ARGS) OP(F1, ARGS, _MACRO_EVAL_1A)
+
+#define _MACRO_EVAL_2A(OP, F1, F2, ARGS) OP(F2, ARGS, _MACRO_EVAL_2B)
+#define _MACRO_EVAL_2B(OP, F1, F2, ARGS) OP(F2, ARGS, _MACRO_EVAL_2A)
+
+#define MACRO_EVAL_1(FORMS) _MACRO_EVAL_1A FORMS
+#define MACRO_EVAL_2(FORMS) _MACRO_EVAL_2A FORMS
+
+/** Exception primitives **/
+
+/* declare exception */
+#define _EXCEPT_DECL(NAME, STR)			\
+  char * NAME ;
+
+/* define exception */
+#define _EXCEPT_DEFN(NAME, STR)			\
+  STR,
+
+/* exception */
+#define EXCEPTION(NAME, STR)			\
+  (MACRO_APPLY, _EXCEPT_DECL, _EXCEPT_DEFN, (NAME, STR))
+
+
+/* GROUP */
+#define _EXCEPT_GROUP_DECL_INIT(STR)			\
+  struct {					\
+    char	* desc;
+
+#define _EXCEPT_GROUP_DECL_CLOSE(NAME)			\
+  } NAME ;
+
+#define _EXCEPT_GROUP_DEFN_INIT(STR)			\
+  { STR,
+
+#define _EXCEPT_GROUP_DEFN_CLOSE(NAME)			\
+  },
+
+#define EXCEPT_GROUP(NAME, STR, REST)						\
+  (MACRO_APPLY, _EXCEPT_GROUP_DECL_INIT, _EXCEPT_GROUP_DEFN_INIT, (STR)) 	\
+  REST										\
+  (MACRO_APPLY, _EXCEPT_GROUP_DECL_CLOSE, _EXCEPT_GROUP_DEFN_CLOSE, (NAME))
+
+
+/* TOP GROUP */
+#define _EXCEPT_TYPE(NAME) exceptDomain_ ## NAME
+
+#define _EXCEPT_TOP_GROUP_DECL_INIT(NAME, STR)		\
+  typedef struct {					\
+    char	* desc;
+
+#ifndef EXCEPT_DEFINE
+# define _EXTERN_DECL(NAME) extern _EXCEPT_TYPE(NAME) NAME
+#else
+# define _EXTERN_DECL(NAME)
+#endif
+
+#define _EXCEPT_TOP_GROUP_DECL_CLOSE(NAME)		\
+  } _EXCEPT_TYPE(NAME);					\
+	_EXTERN_DECL(NAME)
+				  
+
+#define _EXCEPT_TOP_GROUP_DEFN_INIT(NAME, STR)		\
+  _EXCEPT_TYPE(NAME) NAME = { STR ,
+
+#define _EXCEPT_TOP_GROUP_DEFN_CLOSE(NAME)		\
+  }
+			     
+#define _EXCEPT_FORMS(NAME, STR, REST)							\
+  (MACRO_APPLY, _EXCEPT_TOP_GROUP_DECL_INIT, _EXCEPT_TOP_GROUP_DEFN_INIT, (NAME, STR)) 	\
+  REST											\
+  (MACRO_APPLY_STOP, _EXCEPT_TOP_GROUP_DECL_CLOSE, _EXCEPT_TOP_GROUP_DEFN_CLOSE, (NAME))
+
+/* actual definition */
+#define EXCEPT_DECL(NAME, STR, REST) MACRO_EVAL_1(_EXCEPT_FORMS(NAME, STR, REST))
+#define EXCEPT_DEFN(NAME, STR, REST) MACRO_EVAL_2(_EXCEPT_FORMS(NAME, STR, REST))
+
+#ifdef EXCEPT_DEFINE
+# define EXCEPT_DESC(NAME, STR, REST)			\
+	EXCEPT_DECL(NAME, STR, REST);			\
+	EXCEPT_DEFN(NAME, STR, REST)
+#else
+# define EXCEPT_DESC(NAME, STR, REST) EXCEPT_DECL(NAME, STR, REST)
+#endif	/* EXCEPT_DEFINE */
+#undef EXCEPT_DEFINE
 
 struct except_Frame {
 	struct except_Frame	 *prev;
@@ -43,6 +132,7 @@ extern struct except_Frame *_except_Stack;
 extern void except_unhandled_exception(struct except_Frame *stack, int flags);
 extern void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc, int flags);
 extern void _except_call_handlers(struct except_Frame *);
+extern int domain_default_except_handler(void *exc, void *type, char *etext, char *file, char *func, int line);
 
 extern except_handler
 _except_install_default_handler(except_handler h);
@@ -105,9 +195,9 @@ extern void _except_remove_handler(void*, except_handler);
 		_except_Stack->efunc = (char *)__FUNCTION__;		\
 		_except_Stack->eline = __LINE__;			\
 		_except_Stack->caught = 0;				\
+		_except_Stack->exception = &(EXCEPTION);		\
+		_except_Stack->type = &(TYPE);				\
 		if(_except_Stack->phase == except_WindPhase){		\
-			_except_Stack->exception = &(EXCEPTION);	\
-			_except_Stack->type = &(TYPE);			\
 			longjmp(_except_Stack->env, 1);			\
 		}							\
 	} while(0)

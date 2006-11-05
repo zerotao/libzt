@@ -1,5 +1,6 @@
 SUBDIRS = 		\
 	adt		\
+	ucontext	\
 	zt_cfg 		\
 	zt_log 		\
 	zt_event	\
@@ -15,6 +16,7 @@ lib_LTLIBRARIES = libzt.la
 libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
 	adt/libzt_adt.la		\
+	ucontext/libzt_ucontext.la	\
 	zt_log/libzt_log.la		\
 	zt_cfg/libzt_cfg.la		\
 	zt_event/libzt_event.la
@@ -47,7 +49,8 @@ libzt_la_SOURCES = 		\
 	zt_coro.c		\
 	zt_time.c		\
 	zt_event.c		\
-	zt_cothread.c
+	zt_cothread.c		\
+	zt_int.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
@@ -67,7 +70,8 @@ pkginclude_HEADERS = \
 	zt_coro.h		\
         zt_macros.h		\
 	zt_event.h		\
-	zt_cothread.h
+	zt_cothread.h		\
+	zt_int.h
 
 
 # The following is required in the Makefile.am for common.h

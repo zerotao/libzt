@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2006, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  */
 
@@ -47,9 +47,9 @@
 	} while(0)
 
 /*!
- * return a substring
+ * return a newly allocated substring
  */
-char *cstr_sub(const char *s, int i, int j)
+char *zt_cstr_sub(const char *s, int i, int j)
 {
 	char	* new;
 	char	* p;
@@ -68,9 +68,9 @@ char *cstr_sub(const char *s, int i, int j)
 }
 
 /*!
- * return a string containing n copies of s[i:j] plus NUL
+ * return a newley allocated string containing n copies of s[i:j] plus NUL
  */
-char *cstr_dup(const char *s, int i, int j, int n)
+char *zt_cstr_dup(const char *s, int i, int j, int n)
 {
 	int	  k;
 	char	* new, *p;
@@ -94,10 +94,10 @@ char *cstr_dup(const char *s, int i, int j, int n)
 }
 
 /*!
- *
+ * return a newly allocated string containing s1[i1:j1]s2[i2:j2]
  */
-char *cstr_cat(const char *s1, int i1, int j1,
-	      const char *s2, int i2, int j2)
+char *zt_cstr_cat(const char *s1, int i1, int j1,
+		  const char *s2, int i2, int j2)
 {
 	char	* new,
 		* p;
@@ -120,9 +120,9 @@ char *cstr_cat(const char *s1, int i1, int j1,
 }
 
 /*!
- * 
+ * return a newly allocated string containing s[i:j]s1[i1:j1]...sn[in:jn] 
  */
-char *cstr_catv(const char *s, ...)
+char *zt_cstr_catv(const char *s, ...)
 {
 	char		* new,
 		        * p;
@@ -163,9 +163,9 @@ char *cstr_catv(const char *s, ...)
 }
 
 /*!
- * reverse s[i:j]
+ * returns a newly allocated string containing the reverse of s[i:j]
  */
-char *cstr_reverse(const char *s, int i, int j)
+char *zt_cstr_reverse(const char *s, int i, int j)
 {
 	char	* new,
 		* p;
@@ -183,10 +183,12 @@ char *cstr_reverse(const char *s, int i, int j)
 }
 
 /*!
- *
+ * returns a newly allocated string containing convert(s[i:j], from, to) where the chars in from are
+ * converted to the corrisponding chars in to.
+ * returns NULL on failure
  */
-char *cstr_map(const char *s, int i, int j,
-	      const char *from, const char *to)
+char *zt_cstr_map(const char *s, int i, int j,
+		  const char *from, const char *to)
 {
 	static char map[256] = { 0 };
 
@@ -220,9 +222,9 @@ char *cstr_map(const char *s, int i, int j,
 }
 
 /*!
- *
+ * returns the index into s that i corrisponds to.
  */
-int cstr_pos(const char *s, int i)
+int zt_cstr_pos(const char *s, int i)
 {
 	int	  len;
 	
@@ -234,20 +236,20 @@ int cstr_pos(const char *s, int i)
 }
 
 /*!
- *
+ * returns the length of the slice represented by [i:j]
  */
-int cstr_len(const char *s, int i, int j)
+int zt_cstr_len(const char *s, int i, int j)
 {
 	CONVERT(s, i, j);
 	return j - i;
 }
 
 /*!
- * return -1, 0, 1 if s1 is lexically less then, equal to or greater
- * then s2
+ * return -1, 0, 1 if s1[i1:j1] is lexically less then, equal to or greater
+ * then s2[i2:j2]
  */
-int cstr_cmp(const char *s1, int i1, int j1,
-	    const char *s2, int i2, int j2)
+int zt_cstr_cmp(const char *s1, int i1, int j1,
+		const char *s2, int i2, int j2)
 {
 	CONVERT(s1, i1, j1);
 	CONVERT(s2, i2, j2);
@@ -267,9 +269,9 @@ int cstr_cmp(const char *s1, int i1, int j1,
 }
 
 /*!
- * 
+ * locates the first occurrence of c in the string referenced by s[i:j]
  */
-int cstr_chr(const char *s, int i, int j, int c)
+int zt_cstr_chr(const char *s, int i, int j, int c)
 {
 	CONVERT(s, i, j);
 	for ( ; i < j; i++) {
@@ -281,9 +283,9 @@ int cstr_chr(const char *s, int i, int j, int c)
 	return 0;
 }
 /*!
- *
+ * locates the last occurrence of c in the string referenced by s[i:j]
  */
-int cstr_rchr(const char *s, int i, int j, int c)
+int zt_cstr_rchr(const char *s, int i, int j, int c)
 {
 	CONVERT(s, i, j);
 	while (j > i) {
@@ -296,9 +298,9 @@ int cstr_rchr(const char *s, int i, int j, int c)
 }
 
 /*!
- *
+ * locates the first occurrence of any char in set in the string referenced by s[i:j]
  */
-int cstr_upto(const char *s, int i, int j, const char *set)
+int zt_cstr_upto(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 	CONVERT(s, i, j);
@@ -312,9 +314,9 @@ int cstr_upto(const char *s, int i, int j, const char *set)
 }
 
 /*!
- *
+ * locates the last occurrence of any char in set in the string referenced by s[i:j]
  */
-int cstr_rupto(const char *s, int i, int j, const char *set)
+int zt_cstr_rupto(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -329,9 +331,9 @@ int cstr_rupto(const char *s, int i, int j, const char *set)
 }
 
 /*!
- *
+ * locates the first occurrence of the string str in the string referenced by s[i:j]
  */
-int cstr_find(const char *s, int i, int j, const char *str)
+int zt_cstr_find(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -360,9 +362,9 @@ int cstr_find(const char *s, int i, int j, const char *str)
 }
 
 /*!
- *
+ * locates the first occurrence of the string str in the string referenced by s[i:j]
  */
-int cstr_rfind(const char *s, int i, int j, const char *str)
+int zt_cstr_rfind(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -390,9 +392,9 @@ int cstr_rfind(const char *s, int i, int j, const char *str)
 }
 
 /*!
- *
+ * locates the first occurrence of any char in set in the string referenced by s[i]
  */
-int cstr_any(const char *s, int i, const char *set)
+int zt_cstr_any(const char *s, int i, const char *set)
 {
 	int	  len;
 
@@ -411,9 +413,9 @@ int cstr_any(const char *s, int i, const char *set)
 }
 
 /*!
- *
+ * locates the first occurrence of any string not in set in the string referenced by s[i:j]
  */
-int cstr_many(const char *s, int i, int j, const char *set)
+int zt_cstr_many(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -430,9 +432,9 @@ int cstr_many(const char *s, int i, int j, const char *set)
 }
 
 /*!
- *
+ * locates the last occurrence of any string not in set in the string referenced by s[i:j]
  */
-int cstr_rmany(const char *s, int i, int j, const char *set)
+int zt_cstr_rmany(const char *s, int i, int j, const char *set)
 {
 	assert(set);
 
@@ -449,9 +451,9 @@ int cstr_rmany(const char *s, int i, int j, const char *set)
 }
 
 /*!
- *
+ * 
  */
-int cstr_match(const char *s, int i, int j, const char *str)
+int zt_cstr_match(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -475,7 +477,7 @@ int cstr_match(const char *s, int i, int j, const char *str)
 /*!
  *
  */
-int cstr_rmatch(const char *s, int i, int j, const char *str)
+int zt_cstr_rmatch(const char *s, int i, int j, const char *str)
 {
 	int	  len;
 
@@ -501,7 +503,7 @@ int cstr_rmatch(const char *s, int i, int j, const char *str)
  *
  */
 int
-cstr_format(int code, va_list *app,
+zt_put_cstr(int code, va_list *app,
 	   int put(int c, void *cl), void *cl,
 	   unsigned char flags[], int width, int precision)
 {
@@ -510,6 +512,7 @@ cstr_format(int code, va_list *app,
 		  j;
 
 	assert(app && flags);
+	
 	s = va_arg(*app, char *);
 	i = va_arg(*app, int);
 	j = va_arg(*app, int);
@@ -521,7 +524,7 @@ cstr_format(int code, va_list *app,
 
 /* strip the \n from the end of a string */
 char*
-cstr_chomp (char *str)
+zt_cstr_chomp (char *str)
 {
 	assert(str);
 	{
@@ -535,7 +538,7 @@ cstr_chomp (char *str)
 
 /* Strip white space characters from the front and back of the string */
 char*
-cstr_strip (char *str)
+zt_cstr_strip (char *str)
 {
 	assert(str);
 	{
@@ -548,7 +551,7 @@ cstr_strip (char *str)
 		/* strip whitespace from the end of the string */
 		if(index(str, '\n') != NULL)
 			nl = 1;
-		len = cstr_rspn(str, WHITESPACE "\n");
+		len = zt_cstr_rspn(str, WHITESPACE "\n");
 		len = strlen(str) - len;
 		if(len){
 			if(nl)
@@ -560,7 +563,7 @@ cstr_strip (char *str)
 }
 
 size_t
-cstr_rspn (const char *s,
+zt_cstr_rspn (const char *s,
 	 const char *accept)
 {
 	assert(s);
@@ -579,7 +582,7 @@ cstr_rspn (const char *s,
 }
 
 size_t
-cstr_rcspn (const char *s,
+zt_cstr_rcspn (const char *s,
 	  const char *reject)
 {
 	assert(s);
@@ -598,7 +601,7 @@ cstr_rcspn (const char *s,
 }
 
 char*
-cstr_basename(char *npath,
+zt_cstr_basename(char *npath,
 	  int len,
 	  const char *path,
 	  const char *suffix)
@@ -636,7 +639,7 @@ cstr_basename(char *npath,
 
 
 char *
-cstr_dirname (char *npath, int len, const char *path)
+zt_cstr_dirname (char *npath, int len, const char *path)
 {
 	char *dirname = NULL;
 	int dir_len = 0;
