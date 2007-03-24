@@ -28,24 +28,20 @@ void
 timetest(char *name, int n, void *(*test)(void *), void *data)
 {
 	struct time_result	  result;
-	float			  usr, sys, total;
+	float			  	  usr;
+	float				  sys;
+	float				  total;
 	
 	zt_time(n, &result, test, data);
-	zt_time_result_to_elapsed(&result, &usr, &sys, &total);
-	
-	if(n == 1) {
-		printf("%s took: %4.2fs user %4.2fs system %4.2fs total \n",name, usr, sys, total);
-	} else {
-		printf("%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total \n",n, name, usr, sys, total);
-	}	
+	zt_time_print_result(&result, name, n);	
 }
 
 
 void *test_malloc(void *data)
 {
 	struct test_data_t	* td = data;
-	int			  size = td->size;
-	int			  i;
+	int			  		  size = td->size;
+	int			  		  i;
 
 	for(i = 0; i < td->n; i++) {
 		td->parr[i] = malloc(size);
@@ -62,7 +58,7 @@ void *test_pool(void *data)
 {
 	struct test_data_t	* td = data;	
 	struct zt_mem_pool	* pool = td->pool;
-	int			  i = 0;
+	int					  i;
 
 	for(i = 0; i < td->n; i++) {
 		td->parr[i] = zt_mem_pool_alloc(pool);
@@ -82,7 +78,7 @@ main(int argc, char *argv[])
 {
 	struct test_data_t	  td_small;
 	struct test_data_t	  td_large;
-	void			**parr;
+	void				**parr;
 
 	parr = (void **)calloc(NPTEST+1, sizeof(void *));
 	
@@ -109,7 +105,7 @@ main(int argc, char *argv[])
 	timetest("pool_alloc_large", NPLOOP, test_pool, (void *)&td_large);
 
 	zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
-
+	
 	zt_mem_pool_destroy(&td_small.pool);
 	zt_mem_pool_destroy(&td_large.pool);
 	free(parr);
