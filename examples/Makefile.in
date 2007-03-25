@@ -190,7 +190,7 @@ all: all-am
 .SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  Makefile.am $(top_srcdir)/Makefile.extra $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  examples/Makefile
+	  $(AUTOMAKE) --foreign  examples/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 

@@ -1,4 +1,4 @@
-LDADD = ../libzt.la
+LDADD = ../libzt/libzt.la
 
 DEFS = @DEFS@
 CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
@@ -97,14 +97,14 @@ noinst_DATA = \
 DUMMY_TEST = $(addprefix $(srcdir)/,$(noinst_DATA))
 
 update: test.out
-	cp test.out $(top_srcdir)/libzt/test/out.test
+	cp test.out $(top_srcdir)/tests/out.test
 
 test.out:
 	test
 
 test: $(TEST_APPS)
 	@echo Beginning Test Run
-	@cp -p $(DUMMY_TEST) $(top_builddir)/libzt/test
+	@cp -p $(DUMMY_TEST) $(top_builddir)/tests
 	@$(RM) -f test.out diff.out assert.out core
 	@(for program in $^; do \
 	  if [ "$$program" = "opts_test" ]; then \

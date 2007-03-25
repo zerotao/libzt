@@ -4,12 +4,7 @@ SUBDIRS = 		\
 	zt_cfg 		\
 	zt_log 		\
 	zt_event	\
-	.		\
-	test
-#	cfg 
-
-tests:
-	$(MAKE) -C test test
+	.
 
 lib_LTLIBRARIES = libzt.la 
 

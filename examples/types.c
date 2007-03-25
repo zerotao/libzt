@@ -1,5 +1,5 @@
 #include <libzt/zt.h>
-#include "../libzt/test/test.h"
+#include "../tests/test.h"
 
 
 int

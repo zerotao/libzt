@@ -4,7 +4,7 @@
 #include <libzt/zt_event.h>
 #include <libzt/zt_event/private.h>
 #include <libzt/zt_log.h>
-#include "../libzt/test/test.h"
+#include "../tests/test.h"
 
 typedef struct stream *stream;
 struct stream {
