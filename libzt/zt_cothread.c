@@ -28,8 +28,7 @@ zt_cothread_sched_new(void)
 	cts->revents = 0;
 	cts->event_flags = (ZT_ALL_EVENTS|ZT_RUN_ONCE);
 	
-	memcpy(&cts->ctime, zt_event_tod(cts->sys), sizeof(struct timeval));
-	
+	memcpy(&cts->ctime, zt_event_tod(cts->sys), sizeof(struct timeval));	
 	return cts;
 }
 
@@ -43,8 +42,8 @@ zt_cothread_sched_delete(zt_cothread_sched *cts)
 zt_cothread *
 zt_cothread_new(zt_cothread_sched *cts, void *(*func)(), int stacksize, ...) 
 {
-	zt_cothread		* co;
-	va_list			  args;
+	zt_cothread			* co;
+	va_list			  	  args;
 	struct event_req	  req[1];
 	
 	_add_req(cts, req, ZT_TIMER_EVENT, 0);
@@ -72,6 +71,13 @@ zt_cothread_wait(zt_cothread_sched *cts, int mode, ...)
 	return _schedule(cts);
 }
 
+void
+zt_cothread_join(zt_cothread_sched *cts)
+{
+	while(! zt_cothread_sched_empty(cts)) {
+		zt_cothread_wait(cts, ZT_TIMER_EVENT, 10);
+	}
+}
 
 /* local functions */
 
@@ -79,30 +85,20 @@ static int _schedule(zt_cothread_sched *cts)
 {
 	struct event_queue	* queue;
 	struct event_req	* req;
-	int			  result;
+	int					  result;
 
 	for(;;){
+		
 		queue = cts->active;
-		while((req = queue->req)) {
+		while((req = queue->req)) { /* for each request in the queue */
 			queue->req = req->next;
-			if ((result = _check(req, &cts->ctime))) {
-				if(req->mode & ZT_ANY_IO_EVENT) {
-					zt_event_remove_io(cts->sys, req->fd, req->mode);
-				}
-				zt_coro_call(req->coro, NULL);
-				return -1;
+			if(req->mode & ZT_ANY_IO_EVENT) {
+				zt_event_remove_io(cts->sys, req->fd, req->mode);
 			}
-
-			if (req->mode == 0 && req->coro != zt_coro_get_current()) {
-				printf("delete request %p\n", req);
-				zt_coro_delete(req->coro);
-			} else {
-				printf("enqueue request %p\n", req);
-				_enqueue(cts, cts->wait, req);
-			}
+			
+			zt_coro_call(req->coro, NULL); /* call it */
+			return -1;					   /* returning to my parent */
 		}
-
-		queue = cts->active;
 		
 		while(zt_event_run(cts->sys, cts->event_flags) == -1);
 		memcpy(&cts->ctime, zt_event_tod(cts->sys), sizeof(struct timeval));
@@ -201,7 +197,7 @@ static void _enqueue_timer(zt_event_sys sys, struct timeval *tv, void *data)
 
 static void _enqueue_io(zt_event_sys sys, int fd, zt_event_enum type, void *data)
 {
-	struct event_req		* req = (struct event_req *)data;
+	struct event_req			* req = (struct event_req *)data;
 	struct zt_cothread_sched	* cts;
 
 	cts = req->cts;
@@ -215,8 +211,14 @@ static void _enqueue_io(zt_event_sys sys, int fd, zt_event_enum type, void *data
 
 static struct timeval *_timeout2timeval(struct timeval *tv, int to)
 {
-	tv->tv_sec = to/1000;
-	tv->tv_usec = to%1000 * 1000;
+	if (to <= 0){
+		tv->tv_sec = 0;
+		tv->tv_usec = 0;
+	} else {
+		tv->tv_sec = to/1000;
+		tv->tv_usec = to%1000 * 1000;
+	}
+	
 	return tv;
 }
 

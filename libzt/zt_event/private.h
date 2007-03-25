@@ -13,9 +13,9 @@ struct zt_event_sys {
 	struct zt_event_vtbl	* vtbl;
 
 	/* other options */
-	long			  num_events;
-	struct timeval		  tod;
-	struct timeval		  min_timeout;
+	long			  		  num_events;
+	struct timeval		  	  tod;
+	struct timeval		  	  min_timeout;
 };
 
 typedef struct zt_event_vtbl {

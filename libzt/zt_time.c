@@ -77,14 +77,12 @@ zt_diff_time(struct timeval *dt,
  */
 long
 zt_cmp_time(struct timeval *t1,
-	    struct timeval *t2)
+			struct timeval *t2)
 {
 	long	  t = t1->tv_sec - t2->tv_sec;
-	
 	if(t) {
 		return t;
 	}
-	
 	return t1->tv_usec - t2->tv_usec;
 }
 
@@ -178,9 +176,9 @@ zt_time_print_result(struct time_result *tr, char *name, int n)
 	zt_time_result_to_elapsed(tr, &usr, &sys, &total);
 
 	if(n <= 1) {
-		log_printf(log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total\n", name, usr, sys, total);
+		log_printf(log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total", name, usr, sys, total);
 	} else {
-		log_printf(log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total \n",n, name, usr, sys, total);
+		log_printf(log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total",n, name, usr, sys, total);
 	}
 	
 }

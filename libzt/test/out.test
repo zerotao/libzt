@@ -52,7 +52,7 @@ MIN[2]:                                                     => success
 sizeof_array[1]:                                            => success
 endof_array[1]:                                             => success
 assert[0]:                                                  => success
-assert[1]:                                                  => failure
+assert[1]:                                                  => success
 progname[1]:                                                => success
 progname[2]:                                                => success
 progname[3]:                                                => success
@@ -124,6 +124,7 @@ Nesting:                                                    => success
 TRY_RETURN from CATCH:                                      => success
 TRY_RETURN from WIND:                                       => success
 Domains:                                                    => success
+Domains2:                                                   => success
 Rethrow:                                                    => success
 Unwind_protect:                                             => success
 CATCH escape:                                               => success
@@ -227,17 +228,15 @@ zt_coro_call[3]                                             => success
 zt_coro_call[4]                                             => success
 zt_coro_call[5]                                             => success
 zt_coro_call[6]                                             => success
+_call2 local except stack[1]                                => success
 zt_coro_call[7]                                             => success
+_call1 local except stack[1]                                => success
 zt_coro_call[8]                                             => success
-Testing 1000 co_threads
-Init Complete
-main: waiting on 1000 cothreads...
-main: waiting on 1000 cothreads...
-main: waiting on 992 cothreads...
-main: waiting on 991 cothreads...
-main: waiting on 992 cothreads...
-main: waiting on 1000 cothreads...
-main: waiting on 1000 cothreads...
-main: waiting on 991 cothreads...
-16008 events registered
-16008 events handled
+main local except stack[1]                                  => success
+zt_cothread_new                                             => success
+zt_cothread_new handles events                              => success
+handled_all_events                                          => success
+correct_number_of_waits                                     => success
+zt_cothread_sched_empty                                     => success
+int_add                                                     => success
+int_add                                                     => success

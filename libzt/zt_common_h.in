@@ -1,5 +1,6 @@
 /* zt_common_h.in -- Process this file with configure to produce common.h */
 
+extern char *memoryError;
 #define XCALLOCS(size, num)     (xcalloc ((num), size))
 #define XMALLOCS(size, num)     (xmalloc ((num), size))
 #define XCALLOC(type, num)	((type *) xcalloc ((num), sizeof(type)))

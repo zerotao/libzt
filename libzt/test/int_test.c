@@ -16,6 +16,6 @@ main(int argc, char *argv[])
         TEST("int_add", int_add(127, -128) == -1);
         
         
-        printf("%d\n", c);
+        //printf("%d\n", c);
         
 }

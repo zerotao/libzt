@@ -29,7 +29,7 @@ fi
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-
+AC_PROG_RANLIB
 AM_PROG_LIBTOOL
 
 CFLAGS="-fno-strict-aliasing"
@@ -331,6 +331,7 @@ libzt/test/Makefile
 tools/Makefile
 tools/project.spec
 tools/libzt.pc
+examples/Makefile
 project.list
 )
 

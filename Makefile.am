@@ -4,7 +4,8 @@ SUBDIRS = \
 	doc     \
 	tools	\
 	replace \
-	libzt
+	libzt   \
+	examples
 
 MAINTAINERCLEANFILES = \
 	configure \

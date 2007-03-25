@@ -94,6 +94,7 @@ zt_coro_create(void *(*func)(void *), zt_coro *co, size_t stack_size) {
     if (!co) {
         co = (zt_coro *)XCALLOC(unsigned char, sizeof(*co) + stack_size);
     }
+
 	
 	stack = (unsigned char *)(co+1);
 

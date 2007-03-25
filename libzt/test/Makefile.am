@@ -26,17 +26,11 @@ TEST_APPS = 		\
 	event_test	\
 	coro_test	\
 	cothread_test	\
+	hash_test	\
 	int_test
 
-#	bytearray_test
 noinst_PROGRAMS = 	\
-	$(TEST_APPS)	\
-	types_test	\
-	mem_tools_test	\
-	mem_tools_test2
-
-# 	chash_test	
-# 	chash64_test	
+	$(TEST_APPS)
 
 int_test_SOURCES = \
 	int_test.c
@@ -53,32 +47,14 @@ time_test_SOURCES = \
 bstream_test_SOURCES = \
 	bstream_test.c
 
-types_test_SOURCES = 	\
-	types_test.c
-
-# chash_test_SOURCES = 
-# 	chash_test.c
-
-# chash64_test_SOURCES = 
-# 	chash64_test.c
-
 array_test_SOURCES = \
 	array_test.c
 
 format_test_SOURCES = \
 	format_test.c
 
-# bytearray_test_SOURCES = \
-# 	bytearray_test.c
-
 table_test_SOURCES = 	\
 	table_test.c
-
-mem_tools_test2_SOURCES =\
-	mem_tools_test2.c
-
-mem_tools_test_SOURCES =\
-	mem_tools_test.c
 
 list_test_SOURCES =	\
 	list_test.c

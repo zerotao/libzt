@@ -10,20 +10,39 @@ struct glbl {
 	zt_cothread_sched	* cts;
 }glbl;
 
+int loops = 0;
+int inits = 0;
+
+#define STACK_SIZE ZT_CORO_MIN_STACK_SIZE
+#define CORO_N 10000
+#define DEBUG 0
+
 static void *test1(va_list args) {
 	char *str = va_arg(args, char *);
 	int limit = va_arg(args, int);
 	int i = 0;
-
-	//printf("%s started\n", str);
+	
+	inits++;
+	/* We have been called initially, so we want to wait for a little
+	 * while, charging the schedular with a large number of threads.
+	 * we do a little bit of magic with the wait time here to "try" to
+	 * make the semantics work, basicly I want to wait until all of
+	 * the threads are started before I start to process them as the
+	 * schedular does not have the concept, yet, of enabled/disabled I
+	 * try to give enough time, in usec, for all of the threads to get
+	 * started (# of threads / 2) before we begin running.  This is
+	 * obviosuly flawed, but works most of the time.
+	 */
+	zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, CORO_N/2);
+	
 	while (i < limit) {
-		zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, 100 * limit);
+		loops++;
+		zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, 1); /* 0 = schedule for the next spin */
 		i++;
-		//printf("%s: %d\n", str, i++);
 	}
-	//printf("%s: dying\n", str);
-	zt_cothread_wait(glbl.cts, 0);
-        return NULL;
+	
+	zt_cothread_wait(glbl.cts, 0); /* request a delete of the cothread */
+	return NULL;
 }
 
 
@@ -34,58 +53,68 @@ static void *test2(va_list args) {
 	char buf[256];
 	int n;
 
-	printf("%s started\n", str);
 	for (;;) {
 		zt_cothread_wait(glbl.cts, ZT_READ_EVENT, in);
 		if ((n = read(in, buf, sizeof(buf))) <= 0)
 			break;
-		printf("test2 writing\n");
+		
 		zt_cothread_wait(glbl.cts, ZT_WRITE_EVENT, out);
 		write(out, buf, n);
 	}
-	printf("%s: dying\n", str);
+	
 	zt_cothread_wait(glbl.cts, 0);
-        return NULL;
+	return NULL;
 }
 
-#define CORO_N 1000
 int main(int argc, char **argv) {
-	char			  name[CORO_N + 1][256];
 	int			  i;
 	
 	glbl.cts = zt_cothread_sched_new();
 
 	/*
-	 * setting this here makes sure 
+	 * Make sure that the event system does not block waiting for an event
+	 * to fire.  This way we can load up the system with a large number
+	 * of "threads" before we start "running".  This results in higher CPU
+	 * load as we spin in the for loop and request new threads, but keeps from
+	 * blocking on each one.
 	 */
 	glbl.cts->event_flags |= ZT_NON_BLOCK;
 
-	printf("Testing %d co_threads\n", CORO_N);
+#define YIELDS_PER_THREAD 5
 	for(i=0; i < CORO_N; i++) {
-		sprintf(name[i], "test[%d]", i);
-		zt_cothread_new(glbl.cts, test1, 32768, name[i], rand()%15);
-	}	
-	/* 
-         * cothread_new(test1, "test1a", 10);
-	 * cothread_new(test1, "test1b", 12);
-	 * cothread_new(test1, "test1c", 14);
-	 * cothread_new(test2, "test2", 0, 2);
-         */
-	printf("Init Complete\n");
+		zt_cothread_new(glbl.cts, test1, STACK_SIZE, "test_thread", YIELDS_PER_THREAD);
+	}
+
+#if DEBUG
+	printf("request: %d handled: %d\n", glbl.cts->revents, glbl.cts->hevents);
+#endif
+	
+	TEST("zt_cothread_new", inits == CORO_N);
+	TEST("zt_cothread_new handles events", glbl.cts->hevents > 0);
 	
 	/*
-	 * this will reduce the CPU load and system call overhead as
-	 * there is nothing to be doing while the threads are running
-	 * other then loop back on it's self
+	 * this will reduce the CPU load and system call overhead as there
+	 * is nothing to be doing while the threads are running other then
+	 * loop back on it's self.  this is what should be done when using
+	 * the parent workerthread model (one parent that wraps multiple
+	 * child threads).
 	 */
 	glbl.cts->event_flags &= ~(ZT_NON_BLOCK);
 
-	while(zt_event_num_events(glbl.cts->sys) > 0) {
-	  printf("main: waiting on %ld cothreads...\n", zt_event_num_events(glbl.cts->sys));
-		zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, 3000);
-	}
+	/* Wait for all events to complete */
+	zt_cothread_join(glbl.cts);	
+	
+	TEST("handled_all_events", glbl.cts->revents == glbl.cts->hevents);
+	TEST("correct_number_of_waits", CORO_N * YIELDS_PER_THREAD == loops);
+	TEST("zt_cothread_sched_empty", zt_cothread_sched_empty(glbl.cts) == 1);
+
+#if DEBUG
+	printf("coro * yields: %d\n", CORO_N * YIELDS_PER_THREAD);
+	printf("loops: %d\n", loops);
+		
 	printf("%ld events registered\n", glbl.cts->revents);
 	printf("%ld events handled\n", glbl.cts->hevents);
+#endif
 }
 
 
