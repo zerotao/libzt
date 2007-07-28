@@ -63,22 +63,22 @@ progvar LIBTOOLIZE glibtoolize libtoolize
 progvar ACLOCAL aclocal
 progvar AUTOHEADER autoheader
 progvar AUTOCONF autoconf
-progvar AUTOMAKE automake
+progvar AUTOMAKE automake-1.6
 progvar AUTORECONF autoreconf
 
 
 
-if [ -f configure -a -n ${AUTORECONF} ]; then
-    set -x
-    ${AUTORECONF} || error "${AUTORECONF}"
-else
-    set -x
-    ${LIBTOOLIZE} --automake --copy --force || error "${LIBTOOLIZE}"
-    ${ACLOCAL} -I aux_files || error "${ACLOCAL}"
-    ${AUTOHEADER} || error "${AUTOHEADER}"
-    ${AUTOCONF} || error "${AUTOCONF}"
-    ${AUTOMAKE} --add-missing --copy --foreign || error "${AUTOMAKE}"
-fi
+#if [ -f configure -a -n ${AUTORECONF} ]; then
+#    set -x
+#    ${AUTORECONF} || error "${AUTORECONF}"
+#else
+set -x
+${LIBTOOLIZE} --automake --copy --force || error "${LIBTOOLIZE}"
+${ACLOCAL} -I aux_files || error "${ACLOCAL}"
+${AUTOHEADER} || error "${AUTOHEADER}"
+${AUTOCONF} || error "${AUTOCONF}"
+${AUTOMAKE} --add-missing --copy --foreign || error "${AUTOMAKE}"
+#fi
 
 # set +x
 # if [ x${AUTOMAKE} == x"unsermake" ]; then

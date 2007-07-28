@@ -8,7 +8,7 @@ libzt_log_la_SOURCES = \
 
 DEFS = @DEFS@ 
 
-CPPFLAGS = -I${top_builddir} -I${top_builddir}/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+AM_CPPFLAGS = -I${top_builddir} -I${top_builddir}/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 pkgincludedir = ${includedir}/libzt/zt_log
 pkginclude_HEADERS = \

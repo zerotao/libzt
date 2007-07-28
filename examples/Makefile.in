@@ -106,7 +106,7 @@ install_sh = @install_sh@
 LDADD = ../libzt/libzt.la
 
 DEFS = @DEFS@
-CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 EXAMPLE_APPS = \
 	events		\
@@ -165,6 +165,7 @@ types_LDADD = $(LDADD)
 types_DEPENDENCIES = ../libzt/libzt.la
 types_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
+CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 depcomp = $(SHELL) $(top_srcdir)/aux_files/depcomp

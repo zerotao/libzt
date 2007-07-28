@@ -1,7 +1,7 @@
 LDADD = ../libzt/libzt.la
 
 DEFS = @DEFS@
-CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 EXAMPLE_APPS = 		\
 	events		\

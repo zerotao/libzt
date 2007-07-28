@@ -27,7 +27,7 @@ libzt_la_LDFLAGS = -version-info 1:0:0 \
 		-export-dynamic
 
 DEFS = @DEFS@
-CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 libzt_la_SOURCES = 		\
 	zt_assert.c 		\
