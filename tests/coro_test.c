@@ -106,12 +106,12 @@ main(int argc, char *argv[])
 {
     zt_coro         	* co;
     zt_coro         	* read_coro;
-    int           	  	  i;
+    int           	  i;
     struct io_request     r1;
     struct io_request     r2;
     char              	  b1[1024];
     char              	  b2[1024];
-    struct except_Frame   * stack = _except_Stack;
+    struct except_Frame * stack = _except_Stack;
         
     /* Stacks using the "Default" minimum stack size should not
      * make any use of zt_except (it expects alot more stack to be available
@@ -136,11 +136,11 @@ main(int argc, char *argv[])
     END_TRY;
 	
     
-	/* the coroutine exited it's self
-	   no need to delete it */
-	/* zt_coro_delete(co); */
-	TEST("main local except stack[1]", stack == _except_Stack);
-        
+    /* the coroutine exited it's self
+       no need to delete it */
+    /* zt_coro_delete(co); */
+    TEST("main local except stack[1]", stack == _except_Stack);
+    
     read_coro = zt_coro_create(_call_read, 0, ZT_CORO_MIN_STACK_SIZE);
 
     r1.fd = 0;

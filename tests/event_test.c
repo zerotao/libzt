@@ -18,11 +18,11 @@ void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data)
 
 int main(int argc, char *argv[]) 
 {
-	zt_event_sys	  sys;
-	struct timeval	  ntv = {0, 0};
-	int				  i;
-	int				  n;
-	long		  	  last = 0;
+	zt_event_sys	  	  sys;
+	struct timeval	  	  ntv = {0, 0};
+	int					  i;
+	int				  	  n;
+	long		  	  	  last = 0;
 	
 	sys = zt_event_select();
 
@@ -38,7 +38,8 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		char 			  buff[256];
+		char	  buff[256];
+		
 		sprintf(buff, "%d timers", NUM_TIMERS);	
 		while(zt_event_run(sys, ZT_ALL_EVENTS|ZT_RUN_ONCE|ZT_NON_BLOCK) != -1) {
 			if(counter == NUM_TIMERS) {
