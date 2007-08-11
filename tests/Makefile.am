@@ -27,10 +27,14 @@ TEST_APPS = 		\
 	coro_test	\
 	cothread_test	\
 	hash_test	\
-	int_test
+	int_test	\
+	llist_test
 
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)
+
+llist_test_SOURCES = \
+	llist_test.c
 
 int_test_SOURCES = \
 	int_test.c

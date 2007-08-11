@@ -87,7 +87,7 @@ zt_elist_add_tail(zt_elist *head, zt_elist *new)
 static INLINE void
 zt_elist_join(zt_elist *head, zt_elist *list)
 {
-        zt_elist *first = list->next;
+	zt_elist *first = list->next;
 	zt_elist *last = list->prev;
 	zt_elist *at = head->next;
 
