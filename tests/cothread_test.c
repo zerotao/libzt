@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 	 * Make sure that the event system does not block waiting for an event
 	 * to fire.  This way we can load up the system with a large number
 	 * of "threads" before we start "running".  This results in higher CPU
-	 * load as we spin in the for loop and request new threads, but keeps from
+	 * load as we spin, in the for loop and request new threads, but keeps from
 	 * blocking on each one.
 	 */
 	glbl.cts->event_flags |= ZT_NON_BLOCK;
@@ -93,6 +93,7 @@ int main(int argc, char **argv) {
 	TEST("zt_cothread_new handles events", glbl.cts->hevents > 0);
 	
 	/*
+	 * Now we block waiting for events to fire,
 	 * this will reduce the CPU load and system call overhead as there
 	 * is nothing to be doing while the threads are running other then
 	 * loop back on it's self.  this is what should be done when using
