@@ -63,7 +63,7 @@ progvar LIBTOOLIZE glibtoolize libtoolize
 progvar ACLOCAL aclocal
 progvar AUTOHEADER autoheader
 progvar AUTOCONF autoconf
-progvar AUTOMAKE automake-1.6
+progvar AUTOMAKE automake
 progvar AUTORECONF autoreconf
 
 
