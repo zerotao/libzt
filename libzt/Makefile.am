@@ -45,6 +45,7 @@ libzt_la_SOURCES = 		\
 	zt_time.c		\
 	zt_event.c		\
 	zt_cothread.c		\
+	zt_gc.c			\
 	zt_int.c
 
 pkgincludedir = ${includedir}/libzt
@@ -66,6 +67,7 @@ pkginclude_HEADERS = \
         zt_macros.h		\
 	zt_event.h		\
 	zt_cothread.h		\
+	zt_gc.h			\
 	zt_int.h
 
 
