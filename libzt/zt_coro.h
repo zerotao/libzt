@@ -19,7 +19,6 @@ BEGIN_C_DECLS
 
 typedef struct zt_coro {
 	ucontext_t			  ctx;
-	unsigned int          overflow;
 	struct zt_coro		* caller;
 	struct zt_coro		* target;
 	void				*(* func)(void *);
@@ -37,6 +36,8 @@ void *zt_coro_yield(void *data);
 void zt_coro_exit_to(zt_coro *co, void *data) NORETURN;
 void zt_coro_exit(void * data) NORETURN;
 zt_coro *zt_coro_get_current(void);
+
+int zt_coro_stack_left(void);
 
 END_C_DECLS
 #endif /* _zt_coroutine_h_ */

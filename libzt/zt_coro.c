@@ -12,7 +12,7 @@
 #define ZT_CORO_CHECK_STACK(co)                         				\
 	if (co != &coro_main) {												\
 		int left = _stack_left(co);										\
-		if(left <= 0 || left > co->size) {								\
+		if((left <= 0) || (left > co->size)) { \
 			printf("Stack Overflow for coroutine @ %p\n", co);          \
 			exit(1);                            						\
 		}																\
@@ -24,6 +24,7 @@ char    * zt_coro_except_exit = "CoroExit";
 static zt_coro coro_main;
 static zt_coro *coro_current = &coro_main;
 static zt_coro *coro_helper;
+
 
 static void _switch_context(zt_coro *old, zt_coro *new)
 {
@@ -40,17 +41,29 @@ static uint8_t *_current_stack_pointer(void)
 static ptrdiff_t _stack_left(zt_coro *co)
 {
 	unsigned char	  dummy;
-	ptrdiff_t		  p1 = (ptrdiff_t)(&dummy);
-	ptrdiff_t		  p2 = (ptrdiff_t)_current_stack_pointer();
-	int				  stack_up = p2 > p1;
-	ptrdiff_t		  start = ((ptrdiff_t)co->ctx.uc_stack.ss_sp);
-	ptrdiff_t		  end = start + co->size;
+	intptr_t		  p1 = (intptr_t)(&dummy);
+	intptr_t		  p2 = (intptr_t)_current_stack_pointer();
+	register int	  stack_up = p2 > p1;
+	register intptr_t start = ((intptr_t)co->ctx.uc_stack.ss_sp);
+	register intptr_t end = start + co->size;
 	
 	if (stack_up) {
-		return end - p1;
+		return (ptrdiff_t)(end - p1);
 	}
 	/* else */
-	return p1 - start;
+	return (ptrdiff_t)(p1 - start);
+}
+
+int zt_coro_stack_left(void) 
+{
+	ptrdiff_t left = _stack_left(coro_current);
+	printf("coro: %p left: %d size: %d\n", coro_current, left, coro_current->size);
+	return left;
+}
+
+void zt_coro_check_stack(void) 
+{
+	ZT_CORO_CHECK_STACK(coro_current);
 }
 
 static void _coro_run(void)
@@ -97,13 +110,8 @@ zt_coro_create(void *(*func)(void *), zt_coro *co, size_t stack_size) {
 
 	
 	stack = (unsigned char *)(co+1);
-
-    if (coro_main.overflow == 0) {
-        coro_main.overflow = 0xDEADBEEF;
-    }
-    
+	
     /* Assign the coroutine to the base of the stack */
-    co->overflow = 0xDEADBEEF;
     
     if(getcontext(&(co->ctx)) < 0) {
         printf("getcontext failed");

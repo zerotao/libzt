@@ -53,6 +53,7 @@ void *_call2(void *data)
 {
     int                   i = (int) data;
     struct except_Frame     * stack = _except_Stack;
+	
 	/* 
      * unsigned char		    dummy[ZT_CORO_MIN_STACK_SIZE + 10];
 	 * memset(dummy, 0, sizeof(dummy));
@@ -70,17 +71,26 @@ void *_call2(void *data)
     zt_coro_exit((void *)7);
 }
 
+
 void *_call1(void *data) 
 {
+	zt_coro_stack_left();
     int                   i = (int) data;
     zt_coro                 * co = zt_coro_create(_call2, 0, ZT_CORO_MIN_STACK_SIZE);
     struct except_Frame     * stack = _except_Stack;
-    
+	// uncomment to force a stack overflow
+	//int ** 				  p = (int **)alloca(1024 * sizeof(int));
+	
+	zt_coro_check_stack();
+	zt_coro_stack_left();
+	printf("frame: %d\n", sizeof(struct except_Frame));
+	
     TEST("zt_coro_call[1]", i == 1);
     
     i = (int)zt_coro_call(co, (void *)2);
     TEST("zt_coro_call[3]", i == 3);
-        
+	
+	
     i = (int)zt_coro_yield((void *)4);
     TEST("zt_coro_call[5]", i == 5);
 
@@ -117,6 +127,7 @@ main(int argc, char *argv[])
      * make any use of zt_except (it expects alot more stack to be available
      */
     co = zt_coro_create(_call1, 0, ZT_CORO_MIN_STACK_SIZE + 2048);
+		
     if(co == NULL) {
         exit(1);
     }
