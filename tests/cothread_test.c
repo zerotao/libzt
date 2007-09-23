@@ -14,7 +14,7 @@ int loops = 0;
 int inits = 0;
 
 #define STACK_SIZE ZT_CORO_MIN_STACK_SIZE
-#define CORO_N 10000
+#define CORO_N 100
 #define DEBUG 0
 
 static void *test1(va_list args) {
@@ -34,7 +34,6 @@ static void *test1(va_list args) {
 	 * obviosuly flawed, but works most of the time.
 	 */
 	zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, CORO_N/2);
-	
 	while (i < limit) {
 		loops++;
 		zt_cothread_wait(glbl.cts, ZT_TIMER_EVENT, 1); /* 0 = schedule for the next spin */
@@ -106,6 +105,7 @@ int main(int argc, char **argv) {
 	zt_cothread_join(glbl.cts);	
 	
 	TEST("handled_all_events", glbl.cts->revents == glbl.cts->hevents);
+	
 	TEST("correct_number_of_waits", CORO_N * YIELDS_PER_THREAD == loops);
 	TEST("zt_cothread_sched_empty", zt_cothread_sched_empty(glbl.cts) == 1);
 
@@ -117,5 +117,4 @@ int main(int argc, char **argv) {
 	printf("%ld events handled\n", glbl.cts->hevents);
 #endif
 }
-
 

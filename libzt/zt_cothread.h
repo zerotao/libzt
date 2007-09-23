@@ -23,10 +23,10 @@ struct event_req {
 	/*
 	 * pointer back to my scheduler.  This is here to avoid the
 	 * overhead of allocating a new wrapper data structure for
-	 * _enqueue_io and _enqueue_timer
+	 * _enqueue_io and _enqueue_timer, it is also the location of the zt_coro_ctl pointer
 	 */
 	struct zt_cothread_sched	* cts;
-	
+
 };
 	
 struct event_queue {
@@ -39,7 +39,8 @@ struct zt_cothread_sched {
 	long				  revents;
 	long				  hevents;
 	int			  		  event_flags;
-
+	zt_coro_ctx			  coro_ctx;		/* pointer to the coroutine contol structure */
+	
 	struct timeval		  ctime;
 	struct event_queue	* active;
 	struct event_queue	* wait;

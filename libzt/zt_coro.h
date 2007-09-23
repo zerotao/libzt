@@ -17,27 +17,36 @@
 
 BEGIN_C_DECLS
 
+typedef struct zt_coro_ctx zt_coro_ctx;
+
 typedef struct zt_coro {
 	ucontext_t			  ctx;
 	struct zt_coro		* caller;
 	struct zt_coro		* target;
-	void				*(* func)(void *);
+	void				*(* func)(zt_coro_ctx *, void *);
 	void				* data;
 	size_t                size;
 	struct except_Frame	* except_stack;
 } zt_coro;
 
+struct zt_coro_ctx {
+	zt_coro				  main;
+	zt_coro				* current;
+	zt_coro				* helper;
+};
+
+
 extern char     * zt_coro_except_exit;
 
-zt_coro *zt_coro_create(void *(*func)(void *), zt_coro *co, size_t size);
-void zt_coro_delete(zt_coro *co);
-void *zt_coro_call(zt_coro *co, void *data);
-void *zt_coro_yield(void *data);
-void zt_coro_exit_to(zt_coro *co, void *data) NORETURN;
-void zt_coro_exit(void * data) NORETURN;
-zt_coro *zt_coro_get_current(void);
-
-int zt_coro_stack_left(void);
+int zt_coro_init_ctx(zt_coro_ctx *ctx);
+zt_coro *zt_coro_create(zt_coro_ctx *ctx, void *(*func)(zt_coro_ctx *, void *), zt_coro *co, size_t size);
+void zt_coro_delete(zt_coro_ctx *ctx, zt_coro *co);
+void *zt_coro_call(zt_coro_ctx *ctx, zt_coro *co, void *data);
+void *zt_coro_yield(zt_coro_ctx *ctx, void *data);
+void zt_coro_exit_to(zt_coro_ctx *ctx, zt_coro *co, void *data) NORETURN;
+void zt_coro_exit(zt_coro_ctx *ctx, void * data) NORETURN;
+zt_coro *zt_coro_get_current(zt_coro_ctx *ctx);
+int zt_coro_stack_left(zt_coro_ctx *ctx);
 
 END_C_DECLS
 #endif /* _zt_coroutine_h_ */

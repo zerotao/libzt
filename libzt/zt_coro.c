@@ -9,8 +9,8 @@
 #include "zt_assert.h"
 #include "zt_coro.h"
 
-#define ZT_CORO_CHECK_STACK(co)                         				\
-	if (co != &coro_main) {												\
+#define ZT_CORO_CHECK_STACK(ctl, co)									\
+	if (co != &ctl->main) {												\
 		int left = _stack_left(co);										\
 		if((left <= 0) || (left > co->size)) { \
 			printf("Stack Overflow for coroutine @ %p\n", co);          \
@@ -21,10 +21,17 @@
 char    * zt_coro_except_exit = "CoroExit";
 
 /* FIXME: these need to be thread safe */
-static zt_coro coro_main;
-static zt_coro *coro_current = &coro_main;
-static zt_coro *coro_helper;
+/* 
+ * static zt_coro coro_main;
+ * static zt_coro *coro_current = &coro_main;
+ * static zt_coro *coro_helper;
+ */
 
+int zt_coro_init_ctx(zt_coro_ctx *ctx)
+{
+	ctx->current = &ctx->main;
+	return 0;
+}
 
 static void _switch_context(zt_coro *old, zt_coro *new)
 {
@@ -54,28 +61,28 @@ static ptrdiff_t _stack_left(zt_coro *co)
 	return (ptrdiff_t)(p1 - start);
 }
 
-int zt_coro_stack_left(void) 
+int zt_coro_stack_left(zt_coro_ctx *ctl) 
 {
-	ptrdiff_t left = _stack_left(coro_current);
-	printf("coro: %p left: %d size: %d\n", coro_current, left, coro_current->size);
+	ptrdiff_t left = _stack_left(ctl->current);
+	printf("coro: %p left: %d size: %d\n", ctl->current, left, ctl->current->size);
 	return left;
 }
 
-void zt_coro_check_stack(void) 
+void zt_coro_check_stack(zt_coro_ctx *ctl) 
 {
-	ZT_CORO_CHECK_STACK(coro_current);
+	ZT_CORO_CHECK_STACK(ctl, ctl->current);
 }
 
-static void _coro_run(void)
+static void _coro_run(zt_coro_ctx *ctl)
 {
-    zt_coro     * co = coro_current;
+    zt_coro     * co = ctl->current;
     
     co->target = co->caller;
     
     DO_TRY
     {
-    co->except_stack = _except_Stack;
-    co->func(co->data);
+		co->except_stack = _except_Stack;
+		co->func(ctl, co->data);
     }
     ELSE_TRY
     {
@@ -95,11 +102,11 @@ static void _coro_run(void)
     }
     END_TRY;
         
-    zt_coro_exit(co->data);
+    zt_coro_exit(ctl, co->data);
 }
 
 zt_coro *
-zt_coro_create(void *(*func)(void *), zt_coro *co, size_t stack_size) {
+zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *co, size_t stack_size) {
 	unsigned char	* stack;
 	
     assert((stack_size &= ~(sizeof(int) - 1)) >= ZT_CORO_MIN_STACK_SIZE);
@@ -129,13 +136,13 @@ zt_coro_create(void *(*func)(void *), zt_coro *co, size_t stack_size) {
 #endif
 
     co->func = func;
-    makecontext(&(co->ctx), _coro_run, 0);
+    makecontext(&(co->ctx), _coro_run, 1, ctl);
     return co;
 }
 
-void zt_coro_delete(zt_coro *co) 
+void zt_coro_delete(zt_coro_ctx *ctl, zt_coro *co) 
 {
-    if(co == coro_current) {
+    if(co == ctl->current) {
         printf("coroutine cannot delete itself\n");
         exit(1);
     }
@@ -144,14 +151,14 @@ void zt_coro_delete(zt_coro *co)
 }
 
 
-void *_zt_coro_call(zt_coro *co, void *data, int yield)
+void *_zt_coro_call(zt_coro_ctx *ctl, zt_coro *co, void *data, int yield)
 {
-    zt_coro *old = coro_current;
+    zt_coro *old = ctl->current;
         
-	ZT_CORO_CHECK_STACK(coro_current);
+	ZT_CORO_CHECK_STACK(ctl, ctl->current);
         
-    co->caller = coro_current;
-    coro_current = co;
+    co->caller = ctl->current;
+    ctl->current = co;
     
     co->data = data;
 
@@ -172,29 +179,29 @@ void *_zt_coro_call(zt_coro *co, void *data, int yield)
     return old->data;
 }
 
-void *zt_coro_call(zt_coro *co, void *data)
+void *zt_coro_call(zt_coro_ctx *ctl, zt_coro *co, void *data)
 {
-    return _zt_coro_call(co, data, 0);
+    return _zt_coro_call(ctl, co, data, 0);
 }
 
-void *zt_coro_yield(void *data)
+void *zt_coro_yield(zt_coro_ctx *ctl, void *data)
 {
-    data = _zt_coro_call(coro_current->target, data, 1);
-    coro_current->target = coro_current->caller;
+    data = _zt_coro_call(ctl, ctl->current->target, data, 1);
+    ctl->current->target = ctl->current->caller;
     return data;    
 }
 
-static void *_del_helper(void *data) 
+static void *_del_helper(zt_coro_ctx *ctl, void *data) 
 {
     zt_coro *co;
 
     for(;;){
 
-        co = coro_helper;
-        coro_helper = NULL;
-        zt_coro_delete(coro_current->caller);
-        data = zt_coro_call(co, data);
-        if(!coro_helper) {
+        co = ctl->helper;
+        ctl->helper = NULL;
+        zt_coro_delete(ctl, ctl->current->caller);
+        data = zt_coro_call(ctl, co, data);
+        if(!ctl->helper) {
             printf("yielded to delete helper coroutine\n");
             exit(1);
         }
@@ -204,30 +211,30 @@ static void *_del_helper(void *data)
 
         
 
-void zt_coro_exit_to(zt_coro *co, void *data)
+void zt_coro_exit_to(zt_coro_ctx *ctl, zt_coro *co, void *data)
 {
     static zt_coro	* helper = NULL;
     static char 	  vco[sizeof(zt_coro) + ZT_CORO_MIN_STACK_SIZE];
 	
     if(!helper &&
-       !(helper = zt_coro_create(_del_helper, (zt_coro *)&vco, ZT_CORO_MIN_STACK_SIZE))) {
+       !(helper = zt_coro_create(ctl, _del_helper, (zt_coro *)&vco, ZT_CORO_MIN_STACK_SIZE))) {
         printf("Unable to create delete helper coroutine\n");
         exit(1);
     }
         
-    coro_helper = co;
-    zt_coro_call(helper, data);
+    ctl->helper = co;
+    zt_coro_call(ctl, helper, data);
     printf("stale corotine called\n");
     exit(1);
 }
     
 
-void zt_coro_exit(void *data) 
+void zt_coro_exit(zt_coro_ctx *ctl, void *data) 
 {
-    zt_coro_exit_to(coro_current->target, data);
+    zt_coro_exit_to(ctl, ctl->current->target, data);
 }
 
-zt_coro *zt_coro_get_current(void)
+zt_coro *zt_coro_get_current(zt_coro_ctx *ctl)
 {
-    return coro_current;
+    return ctl->current;
 }

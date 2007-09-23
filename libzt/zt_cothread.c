@@ -18,6 +18,7 @@ zt_cothread_sched_new(void)
 	zt_cothread_sched	* cts;
 
 	cts = XCALLOC(zt_cothread_sched, 1);
+	zt_coro_init_ctx(&cts->coro_ctx);
 	
 	cts->active = cts->queues;
 	cts->wait = cts->queues + 1;
@@ -39,21 +40,33 @@ zt_cothread_sched_delete(zt_cothread_sched *cts)
 	XFREE(cts);
 }
 
+struct boot_strap {
+	void *		(*fn)(va_list);
+	va_list		  args;
+};
+	
+void * _boot_strap(zt_coro_ctx *ctx, void *data) 
+{
+	struct boot_strap * bs = (struct boot_strap *)data;
+	return bs->fn(bs->args);
+}
+
 zt_cothread *
-zt_cothread_new(zt_cothread_sched *cts, void *(*func)(), int stacksize, ...) 
+zt_cothread_new(zt_cothread_sched *cts, void *(*func)(va_list), int stacksize, ...) 
 {
 	zt_cothread			* co;
-	va_list			  	  args;
+	struct boot_strap	  bs;
+	//va_list			  	  args;
 	struct event_req	  req[1];
 	
 	_add_req(cts, req, ZT_TIMER_EVENT, 0);
-	va_start(args, stacksize);
-
-	if((co = zt_coro_create(func, 0, stacksize))) {
-		zt_coro_call(co, args);
+	va_start(bs.args, stacksize);
+	bs.fn = func;
+	if((co = zt_coro_create(&cts->coro_ctx, _boot_strap, 0, stacksize))) {
+		zt_coro_call(&cts->coro_ctx, co, &bs);
 	}
 
-	va_end(args);
+	va_end(bs.args);
 	return co;
 }
 
@@ -96,7 +109,7 @@ static int _schedule(zt_cothread_sched *cts)
 				zt_event_remove_io(cts->sys, req->fd, req->mode);
 			}
 			
-			zt_coro_call(req->coro, NULL); /* call it */
+			zt_coro_call(&cts->coro_ctx, req->coro, NULL); /* call it */
 			return -1;					   /* returning to my parent */
 		}
 		
@@ -118,7 +131,7 @@ static void _add_req(zt_cothread_sched *cts, struct event_req *req, int mode, ..
 
 static void _vadd_req(zt_cothread_sched *cts, struct event_req *req, int mode, va_list args)
 {
-	req->coro = zt_coro_get_current();
+	req->coro = zt_coro_get_current(&cts->coro_ctx);
 	req->mode = mode;
 	if(mode & ZT_ANY_IO_EVENT) {
 		req->fd = va_arg(args, int);
