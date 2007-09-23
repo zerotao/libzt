@@ -29,7 +29,7 @@ char *assertion_failed = "assertion_failed";
 
 void
 _assert_fail (char *s, char *file, unsigned int line,
-	      const char *func, char fatal)
+			  const char *func, char fatal)
 {
 	char	bname[PATH_MAX];
 

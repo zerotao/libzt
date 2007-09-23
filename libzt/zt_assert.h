@@ -27,8 +27,8 @@ BEGIN_C_DECLS
  *
  ****/
 extern void _assert_fail (char *condition, char *file, 
-			  unsigned int line, const char *function,
-			  char fatal);
+						  unsigned int line, const char *function,
+						  char fatal);
 
 /****d* Assertion/assert
  * NAME
@@ -46,9 +46,9 @@ extern void _assert_fail (char *condition, char *file,
  *   assert(foo == 1);
  *
  ****/
-#ifdef NDEBUG
-# define assert(c) (1)
-# define assert_nf(c) (1)
+#if defined(NDEBUG) || defined(NO_ASSERT)
+# define assert(c)
+# define assert_nf(c)
 #else
 # define assert(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0)))
 # define assert_nf(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 0), 0)))
