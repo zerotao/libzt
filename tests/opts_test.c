@@ -49,7 +49,7 @@ main(int argc, char* argv[])
 			{ 'h', "help", "This help text", opt_help, NULL, NULL},
 			{ '[', "int", "integer test", opt_int, &integer, NULL},
 			{ 'b', "bool", "boolean test", opt_bool, &bool, NULL},
-			{ 's', "string", "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times.", opt_string, &str, ""},
+			{ 's', "string", "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times.", opt_string, &str, "-s \"Some String\""},
 			{ 'f', "func", "func test", opt_func, func, NULL},
 			{ 'o', "ofunc", "ofunc test", opt_ofunc, ofunc, NULL},
 			{ 'f', "rfunc", "rfunc test", opt_rfunc, rfunc, NULL},
@@ -57,7 +57,7 @@ main(int argc, char* argv[])
 			{ 0,0,0,0 }
 		};
 				
-	opts_process(argc, argv, options, "[options]");
+	opts_process(argc, argv, options, "[options]", TRUE, TRUE);
 	printf("integer = %d, bool = %d, string = %s flag = %d\n", integer, bool, str ? str : "string", flag);
 
 	if(str) {

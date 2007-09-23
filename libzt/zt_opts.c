@@ -46,8 +46,35 @@ struct
 		     { opt_rfunc, NULL },
 		     { opt_help, NULL }, };
 
+static void
+print_default(char *prefix, opt_types type, void *value) 
+{
+	switch (type) {
+		case opt_bool:
+			fprintf(stderr, "%s%s", prefix, *(int *)value ? "true" : "false");
+			break;
+		case opt_flag:
+		case opt_int:			
+			fprintf(stderr, "%s%d", prefix, *(int *)value);
+			break;
+		case opt_string:
+			{
+				char * c = *(char **)value;
+				if (c != NULL) {
+					fprintf(stderr, "%s%s", prefix, c);
+				}
+			}
+			break;
+		case opt_func:
+		case opt_ofunc:
+		case opt_rfunc:
+		case opt_help:
+			break;
+	}
+}
+
 void
-opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opts){
+opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opts, int show_defaults){
 	int i = 0;
 	
 	fprintf(stderr, "Usage: %s %s\n", basename(argv[0]), option_string);
@@ -64,26 +91,29 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 					fprintf(stderr, "    --%s", opts[i].long_opt);
 			}
 #endif
-			fprintf(stderr, "\t%s\t", opts[i].description ? opts[i].description : "");
-
-			if(opts[i].usage)
-				fprintf(stderr, "%s\n", opts[i].usage);
-			else
-				if(opts_usage_t[opts[i].type].desc)
-					if(optchar(opts[i].opt))
-						fprintf(stderr, "eg. -%c %s\n", opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
-					else
-						fprintf(stderr, "eg. --%s %s\n", opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
-				else
-					fprintf(stderr, "\n");
+			fprintf(stderr, "\t%s", opts[i].description ? opts[i].description : "");
 			
+			if(show_defaults) {
+				print_default(" : default = ", opts[i].type, opts[i].val);
+			}
+			
+			if(opts[i].usage)
+				fprintf(stderr, "\t: %s\n", opts[i].usage);
+			else
+				if(opts_usage_t[opts[i].type].desc) {
+					if(optchar(opts[i].opt))
+						fprintf(stderr, "\t: eg. -%c %s\n", opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+					else
+						fprintf(stderr, "\t: eg. --%s %s\n", opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+				} else {
+					fprintf(stderr, "\n");
+				}
 		}
 	}
-	exit(EXIT_FAILURE);
 }
 
 int
-opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string )
+opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults)
 {
 	int i = 0;
 #define OPT_MAX 255
@@ -164,7 +194,10 @@ opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string
 		if ( c == -1 )
 			break;
 		else if ( c == '?' ){ /* unknown option */
-			opts_usage(argv, opts, option_string, max_opts);
+			if(auto_usage) {
+				opts_usage(argv, opts, option_string, max_opts, show_defaults);
+			}
+			return EXIT_FAILURE;
 		}
 		for(i=0; i < max_opts; i++) {
 			if(c != opts[i].opt) {
@@ -188,8 +221,10 @@ opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string
 						} else {
 							printf("Invalid value \"%s\" for %s (expecting [t|f|yes|no|true|false]).\n",
 							       argv[optind-1], argv[optind-2] );
-							opts_usage(argv, opts, option_string, max_opts);
-							exit(EXIT_FAILURE);
+							if(auto_usage) {
+								opts_usage(argv, opts, option_string, max_opts, show_defaults);
+							}
+							return EXIT_FAILURE;
 						}
 					} else {
 						*(int *)opts[i].val = !*(int *)opts[i].val;
@@ -203,8 +238,10 @@ opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string
 					if((*(int *)opts[i].val == 0) && (optarg[0] != '0')){ 
 						printf("Invalid value \"%s\" for %s (expecting an integer).\n",
 						       argv[optind-1], argv[optind-2] );
-						opts_usage(argv, opts, option_string, max_opts);
-						exit(EXIT_FAILURE);
+						if(auto_usage) {
+							opts_usage(argv, opts, option_string, max_opts, show_defaults);
+						}
+						return EXIT_FAILURE;
 						}
 					break;
 				case opt_string:
@@ -212,23 +249,34 @@ opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string
 					if(opts[i].val == NULL){
 						printf("Invalid value \"%s\" for %s (expecting a string).\n",
 						       argv[optind-1], argv[optind-2] );
-						opts_usage(argv, opts, option_string, max_opts);
-						exit(EXIT_FAILURE);
+						if(auto_usage) {
+							opts_usage(argv, opts, option_string, max_opts, show_defaults);
+						}
+						return EXIT_FAILURE;
 					}
 					break;
 				case opt_func:
 					if( (((opt_function)opts[i].val)()) == EXIT_FAILURE){
-						opts_usage(argv, opts, option_string, max_opts);
+						if(auto_usage) {
+							opts_usage(argv, opts, option_string, max_opts, show_defaults);
+						}
+						return EXIT_FAILURE;
 					}
 					break;									
 				case opt_ofunc:
 					if( (((opt_ofunction)opts[i].val)(optarg)) == EXIT_FAILURE){
-						opts_usage(argv, opts, option_string, max_opts);
+						if(auto_usage) {
+							opts_usage(argv, opts, option_string, max_opts, show_defaults);
+						}
+						return EXIT_FAILURE;
 					}
 					break;									
 				case opt_rfunc:										
 					if( (((opt_rfunction)opts[i].val)(optind-1, argv)) == EXIT_FAILURE){
-						opts_usage(argv, opts, option_string, max_opts);
+						if(auto_usage) {
+							opts_usage(argv, opts, option_string, max_opts, show_defaults);
+						}
+						return EXIT_FAILURE;
 					}
 					break;
 				case opt_flag:
@@ -239,11 +287,14 @@ opts_process( int argc, char *argv[], struct opt_args *opts, char *option_string
 					}
 					break;
 				case opt_help:
-					opts_usage(argv, opts, option_string, max_opts);
+					if(auto_usage) {
+						opts_usage(argv, opts, option_string, max_opts, show_defaults);
+					}
+					return -1;
 					break;
 				default:
 					printf("Unknown arg type %d\n", opts[i].opt);
-					exit(1);
+					return EXIT_FAILURE;
 			}
 		}
 	}
