@@ -20,13 +20,6 @@
 
 char    * zt_coro_except_exit = "CoroExit";
 
-/* FIXME: these need to be thread safe */
-/* 
- * static zt_coro coro_main;
- * static zt_coro *coro_current = &coro_main;
- * static zt_coro *coro_helper;
- */
-
 int zt_coro_init_ctx(zt_coro_ctx *ctx)
 {
 	ctx->current = &ctx->main;
