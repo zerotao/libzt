@@ -47,21 +47,21 @@ struct
 		     { opt_help, NULL }, };
 
 static void
-print_default(char *prefix, opt_types type, void *value) 
+print_default(opt_types type, void *value) 
 {
 	switch (type) {
 		case opt_bool:
-			fprintf(stderr, "%s%s", prefix, *(int *)value ? "true" : "false");
+			fprintf(stderr, " (default %s)", *(int *)value ? "true" : "false");
 			break;
 		case opt_flag:
 		case opt_int:			
-			fprintf(stderr, "%s%d", prefix, *(int *)value);
+			fprintf(stderr, " (default %d)", *(int *)value);
 			break;
 		case opt_string:
 			{
 				char * c = *(char **)value;
 				if (c != NULL) {
-					fprintf(stderr, "%s%s", prefix, c);
+					fprintf(stderr, " (default \"%s\")", c);
 				}
 			}
 			break;
@@ -94,7 +94,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 			fprintf(stderr, "\t%s", opts[i].description ? opts[i].description : "");
 			
 			if(show_defaults) {
-				print_default(" : default = ", opts[i].type, opts[i].val);
+				print_default(opts[i].type, opts[i].val);
 			}
 			
 			if(opts[i].usage)
