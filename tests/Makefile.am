@@ -1,8 +1,7 @@
-LDADD = ../libzt/libzt.la
+LDADD = ../libzt/libzt.la # ../libzt/.libs/libzt.a
 
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
-
 
 
 TEST_APPS = 		\
