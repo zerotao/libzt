@@ -65,14 +65,11 @@ int main(int argc, char *argv[]){
 		DO_TRY
 			DO_TRY
 			   THROW(do_try);
-		        END_TRY
-		
+		    END_TRY
 		ELSE_TRY
 			CATCH(do_try, do_try = Pass;);
-                END_TRY
-			
-			
-                TEST("END_TRY w/o ELSE_TRY: ", do_try == Pass);
+		END_TRY
+        TEST("END_TRY w/o ELSE_TRY: ", do_try == Pass);
 	}
 	
 	{
@@ -199,6 +196,7 @@ int main(int argc, char *argv[]){
 	/*Test Unwind Protect*/
 	{
 		char *unwind = Fail;
+		char *dummy = Fail;
 		
 		DO_TRY
 			UNWIND_PROTECT({
@@ -211,6 +209,17 @@ int main(int argc, char *argv[]){
 			CATCH(unwind, {});
 		END_TRY
 		TEST("Unwind_protect: ", unwind == Pass);
+
+		DO_TRY {
+			UNWIND_PROTECT({
+					unwind = Fail;
+				},{
+					unwind = Pass;
+				});
+		} ELSE_TRY {
+			CATCH(unwind, unwind = Fail;);
+		} END_TRY;
+		TEST("Unwind_protect[2]: ", unwind == Pass);			
 	}
 
 	/*Test CATCH escape*/
