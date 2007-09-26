@@ -33,44 +33,44 @@ BEGIN_C_DECLS
 /** Exception primitives **/
 
 /* declare exception */
-#define _EXCEPT_DECL(NAME, STR)			\
+#define _EXCEPT_DECL(NAME, STR)         \
   char * NAME ;
 
 /* define exception */
-#define _EXCEPT_DEFN(NAME, STR)			\
+#define _EXCEPT_DEFN(NAME, STR)         \
   STR,
 
 /* exception */
-#define EXCEPTION(NAME, STR)			\
+#define EXCEPTION(NAME, STR)            \
   (MACRO_APPLY, _EXCEPT_DECL, _EXCEPT_DEFN, (NAME, STR))
 
 
 /* GROUP */
-#define _EXCEPT_GROUP_DECL_INIT(STR)			\
-  struct {					\
-    char	* desc;
+#define _EXCEPT_GROUP_DECL_INIT(STR)            \
+  struct {                  \
+    char    * desc;
 
-#define _EXCEPT_GROUP_DECL_CLOSE(NAME)			\
+#define _EXCEPT_GROUP_DECL_CLOSE(NAME)          \
   } NAME ;
 
-#define _EXCEPT_GROUP_DEFN_INIT(STR)			\
+#define _EXCEPT_GROUP_DEFN_INIT(STR)            \
   { STR,
 
-#define _EXCEPT_GROUP_DEFN_CLOSE(NAME)			\
+#define _EXCEPT_GROUP_DEFN_CLOSE(NAME)          \
   },
 
-#define EXCEPT_GROUP(NAME, STR, REST)						\
-  (MACRO_APPLY, _EXCEPT_GROUP_DECL_INIT, _EXCEPT_GROUP_DEFN_INIT, (STR)) 	\
-  REST										\
+#define EXCEPT_GROUP(NAME, STR, REST)                       \
+  (MACRO_APPLY, _EXCEPT_GROUP_DECL_INIT, _EXCEPT_GROUP_DEFN_INIT, (STR))    \
+  REST                                      \
   (MACRO_APPLY, _EXCEPT_GROUP_DECL_CLOSE, _EXCEPT_GROUP_DEFN_CLOSE, (NAME))
 
 
 /* TOP GROUP */
 #define _EXCEPT_TYPE(NAME) exceptDomain_ ## NAME
 
-#define _EXCEPT_TOP_GROUP_DECL_INIT(NAME, STR)		\
-  typedef struct {					\
-    char	* desc;
+#define _EXCEPT_TOP_GROUP_DECL_INIT(NAME, STR)      \
+  typedef struct {                  \
+    char    * desc;
 
 #ifndef EXCEPT_DEFINE
 # define _EXTERN_DECL(NAME) extern _EXCEPT_TYPE(NAME) NAME
@@ -78,20 +78,20 @@ BEGIN_C_DECLS
 # define _EXTERN_DECL(NAME)
 #endif
 
-#define _EXCEPT_TOP_GROUP_DECL_CLOSE(NAME)		\
-  } _EXCEPT_TYPE(NAME);					\
-	_EXTERN_DECL(NAME)
-				  
+#define _EXCEPT_TOP_GROUP_DECL_CLOSE(NAME)      \
+  } _EXCEPT_TYPE(NAME);                 \
+    _EXTERN_DECL(NAME)
+                  
 
-#define _EXCEPT_TOP_GROUP_DEFN_INIT(NAME, STR)		\
+#define _EXCEPT_TOP_GROUP_DEFN_INIT(NAME, STR)      \
   _EXCEPT_TYPE(NAME) NAME = { STR ,
 
-#define _EXCEPT_TOP_GROUP_DEFN_CLOSE(NAME)		\
+#define _EXCEPT_TOP_GROUP_DEFN_CLOSE(NAME)      \
   }
-			     
-#define _EXCEPT_FORMS(NAME, STR, REST)							\
-  (MACRO_APPLY, _EXCEPT_TOP_GROUP_DECL_INIT, _EXCEPT_TOP_GROUP_DEFN_INIT, (NAME, STR)) 	\
-  REST											\
+                 
+#define _EXCEPT_FORMS(NAME, STR, REST)                          \
+  (MACRO_APPLY, _EXCEPT_TOP_GROUP_DECL_INIT, _EXCEPT_TOP_GROUP_DEFN_INIT, (NAME, STR))  \
+  REST                                          \
   (MACRO_APPLY_STOP, _EXCEPT_TOP_GROUP_DECL_CLOSE, _EXCEPT_TOP_GROUP_DEFN_CLOSE, (NAME))
 
 /* actual definition */
@@ -99,31 +99,31 @@ BEGIN_C_DECLS
 #define EXCEPT_DEFN(NAME, STR, REST) MACRO_EVAL_2(_EXCEPT_FORMS(NAME, STR, REST))
 
 #ifdef EXCEPT_DEFINE
-# define EXCEPT_DESC(NAME, STR, REST)			\
-	EXCEPT_DECL(NAME, STR, REST);			\
-	EXCEPT_DEFN(NAME, STR, REST)
+# define EXCEPT_DESC(NAME, STR, REST)           \
+    EXCEPT_DECL(NAME, STR, REST);           \
+    EXCEPT_DEFN(NAME, STR, REST)
 #else
 # define EXCEPT_DESC(NAME, STR, REST) EXCEPT_DECL(NAME, STR, REST)
-#endif	/* EXCEPT_DEFINE */
+#endif  /* EXCEPT_DEFINE */
 #undef EXCEPT_DEFINE
 
 struct except_Frame {
-	struct except_Frame	 *prev;
-	int 		  	  phase;
-	int 		  	  caught;
-	jmp_buf			  env;
-	void			 *exception;
-	void			 *type;
-	char			 *etext;
-	char			 *efunc;
-	char			 *efile;
-	int			  eline;
+    struct except_Frame  *prev;
+    int               phase;
+    int               caught;
+    jmp_buf           env;
+    void             *exception;
+    void             *type;
+    char             *etext;
+    char             *efunc;
+    char             *efile;
+    int           eline;
 };
 
 typedef int (*except_handler)(void *, void *, char *, char *, char *, int);
 
 enum { except_WindPhase = 0, except_UnWindPhase };
-extern char	* except_CatchAll;
+extern char * except_CatchAll;
 
 /* exported variables */
 extern struct except_Frame *_except_Stack;
@@ -136,8 +136,8 @@ extern int domain_default_except_handler(void *exc, void *type, char *etext, cha
 
 extern except_handler
 _except_install_default_handler(except_handler h);
-#define INSTALL_DEFAULT_HANDLER(HANDLER)	\
-	_except_install_default_handler(HANDLER)
+#define INSTALL_DEFAULT_HANDLER(HANDLER)    \
+    _except_install_default_handler(HANDLER)
 
 /****d* Exceptions/INSTALL_EXCEPT_HANDLER
  * NAME
@@ -146,8 +146,8 @@ _except_install_default_handler(except_handler h);
  * SOURCE
  */
 extern void _except_install_handler(void*, except_handler h);
-#define INSTALL_EXCEPT_HANDLER(EXCEPTION, HANDLER)			\
-	_except_install_handler(&EXCEPTION, HANDLER)
+#define INSTALL_EXCEPT_HANDLER(EXCEPTION, HANDLER)          \
+    _except_install_handler(&EXCEPTION, HANDLER)
 
 /*** INSTALL_EXCEPT_HANDLER ***/
 
@@ -159,8 +159,8 @@ extern void _except_install_handler(void*, except_handler h);
  * SOURCE
  */
 extern void _except_remove_handler(void*, except_handler);
-#define REMOVE_EXCEPT_HANDLER(EXCEPTION, HANDLER)			\
-	_except_remove_handler(&EXCEPTION, HANDLER)
+#define REMOVE_EXCEPT_HANDLER(EXCEPTION, HANDLER)           \
+    _except_remove_handler(&EXCEPTION, HANDLER)
 
 /*** REMOVE_EXCEPT_HANDLER ***/
 
@@ -170,8 +170,8 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define RETHROW()							\
-		_except_Stack->caught = 0
+#define RETHROW()                           \
+        _except_Stack->caught = 0
 
 /************ RETHROW */
 
@@ -181,26 +181,26 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define THROW_TYPED(EXCEPTION, TYPE)					\
-	do {								\
-		if(!_except_Stack) {					\
-			_except_unhandled_exception(#EXCEPTION,		\
-						    __FILE__,		\
-						    __LINE__,		\
-						    __FUNCTION__,       \
-                                                    1);                 \
-		}							\
-		_except_Stack->etext = #EXCEPTION;			\
-		_except_Stack->efile = (char *)__FILE__;		\
-		_except_Stack->efunc = (char *)__FUNCTION__;		\
-		_except_Stack->eline = __LINE__;			\
-		_except_Stack->caught = 0;				\
-		_except_Stack->exception = &(EXCEPTION);		\
-		_except_Stack->type = &(TYPE);				\
-		if(_except_Stack->phase == except_WindPhase){		\
-			longjmp(_except_Stack->env, 1);			\
-		}							\
-	} while(0)
+#define THROW_TYPED(EXCEPTION, TYPE)                                    \
+    do {                                                                \
+        if(!_except_Stack) {                                            \
+            _except_unhandled_exception(#EXCEPTION,                     \
+                                        __FILE__,                       \
+                                        __LINE__,                       \
+                                        __FUNCTION__,                   \
+                                        1);                             \
+        }                                                               \
+        _except_Stack->etext = #EXCEPTION;                              \
+        _except_Stack->efile = (char *)__FILE__;                        \
+        _except_Stack->efunc = (char *)__FUNCTION__;                    \
+        _except_Stack->eline = __LINE__;                                \
+        _except_Stack->caught = 0;                                      \
+        _except_Stack->exception = &(EXCEPTION);                        \
+        _except_Stack->type = &(TYPE);                                  \
+        if(_except_Stack->phase == except_WindPhase){                   \
+            longjmp(_except_Stack->env, 1);                             \
+        }                                                               \
+    } while(0)
 
 /************ THROW_TYPED */
 
@@ -210,8 +210,8 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define TRY_THROW(EXCEPTION)						\
-	TRY(THROW(EXCEPTION))
+#define TRY_THROW(EXCEPTION)                        \
+    TRY(THROW(EXCEPTION))
 
 /************ TRY_THROW */
 
@@ -221,8 +221,8 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define THROW(EXCEPTION)						\
-	THROW_TYPED(EXCEPTION, EXCEPTION);
+#define THROW(EXCEPTION)                        \
+    THROW_TYPED(EXCEPTION, EXCEPTION);
 
 /************ THROW */
 
@@ -232,32 +232,32 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define CATCH(EXCEPTION, DATA)								\
-	if(_except_Stack->phase == except_UnWindPhase){					\
-		void *e = _except_Stack->exception;					\
-		void *e2 = (void *)(&EXCEPTION);					\
-		if((e2 == (void *)&except_CatchAll) ||			\
-		   (e >= e2 && e2 <= (void *)((int)e + sizeof(EXCEPTION)))){ 		\
-			_except_Stack->caught = 1;					\
-			{ DATA };							\
-		}									\
-	}
+#define CATCH(EXCEPTION, DATA)                                          \
+    if(_except_Stack->phase == except_UnWindPhase){                     \
+        void *e = _except_Stack->exception;                             \
+        void *e2 = (void *)(&EXCEPTION);                                \
+        if((e2 == (void *)&except_CatchAll) ||                          \
+           (e >= e2 && e2 <= (void *)((int)e + sizeof(EXCEPTION)))){    \
+            _except_Stack->caught = 1;                                  \
+            { DATA };                                                   \
+        }                                                               \
+    }
 
 /************ CATCH */
-#define _COPY_FRAME_DATA(x,y)                           \
-	(y)->exception = (x)->exception;		\
-	(y)->type = (x)->type;			        \
-	(y)->etext = (x)->etext;			\
-	(y)->efile = (x)->efile;			\
-	(y)->efunc = (x)->efunc;			\
-	(y)->eline = (x)->eline
+#define _COPY_FRAME_DATA(x,y)               \
+    (y)->exception = (x)->exception;        \
+    (y)->type = (x)->type;                  \
+    (y)->etext = (x)->etext;                \
+    (y)->efile = (x)->efile;                \
+    (y)->efunc = (x)->efunc;                \
+    (y)->eline = (x)->eline
 /****d* Exceptions/_PUSH_FRAME_DATA
  *  NAME
  *    _PUSH_FRAME_DATA
  *
  *  SOURCE
  */
-#define _PUSH_FRAME_DATA(x)				\
+#define _PUSH_FRAME_DATA(x)             \
         _COPY_FRAME_DATA(x, x->prev)
 /************ _PUSH_FRAME_DATA */
 
@@ -267,14 +267,14 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define DO_TRY										\
-	do{										\
-		struct except_Frame Frame;						\
-		Frame.prev = _except_Stack;						\
-		Frame.phase = except_WindPhase;						\
-		_except_Stack = &Frame;							\
-		switch(setjmp(_except_Stack->env)){					\
-			case 0:
+#define DO_TRY                                              \
+    do{                                                     \
+        struct except_Frame Frame;                          \
+        Frame.prev = _except_Stack;                         \
+        Frame.phase = except_WindPhase;                     \
+        _except_Stack = &Frame;                             \
+        switch(setjmp(_except_Stack->env)){                 \
+            case 0:
 /************ DO_TRY */
 
 /****d* Exceptions/ELSE_TRY
@@ -283,10 +283,10 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define ELSE_TRY									\
-                        break;								\
-	                case 1:								\
-			_except_Stack->phase = except_UnWindPhase;
+#define ELSE_TRY                                            \
+    break;                                                  \
+    case 1:                                                 \
+    _except_Stack->phase = except_UnWindPhase;
 
 /************ ELSE_TRY */
 
@@ -296,22 +296,22 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define END_TRY										\
-                        default:							\
-			if((_except_Stack->exception) &&				\
-			   (_except_Stack->caught == 0)){				\
-				if(_except_Stack->prev != NULL){			\
-					_PUSH_FRAME_DATA(_except_Stack); 		\
-					_except_Stack = _except_Stack->prev; 		\
-					_except_Stack->caught = 0;			\
-					longjmp(_except_Stack->env, 1);			\
-				}else{							\
-					_except_call_handlers(_except_Stack); 		\
-				}							\
-			}								\
-		}/*unwind end*/								\
-		_except_Stack = _except_Stack->prev;					\
-	}while(0);
+#define END_TRY                                             \
+                        default:                            \
+            if((_except_Stack->exception) &&                \
+               (_except_Stack->caught == 0)){               \
+                if(_except_Stack->prev != NULL){            \
+                    _PUSH_FRAME_DATA(_except_Stack);        \
+                    _except_Stack = _except_Stack->prev;    \
+                    _except_Stack->caught = 0;              \
+                    longjmp(_except_Stack->env, 1);         \
+                }else{                                      \
+                    _except_call_handlers(_except_Stack);   \
+                }                                           \
+            }                                               \
+        }/*unwind end*/                                     \
+        _except_Stack = _except_Stack->prev;                \
+    }while(0);
 
 
 /************ END_TRY */
@@ -322,12 +322,12 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define TRY(WIND_DATA, UNWIND_DATA...)						\
-	DO_TRY									\
-	{ WIND_DATA }								\
-	ELSE_TRY								\
-	{ UNWIND_DATA }								\
-	END_TRY
+#define TRY(WIND_DATA, UNWIND_DATA...)                      \
+    DO_TRY                                                  \
+    { WIND_DATA }                                           \
+    ELSE_TRY                                                \
+    { UNWIND_DATA }                                         \
+    END_TRY
 
 /************ TRY */
 
@@ -337,9 +337,9 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define TRY_RETURN								\
-	_except_Stack = _except_Stack->prev;					\
-	return
+#define TRY_RETURN                              \
+    _except_Stack = _except_Stack->prev;        \
+    return
 
 /************ TRY_RETURN */
 
@@ -349,21 +349,16 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define UNWIND_PROTECT(WIND_DATA, UNWIND_DATA)					\
-	 do {									\
-		 static void *_unwind_protect;					\
-		 TRY(								\
-		     {								\
-			     { WIND_DATA; }					\
-			     _unwind_protect = _except_Stack->exception; 	\
-			     THROW (_unwind_protect);				\
-		     },								\
-		     {								\
-			     { UNWIND_DATA; }					\
-			     CATCH (_unwind_protect, ; );			\
-			     RETHROW();						\
-		     });							\
-	 }while(0)
+#define UNWIND_PROTECT(WIND_DATA, UNWIND_DATA)                          \
+    do {                                                                \
+        TRY({                                                           \
+                { WIND_DATA; }                                          \
+                { UNWIND_DATA;}                                         \
+            },                                                          \
+            {                                                           \
+                CATCH (except_CatchAll, { UNWIND_DATA;  RETHROW(); });  \
+            });                                                         \
+     }while(0)
 /*** UNWIND_PROTECT ***/
 
 END_C_DECLS
