@@ -13,7 +13,7 @@ BEGIN_C_DECLS
  *
  */
 typedef struct zt_elist {
-	struct zt_elist	*prev, *next;
+    struct zt_elist *prev, *next;
 }zt_elist;
 
 /* convienience typedef */
@@ -23,25 +23,25 @@ typedef zt_elist zt_elist_elt;
 
 #define zt_elist(N) zt_elist N = zt_elist_init(N)
 
-#define zt_elist_reset(P) do{			\
-		(P)->prev = (P);		\
-		(P)->next = (P);		\
-	}while(0)
+#define zt_elist_reset(P) do{           \
+        (P)->prev = (P);                \
+        (P)->next = (P);                \
+    }while(0)
 
 #define zt_elist_get_next(P) ((P)->next)
 
 #define zt_elist_get_prev(P) ((P)->prev)
 
 #define zt_elist_data(PTR, TYPE, ELT) \
-	containerof(PTR, TYPE, ELT)
+    containerof(PTR, TYPE, ELT)
 
-#define zt_elist_for_each(h, p)				\
-	for ((p) = (h)->next; (p) != (h); 		\
-	     (p) = (p)->next)
+#define zt_elist_for_each(h, p)             \
+    for ((p) = (h)->next; (p) != (h);       \
+         (p) = (p)->next)
 
-#define zt_elist_for_each_safe(h, p, n)			\
-	for ((p) = (h)->next, (n) = (p)->next;		\
-	     (p) != (h); (p) = (n), (n) = (n)->next)
+#define zt_elist_for_each_safe(h, p, n)         \
+    for ((p) = (h)->next, (n) = (p)->next;      \
+         (p) != (h); (p) = (n), (n) = (n)->next)
 
 static INLINE int
 zt_elist_empty(zt_elist *head)
@@ -87,16 +87,16 @@ zt_elist_add_tail(zt_elist *head, zt_elist *new)
 static INLINE void
 zt_elist_join(zt_elist *head, zt_elist *list)
 {
-	zt_elist *first = list->next;
-	zt_elist *last = list->prev;
-	zt_elist *at = head->next;
+    zt_elist *first = list->next;
+    zt_elist *last = list->prev;
+    zt_elist *at = head->next;
 
-	first->prev = head;
-	head->next = first;
+    first->prev = head;
+    head->next = first;
 
-	last->next = at;
-	at->prev = last;
+    last->next = at;
+    at->prev = last;
 }
 
 END_C_DECLS
-#endif	/* _ZT_LIST_H_ */
+#endif  /* _ZT_LIST_H_ */
