@@ -2,7 +2,7 @@
 
 extern char *memoryError;
 #define XCALLOCS(size, num)     (xcalloc ((num), size))
-#define XMALLOCS(size, num)     (xmalloc ((num), size))
+#define XMALLOCS(size, num)     (xmalloc ((num))
 #define XCALLOC(type, num)	((type *) xcalloc ((num), sizeof(type)))
 #define XMALLOC(type, num)	((type *) xmalloc ((num) * sizeof(type)))
 #define XREALLOC(type, p, num)	((type *) xrealloc ((p), (num) * sizeof(type)))
