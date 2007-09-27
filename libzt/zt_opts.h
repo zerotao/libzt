@@ -42,7 +42,7 @@ struct opt_args
 	char *usage;
 };
 
-extern int opts_process _(( int argc, char *argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults));
+extern int opts_process _(( int *argc, char **argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults));
 extern void opts_usage _((char *argv[], struct opt_args *opts, char *option_string, int max_opts, int show_defaults));
 
 END_C_DECLS

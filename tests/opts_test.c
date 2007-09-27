@@ -44,7 +44,8 @@ opt_rfunction rfunc (int argc, char **argv)
 int
 main(int argc, char* argv[])
 {
-	struct opt_args options[] =
+	int				  offt;
+	struct opt_args   options[] =
 		{
 			{ 'h', "help", "This help text", opt_help, NULL, NULL},
 			{ '[', "int", "integer test", opt_int, &integer, NULL},
@@ -57,7 +58,7 @@ main(int argc, char* argv[])
 			{ 0,0,0,0 }
 		};
 				
-	opts_process(argc, argv, options, "[options]", TRUE, TRUE);
+	opts_process(&argc, &argv, options, "[options]", TRUE, TRUE);
 	printf("integer = %d, bool = %d, string = %s flag = %d\n", integer, bool, str ? str : "string", flag);
 
 	if(str) {
