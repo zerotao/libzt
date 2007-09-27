@@ -6,7 +6,7 @@ SUBDIRS = 		\
 	zt_event	\
 	.
 
-lib_LTLIBRARIES = libzt.la 
+lib_LTLIBRARIES = libzt.la libzt_unit.la
 
 libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
@@ -28,6 +28,9 @@ libzt_la_LDFLAGS = -version-info 1:0:0 \
 
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
+
+libzt_unit_la_SOURCES = 	\
+	zt_unit.c
 
 libzt_la_SOURCES = 		\
 	zt_assert.c 		\
@@ -51,6 +54,7 @@ libzt_la_SOURCES = 		\
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
 	zt.h			\
+	zt_unit.h		\
 	zt_assert.h		\
 	zt_cfg.h		\
 	zt_common.h		\

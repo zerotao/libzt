@@ -3,8 +3,10 @@ LDADD = ../libzt/libzt.la # ../libzt/.libs/libzt.a
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
+unit_test_LDADD = ../libzt/.libs/libzt_unit.a ../libzt/.libs/libzt.a
 
 TEST_APPS = 		\
+	unit_test	\
 	array_test	\
 	cstr_test 	\
 	macros_test 	\
