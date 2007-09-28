@@ -81,7 +81,7 @@ zt_unit_register_suite(struct zt_unit 		* unit,
 	suite->failed = 0;
 	
 	zt_elist_reset(&suite->tests);
-	zt_elist_add(&unit->suites, &suite->suite);
+	zt_elist_add_tail(&unit->suites, &suite->suite);
 	return suite;
 }
 
@@ -126,7 +126,7 @@ zt_unit_register_test(struct zt_unit_suite	* suite,
 	test->success = -1;
 	test->test_fn = test_fn;
 	
-	zt_elist_add(&suite->tests, &test->test);
+	zt_elist_add_tail(&suite->tests, &test->test);
 	return test;
 }
 
