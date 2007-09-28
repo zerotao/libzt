@@ -155,7 +155,7 @@ zt_unit_run(struct zt_unit	* unit)
 	zt_elist				* tmp;
 	struct zt_unit_suite	* unit_suite;
 	int						  result = 0;
-	
+
 	zt_elist_for_each(&unit->suites, tmp) {
 		unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
 		result += zt_unit_run_suite(unit, unit_suite);
@@ -185,8 +185,8 @@ zt_unit_run_suite(struct zt_unit		* unit,
 	
 	suite->failed = 0;
 	suite->succeeded = 0;
-	len = printf("%s\n", suite->name);
-	printf_underline(len-1);
+	printf("- %s:\n", suite->name);
+	printf(BLANK "- Tests:\n", INDENT_TO(2, 2, 0));
 	
 	zt_elist_for_each(&suite->tests, tmp) {
 		unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
@@ -199,16 +199,16 @@ zt_unit_run_suite(struct zt_unit		* unit,
 	}
 
 	if (suite->failed != 0) {
-		len = printf("\n%s : Errors\n", suite->name);
-		printf_underline(len-2);
+		len = printf(BLANK "- Errors:\n", INDENT_TO(2, 2, 0));
 		
 		zt_elist_for_each(&suite->tests, tmp) {
 			unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
 			if (unit_test->success != TRUE) {
-				printf("%s -- %s\n", unit_test->name, unit_test->error);			
+				printf(BLANK "- %s: %s\n", INDENT_TO(4, 4, 0), unit_test->name, unit_test->error);			
 			}
 		}
 	}
+	printf("\n");
 	
 	return suite->failed + suite->succeeded;
 }
@@ -253,9 +253,8 @@ zt_unit_run_test(struct zt_unit			* unit,
 	
 	test->success = FALSE;
 	assert(test);
-	offt = strlen(test->name);
 	
-	printf("%s", test->name);
+	offt = printf(BLANK "- %s:", INDENT_TO(4, 4, 0), test->name);
 	
 	TRY({
 			UNWIND_PROTECT({
@@ -275,7 +274,7 @@ zt_unit_run_test(struct zt_unit			* unit,
 				  });
 		});
 
-	printf(BLANK "=> %s\n", INDENT_TO(60, 5, offt),
+	printf(BLANK "%s\n", INDENT_TO(20, 5, offt),
 		   test->success == TRUE ? "success" : "failure");
 	
 	/* 
