@@ -22,7 +22,7 @@ struct zt_unit_test;
 		TRY_THROW(zt_unit_exception);			\
 	}
 	
-#define ZT_UNIT_ASSERT_EQUAL(expr_a, expr_b)							\
+#define ZT_UNIT_ASSERT_EQUAL(expr1, expr2)								\
 	if ((expr1) != (expr2)) {											\
 		zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
 		TRY_THROW(zt_unit_exception);									\
