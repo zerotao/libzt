@@ -118,5 +118,18 @@ BEGIN_C_DECLS
 #define MACRO_APPLY(FUNC, ARGS, NEXT) FUNC ARGS NEXT
 #define MACRO_APPLY_STOP(FUNC, ARGS, NEXT) FUNC ARGS
 
+
+#define BIT_SET(target, bit) \
+	(target) |= (bit)
+
+#define BIT_UNSET(target, bit) \
+	(target) &= ~(bit)
+
+#define BIT_ISSET(target, bit) \
+	((target) & (bit)) ? TRUE : FALSE
+
+#define BIT_ISUNSET(target, bit) \
+	BIT_ISSET(target, bit) ? FALSE : TRUE
+
 END_C_DECLS
 #endif /*_ZT_MACROS_H_*/
