@@ -5,15 +5,15 @@
  *
  */
 
-static int one_is_white(zt_gc_mark *mark) { return mark->colour == 1 ? 1 : 0; }
-static void one_clear_white(zt_gc_mark *mark) { mark->colour = 0; }
-static void one_set_white(zt_gc_mark *mark) { mark->colour = 1; }
+static int one_is_white(zt_gc_collectable_t *mark) { return mark->colour == 1 ? 1 : 0; }
+static void one_clear_white(zt_gc_collectable_t *mark) { mark->colour = 0; }
+static void one_set_white(zt_gc_collectable_t *mark) { mark->colour = 1; }
 
-static int zero_is_white(zt_gc_mark *mark) { return mark->colour == 0 ? 1 : 0; }
-static void zero_clear_white(zt_gc_mark *mark) { mark->colour = 1; }
-static void zero_set_white(zt_gc_mark *mark) { mark->colour = 0; }
+static int zero_is_white(zt_gc_collectable_t *mark) { return mark->colour == 0 ? 1 : 0; }
+static void zero_clear_white(zt_gc_collectable_t *mark) { mark->colour = 1; }
+static void zero_set_white(zt_gc_collectable_t *mark) { mark->colour = 0; }
 
-static void switch_white(gc *gc)
+static void switch_white(gc_t *gc)
 {
 	if (gc->is_white == NULL || gc->is_white == one_is_white) {
 		gc->is_white = zero_is_white;
@@ -28,7 +28,7 @@ static void switch_white(gc *gc)
 
 
 static void
-resize_rootset(gc *gc, int new_size)
+resize_rootset(gc_t *gc, int new_size)
 {
 	if (gc->rootset == NULL){
 		gc->rootset = XCALLOC(zt_elist *, new_size);
@@ -61,7 +61,7 @@ dump_elist(char *name, zt_elist *p)
 }
 
 void
-zt_gc_init(gc *gc,
+zt_gc_init(gc_t *gc,
 		void (*mark_fn)(struct gc *, void *),
 		void (*release_fn)(struct gc *, void **),
 		int marks_per_scan,
@@ -97,7 +97,7 @@ zt_gc_init(gc *gc,
 }
 
 void
-zt_gc_register_root(gc *gc, void *v)
+zt_gc_register_root(gc_t *gc, void *v)
 {
 	zt_elist	* el = (zt_elist *)v;
 	gc->rootset[gc->rootset_next++] = el;
@@ -107,10 +107,9 @@ zt_gc_register_root(gc *gc, void *v)
 }
 
 void
-zt_gc_register_value(gc *gc, void *v) 
+zt_gc_register_value(gc_t *gc, void *v) 
 {
-	zt_gc_mark		* mark = (zt_gc_mark *) v;
-	printf("Registering value %p(%p)\n", mark, &mark->list);
+	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	
 	gc->clear_white(mark);
 	zt_elist_reset(&mark->list);
@@ -125,7 +124,7 @@ zt_gc_register_value(gc *gc, void *v)
 }
 
 void
-zt_gc_free_white(gc *gc)
+zt_gc_free_white(gc_t *gc)
 {
 	zt_elist	* elt;
 	zt_elist	* dont_use;
@@ -137,7 +136,7 @@ zt_gc_free_white(gc *gc)
 }
 
 void
-zt_gc_switch(gc *gc) 
+zt_gc_switch(gc_t *gc) 
 {
 	zt_elist	* tmp_white;
 	/* in a traditional GC we would just swap the swap out the white */
@@ -150,20 +149,16 @@ zt_gc_switch(gc *gc)
 }
 
 void
-zt_gc_scan(gc *gc, int full_scan)
+zt_gc_scan(gc_t *gc, int full_scan)
 {
 	int	  current_marks = 0;
-	printf("Scanning starting\n");
 	
 	if (gc->scan == gc->grey) {
-		printf(" Initializing scan\n");
-		dump_elist("  scan", gc->grey);
-		
 		/* beginning of a scan */
 		int	  i;
 		for(i = 0; i < gc->rootset_next; i++) {
 			/* add each object in the rootset into the grey list */
-			zt_gc_mark	* mark	= (zt_gc_mark *) gc->rootset[i];
+			zt_gc_collectable_t	* mark	= (zt_gc_collectable_t *) gc->rootset[i];
 			//set_grey(mark);
 			
 			zt_elist_remove(&mark->list);
@@ -179,10 +174,9 @@ zt_gc_scan(gc *gc, int full_scan)
 		 */
 		zt_elist	* next;
 		zt_elist	* elt;
-		zt_gc_mark		* mark;
-		printf(" Scanning %p(n:%p, p:%p)\n", gc->scan, gc->scan->next, gc->scan->prev);
+		zt_gc_collectable_t	* mark;
 		elt = gc->scan;
-		mark = zt_elist_data(elt, zt_gc_mark, list);
+		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		
 		gc->mark_fn(gc, elt);		
 		next = gc->scan->next;
@@ -199,14 +193,13 @@ zt_gc_scan(gc *gc, int full_scan)
 			}
 		}
 	}
-	printf("Scan Complete\n");
 	zt_gc_switch(gc);
 }
 
 void
-zt_gc_mark_value(gc *gc, void *value)
+zt_gc_mark_value(gc_t *gc, void *value)
 {
-	zt_gc_mark	* mark = (zt_gc_mark *)value;
+	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
 	assert(value != NULL);
 	
 	if (gc->is_white(mark)) {
@@ -225,7 +218,7 @@ zt_gc_mark_value(gc *gc, void *value)
 
 
 void
-zt_gc_print_heap(gc *gc)
+zt_gc_print_heap(gc_t *gc)
 {
 	printf("Heap Dump\n============\n");
 	printf("l1: %p l2: %p l3: %p\nblack: %p grey: %p white: %p\nscan: %p\n",

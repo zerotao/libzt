@@ -1,12 +1,14 @@
 #ifndef _ZT_GC_H_
 #define _ZT_GC_H_
 
+#include <libzt/zt.h>
 #include <libzt/adt/zt_list.h>
 
-typedef struct zt_gc_mark {
+BEGIN_C_DECLS
+typedef struct zt_gc_collectable {
  	zt_elist	  list;
  	int	  		  colour;
-} zt_gc_mark;
+} zt_gc_collectable_t;
 
 typedef struct gc {
 	int			  current_allocs;
@@ -17,9 +19,9 @@ typedef struct gc {
 	int			  rootset_size;
 	int			  rootset_next;
 	
-	int 		(*is_white)(zt_gc_mark *mark);
-	void 		(*clear_white)(zt_gc_mark *mark);
-	void 		(*set_white)(zt_gc_mark *mark);
+	int 		(*is_white)(zt_gc_collectable_t *mark);
+	void 		(*clear_white)(zt_gc_collectable_t *mark);
+	void 		(*set_white)(zt_gc_collectable_t *mark);
 
 	zt_elist	  **rootset;
 	
@@ -36,20 +38,21 @@ typedef struct gc {
 	void		(*mark_fn)(struct gc *, void *);
 	void		(*release_fn)(struct gc *, void **);
 	
-} gc;
+} gc_t;
 
-void zt_gc_init(gc *gc, void (*mark_fn)(struct gc *, void *), 
-                     void (*release_fn)(struct gc *, void **),
-                     int marks_per_scan, 
-                     int allocs_to_scan);
+void zt_gc_init(gc_t *gc, void (*mark_fn)(struct gc *, void *), 
+				void (*release_fn)(struct gc *, void **),
+				int marks_per_scan, 
+				int allocs_to_scan);
 
-void zt_gc_register_value(gc *gc, void *value);
-void zt_gc_register_root(gc *gc, void *value);
+void zt_gc_register_value(gc_t *gc, void *value);
+void zt_gc_register_root(gc_t *gc, void *value);
 /* void zt_gc_protect(gc *gc, void *value); */
-void zt_gc_print_heap(gc *gc);
-void zt_gc_mark_value(gc *gc, void *value);
-void zt_gc_scan(gc *gc, int full_scan);
+void zt_gc_print_heap(gc_t *gc);
+void zt_gc_mark_value(gc_t *gc, void *value);
+void zt_gc_scan(gc_t *gc, int full_scan);
 /* void zt_gc_mark(gc *gc); */
 
+END_C_DECLS
 
 #endif /*_ZT_GC_H_*/
