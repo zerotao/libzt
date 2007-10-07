@@ -34,14 +34,18 @@ typedef struct gc {
 	zt_elist	* white;		/* not seen */
 
 	zt_elist	* scan;		    /* current offset into the grey list */
+
+	void		* private_data;
 	
-	void		(*mark_fn)(struct gc *, void *);
-	void		(*release_fn)(struct gc *, void **);
+	void		(*mark_fn)(struct gc *, void *, void *);
+	void		(*release_fn)(struct gc *, void *, void **);
 	
 } gc_t;
 
-void zt_gc_init(gc_t *gc, void (*mark_fn)(struct gc *, void *), 
-				void (*release_fn)(struct gc *, void **),
+void zt_gc_init(gc_t *gc,
+				void *private_data,
+				void (*mark_fn)(struct gc *, void *, void *), 
+				void (*release_fn)(struct gc *, void *, void **),
 				int marks_per_scan, 
 				int allocs_to_scan);
 

@@ -62,10 +62,11 @@ dump_elist(char *name, zt_elist *p)
 
 void
 zt_gc_init(gc_t *gc,
-		void (*mark_fn)(struct gc *, void *),
-		void (*release_fn)(struct gc *, void **),
-		int marks_per_scan,
-		int allocs_before_scan)
+		   void *private_data,
+		   void (*mark_fn)(struct gc *, void *, void *),
+		   void (*release_fn)(struct gc *, void *, void **),
+		   int marks_per_scan,
+		   int allocs_before_scan)
 {
 	
 
@@ -92,6 +93,7 @@ zt_gc_init(gc_t *gc,
 	gc->clear_white = one_clear_white;
 	gc->set_white = one_set_white;
 
+	gc->private_data = private_data;
 	gc->mark_fn = mark_fn;
 	gc->release_fn = release_fn;
 }
@@ -131,7 +133,7 @@ zt_gc_free_white(gc_t *gc)
 	
 	zt_elist_for_each_safe(gc->white, elt, dont_use){
 		zt_elist_remove(elt);
-		gc->release_fn(gc, (void **)&elt);
+		gc->release_fn(gc, gc->private_data, (void **)&elt);
 	}
 }
 
@@ -178,7 +180,7 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		elt = gc->scan;
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		
-		gc->mark_fn(gc, elt);		
+		gc->mark_fn(gc, gc->private_data, elt);		
 		next = gc->scan->next;
 		
 		gc->clear_white(mark);
@@ -208,14 +210,6 @@ zt_gc_mark_value(gc_t *gc, void *value)
 		zt_elist_add(gc->scan, &mark->list);
 	}
 }
-
-/* 
- * void zt_gc_mark(gc *gc)
- * {
- * 	
- * }
- */
-
 
 void
 zt_gc_print_heap(gc_t *gc)
