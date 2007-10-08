@@ -324,9 +324,9 @@ extern void _except_remove_handler(void*, except_handler);
  */
 #define TRY(WIND_DATA, UNWIND_DATA...)                      \
     DO_TRY                                                  \
-    { WIND_DATA }                                           \
+    { WIND_DATA; }											\
     ELSE_TRY                                                \
-    { UNWIND_DATA }                                         \
+    { UNWIND_DATA; }										\
     END_TRY
 
 /************ TRY */

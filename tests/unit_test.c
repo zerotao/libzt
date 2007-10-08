@@ -13,7 +13,7 @@ test_fn_2(void *data)
 {
 	char * abc = "123";
 	
-	ZT_UNIT_ASSERT_RAISES(abc, TRY_THROW(abc););
+	ZT_UNIT_ASSERT_RAISES(abc, TRY_THROW(abc));
 	// ZT_UNIT_ASSERT_RAISES(abc, {});
 	
 	return;

@@ -32,7 +32,7 @@ struct zt_unit_test;
 	{																	\
 		int	  success = 0;												\
 		TRY({															\
-				{expr}													\
+				{expr;}													\
 			},{															\
 				CATCH(excpt, success = 1;);							\
 			});															\
