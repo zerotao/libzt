@@ -101,8 +101,10 @@ zt_gc_init(gc_t *gc,
 void
 zt_gc_register_root(gc_t *gc, void *v)
 {
-	zt_elist	* el = (zt_elist *)v;
-	gc->rootset[gc->rootset_next++] = el;
+	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
+	zt_elist_reset(&mark->list);
+	
+	gc->rootset[gc->rootset_next++] = &mark->list;
 	if (gc->rootset_next > gc->rootset_size) {
 		resize_rootset(gc, gc->rootset_size + 1024);
 	}
@@ -115,8 +117,8 @@ zt_gc_register_value(gc_t *gc, void *v)
 	
 	gc->clear_white(mark);
 	zt_elist_reset(&mark->list);
-	/* The mutator is registering interest in this value so we must place it in
-	 * the the grey list no the white. */
+	/* The mutator is registering interest in this value so we must
+	 * place it in the the grey list not the white. */
 	zt_elist_add_tail(gc->grey, &mark->list);
 	
 	if(++gc->current_allocs >= gc->allocs_before_scan){
@@ -162,7 +164,6 @@ zt_gc_scan(gc_t *gc, int full_scan)
 			/* add each object in the rootset into the grey list */
 			zt_gc_collectable_t	* mark	= (zt_gc_collectable_t *) gc->rootset[i];
 			//set_grey(mark);
-			
 			zt_elist_remove(&mark->list);
 			zt_elist_add(gc->grey, &mark->list);
 		}
@@ -177,6 +178,7 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		zt_elist	* next;
 		zt_elist	* elt;
 		zt_gc_collectable_t	* mark;
+		
 		elt = gc->scan;
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		
