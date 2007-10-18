@@ -32,6 +32,7 @@ resize_rootset(gc_t *gc, int new_size)
 {
 	if (gc->rootset == NULL){
 		gc->rootset = XCALLOC(zt_elist *, new_size);
+		gc->rootset_next = 0;
 	} else {
 		int	diff = new_size - gc->rootset_size;
 		int i;
@@ -73,10 +74,9 @@ zt_gc_init(gc_t *gc,
 	zt_elist_reset(&gc->list_1);
 	zt_elist_reset(&gc->list_2);
 	zt_elist_reset(&gc->list_3);
-	
-	gc->rootset = XCALLOC(zt_elist *, 1024);
-	gc->rootset_size = 1024;
-	gc->rootset_next = 0;
+
+	gc->rootset = NULL;	
+	resize_rootset(gc, 1024);
 	
 	gc->black = &gc->list_1;
 	gc->grey = &gc->list_2;
