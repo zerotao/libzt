@@ -3,17 +3,18 @@
 
 
 void
-test_fn_1(void *data) 
+test_fn_1(struct zt_unit_test *test, void *data) 
 {
-	ZT_UNIT_ASSERT(1 == 2);
+	ZT_UNIT_ASSERT(test, 1 == 2);
 }
 
 void
-test_fn_2(void *data)
+test_fn_2(struct zt_unit_test *test, void *data)
 {
 	char * abc = "123";
 	
-	ZT_UNIT_ASSERT_RAISES(abc, TRY_THROW(abc));
+	ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc));
+	ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc));
 	// ZT_UNIT_ASSERT_RAISES(abc, {});
 	
 	return;

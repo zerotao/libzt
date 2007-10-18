@@ -1,4 +1,5 @@
-LDADD = ../libzt/libzt.la # ../libzt/.libs/libzt.a
+#LDADD = ../libzt/libzt.la 
+LDADD = ../libzt/.libs/libzt.a
 
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
@@ -6,6 +7,7 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_
 unit_test_LDADD = ../libzt/.libs/libzt_unit.a ../libzt/.libs/libzt.a
 
 TEST_APPS = 		\
+	gc_test		\
 	unit_test	\
 	array_test	\
 	cstr_test 	\
@@ -33,6 +35,9 @@ TEST_APPS = 		\
 
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)
+
+gc_test_SOURCES = \
+	gc_test.c
 
 llist_test_SOURCES = \
 	llist_test.c

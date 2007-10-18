@@ -8,38 +8,44 @@ BEGIN_C_DECLS
 
 extern char * zt_unit_exception;
 
-typedef void (*zt_unit_setup_fn)(void *data);
-typedef void (*zt_unit_teardown_fn)(void *data);
-typedef void (*zt_unit_test_fn)(void *data);
-
 struct zt_unit;
 struct zt_unit_suite;
 struct zt_unit_test;
 
-#define ZT_UNIT_ASSERT(expr)					\
-	if (!(expr)) {								\
+typedef void (*zt_unit_setup_fn)(void *data);
+typedef void (*zt_unit_teardown_fn)(void *data);
+typedef void (*zt_unit_test_fn)(struct zt_unit_test *test, void *data);
+
+
+#define ZT_UNIT_ASSERT(test,expr)									\
+	if (!(expr)) {													\
 		zt_unit_exception = "Assertion Failed: " STR(expr);			\
-		TRY_THROW(zt_unit_exception);			\
-	}
+		TRY_THROW(zt_unit_exception);								\
+	}else{                                                          \
+		zt_unit_test_add_assertion(test);							\
+    }
 	
-#define ZT_UNIT_ASSERT_EQUAL(expr1, expr2)								\
+#define ZT_UNIT_ASSERT_EQUAL(test, expr1, expr2)						\
 	if ((expr1) != (expr2)) {											\
 		zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
 		TRY_THROW(zt_unit_exception);									\
-	}																	\
+	} else {                                                            \
+		zt_unit_test_add_assertion(test);								\
+    }
 	
-#define ZT_UNIT_ASSERT_RAISES(excpt, expr)								\
+#define ZT_UNIT_ASSERT_RAISES(test,excpt, expr)							\
 	{																	\
 		int	  success = 0;												\
 		TRY({															\
 				{expr;}													\
 			},{															\
-				CATCH(excpt, success = 1;);							\
+				CATCH(excpt, success = 1;);								\
 			});															\
 		if (success != 1) {												\
 			zt_unit_exception = "Assertion Failed: " STR(expr) " did not raise " STR(excpt); \
 			TRY_THROW(zt_unit_exception);								\
 		}																\
+		zt_unit_test_add_assertion(test);								\
 	}
 
 
@@ -88,6 +94,9 @@ int
 zt_unit_main(struct zt_unit				* unit,
 			 int						  argc,
 			 char						* argv[]);
+
+void
+zt_unit_test_add_assertion(struct zt_unit_test *test);
 
 END_C_DECLS
 #endif	/* _ZT_UNIT_H_ */

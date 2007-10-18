@@ -10,6 +10,7 @@
 #define ZT_UNIT_EXCEPTION_DEFAULT "Unknown Error"
 char * zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
 
+
 struct zt_unit {
 	zt_elist				  suites;
 };
@@ -31,7 +32,27 @@ struct zt_unit_test {
 	zt_unit_test_fn			  test_fn;
 	int						  success;
 	char					* error;
+	long					  assertions;
 };
+
+#define yaml_dict(name, offt)										\
+	printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
+
+#define yaml_list_elt(value, fmt, offt)									\
+	printf(BLANK "- " fmt "\n", INDENT_TO(offt, 2, 0), value)
+
+#define yaml_value(name, offt_1, value_fmt, value)						\
+	do{																	\
+		int		  offt;													\
+		offt = printf(BLANK "%s", INDENT_TO(offt_1, 2, 0), name);	\
+		printf(BLANK ": " value_fmt "\n", INDENT_TO(30, 2, offt), value);	\
+	}while(0)
+		
+void
+zt_unit_test_add_assertion(struct zt_unit_test *test) 
+{
+	test->assertions++;
+}
 
 struct zt_unit *
 zt_unit_init(void)
@@ -125,6 +146,7 @@ zt_unit_register_test(struct zt_unit_suite	* suite,
 	strncpy(test->name, name, len);
 	test->success = -1;
 	test->test_fn = test_fn;
+    test->assertions = 0;
 	
 	zt_elist_add_tail(&suite->tests, &test->test);
 	return test;
@@ -163,17 +185,6 @@ zt_unit_run(struct zt_unit	* unit)
 	return result;
 }
 
-char * minuses_60 = "------------------------------------------------------------";
-
-static int
-printf_underline(int len) 
-{
-	char	  fmt[7+1];  // "%%.??s\n"
-	
-	snprintf(fmt, 7, "%%.%ds\n", len <= 60 ? len : 60);
-	return printf(fmt, minuses_60);
-}
-
 int
 zt_unit_run_suite(struct zt_unit		* unit,
 				  struct zt_unit_suite 	* suite)
@@ -186,7 +197,7 @@ zt_unit_run_suite(struct zt_unit		* unit,
 	suite->failed = 0;
 	suite->succeeded = 0;
 	printf("---\n%s:\n", suite->name);
-	printf(BLANK "Tests:\n", INDENT_TO(2, 2, 0));
+	yaml_dict("Tests", 2);
 	
 	zt_elist_for_each(&suite->tests, tmp) {
 		unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
@@ -199,17 +210,15 @@ zt_unit_run_suite(struct zt_unit		* unit,
 	}
 
 	if (suite->failed != 0) {
-		len = printf(BLANK "Errors:\n", INDENT_TO(2, 2, 0));
-		
+		yaml_dict("Errors", 2);
 		zt_elist_for_each(&suite->tests, tmp) {
 			unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
 			if (unit_test->success != TRUE) {
-				len = printf(BLANK "%s", INDENT_TO(4, 4, 0), unit_test->name);
-				len = printf(BLANK ": '%s'\n", INDENT_TO(30, 5, len), unit_test->error);			
+				yaml_value(unit_test->name, 4, "'%s'", unit_test->error);
 			}
 		}
 	}
-	
+
 	return suite->failed + suite->succeeded;
 }
 
@@ -249,18 +258,18 @@ zt_unit_run_test(struct zt_unit			* unit,
 				 struct zt_unit_suite 	* suite,
 				 struct zt_unit_test 	* test) 
 {
-	int	  offt;
+	int	  	  offt;
 	
 	test->success = FALSE;
 	assert(test);
-	
-	offt = printf(BLANK "%s", INDENT_TO(4, 4, 0), test->name);
+
+	yaml_dict(test->name, 4);
 	
 	TRY({
 			UNWIND_PROTECT({
 					if(suite->setup_fn) 
 						suite->setup_fn(suite->data);
-					test->test_fn(suite->data);
+					test->test_fn(test, suite->data);
 					test_passed(test);
 				},{
 					if(suite->teardown_fn)
@@ -274,15 +283,9 @@ zt_unit_run_test(struct zt_unit			* unit,
 				  });
 		});
 
-	printf(BLANK ": %s\n", INDENT_TO(30, 5, offt),
-		   test->success == TRUE ? "success" : "failure");
-	
-	/* 
-     * if (test->success == FALSE) {
-	 * 	printf(" -- %s", test->error);
-	 * }
-	 * printf("\n");
-     */
+
+	yaml_value("assertions", 6, "%d", test->assertions);
+	yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 	
 	return test->success;
 }
@@ -412,20 +415,16 @@ zt_unit_list(struct zt_unit *unit)
 	struct zt_unit_test		* unit_test;
 	int						  offt;
 	
-	offt = printf("Test Suites:\n");
+	yaml_dict("Test Suites", 0);
 	
 	zt_elist_for_each(&unit->suites, tmp){
 		unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
-		printf(BLANK "%s:\n", INDENT_TO(2, 2, 0),
-			   unit_suite->name);
+		yaml_dict(unit_suite->name, 2);
 		zt_elist_for_each(&unit_suite->tests, tmp2) {
 			unit_test = zt_elist_data(tmp2, struct zt_unit_test, test);
-			printf(BLANK "- %s\n", INDENT_TO(4, 4, 0),
-				   unit_test->name);
+			yaml_list_elt(unit_test->name, "%s", 4);
 		}
 	}
-	
-
 }
 
 
