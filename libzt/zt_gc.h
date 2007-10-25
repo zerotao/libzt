@@ -11,6 +11,8 @@ typedef struct zt_gc_collectable {
 } zt_gc_collectable_t;
 
 typedef struct gc {
+	int			  enabled;
+	
 	int			  current_allocs;
 	
 	int			  marks_per_scan;
@@ -49,8 +51,14 @@ void zt_gc_init(gc_t *gc,
 				int marks_per_scan, 
 				int allocs_to_scan);
 
+void zt_gc_enable(gc_t *gc);
+void zt_gc_disable(gc_t *gc);
+
+void zt_gc_prepare_value(gc_t *gc, void *value);
 void zt_gc_register_value(gc_t *gc, void *value);
+void zt_gc_unregister_value(gc_t *gc, void *value);
 void zt_gc_register_root(gc_t *gc, void *value);
+
 /* void zt_gc_protect(gc *gc, void *value); */
 void zt_gc_print_heap(gc_t *gc);
 void zt_gc_mark_value(gc_t *gc, void *value);

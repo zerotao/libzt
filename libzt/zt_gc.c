@@ -62,6 +62,21 @@ dump_elist(char *name, zt_elist *p)
 }
 
 void
+zt_gc_enable(gc_t *gc) 
+{
+	gc->enabled = TRUE;
+	if(gc->current_allocs >= gc->allocs_before_scan){
+		zt_gc_scan(gc, 0);
+	}
+}
+
+void
+zt_gc_disable(gc_t *gc)
+{
+	gc->enabled = FALSE;
+}
+
+void
 zt_gc_init(gc_t *gc,
 		   void *private_data,
 		   void (*mark_fn)(struct gc *, void *, void *),
@@ -69,8 +84,8 @@ zt_gc_init(gc_t *gc,
 		   int marks_per_scan,
 		   int allocs_before_scan)
 {
+	gc->enabled = TRUE;
 	
-
 	zt_elist_reset(&gc->list_1);
 	zt_elist_reset(&gc->list_2);
 	zt_elist_reset(&gc->list_3);
@@ -98,6 +113,10 @@ zt_gc_init(gc_t *gc,
 	gc->release_fn = release_fn;
 }
 
+/*
+ * TODO: turn this into a wrapped list so that objects can be removed
+ * from the root set.
+ */
 void
 zt_gc_register_root(gc_t *gc, void *v)
 {
@@ -111,18 +130,31 @@ zt_gc_register_root(gc_t *gc, void *v)
 }
 
 void
+zt_gc_prepare_value(gc_t *gc, void *v) 
+{
+	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
+	zt_elist_reset(&mark->list);
+}
+
+void
+zt_gc_unregister_value(gc_t *gc, void *v)
+{
+	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
+	zt_elist_remove(&mark->list);
+}
+
+void
 zt_gc_register_value(gc_t *gc, void *v) 
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
-	
-	gc->clear_white(mark);
 	zt_elist_reset(&mark->list);
+	gc->clear_white(mark);
 	/* The mutator is registering interest in this value so we must
-	 * place it in the the grey list not the white. */
+	 * place it in the the grey list not the white.
+	 */
 	zt_elist_add_tail(gc->grey, &mark->list);
 	
 	if(++gc->current_allocs >= gc->allocs_before_scan){
-		gc->current_allocs = 0;
 		zt_gc_scan(gc, 0);
 	}
 }
@@ -156,6 +188,12 @@ void
 zt_gc_scan(gc_t *gc, int full_scan)
 {
 	int	  current_marks = 0;
+
+	if (gc->enabled == FALSE) {
+		return;
+	}
+	
+	gc->current_allocs = 0;
 	
 	if (gc->scan == gc->grey) {
 		/* beginning of a scan */
