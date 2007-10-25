@@ -201,7 +201,6 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		for(i = 0; i < gc->rootset_next; i++) {
 			/* add each object in the rootset into the grey list */
 			zt_gc_collectable_t	* mark	= (zt_gc_collectable_t *) gc->rootset[i];
-			//set_grey(mark);
 			zt_elist_remove(&mark->list);
 			zt_elist_add(gc->grey, &mark->list);
 		}
@@ -220,10 +219,10 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		elt = gc->scan;
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		
-		gc->mark_fn(gc, gc->private_data, elt);		
-		next = gc->scan->next;
+		gc->clear_white(mark);		
+		gc->mark_fn(gc, gc->private_data, elt);
 		
-		gc->clear_white(mark);
+		next = gc->scan->next;
 		zt_elist_remove(elt);
 		zt_elist_add(gc->black, elt);
 		
