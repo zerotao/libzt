@@ -61,19 +61,27 @@ dump_elist(char *name, zt_elist *p)
 	printf("]\n");	
 }
 
+char	* UnbalancedGCEnabling = "The gc was enabled when it was not disabled";
+
 void
 zt_gc_enable(gc_t *gc) 
 {
-	gc->enabled = TRUE;
-	if(gc->current_allocs >= gc->allocs_before_scan){
-		zt_gc_scan(gc, 0);
+	gc->enabled++;
+	if (gc->enabled > 0) {
+		TRY_THROW(UnbalancedGCEnabling);
+	}
+	
+	if (gc->enabled == 0) {
+		if(gc->current_allocs >= gc->allocs_before_scan){
+			zt_gc_scan(gc, 0);
+		}
 	}
 }
 
 void
 zt_gc_disable(gc_t *gc)
 {
-	gc->enabled = FALSE;
+	gc->enabled--;
 }
 
 void
@@ -84,7 +92,7 @@ zt_gc_init(gc_t *gc,
 		   int marks_per_scan,
 		   int allocs_before_scan)
 {
-	gc->enabled = TRUE;
+	gc->enabled = 0;
 	
 	zt_elist_reset(&gc->list_1);
 	zt_elist_reset(&gc->list_2);
@@ -175,7 +183,9 @@ void
 zt_gc_switch(gc_t *gc) 
 {
 	zt_elist	* tmp_white;
-	/* in a traditional GC we would just swap the swap out the white */
+	/* in a traditional GC we would scan and reset the values here we
+	 * just swap the the white with the black
+	 */
 	zt_gc_free_white(gc);
 	tmp_white = gc->white;
 	gc->white = gc->black;
@@ -189,7 +199,7 @@ zt_gc_scan(gc_t *gc, int full_scan)
 {
 	int	  current_marks = 0;
 
-	if (gc->enabled == FALSE) {
+	if (gc->enabled < 0) {
 		return;
 	}
 	
@@ -217,14 +227,16 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		zt_gc_collectable_t	* mark;
 		
 		elt = gc->scan;
+		
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		
-		gc->clear_white(mark);		
-		gc->mark_fn(gc, gc->private_data, elt);
-		
 		next = gc->scan->next;
+
+		gc->clear_white(mark);
 		zt_elist_remove(elt);
 		zt_elist_add(gc->black, elt);
+		
+		gc->mark_fn(gc, gc->private_data, elt);
 		
 		gc->scan = next;
 
@@ -257,6 +269,7 @@ zt_gc_print_heap(gc_t *gc)
 	printf("l1: %p l2: %p l3: %p\nblack: %p grey: %p white: %p\nscan: %p\n",
 		   &gc->list_1, &gc->list_2, &gc->list_3,
 		   gc->black, gc->grey, gc->white, gc->scan);
+
 	
 	dump_elist("Black", gc->black);
 	dump_elist("Grey", gc->grey);
