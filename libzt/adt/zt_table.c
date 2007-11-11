@@ -29,33 +29,33 @@ nbits(unsigned long val)
 }
 
 unsigned long powers_of_2[] = {2,4,8,
-			       16,32,64,
-			       128,256,512,
-			       1024,2048,4096,
-			       8192,16384,32768,
-			       65535,131072,262144,
-			       524288,1048576,2097152,
-			       4194304,8388608,16777216,
-			       33554432,67108864,134217728,
-			       268435456,536870912,1073741824,
-			       2147483648UL, UINT_MAX};
+							   16,32,64,
+							   128,256,512,
+							   1024,2048,4096,
+							   8192,16384,32768,
+							   65535,131072,262144,
+							   524288,1048576,2097152,
+							   4194304,8388608,16777216,
+							   33554432,67108864,134217728,
+							   268435456,536870912,1073741824,
+							   2147483648UL, UINT_MAX};
 		 
 struct table_node {
-	void		  * datum;
-	void		  * key;
-	struct table_node * next;
+	void		  		* datum;
+	void		  		* key;
+	struct table_node 	* next;
 };
 
 struct zt_table {
-	char			* name;
-	table_compare 		  cmp;
-	table_hash_func    	  func;
-	int			  nbits;
-	int			  flags;
+	char				* name;
+	table_compare		  cmp;
+	table_hash_func 	  func;
+	int			  		  nbits;
+	int			  		  flags;
 	unsigned long		  num_buckets;
-	unsigned int 		  filled;
-	zt_mem_pool		* node_pool;
-	zt_mem_heap		* table_heap;
+	unsigned int		  filled;
+	zt_mem_pool			* node_pool;
+	zt_mem_heap			* table_heap;
 	struct table_node	**buckets;
 };
 
@@ -67,7 +67,7 @@ zt_table *
 table_init(char *name, table_hash_func func, table_compare cmp, size_t hint, int flags)
 {
 	zt_table 	* table;
-	int		  nbuckets = 0;
+	int			  nbuckets = 0;
 	char		  tname[1024];
 
 	if( (func == NULL) ||

@@ -6,20 +6,20 @@
  *   a heap is mearly awrapper around malloc and are the basis for pools
  * 
  *   pools are page oriented allocators they are intended to be used
- *   when there are many allocations of the same size.  They provide some
- *   referential locality and vast speedups, up to an order of magnitude, when
- *   they have been tuned properly.  They also provide a framework for gathering
- *   statistics of system use.
+ *   when there are many allocations of the same size.  They provide
+ *   some referential locality and vast speedups, up to an order of
+ *   magnitude, when they have been tuned properly.  They also provide
+ *   a framework for gathering statistics of system use.
  *
- *   mem stets provide a group of pools that can be treated as a single entity
- *   thus you can have a set of various sizes and a request from that set will
- *   provide an allocation from the pool whose elements are the closest size
- *   to the request.
+ *   pool groups provide an interface to a group of different sized
+ *   poold of different sizes that can be treated as a single entity a
+ *   request from this group will provide an allocation from the pool
+ *   whose elements are the closest size to the request.
  * 
- *   ranges provide a mechanism for releasing a number of associated memory allocations
- *   all at once.  They are used when you allocate a number of items from pools
- *   (either the same pool or various pools) and want them to be released at the same
- *   time.
+ *   sets provide a mechanism for releasing a number of associated
+ *   memory allocations all at once.  They are used when you allocate
+ *   a number of items from pools (either the same pool or various
+ *   pools) and want them to be released at the same time.
  *
  * COPYRIGHT
  *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.com>.
@@ -59,18 +59,18 @@ typedef struct zt_mem_pool_group zt_mem_pool_group;
  *   o cb_data     - callback data registered with the pool
  ****/
 typedef int(*zt_page_release_test)(int	  total_pages,
-				   int 	  free_pages,
-				   int 	  cache_size,
-				   int 	  flags,
-				   void	* cb_data);
+								   int 	  free_pages,
+								   int 	  cache_size,
+								   int 	  flags,
+								   void	* cb_data);
 
 typedef struct zt_mem_pool_desc {
-	char			* name;
-	long			  elts;
-	size_t			  size;	
+	char					* name;
+	long					  elts;
+	size_t					  size;	
 	zt_page_release_test	  release_test;
-	void			* cb_data;
-	int			  flags	;
+	void					* cb_data;
+	int						  flags;
 	
 } zt_mem_pool_desc;
 
@@ -85,7 +85,7 @@ typedef struct zt_mem_pool_stats {
 	size_t		  page_size;
 	long		  page_allocs;
 	long		  page_frees;
-	int		  flags;
+	int		  	  flags;
 }zt_mem_pool_stats;
 
 /**
@@ -131,12 +131,12 @@ char *zt_mem_heap_get_name(zt_mem_heap *heap);
  * @param flags flags set for the pool
  */
 zt_mem_pool *
-zt_mem_pool_init(char			* name,
-		 long			  elts,
-		 size_t			  size,
-		 zt_page_release_test	  release_test,
-		 void			* cb_data,
-		 int			  flags);
+zt_mem_pool_init(char					* name,
+				 long					  elts,
+				 size_t					  size,
+				 zt_page_release_test	  release_test,
+				 void					* cb_data,
+				 int					  flags);
 
 /**
  * allocate memory from a pool.
