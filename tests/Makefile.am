@@ -9,7 +9,6 @@ unit_test_LDADD = ../libzt/.libs/libzt_unit.a ../libzt/.libs/libzt.a
 TEST_APPS = 		\
 	gc_test		\
 	unit_test	\
-	array_test	\
 	cstr_test 	\
 	macros_test 	\
 	assert_test 	\
@@ -36,6 +35,10 @@ TEST_APPS = 		\
 noinst_PROGRAMS = 	\
 	$(TEST_APPS)
 
+unit_test_SOURCES = \
+	unit_test.c	\
+	array_test.c
+
 gc_test_SOURCES = \
 	gc_test.c
 
@@ -56,9 +59,6 @@ time_test_SOURCES = \
 
 bstream_test_SOURCES = \
 	bstream_test.c
-
-array_test_SOURCES = \
-	array_test.c
 
 format_test_SOURCES = \
 	format_test.c

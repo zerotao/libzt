@@ -20,6 +20,7 @@ test_fn_2(struct zt_unit_test *test, void *data)
 	return;
 }
 
+extern int register_array_suite(struct zt_unit *unit);
 
 int
 main(int argc, char *argv[])
@@ -31,18 +32,13 @@ main(int argc, char *argv[])
 	
 	unit = zt_unit_init();
 
-	suite1 = zt_unit_register_suite(unit, "test suite 1", NULL, NULL, NULL);
-	test1 = zt_unit_register_test(suite1, "test 1", test_fn_1);
-	zt_unit_register_test(suite1, "test 2", test_fn_2);
+	suite1 = zt_unit_register_suite(unit, "unit test suite", NULL, NULL, NULL);
+	test1 = zt_unit_register_test(suite1, "unit test 1", test_fn_1);
+	zt_unit_register_test(suite1, "unit test 2", test_fn_2);
 
+	/* register actual tests */
+	register_array_suite(unit);
+	
 	zt_unit_main(unit, argc, argv);
 	
-	//result = zt_unit_run(unit);
-	//printf("result: %d\n", result);
-
-	//result = zt_unit_run_suite(unit, suite1);
-	//printf("result: %d\n", result);
-
-	//result = zt_unit_run_test(unit, suite1, test1);
-	//printf("result: %d\n", result == TRUE ? 1 : 0);	
 }
