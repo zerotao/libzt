@@ -1,20 +1,21 @@
 SUBDIRS = 		\
 	adt		\
-	ucontext	\
 	zt_cfg 		\
 	zt_log 		\
 	zt_event	\
+	ucontext	\
 	.
+
 
 lib_LTLIBRARIES = libzt.la libzt_unit.la
 
 libzt_la_LIBADD = 	\
 	../replace/libreplace.la 	\
 	adt/libzt_adt.la		\
-	ucontext/libzt_ucontext.la	\
 	zt_log/libzt_log.la		\
 	zt_cfg/libzt_cfg.la		\
-	zt_event/libzt_event.la
+	zt_event/libzt_event.la		\
+	ucontext/libzt_ucontext.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release

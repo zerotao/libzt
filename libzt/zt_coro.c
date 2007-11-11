@@ -11,9 +11,9 @@
 
 #define ZT_CORO_CHECK_STACK(ctl, co)									\
 	if (co != &ctl->main) {												\
-		int left = _stack_left(co);										\
-		if((left <= 0) || (left > co->size)) { \
-			printf("Stack Overflow for coroutine @ %p\n", co);          \
+		ptrdiff_t left = _stack_left(co);								\
+		if((left <= 0) || (left > (co->size))) {						\
+			printf("Stack Overflow (by %d bytes of %d) for coroutine @ %p\n", left, co->size, co); \
 			exit(1);                            						\
 		}																\
 	}
@@ -90,13 +90,14 @@ static void _coro_run(zt_coro_ctx *ctl)
               co->target->except_stack->caught = -1;
               }
           }
-          });
-                
+          });                
     }
     END_TRY;
         
     zt_coro_exit(ctl, co->data);
 }
+
+typedef void (*mkcontext_fn)(void);
 
 zt_coro *
 zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *co, size_t stack_size) {
@@ -105,14 +106,12 @@ zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *
     assert((stack_size &= ~(sizeof(int) - 1)) >= ZT_CORO_MIN_STACK_SIZE);
 
     if (!co) {
-        co = (zt_coro *)XCALLOC(unsigned char, sizeof(*co) + stack_size);
+        co = (zt_coro *)XCALLOC(unsigned char, sizeof(zt_coro) + stack_size);
     }
-
 	
 	stack = (unsigned char *)(co+1);
 	
-    /* Assign the coroutine to the base of the stack */
-    
+    /* Assign the coroutine to the base of the stack */  
     if(getcontext(&(co->ctx)) < 0) {
         printf("getcontext failed");
         abort();
@@ -123,13 +122,13 @@ zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *
 	
 	co->size = stack_size;
 	
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) || defined(__DARWIN_UNIX03)
     co->ctx.uc_stack.ss_flags = 0;
     co->ctx.uc_link = NULL;
 #endif
 
     co->func = func;
-    makecontext(&(co->ctx), _coro_run, 1, ctl);
+    makecontext(&(co->ctx), (mkcontext_fn)_coro_run, 1, ctl);
     return co;
 }
 
@@ -159,7 +158,7 @@ void *_zt_coro_call(zt_coro_ctx *ctl, zt_coro *co, void *data, int yield)
 	_except_Stack = co->except_stack;
 
 	_switch_context(old, co);
-        
+
 	_except_Stack = old->except_stack;
         
 	if(_except_Stack &&

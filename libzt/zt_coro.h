@@ -4,29 +4,25 @@
 #include <libzt/zt.h>
 #include <libzt/zt_except.h>
 #include <libzt/zt_assert.h>
-
 #include <libzt/ucontext/portableucontext.h>
-
-#if defined(HAS_UCONTEXT)
-# include <ucontext.h>
-#else
-# include <setjmp.h>        /* setjmp/longjmp */
-#endif
-
-#define ZT_CORO_MIN_STACK_SIZE (4 * 1024)
 
 BEGIN_C_DECLS
 
 typedef struct zt_coro_ctx zt_coro_ctx;
 
 typedef struct zt_coro {
-	ucontext_t			  ctx;
 	struct zt_coro		* caller;
 	struct zt_coro		* target;
-	void				*(* func)(zt_coro_ctx *, void *);
-	void				* data;
+	void				*(* func)(zt_coro_ctx *, void *);	
 	size_t                size;
+	void				* data;
 	struct except_Frame	* except_stack;
+	ucontext_t			  ctx;
+#if defined(__APPLE__) && defined(__DARWIN_UNIX03)
+#warning "Enabling DARWIN Broken UCONTEXT Fix"
+	//mcontext_t			  mctx;
+	unsigned char		  buffer[64]; /* buffer to catch broken makecontext on osx 10.5*/
+#endif
 } zt_coro;
 
 struct zt_coro_ctx {
@@ -35,6 +31,8 @@ struct zt_coro_ctx {
 	zt_coro				* helper;
 };
 
+#define ZT_CORO_MIN_STACK_SIZE (32 * 1024) /* 32k stack */
+//#define ZT_CORO_MIN_STACK_SIZE ((128 * 1024))
 
 extern char     * zt_coro_except_exit;
 

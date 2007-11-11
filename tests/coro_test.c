@@ -130,7 +130,8 @@ main(int argc, char *argv[])
      * make any use of zt_except (it expects alot more stack to be available
      */
 	zt_coro_init_ctx(&ctx);
-    co = zt_coro_create(&ctx, _call1, 0, ZT_CORO_MIN_STACK_SIZE + 2048);
+    //co = zt_coro_create(&ctx, _call1, 0, ZT_CORO_MIN_STACK_SIZE + 2048);
+	co = zt_coro_create(&ctx, _call1, 0, ZT_CORO_MIN_STACK_SIZE);
 		
     if(co == NULL) {
         exit(1);
@@ -146,9 +147,9 @@ main(int argc, char *argv[])
     }
     ELSE_TRY
     {
-        CATCH(except_CatchAll,{});
-    }
-    END_TRY;
+		CATCH(except_CatchAll,{});
+	}
+	END_TRY;
 	
     
     /* the coroutine exited it's self

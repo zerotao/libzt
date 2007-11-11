@@ -27,31 +27,21 @@ This software was developed as part of a project at MIT.
 #ifndef PORTABLEUCONTEXT_DEFINED 
 #define PORTABLEUCONTEXT_DEFINED 1
 
-//#if defined(__APPLE__) || defined(linux) || defined(__NetBSD__) || defined(__FreeBSD__) || (defined(__SVR4) && defined (__sun))
 #if defined(linux) || defined(__NetBSD__) || defined(__FreeBSD__) || (defined(__SVR4) && defined (__sun))
 # define HAS_UCONTEXT 1
 #endif
 
-#if defined(__FreeBSD__) ||  defined(__APPLE__)
+#if defined(__APPLE__) && __APPLE_CC__ < 5465
+# define APPLE_MISSING_UCONTEXT 1
+#endif
 
-#include <stdarg.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <assert.h>
-#include <time.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sched.h>
-#include <signal.h>
-#include <sys/utsname.h>
-#include <inttypes.h>
+#if defined(__FreeBSD__) ||  defined(APPLE_MISSING_UCONTEXT)
+#include <string.h>				/* memmove */
+#include <inttypes.h>			/* intptr_t */
 #include <ucontext.h>
 typedef unsigned long ulong;
 
-#if defined(__FreeBSD__) && __FreeBSD__ < 5
+#  if defined(__FreeBSD__) && __FreeBSD__ < 5
     extern	int		getmcontext(mcontext_t*);
     extern	void	setmcontext(mcontext_t*);
 #   define	setcontext(u)	setmcontext(&(u)->uc_mcontext)
@@ -60,7 +50,7 @@ typedef unsigned long ulong;
     extern	void	makecontext(ucontext_t*, void(*)(), int, ...);
 #endif	/* defined(__FreeBSD__) && __FreeBSD__ < 5 */
 
-#if defined(__APPLE__)
+#if defined(APPLE_MISSING_UCONTEXT)
 #	define mcontext libthread_mcontext
 #	define mcontext_t libthread_mcontext_t
 #	define ucontext libthread_ucontext
@@ -70,7 +60,7 @@ typedef unsigned long ulong;
 #	else
 #     define INCLUDE_PPC
 #	endif	
-#endif	/* defiend(__APPLE__) */
+#endif	/* defiend(APPLE_MISSING_UCONTEXT) */
 
 #if defined(__OpenBSD__)
 #	define mcontext libthread_mcontext
@@ -102,24 +92,25 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 
 // --------------------------
 
-#if defined(__APPLE__) && defined(__i386__)
+#if defined(APPLE_MISSING_UCONTEXT) && defined(__i386__)
 #   define NEEDX86MAKECONTEXT
 #   define NEEDSWAPCONTEXT
 #   define HAS_UCONTEXT 1
-#endif	/* defined(__APPLE__) && defined(__i386__) */
+#endif	/* defined(APPLE_MISSING_UCONTEXT) && defined(__i386__) */
 
-#if defined(__APPLE__) && !defined(__i386__)
+#if defined(APPLE_MISSING_UCONTEXT) && defined(__ppc__)
 #   define NEEDPOWERMAKECONTEXT
 #   define NEEDSWAPCONTEXT
 #   define HAS_UCONTEXT 1
-#endif	/* defined(__APPLE__) && !defined(__i386__) */
+#endif	/* defined(APPLE_MISSING_UCONTEXT) && defined(__ppc__) */
 
 #if defined(__FreeBSD__) && defined(__i386__) && __FreeBSD__ < 5
 #   define NEEDX86MAKECONTEXT
 #   define NEEDSWAPCONTEXT
 #   define HAS_UCONTEXT 1
 #endif	/* defined(__FreeBSD__) && defined(__i386__) && __FreeBSD__ < 5 */
-#endif	/* defined(__FreeBSD__) ||  defined(__APPLE__) */
+
+#endif	/* defined(__FreeBSD__) ||  defined(APPLE_MISSING_UCONTEXT) */
 
 /*
   capture any include information needed
