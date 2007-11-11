@@ -12,8 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <libzt/adt/zt_table.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 #define STR_TEST_PRE "strings "
 
@@ -23,13 +22,13 @@ static int str_iterator (void *key, void *datum, void *param);
 static int int_iterator (void *key, void *datum, void *param);
 static int str_free(void *key, void *datum, void *param);
 
-int
-main ( int argc, char *argv[] ){
+void
+basic_tests(struct zt_unit_test *test, void *data){
 
 	char	  	  buf[1024];
 	int 		  i;
 	int 		  nn = 0;
-	int		  numbers[10] = { 9,8,7,6,5,4,3,2,1,0 };
+	int		  	  numbers[10] = { 9,8,7,6,5,4,3,2,1,0 };
 	zt_table	* table_int = NULL;
 	zt_table 	* table_str = NULL;
   
@@ -40,12 +39,12 @@ main ( int argc, char *argv[] ){
 	for( i=9; i >= 0; i--)
 		table_set (table_int, (void *)i, (void *)numbers[i]);
   
-	table_for_each(table_int, int_iterator, NULL);
+	table_for_each(table_int, int_iterator, test);
 
-	TEST("table_for_each, table_set[0]", count == 10);
+	ZT_UNIT_ASSERT(test, count == 10);
 	
 	nn = (int)table_get ( table_int, (void *)5 );
-	TEST("table_get[0]", nn == 4);
+	ZT_UNIT_ASSERT(test, nn == 4);
 
 	/* string test */
 	/* printf("Testing strings\n"); */
@@ -59,14 +58,13 @@ main ( int argc, char *argv[] ){
 		table_set(table_str, b2, (void *)numbers[i]);
 	}
 	
-	table_for_each(table_str, str_iterator, NULL);
-	TEST("table_set, table_for_each[1]", count == 10);	
+	table_for_each(table_str, str_iterator, test);
+	ZT_UNIT_ASSERT(test, count == 10);	
 
 	table_for_each(table_str, str_free, NULL);
 	
 	table_destroy(table_int);
 	table_destroy(table_str);
-	return 0;
 }
 
 static int
@@ -79,11 +77,11 @@ str_free(void *key, void *datum, void *param)
 static int
 str_iterator (void *key, void *datum, void *param)
 {
-	int 	  d = (int)datum;	
-	int 	  k = atoi((key + strlen(STR_TEST_PRE)));
-	static int	  cnt = 0;
+	int 				  d = (int)datum;	
+	int 				  k = atoi((key + strlen(STR_TEST_PRE)));
+	struct zt_unit_test	* test = (struct zt_unit_test *)param;
 
-	TEST_N("str_iterator", cnt, (k + d == 9));
+	ZT_UNIT_ASSERT(test, (k + d == 9));
 	
 	count++;		/* GLOBAL */
 	return 0;
@@ -92,14 +90,22 @@ str_iterator (void *key, void *datum, void *param)
 static int
 int_iterator (void *key, void *datum, void *param)
 {
-	int	  d = (int)datum;
-	int	  k = (int)key;
-	static int	  cnt = 0;
+	int					  d = (int)datum;
+	int					  k = (int)key;
+	struct zt_unit_test	* test = (struct zt_unit_test *)param;
 	
-	
-
-	TEST_N("int_iterator", cnt, (k + d == 9));
+	ZT_UNIT_ASSERT(test, (k + d == 9));
 	
 	count++;		/* GLOBAL */
+	return 0;
+}
+
+int
+register_table_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+	
+	suite = zt_unit_register_suite(unit, "table tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

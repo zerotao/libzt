@@ -17,7 +17,6 @@ TEST_APPS = 		\
 	cfg_test 	\
 	opts_test 	\
 	list_test	\
-	table_test	\
 	format_test	\
 	except_test	\
 	time_test	\
@@ -37,7 +36,8 @@ noinst_PROGRAMS = 	\
 
 unit_test_SOURCES = \
 	unit_test.c	\
-	array_test.c
+	array_test.c	\
+	table_test.c
 
 gc_test_SOURCES = \
 	gc_test.c
@@ -62,9 +62,6 @@ bstream_test_SOURCES = \
 
 format_test_SOURCES = \
 	format_test.c
-
-table_test_SOURCES = 	\
-	table_test.c
 
 list_test_SOURCES =	\
 	list_test.c

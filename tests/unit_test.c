@@ -21,6 +21,7 @@ test_fn_2(struct zt_unit_test *test, void *data)
 }
 
 extern int register_array_suite(struct zt_unit *unit);
+extern int register_table_suite(struct zt_unit *unit);
 
 int
 main(int argc, char *argv[])
@@ -38,6 +39,7 @@ main(int argc, char *argv[])
 
 	/* register actual tests */
 	register_array_suite(unit);
+	register_table_suite(unit);
 	
 	zt_unit_main(unit, argc, argv);
 	
