@@ -57,7 +57,6 @@ static ptrdiff_t _stack_left(zt_coro *co)
 int zt_coro_stack_left(zt_coro_ctx *ctl) 
 {
 	ptrdiff_t left = _stack_left(ctl->current);
-	printf("coro: %p left: %d size: %d\n", ctl->current, left, ctl->current->size);
 	return left;
 }
 
