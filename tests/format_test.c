@@ -2,8 +2,7 @@
 #include <libzt/zt_assert.h>
 #include <libzt/zt_format.h>
 #include <libzt/zt_cstr.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 static int
 cvt_S(int code, va_list *app,
@@ -18,42 +17,51 @@ cvt_S(int code, va_list *app,
 }
 
 
-int
-main(int argc, char *argv[]) 
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	char 	  buf[256];
 	char	* str;
 	
 	fmt_sprintf(buf, 256, "%s: %d\n", "this is a test", 34);
-	TEST("fmt_sprintf & fmt_vsprintf[1]:",
+	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		      "this is a test: 34\n", 1, 0) == 0);
 	
 	fmt_sprintf(buf, 256, "\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
-	TEST("fmt_sprintf & fmt_vsprintf[2]:",
+	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);
 
 	
-	TEST("fmt_register[1]:", fmt_register('S', cvt_S) == 0);
+	ZT_UNIT_ASSERT(test, fmt_register('S', cvt_S) == 0);
 	
 	fmt_sprintf(buf, 256, "%S:\n", "this is a test");
-	TEST("fmt_register[2]:",
+	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		     "this is a test:\n", 1, 0) == 0);
 
 
 	str = fmt_strprintf("%s: %d\n", "this is a test", 34);
-	TEST("fmt_strprintf[1]:",
+	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(str, 1, 0,
 		     "this is a test: 34\n", 1, 0) == 0);
 	XFREE(str);
 	
 	str = fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
-	TEST("fmt_strprintf[2]:",
+	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(str, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);
 	XFREE(str);
-	
+}
+
+int
+register_format_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "format", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }
+

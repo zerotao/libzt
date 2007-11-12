@@ -1,8 +1,7 @@
 #include <libzt/zt.h>
 #include <libzt/adt/zt_stack.h>
 #include <libzt/adt/zt_queue.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 typedef struct stack_elt
 {
@@ -16,11 +15,11 @@ typedef struct queue_elt
 	int		  n;
 }queue_elt;
 
-int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 #define VALUES_MAX sizeof_array(values)
 
-int
-main(int argc, char *argv[]) 
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	stack_elt	* se;
 	queue_elt	* qe;
@@ -28,20 +27,17 @@ main(int argc, char *argv[])
 	zt_stack	* tse;
 	zt_queue	* tqe;
 	
-	int	  	  test_n = 0;
 	int		  i;
 	
 	zt_stack(stk);
 	zt_queue(que);
 
 	
-	TEST_N("zt_stack", test_n, stk.prev == &stk);
-	TEST_N("zt_stack", test_n, stk.next == &stk);
+	ZT_UNIT_ASSERT(test, stk.prev == &stk);
+	ZT_UNIT_ASSERT(test, stk.next == &stk);
 
-	test_n = 0;
-	
-	TEST_N("zt_stack_head", test_n, zt_stack_empty(&stk));
-	TEST_N("zt_queue_empty", test_n, zt_queue_empty(&que));
+	ZT_UNIT_ASSERT(test, zt_stack_empty(&stk));
+	ZT_UNIT_ASSERT(test, zt_queue_empty(&que));
 	
 
 	for(i = 0; i < VALUES_MAX; i++) {
@@ -56,23 +52,29 @@ main(int argc, char *argv[])
 	}
 
 
-	test_n = 0;
 	for(i = 0; i < sizeof_array(values); i++) {
 		tse = zt_stack_pop(&stk);
 		tqe = zt_queue_dequeue(&que);
 			
 		se = zt_stack_data(tse, stack_elt, member);
 		qe = zt_queue_data(tse, queue_elt, member);
-		if(test_n == 0){			
-			TEST_N("zt_stack_pop & zt_stack_data ", test_n, se->n == qe->n);
-			test_n = 0;
-			TEST_N("zt_queue_dequeue & zt_queue_data ", test_n, se->n == qe->n);
+		if(i == 0){			
+			ZT_UNIT_ASSERT(test, se->n == qe->n);
+			ZT_UNIT_ASSERT(test, se->n == qe->n);
 		}
 	}
 	
-	test_n = 0;
-	
-	TEST_N("zt_stack_empty", test_n, zt_stack_empty(&stk));
-	TEST_N("zt_queue_empty", test_n, zt_queue_empty(&que));
+	ZT_UNIT_ASSERT(test, zt_stack_empty(&stk));
+	ZT_UNIT_ASSERT(test, zt_queue_empty(&que));
+}
+
+
+int
+register_stack_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "stack tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

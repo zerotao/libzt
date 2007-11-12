@@ -12,6 +12,7 @@
 
 #include <libzt/zt.h>
 #include <libzt/zt_opts.h>
+#include <libzt/zt_unit.h>
 
 int integer = 0;
 char *str = 0;
@@ -40,11 +41,24 @@ opt_rfunction rfunc (int argc, char **argv)
 	return EXIT_SUCCESS;	
 }
 
-
-int
-main(int argc, char* argv[])
+static char *s_argv[] = {"unit_test",
+						 "--int",
+						 "1",
+						 "--bool=t",
+						 "--string",
+						 "hello",
+						 "--flag",
+						 NULL};
+	
+static void
+basic_opts_tests(struct zt_unit_test *test, void *data)
 {
 	int				  offt;
+	int				  argc = 7;
+	char			**argv;
+	char			**pargv;
+	int				  i;
+	
 	struct opt_args   options[] =
 		{
 			{ 'h', "help", "This help text", opt_help, NULL, NULL},
@@ -57,12 +71,33 @@ main(int argc, char* argv[])
 			{ 'F', "flag", "flag test", opt_flag, &flag, NULL},
 			{ 0,0,0,0 }
 		};
-				
-	opts_process(&argc, &argv, options, "[options]", TRUE, TRUE);
-	printf("integer = %d, bool = %d, string = %s flag = %d\n", integer, bool, str ? str : "string", flag);
 
+	argv = XCALLOC(char *, argc+1);
+	for(i=0; i < argc; i++){
+		argv[i] = s_argv[i];
+	}
+	
+	pargv = argv;
+	opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE);
+	ZT_UNIT_ASSERT(test, integer == 1);
+	ZT_UNIT_ASSERT(test, bool == 1);
+	ZT_UNIT_ASSERT(test, strcmp(str, "hello") == 0);
+	ZT_UNIT_ASSERT(test, flag == 1);
+
+	XFREE(argv);
+	
 	if(str) {
 		XFREE(str);
 	}
+}
+
+
+int
+register_opts_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "option parsing tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_opts_tests);
 	return 0;
 }

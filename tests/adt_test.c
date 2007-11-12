@@ -7,20 +7,18 @@
  * $Id: adt_test.c,v 1.1 2002/11/10 23:36:59 jshiffer Exp $
  */
 
-#include "test.h"
 #include <libzt/adt/list.h>
+#include <libzt/zt_unit.h>
 
 int test_array[] = {
 	1,2,3,4,5,6,7,8,9,0
 };
 
-int
-main( argc, argv )
-	int argc;
-	char *argv[];
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
-	ztlist *list;
-	ztlistelem *elem = NULL;
+	zt_elist *list;
+	zt_elist_elem *elem = NULL;
 	int i;
 	
 	
@@ -29,26 +27,35 @@ main( argc, argv )
 	for(i=0; i < 10; i++)
 		elem = list_ins_next(list, elem, (void *)i);
 
-	TEST("list[0]: ", (int)list_data(list_head(list)) == 0);
-	TEST("list[1]: ", (int)list_data(list_tail(list)) == 9);	
+	ZT_UNIT_TEST(test, (int)list_data(list_head(list)) == 0);
+	ZT_UNIT_TEST(test, (int)list_data(list_tail(list)) == 9);	
 
 	elem = list_tail(list);
-	TEST("list[3]: ", list_is_tail(list, elem));
+	ZT_UNIT_TEST(test, list_is_tail(list, elem));
 
 	elem = list_head(list);
-	TEST("list[4]: ", list_is_head(list, elem));
+	ZT_UNIT_TEST(test, list_is_head(list, elem));
 
 	list_rem_next(list, NULL, (void *)&i);
-	TEST("list[5]: ", list_data(list_head(list)) == (void *)1);
+	ZT_UNIT_TEST(test, list_data(list_head(list)) == (void *)1);
 
 	list_rem_next(list, list_head(list), (void *)&i);
-	TEST("list[6]: ", i == 2);
+	ZT_UNIT_TEST(test, i == 2);
 	
 	list_destroy(list);
-	TEST("list[7]: ", list_size(list) == 0);
+	ZT_UNIT_TEST(test, list_size(list) == 0);
 
 	list_free(&list);
-	TEST("list[8]: ", list == NULL);
+	ZT_UNIT_TEST(test, list == NULL);
+}
+
+int
+register_adt_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "adt", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }
 

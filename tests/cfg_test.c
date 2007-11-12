@@ -14,13 +14,11 @@
 
 #include <string.h>
 
-#include "test.h"
 #include <libzt/zt_cfg.h>
+#include <libzt/zt_unit.h>
 
-int
-main ( argc, argv )
-     int argc;
-     char *argv[];
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
   cfg_ty *cfg = NULL;
   int i = 0;
@@ -31,23 +29,21 @@ main ( argc, argv )
   
   cfg = cfg_ini("cfg_test.ini", 0);
   
-  TEST_N("cfg", n, (cfg != NULL));
+  ZT_UNIT_ASSERT(test, (cfg != NULL));
   if(!cfg) {
 	  printf("Could not open file cfg_test.ini\n");
 	  exit(1);
   }
-  
-
 
   cfg_get(cfg, "main", "bool_var", &b, cfg_bool);
   cfg_get(cfg, "main", "int_var", &i, cfg_int);
   cfg_get(cfg, "main", "float_var", &f, cfg_float);
   cfg_get(cfg, "main", "string_var", &s, cfg_string);
 
-  TEST_N("cfg", n, (b == 1));
-  TEST_N("cfg", n, (i == 1));
-  TEST_N("cfg", n, (f == 99.999));
-  TEST_N("cfg", n, (!strcmp(s, "This is a string")));
+  ZT_UNIT_ASSERT(test, (b == 1));
+  ZT_UNIT_ASSERT(test, (i == 1));
+  ZT_UNIT_ASSERT(test, (f == 99.999));
+  ZT_UNIT_ASSERT(test, (!strcmp(s, "This is a string")));
 
   f = f + 100.00;
   
@@ -55,10 +51,19 @@ main ( argc, argv )
   cfg_get(cfg, "main", "float_var", &f, cfg_float);
   cfg_get(cfg, "main2", "float_var", &f2, cfg_float);
   cfg_get(cfg, "main3", "float_var", &f3, cfg_float);
-  TEST_N("cfg", n, (f == 199.999));
-  TEST_N("cfg", n, (f2 == 199.999));
-  TEST_N("cfg", n, (f3 == 99.999));      
+  ZT_UNIT_ASSERT(test, (f == 199.999));
+  ZT_UNIT_ASSERT(test, (f2 == 199.999));
+  ZT_UNIT_ASSERT(test, (f3 == 99.999));      
   
   cfg_close(cfg);
-  return 0;
+}
+
+int
+register_cfg_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "cfg tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }

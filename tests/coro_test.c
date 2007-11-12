@@ -7,8 +7,7 @@
 
 #include <libzt/zt_coro.h>
 #include <libzt/zt_assert.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 struct io_request {
     int   fd;
@@ -18,6 +17,11 @@ struct io_request {
     char    * buffer;
 };
 
+struct test_data {
+	struct zt_unit_test	* test;
+	int				  	  i;
+};
+	
 void *_call_read(zt_coro_ctx *ctx, void *data) 
 {
     struct io_request   * req = (struct io_request *)data;
@@ -51,7 +55,7 @@ void *_call_read(zt_coro_ctx *ctx, void *data)
 
 void *_call2(zt_coro_ctx *ctx, void *data) 
 {
-    int                   i = (int) data;
+	struct test_data	   	* td = (struct test_data *) data;
     struct except_Frame     * stack = _except_Stack;
 	
 	/* 
@@ -59,23 +63,24 @@ void *_call2(zt_coro_ctx *ctx, void *data)
 	 * memset(dummy, 0, sizeof(dummy));
      */
 	
-    TEST("zt_coro_call[2]", i == 2);
-    i = (int)zt_coro_yield(ctx, (void *)3);
+    ZT_UNIT_ASSERT(td->test, td->i == 2);
+	td->i = 3;
+    td = (struct test_data *)zt_coro_yield(ctx, (void *)td);
     
-    TEST("zt_coro_call[6]", i == 6);
+    ZT_UNIT_ASSERT(td->test, td->i == 6);
 
-    i = 7;
-    TEST("_call2 local except stack[1]", stack == _except_Stack);
+    td->i = 7;
+    ZT_UNIT_ASSERT(td->test, stack == _except_Stack);
         
-    THROW(i);
-    zt_coro_exit(ctx, (void *)7);
+    THROW(td);
+    zt_coro_exit(ctx, (void *)td);
 }
 
 
 void *_call1(zt_coro_ctx *ctx, void *data) 
 {
 	zt_coro_stack_left(ctx);
-    int                   i = (int) data;
+	struct test_data	  	* td = (struct test_data *) data;
     zt_coro                 * co = zt_coro_create(ctx, _call2, 0, ZT_CORO_MIN_STACK_SIZE);
     struct except_Frame     * stack = _except_Stack;
 	// uncomment to force a stack overflow
@@ -84,36 +89,35 @@ void *_call1(zt_coro_ctx *ctx, void *data)
 	zt_coro_check_stack(ctx);
 	zt_coro_stack_left(ctx);
 	
-	printf("frame: %d\n", sizeof(struct except_Frame));
+    ZT_UNIT_ASSERT(td->test, td->i == 1);
 	
-    TEST("zt_coro_call[1]", i == 1);
-    
-    i = (int)zt_coro_call(ctx, co, (void *)2);
-    TEST("zt_coro_call[3]", i == 3);
-	
-	
-    i = (int)zt_coro_yield(ctx, (void *)4);
-    TEST("zt_coro_call[5]", i == 5);
+    td->i = 2;
+    td = (struct test_data *)zt_coro_call(ctx, co, (void *)td);
+    ZT_UNIT_ASSERT(td->test, td->i == 3);
+
+	td->i = 4;
+    td = (struct test_data *)zt_coro_yield(ctx, (void *)td);
+    ZT_UNIT_ASSERT(td->test, td->i == 5);
 
     DO_TRY
     {
-        i = (int)zt_coro_call(ctx, co, (void *)6);
+        td = (struct test_data *)zt_coro_call(ctx, co, (void *)td);
     }
     ELSE_TRY
     {
-        CATCH(except_CatchAll, i = 7;);
+        CATCH(except_CatchAll, td->i = 7;);
         /* RETHROW(); */
     }
     END_TRY;
         
              
-    TEST("zt_coro_call[7]", i == 7);
-    TEST("_call1 local except stack[1]", stack == _except_Stack);
-    zt_coro_exit(ctx, (void *)8);
+    ZT_UNIT_ASSERT(td->test, td->i == 7);
+    ZT_UNIT_ASSERT(td->test, stack == _except_Stack);
+    zt_coro_exit(ctx, (void *)td);
 }
 
-int
-main(int argc, char *argv[])
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
     zt_coro         	* co;
     zt_coro         	* read_coro;
@@ -125,7 +129,9 @@ main(int argc, char *argv[])
     char              	  b1[1024];
     char              	  b2[1024];
     struct except_Frame * stack = _except_Stack;
-        
+    struct test_data	  td;
+	struct test_data	* tdp;
+	
     /* Stacks using the "Default" minimum stack size should not
      * make any use of zt_except (it expects alot more stack to be available
      */
@@ -136,14 +142,17 @@ main(int argc, char *argv[])
     if(co == NULL) {
         exit(1);
     }
-        
-    i = (int)zt_coro_call(&ctx, co, (void *)1);
-    TEST("zt_coro_call[4]", i == 4);
+    td.test = test;
+	td.i = 1;
+	
+    tdp = (struct test_data *)zt_coro_call(&ctx, co, (void *)&td);
+    ZT_UNIT_ASSERT(test, tdp->i == 4);
         
     DO_TRY
     {
-        i = (int)zt_coro_call(&ctx, co, (void *)5);
-        TEST("zt_coro_call[8]", i == 8);
+		td.i = 5;
+        tdp = (struct test_data *)zt_coro_call(&ctx, co, (void *)&td);
+        ZT_UNIT_ASSERT(test, tdp->i == 8);
     }
     ELSE_TRY
     {
@@ -155,7 +164,7 @@ main(int argc, char *argv[])
     /* the coroutine exited it's self
        no need to delete it */
     /* zt_coro_delete(co); */
-    TEST("main local except stack[1]", stack == _except_Stack);
+    ZT_UNIT_ASSERT(test, stack == _except_Stack);
     
     read_coro = zt_coro_create(&ctx, _call_read, 0, ZT_CORO_MIN_STACK_SIZE);
 
@@ -178,7 +187,16 @@ main(int argc, char *argv[])
     /*          printf("result: %s", res->buffer); */
     /*      } */
     /*  } */
-    return 0;
+}
+
+int
+register_coro_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "coro tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }
 
 

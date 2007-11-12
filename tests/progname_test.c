@@ -13,24 +13,31 @@
 #include <string.h>
 
 #include <libzt/zt_progname.h>
+#include <libzt/zt_unit.h>
 
-#include "test.h"
+static char * argv[] = {"test_app", NULL};
 
-
-int
-main ( argc, argv )
-     int argc;
-     char *argv[];
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
   char *name = NULL;
   name = progname(argv[0], 0);
-  TEST("progname[1]: ", (!strcmp(name, argv[0])));
+  ZT_UNIT_ASSERT(test, (!strcmp(name, argv[0])));
 
   name = progname(NULL, 0);
-  TEST("progname[2]: ", (!strcmp(name, argv[0])));
+  ZT_UNIT_ASSERT(test, (!strcmp(name, argv[0])));
 
   name = progname("foo", 0);
-  TEST("progname[3]: ", (!strcmp(name, "foo")));
+  ZT_UNIT_ASSERT(test, (!strcmp(name, "foo")));
 
-  return 0;
+}
+
+int
+register_progname_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "progname tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }

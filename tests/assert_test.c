@@ -11,17 +11,29 @@
 /*
  * Description: 
  */
-
 #include <libzt/zt_assert.h>
-#include "test.h"
+#include <libzt/zt_except.h>
+#include <libzt/zt_log.h>
+#include <libzt/zt_unit.h>
+
+static void
+basic_tests(struct zt_unit_test *test, void *data)
+{
+	/* get rid of the log message for the moment */
+#warning "Hiding log messages for assertions"
+	log_ty *log = log_file("/dev/null", 0, 0);
+	log_logger(log);
+	
+	assert(1==1);			/* will produce a warning: statement with no effect which is too true */
+	ZT_UNIT_ASSERT_RAISES(test, assertion_failed, assert(1==0));
+}
 
 int
-main ( argc, argv )
-     int argc;
-     char *argv[];
+register_assert_suite(struct zt_unit *unit)
 {
-  assert(1==1);			/* will produce a warning: statement with no effect which is too true */
-  assert(1==0);
+	struct zt_unit_suite	* suite;
 
-  return 0;
+	suite = zt_unit_register_suite(unit, "assert tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }

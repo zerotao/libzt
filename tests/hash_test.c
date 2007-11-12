@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <libzt/zt.h>
 #include <libzt/adt/zt_hash.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 
 int

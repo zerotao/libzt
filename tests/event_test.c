@@ -4,7 +4,7 @@
 #include <libzt/zt_event.h>
 #include <libzt/zt_event/private.h>
 #include <libzt/zt_log.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 static int counter = 0;
 
@@ -16,7 +16,8 @@ void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data)
 	counter++;
 }
 
-int main(int argc, char *argv[]) 
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	zt_event_sys	  	  sys;
 	struct timeval	  	  ntv = {0, 0};
@@ -38,17 +39,23 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		char	  buff[256];
-		
-		sprintf(buff, "%d timers", NUM_TIMERS);	
 		while(zt_event_run(sys, ZT_ALL_EVENTS|ZT_RUN_ONCE|ZT_NON_BLOCK) != -1) {
 			if(counter == NUM_TIMERS) {
-				TEST(buff, counter == NUM_TIMERS);
+				ZT_UNIT_ASSERT(test, counter == NUM_TIMERS);
 				break;
 			}
 			last = counter;
 		}
 	}	
+}
 
+
+int
+register_event_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "event tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

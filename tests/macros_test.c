@@ -11,30 +11,36 @@
  */
 
 #include <libzt/zt.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
+
+static void
+basic_tests(struct zt_unit_test *test, void *data)
+{
+	/* test ABS */
+	ZT_UNIT_ASSERT(test, (ABS(-1) == 1));
+	
+	ZT_UNIT_ASSERT(test, (CLAMP(10, 2, 5) == 5));
+	ZT_UNIT_ASSERT(test, (CLAMP(1, 2, 5) == 2));
+
+	ZT_UNIT_ASSERT(test, (MAX(5, 10) == 10));
+	ZT_UNIT_ASSERT(test, (MAX(10, 5) == 10));
+
+	ZT_UNIT_ASSERT(test, (MIN(5, 10) == 5));
+	ZT_UNIT_ASSERT(test, (MIN(10, 5) == 5));
+  
+	{
+		char size[10];
+		ZT_UNIT_ASSERT(test, (sizeof_array(size) == 10));
+		ZT_UNIT_ASSERT(test, (endof_array(size) == &size[10]));
+	}
+}
 
 int
-main ( argc, argv )
-     int argc;
-     char *argv[];
+register_macros_suite(struct zt_unit *unit)
 {
-  /* test ABS */
-  TEST("ABS[1]: ", (ABS(-1) == 1));
+	struct zt_unit_suite	* suite;
 
-  TEST("CLAMP[1]: ", (CLAMP(10, 2, 5) == 5));
-  TEST("CLAMP[2]: ", (CLAMP(1, 2, 5) == 2));
-
-  TEST("MAX[1]: ", (MAX(5, 10) == 10));
-  TEST("MAX[2]: ", (MAX(10, 5) == 10));
-
-  TEST("MIN[1]: ", (MIN(5, 10) == 5));
-  TEST("MIN[2]: ", (MIN(10, 5) == 5));
-  
-  {
-    char size[10];
-    TEST("sizeof_array[1]: ", (sizeof_array(size) == 10));
-    TEST("endof_array[1]: ", (endof_array(size) == &size[10]));
-  }
-
-  return 0;
+	suite = zt_unit_register_suite(unit, "macro tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }

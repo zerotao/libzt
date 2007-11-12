@@ -2,7 +2,7 @@
 
 #include <libzt/zt.h>
 #include <libzt/adt/zt_set.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 int values0_19[] =  { 0, 1, 2, 3, 4, 5,
 		      6, 7, 8, 9, 10,
@@ -15,10 +15,11 @@ int values0_19_fill[MAX_LEN];
 
 static int union_test(void *data, void *param)
 {
-	int		  result = (int) data;
-	static int	  t = 0;
+	struct zt_unit_test	* test = (struct zt_unit_test *)param;
+	int		  			  result = (int) data;
+	static int	  		  t = 0;
 
-	TEST_N("union", t, values0_19_fill[result] == 0);
+	ZT_UNIT_ASSERT(test, values0_19_fill[result] == 0);
 	
 	values0_19_fill[result] = result;
 	
@@ -27,10 +28,11 @@ static int union_test(void *data, void *param)
 
 static int intersection_test(void *data, void *param)
 {
-	int		  result = (int) data;
-	static int	  t = 0;
+	struct zt_unit_test	* test = (struct zt_unit_test *)param;
+	int		  			  result = (int) data;
+	static int			  t = 0;
 
-	TEST_N("intersection", t,
+	ZT_UNIT_ASSERT(test,
 	       (values0_19_fill[result] == 0) &&
 	       result >= MAX_LEN / 2);
 
@@ -41,10 +43,11 @@ static int intersection_test(void *data, void *param)
 
 static int difference_test(void *data, void *param)
 {
-	int		  result = (int) data;
-	static int	  t = 0;
+	struct zt_unit_test	* test = (struct zt_unit_test *)param;
+	int		  			  result = (int) data;
+	static int	  		  t = 0;
 
-	TEST_N("difference", t,
+	ZT_UNIT_ASSERT(test,
 	       (values0_19_fill[result] == 0) &&
 	       result <  MAX_LEN / 2);
 
@@ -54,8 +57,8 @@ static int difference_test(void *data, void *param)
 }
 
 
-int
-main(int argc, char *argv[])
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	int	  i;
 	zt_set	* result;
@@ -77,27 +80,37 @@ main(int argc, char *argv[])
 	memset(values0_19_fill, 0, (MAX_LEN + 1) * sizeof(int));
 	result = zt_set_init(table_compare_int, NULL);
 	zt_set_union(result, set1, set2);
-	zt_set_for_each(result, union_test, NULL);
+	zt_set_for_each(result, union_test, test);
 	zt_set_destroy(result);
 
 	memset(values0_19_fill, 0, (MAX_LEN + 1)  * sizeof(int));
 	result = zt_set_init(table_compare_int, NULL);
 	zt_set_intersection(result, set1, set2);
-	zt_set_for_each(result, intersection_test, NULL);
+	zt_set_for_each(result, intersection_test, test);
 	zt_set_destroy(result);
 
 	memset(values0_19_fill, 0, (MAX_LEN + 1) * sizeof(int));
 	result = zt_set_init(table_compare_int, NULL);
 	zt_set_difference(result, set1, set2);
-	zt_set_for_each(result, difference_test, NULL);
+	zt_set_for_each(result, difference_test, test);
 	zt_set_destroy(result);
 
-	TEST("is_subset[0]", zt_set_is_subset(set2, set1));
-	TEST("is_subset[1]", zt_set_is_subset(set1, set2) == 0);
-	TEST("is_equal[0]", zt_set_is_equal(set1, set1));
+	ZT_UNIT_ASSERT(test, zt_set_is_subset(set2, set1));
+	ZT_UNIT_ASSERT(test, zt_set_is_subset(set1, set2) == 0);
+	ZT_UNIT_ASSERT(test, zt_set_is_equal(set1, set1));
 
 	zt_set_destroy(set1);
 	zt_set_destroy(set2);
 	
+}
+
+
+int
+register_set_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "set tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

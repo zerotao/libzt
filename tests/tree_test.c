@@ -13,8 +13,7 @@
 
 #include <libzt/zt.h>
 #include <libzt/adt/zt_tree.h>
-
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 #define REMOVED 8
 #define REMOVED2 6
@@ -47,8 +46,8 @@ int int_compare( zt_rbt_node *x, zt_rbt_node  *x2)
 		zt_rbt_parent(x) = NULL;	\
 	}while(0)
 
-int
-main (int argc, char *argv[])
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	zt_rbt		* br_root = NULL;
 	zt_rbt_node	* iter;
@@ -84,7 +83,7 @@ main (int argc, char *argv[])
 	}
 
 	for(i=0; i < MAX_OD; i++) {
-		TEST_N("zt_rbt_insert", insert_n, ordered_dataset[i] == 1);
+		ZT_UNIT_ASSERT(test, ordered_dataset[i] == 1);
 	}
 
 	rem1.i = REMOVED;
@@ -94,7 +93,7 @@ main (int argc, char *argv[])
 		//struct int_set *n2;
 		iter = zt_rbt_remove(&br_root, iter);
 		
-		TEST("zt_rbt_remove[0]", n->i == REMOVED);
+		ZT_UNIT_ASSERT(test, n->i == REMOVED);
 		
 		memset(n, 0, sizeof(struct int_set));		
 		XFREE(n);
@@ -107,10 +106,10 @@ main (int argc, char *argv[])
 		//struct int_set *n2;
 		iter = zt_rbt_remove(&br_root, iter);
 		
-		TEST("zt_rbt_remove[1]", n->i == REMOVED2);
+		ZT_UNIT_ASSERT(test, n->i == REMOVED2);
 		
 		iter = zt_rbt_insert(&br_root, iter, int_compare);
-		TEST_N("zt_rbt_insert", insert_n, iter == NULL);
+		ZT_UNIT_ASSERT(test, iter == NULL);
 	}	
 	
 	
@@ -124,9 +123,16 @@ main (int argc, char *argv[])
 
 
 	for(i=0; i < MAX_OD; i++) {
-		static int n = 0;
-		TEST_N("zt_rbt_for_each_safe", n, ordered_dataset[i] == 0 || i == REMOVED);
+		ZT_UNIT_ASSERT(test, ordered_dataset[i] == 0 || i == REMOVED);
 	}
-	
+}
+
+int
+register_tree_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "tree tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

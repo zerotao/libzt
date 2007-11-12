@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <libzt/zt_cothread.h>
 #include <stdlib.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 
 struct glbl {
@@ -65,7 +65,9 @@ static void *test2(va_list args) {
 	return NULL;
 }
 
-int main(int argc, char **argv) {
+static void
+basic_tests(struct zt_unit_test *test, void *data)
+{
 	int			  i;
 	
 	glbl.cts = zt_cothread_sched_new();
@@ -88,8 +90,8 @@ int main(int argc, char **argv) {
 	printf("request: %d handled: %d\n", glbl.cts->revents, glbl.cts->hevents);
 #endif
 	
-	TEST("zt_cothread_new", inits == CORO_N);
-	TEST("zt_cothread_new handles events", glbl.cts->hevents > 0);
+	ZT_UNIT_ASSERT(test, inits == CORO_N);
+	ZT_UNIT_ASSERT(test, glbl.cts->hevents > 0);
 	
 	/*
 	 * Now we block waiting for events to fire,
@@ -104,10 +106,10 @@ int main(int argc, char **argv) {
 	/* Wait for all events to complete */
 	zt_cothread_join(glbl.cts);	
 	
-	TEST("handled_all_events", glbl.cts->revents == glbl.cts->hevents);
+	ZT_UNIT_ASSERT(test, glbl.cts->revents == glbl.cts->hevents);
 	
-	TEST("correct_number_of_waits", CORO_N * YIELDS_PER_THREAD == loops);
-	TEST("zt_cothread_sched_empty", zt_cothread_sched_empty(glbl.cts) == 1);
+	ZT_UNIT_ASSERT(test, CORO_N * YIELDS_PER_THREAD == loops);
+	ZT_UNIT_ASSERT(test, zt_cothread_sched_empty(glbl.cts) == 1);
 
 #if DEBUG
 	printf("coro * yields: %d\n", CORO_N * YIELDS_PER_THREAD);
@@ -116,5 +118,15 @@ int main(int argc, char **argv) {
 	printf("%ld events registered\n", glbl.cts->revents);
 	printf("%ld events handled\n", glbl.cts->hevents);
 #endif
+}
+
+int
+register_cothread_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "cothread tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }
 

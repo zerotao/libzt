@@ -1,8 +1,8 @@
-#include <zt_int.h>
-#include "test.h"
+#include <libzt/zt_int.h>
+#include <libzt/zt_unit.h>
 
-int
-main(int argc, char *argv[]) 
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
         unsigned int    a = 22;
         unsigned int    b = 44;
@@ -12,10 +12,17 @@ main(int argc, char *argv[])
         c = uint_add(a, b);
 
         /* mixed sign addition */
-        TEST("int_add", int_add(-128, 0) == -128);
-        TEST("int_add", int_add(127, -128) == -1);
-        
-        
-        //printf("%d\n", c);
-        
+        ZT_UNIT_ASSERT(test, int_add(-128, 0) == -128);
+        ZT_UNIT_ASSERT(test, int_add(127, -128) == -1);
+        //printf("%d\n", c);        
+}
+
+int
+register_int_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "int tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
 }

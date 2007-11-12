@@ -2,12 +2,12 @@
 
 #include <libzt/adt/zt_bstream.h>
 #include <libzt/adt/zt_array.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
 
 
 
-int
-main(int argc, char *argv[])
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	zt_bstream	  bs, clone;
 	char		* test_string = "this is a test string",
@@ -51,25 +51,25 @@ main(int argc, char *argv[])
 	zt_bstream_read_uint64(bs, &uint64_test);
 	zt_bstream_read_double(bs, &double_test);
 
-	TEST("zt_bstream_write & zt_bstream_read[0]",
+	ZT_UNIT_ASSERT(test,
 	     strcmp(test_string, string_test) == 0);
 
-	TEST("zt_bstream_write_uint8 & zt_bstream_read_uint8[0]",
+	ZT_UNIT_ASSERT(test,
 	     uint8_test == test_uint8);
 
-	TEST("zt_bstream_write_uint16 & zt_bstream_read_uint16[0]",
+	ZT_UNIT_ASSERT(test,
 	     uint16_test == test_uint16);
 
-	TEST("zt_bstream_write_uint32 & zt_bstream_read_uint32[0]",
+	ZT_UNIT_ASSERT(test,
 	     uint32_test == test_uint32);
 
-	TEST("zt_bstream_write_uint64 & zt_bstream_read_uint64[0]",
+	ZT_UNIT_ASSERT(test,
 	     uint64_test == test_uint64);
 	
- 	TEST("zt_bstream_write_float & zt_bstream_read_float[0]",
+ 	ZT_UNIT_ASSERT(test,
 	     float_test == test_float);
 
- 	TEST("zt_bstream_write_double & zt_bstream_read_double[0]",
+ 	ZT_UNIT_ASSERT(test,
 	     double_test == test_double);
 
 
@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 	zt_bstream_read(clone, &string_test[0], strlen(test_string),
 			sizeof(char), 0);
 	
-	TEST("zt_bstream_clone",
+	ZT_UNIT_ASSERT(test,
 	     strcmp(test_string, string_test) == 0);
 
 
@@ -98,7 +98,15 @@ main(int argc, char *argv[])
 			sizeof(char), 0);
 
 
-	TEST("flip_endian", strcmp(string_test, test_string) == 0);
-		
+	ZT_UNIT_ASSERT(test, strcmp(string_test, test_string) == 0);		
+}
+
+int
+register_bstream_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "bstream", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }

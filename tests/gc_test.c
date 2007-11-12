@@ -1,5 +1,6 @@
 #include <libzt/zt.h>
 #include <libzt/zt_gc.h>
+#include <libzt/zt_unit.h>
 
 #define INT  1
 #define ATOM 2
@@ -13,13 +14,17 @@ typedef struct atom {
 	}value;
 }atom;
 
+static int ints_marked = 0;
+static int atoms_marked = 0;
+static int atoms_freed = 0;
+
 static void mark_atom(gc_t *gc, void *pdata, void *v)
 {
 	atom	*a = (atom *)v;
 	if(a->type == INT) {
-		printf("  Marking Number: %p (%d)\n", a, a->value.number);
+		ints_marked++;
 	} else {
-		printf("  Marking Atom: %p (%p)\n", a, a->value.atom);
+		atoms_marked++;
 		if (a->value.atom != NULL) {
 			zt_gc_mark_value(gc, a->value.atom);
 		}
@@ -31,12 +36,13 @@ static void
 release_atom(gc_t *gc, void *pdata, void **v)
 {
 	atom **a = (atom **)v;
-	printf("Releasing Atom %p\n", *a);
+	atoms_freed++;
 	free(*a);
 	*a = NULL;
 }
 
-int main(int argc, char *argv[])
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	gc_t		  gc;
 	atom	  	  root;
@@ -48,7 +54,7 @@ int main(int argc, char *argv[])
 	zt_gc_init(&gc, NULL, mark_atom, release_atom, 1, 1);
 	zt_gc_register_root(&gc, &root);
 
-	zt_gc_print_heap(&gc);
+	//zt_gc_print_heap(&gc);
 	for(i=0; i < 10; i++)
 	{
  		atom	* a = XCALLOC(atom, 1);
@@ -62,12 +68,19 @@ int main(int argc, char *argv[])
 		zt_gc_register_value(&gc, a);
 	}
 	
-	//zt_gc_print_heap(&gc);
-	//printf("Scanning Again\n");
 	zt_gc_scan(&gc, 0);
-	//zt_gc_print_heap(&gc);
 	zt_gc_scan(&gc, 1);
-	//zt_gc_print_heap(&gc);
-	return 0;
+	ZT_UNIT_ASSERT(test, ints_marked == 10);
+	ZT_UNIT_ASSERT(test, atoms_marked = 1);
+	ZT_UNIT_ASSERT(test, atoms_freed = 10);
 }
 
+int
+register_gc_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "gc tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
+	return 0;
+}

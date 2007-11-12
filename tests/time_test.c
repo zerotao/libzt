@@ -2,11 +2,10 @@
 #include <libzt/zt.h>
 #include <libzt/zt_time.h>
 #include <libzt/zt_log.h>
-#include "test.h"
+#include <libzt/zt_unit.h>
 
-
-int
-main(int argc, char *argv[]) 
+static void
+basic_tests(struct zt_unit_test *test, void *data)
 {
 	struct timeval	  tv1;
 	struct timeval    tv2;
@@ -18,16 +17,16 @@ main(int argc, char *argv[])
 	gettimeofday(&tv1, NULL);
 	gettimeofday(&tv2, NULL);
 	
-	TEST("zt_cmp_time", zt_cmp_time(&tv1, &tv2) <= 0);
+	ZT_UNIT_ASSERT(test, zt_cmp_time(&tv1, &tv2) <= 0);
 
 	zt_diff_time(&tgt, &tv1, &tv2);
-	TEST("zt_diff_time", zt_cmp_time(&tv4, &tgt) > 0);
+	ZT_UNIT_ASSERT(test, zt_cmp_time(&tv4, &tgt) > 0);
 
 	zt_sub_time(&tgt, &tv1, &tv1);
-	TEST("zt_sub_time", zt_cmp_time(&tgt, &tv_zero) == 0);
+	ZT_UNIT_ASSERT(test, zt_cmp_time(&tgt, &tv_zero) == 0);
 
 	zt_add_time(&tgt, &tv1, &tv1);
-	TEST("zt_add_time", zt_cmp_time(&tgt, &tv1) > 0);
+	ZT_UNIT_ASSERT(test, zt_cmp_time(&tgt, &tv1) > 0);
 
 /*
  *	{
@@ -43,5 +42,14 @@ main(int argc, char *argv[])
  *	}
  */
 
+}
+
+int
+register_time_suite(struct zt_unit *unit)
+{
+	struct zt_unit_suite	* suite;
+
+	suite = zt_unit_register_suite(unit, "time tests", NULL, NULL, NULL);
+	zt_unit_register_test(suite, "basic", basic_tests);
 	return 0;
 }
