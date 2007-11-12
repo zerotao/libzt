@@ -43,17 +43,12 @@ unit_test_SOURCES = 	\
 # 	adt_test.c
 
 EXTRA_DIST = 		\
-	out.test 	\
 	cfg_test.ini
 
 noinst_DATA = \
-	out.test \
 	cfg_test.ini
 
 DUMMY_TEST = $(addprefix $(srcdir)/,$(noinst_DATA))
-
-update: test.out
-	cp test.out $(top_srcdir)/tests/out.test
 
 test.out:
 	test
