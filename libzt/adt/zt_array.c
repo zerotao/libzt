@@ -149,18 +149,29 @@ zt_array_data(zt_array array)
 }
 
 
+
 void *
-zt_array_get(zt_array array, int offt, void *elem)
+zt_array_elem_copy(zt_array array, int offt, void *elem)
 {
 	assert(array);
 	assert(offt >= 0 && offt < array->length);
 	assert(elem);
-	
+
 	memcpy(elem, array->data + offt * array->size, array->size);
 	return elem;
 }
 
+void *
+zt_array_get(zt_array array, int offt)
+{
+	assert(array);
+	assert(offt >= 0 && offt < array->length);
+	//assert(elem);
 
+	//memcpy(elem, array->data + offt * array->size, array->size);
+	//*elem = ;
+	return (array->data + offt * array->size); //*elem;
+}
 
 void *
 zt_array_put(zt_array array, int offt, void *elem)

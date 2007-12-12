@@ -21,14 +21,17 @@ _array_put(zt_array array, char *s, size_t offt, size_t len, int flip)
 size_t
 _array_get(zt_array array, char *s, size_t offt, size_t len, int flip) 
 {
+	char	*c;
 	if(flip){
 		s += len - 1;
 		while(len--){
-			zt_array_get(array, offt++, s--);
+			c = zt_array_get(array, offt++);
+			*s-- = *c;
 		}
 	} else {
 		while(len--){
-			zt_array_get(array, offt++, s++);
+			c = zt_array_get(array, offt++);
+			*s++ = *c;
 		}
 	}
 	

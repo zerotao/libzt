@@ -9,6 +9,8 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
 	int	  i, n, v;
+	int	* pv;
+	
 	zt_array array = zt_array_new(10, sizeof(int));
 	zt_array array2;
 	
@@ -27,8 +29,8 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 
 	for(i=0; i < n; i++) {
-		zt_array_get(array, i, &v);
-		ZT_UNIT_ASSERT(test, v == i);
+		pv = zt_array_get(array, i);
+		ZT_UNIT_ASSERT(test, *pv == i);
 	}
 
 	zt_array_resize(array, zt_array_length(array) * 2);
@@ -43,8 +45,8 @@ basic_tests(struct zt_unit_test *test, void *data)
 		int	  tt = 0;
 		
 		for(i=0; i < n * 2; i++) {
-			zt_array_get(array2, i, &v);
-			if(v == i) {
+			pv = zt_array_get(array2, i);
+			if(*pv == i) {
 				tt++;
 			}
 		}
