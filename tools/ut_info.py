@@ -50,31 +50,19 @@ def print_stat(stats):
         if er:
             errors.append(er)
 
-    result = {'Global Stats':
-                  {'results': 
-                   {'suites': suites,
-                    'tests': tests,
-                    'successes': successes,
-                    'assertions': assertions,
-                    'failures': failures},
-                   'errors': errors}}
-                        
-              
-
-    print "---"
-    print yaml.dump(result, default_flow_style=False)
-
-
-#     print """
-# ---
-# Global Stats:
-#   suites                      : %d
-#   tests                       : %d
-#   successes                   : %d
-#   assertions                  : %d
-#   failures                    : %d
-#   errors                      : %s
-# """ % (suites, tests, successes, assertions, failures, errors)
+    print """
+---
+Global Stats:
+  suites                      : %d
+  tests                       : %d
+  successes                   : %d
+  assertions                  : %d
+  failures                    : %d
+""" % (suites, tests, successes, assertions, failures),
+    if errors:
+        print "  errors:"
+        for error in errors:
+            print "\n".join(["    - %r" % x for x in error.values()])
 
 
 if __name__ == '__main__':
