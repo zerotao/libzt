@@ -13,7 +13,7 @@
 #include <sys/types.h>
 
 #include <libzt/zt.h>
-
+#include <libzt/zt_mem.h>
 
 BEGIN_C_DECLS
 typedef int (*table_compare)(const void *x, const void *y);
@@ -21,12 +21,17 @@ typedef unsigned long (*table_hash_func)(unsigned char *key);
 typedef int (*table_iterator)(void *, void *, void *);
 
 typedef struct zt_table zt_table;
+typedef struct zt_table_allocator zt_table_allocator;
 
 #define TABLE_SIZE_USE_HINT 	1
 #define TABLE_ALLOW_DUP_KEYS    2
 
+zt_mem_pool *
+table_pool_init(long elts);
+
 zt_table*
-table_init(char *name, table_hash_func func, table_compare cmp, size_t hint, int flags);
+table_init(char *name, table_hash_func func,
+		   table_compare cmp, size_t hint, int flags);
 
 void
 table_destroy(zt_table *h);

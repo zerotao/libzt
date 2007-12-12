@@ -59,29 +59,37 @@ struct zt_table {
 	struct table_node	**buckets;
 };
 
-static struct Global {
-	zt_mem_pool	* table_mem_pool;
-}Global;
+#define ZT_DEFAULT_TABLE_POOL "zt.table.pool"
+
+zt_mem_pool *
+table_pool_init(long elts)
+{
+	return zt_mem_pool_init(ZT_DEFAULT_TABLE_POOL, elts, sizeof(zt_table), NULL, NULL, 0);
+}
 
 zt_table *
-table_init(char *name, table_hash_func func, table_compare cmp, size_t hint, int flags)
+table_init(char *name, table_hash_func func,
+		   table_compare cmp, size_t hint, int flags)
 {
 	zt_table 	* table;
 	int			  nbuckets = 0;
 	char		  tname[1024];
+	zt_mem_pool	* table_mem_pool;
+	
 
 	if( (func == NULL) ||
 	    (cmp == NULL))
 	{
 		return NULL;
 	}
+
+	table_mem_pool = zt_mem_pool_get(ZT_DEFAULT_TABLE_POOL);
 	
-	if(Global.table_mem_pool == NULL)
-	{
-		Global.table_mem_pool = zt_mem_pool_init("table pool", 2, sizeof(zt_table), NULL, NULL, 0);
+	if(table_mem_pool == NULL) {
+		table_mem_pool = table_pool_init(2);
 	}
 	
-	if( (table = (zt_table *)zt_mem_pool_alloc(Global.table_mem_pool)) == NULL){
+	if( (table = (zt_table *)zt_mem_pool_alloc(table_mem_pool)) == NULL){
 		return NULL;
 	}
 
@@ -117,7 +125,7 @@ table_init(char *name, table_hash_func func, table_compare cmp, size_t hint, int
 	
 	snprintf(tname, sizeof_array(tname), "%s (table node pool)", name);
 	table->node_pool = zt_mem_pool_init(tname, nbuckets,
-					   sizeof(struct table_node), NULL, NULL, 0);
+										sizeof(struct table_node), NULL, NULL, 0);
 	
 	table->num_buckets = nbuckets;
 	table->cmp = cmp;
