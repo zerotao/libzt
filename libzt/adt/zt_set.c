@@ -4,15 +4,17 @@
 
 zt_set *
 zt_set_init(int (*match) (const void *key1,
-			  const void *key2),
-	    void (*destroy)(void *data))
+						  const void *key2, void *cdata),
+			void (*destroy)(void *data),
+			void *cdata)
+	
 {
 	zt_set	* set;
 
 	set = XMALLOC(zt_set, 1);
 	
 
-	set->tbl = table_init(NULL, table_hash_int, match, 128, 0);
+	set->tbl = table_init(NULL, table_hash_int, match, 128, 0, cdata);
 	set->match = match;
 	set->destroy = destroy;
 

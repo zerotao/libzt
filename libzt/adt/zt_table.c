@@ -50,6 +50,7 @@ struct zt_table {
 	char				* name;
 	table_compare		  cmp;
 	table_hash_func 	  func;
+	void				* cdata;
 	int			  		  nbits;
 	int			  		  flags;
 	unsigned long		  num_buckets;
@@ -69,7 +70,8 @@ table_pool_init(long elts)
 
 zt_table *
 table_init(char *name, table_hash_func func,
-		   table_compare cmp, size_t hint, int flags)
+		   table_compare cmp, size_t hint, int flags,
+		   void *cdata)
 {
 	zt_table 	* table;
 	int			  nbuckets = 0;
@@ -94,6 +96,7 @@ table_init(char *name, table_hash_func func,
 	}
 
 	table->flags = flags;
+	table->cdata = cdata;
 	
 	if(flags & TABLE_SIZE_USE_HINT) {
 		nbuckets = hint;
@@ -160,7 +163,7 @@ table_destroy(zt_table *h)
 int
 table_set(zt_table *h, const void *key, const void *datum)
 {
-	unsigned long	  	  nkey = h->func((unsigned char *)key);
+	unsigned long	  	  nkey = h->func(key, h->cdata);
 	struct table_node	* node;
 	struct table_node	* nn;
 	
@@ -171,7 +174,7 @@ table_set(zt_table *h, const void *key, const void *datum)
 	if(! (h->flags & TABLE_ALLOW_DUP_KEYS)) {
 		while(nn)
 		{
-			if(h->cmp ((void *)nn->key, key))
+			if(h->cmp((void *)nn->key, key, h->cdata))
 				return 1;
 			nn = nn->next;
 		}
@@ -190,12 +193,12 @@ table_set(zt_table *h, const void *key, const void *datum)
 void *
 table_get(zt_table *h, const void *key)
 {
-	int nkey = h->func ((unsigned char *)key);
+	int nkey = h->func(key, h->cdata);
 	ZT_HASH_SUB32_MASK(nkey, h->nbits);	
 	struct table_node *node = h->buckets[nkey];
 	while(node)
 	{
-		if(h->cmp ((void *)node->key, key))
+		if(h->cmp ((void *)node->key, key, h->cdata))
 			return node->datum;
 		node = node->next;
 	}
@@ -207,7 +210,7 @@ table_del(zt_table *h, const void *key)
 {
 	struct table_node 	* node;
 	struct table_node	* prev;
-	int 			  nkey = h->func ((unsigned char *)key);
+	int 			  nkey = h->func(key, h->cdata);
 	
 	ZT_HASH_SUB32_MASK(nkey, h->nbits);
 
@@ -216,7 +219,7 @@ table_del(zt_table *h, const void *key)
 	
 	while(node)
 	{
-		if(h->cmp ((void *)node->key, key)) {
+		if(h->cmp ((void *)node->key, key, h->cdata)) {
 			void	* datum = node->datum;
 			
 			if(prev == node) {
@@ -280,41 +283,43 @@ table_for_each(zt_table *h, table_iterator iterator, void *param)
 
 /* common hash functions */
 unsigned long
-table_hash_int(unsigned char *key)
+table_hash_int(const void *key, void *cdata)
 {
-	unsigned long nkey = zt_hash32_buff(&key, sizeof(int), ZT_HASH32_INIT);
+	unsigned char	* skey = (unsigned char *)key;
+	unsigned long 	  nkey = zt_hash32_buff(&skey, sizeof(int), ZT_HASH32_INIT);
 	return nkey;
 }
 
 int
-table_compare_int(const void *x, const void *y)
+table_compare_int(const void *lhs, const void *rhs, void *cdata)
 {
-	if((int)x == (int)y) {
+	if((int)lhs == (int)rhs) {
 		return 1;
 	}
 	return 0;
 }
 
 unsigned long
-table_hash_string(unsigned char *key)
+table_hash_string(const void *key, void *cdata)
 {
-	unsigned long nkey = zt_hash32_cstr(key, ZT_HASH32_INIT);
+	unsigned char	* skey = (unsigned char *)key;
+	unsigned long 	  nkey = zt_hash32_cstr(skey, ZT_HASH32_INIT);
 	return nkey;
 }
 
 int
-table_compare_string(const void *x, const void *y)
+table_compare_string(const void *lhs, const void *rhs, void *cdata)
 {
-	if(strcmp((char *)x, (char *)y) == 0) {
+	if(strcmp((char *)lhs, (char *)rhs) == 0) {
 		return 1;
 	}
 	return 0;
 }
 
 int
-table_compare_string_case(const void *x, const void *y)
+table_compare_string_case(const void *lhs, const void *rhs, void *cdata)
 {
-	if(strcasecmp((char *)x, (char *)y) == 0) {
+	if(strcasecmp((char *)lhs, (char *)rhs) == 0) {
 		return 1;
 	}
 	return 0;

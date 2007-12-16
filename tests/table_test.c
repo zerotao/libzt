@@ -32,9 +32,9 @@ basic_tests(struct zt_unit_test *test, void *data){
 	zt_table	* table_int = NULL;
 	zt_table 	* table_str = NULL;
   
-	table_int = table_init("test int table", table_hash_int, table_compare_int, 10, 0);
+	table_int = table_init("test int table", table_hash_int, table_compare_int, 10, 0, NULL);
 	table_str = table_init("test string table", table_hash_string,
-			       table_compare_string, 10, 0);
+						   table_compare_string, 10, 0, NULL);
   
 	for( i=9; i >= 0; i--)
 		table_set (table_int, (void *)i, (void *)numbers[i]);

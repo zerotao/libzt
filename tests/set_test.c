@@ -66,8 +66,8 @@ basic_tests(struct zt_unit_test *test, void *data)
 	zt_set	* set2;
 
 	
-	set1 = zt_set_init(table_compare_int, NULL);
-	set2 = zt_set_init(table_compare_int, NULL);
+	set1 = zt_set_init(table_compare_int, NULL, NULL);
+	set2 = zt_set_init(table_compare_int, NULL, NULL);
 
 	for(i = 0; i < MAX_LEN; i++){
 		zt_set_insert(set1, (void *)values0_19[i]);
@@ -78,19 +78,19 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 	
 	memset(values0_19_fill, 0, (MAX_LEN + 1) * sizeof(int));
-	result = zt_set_init(table_compare_int, NULL);
+	result = zt_set_init(table_compare_int, NULL, NULL);
 	zt_set_union(result, set1, set2);
 	zt_set_for_each(result, union_test, test);
 	zt_set_destroy(result);
 
 	memset(values0_19_fill, 0, (MAX_LEN + 1)  * sizeof(int));
-	result = zt_set_init(table_compare_int, NULL);
+	result = zt_set_init(table_compare_int, NULL, NULL);
 	zt_set_intersection(result, set1, set2);
 	zt_set_for_each(result, intersection_test, test);
 	zt_set_destroy(result);
 
 	memset(values0_19_fill, 0, (MAX_LEN + 1) * sizeof(int));
-	result = zt_set_init(table_compare_int, NULL);
+	result = zt_set_init(table_compare_int, NULL, NULL);
 	zt_set_difference(result, set1, set2);
 	zt_set_for_each(result, difference_test, test);
 	zt_set_destroy(result);
