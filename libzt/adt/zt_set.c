@@ -14,7 +14,7 @@ zt_set_init(int (*match) (const void *key1,
 	set = XMALLOC(zt_set, 1);
 	
 
-	set->tbl = table_init(NULL, table_hash_int, match, 128, 0, cdata);
+	set->tbl = zt_table_init(NULL, zt_table_hash_int, match, 128, 0, cdata);
 	set->match = match;
 	set->destroy = destroy;
 
@@ -36,8 +36,8 @@ void
 zt_set_destroy(zt_set *set)
 {
 	assert(set);
-	table_for_each(set->tbl, _destroy, set->destroy);
-	table_destroy(set->tbl);
+	zt_table_for_each(set->tbl, _destroy, set->destroy);
+	zt_table_destroy(set->tbl);
 
 	XFREE(set);
 }
@@ -51,12 +51,12 @@ zt_set_insert(zt_set *set, const void *data)
 	}
 
 	set->length++;
-	return table_set(set->tbl, (void *)data, (void *)data);
+	return zt_table_set(set->tbl, (void *)data, (void *)data);
 }
 
 int zt_set_remove(zt_set *set, void **data)
 {
-	*data = table_del(set->tbl, *data);
+	*data = zt_table_del(set->tbl, *data);
 	set->length--;
 	return 0;
 }
@@ -78,8 +78,8 @@ int zt_set_union(zt_set *setu, const zt_set *set1, const zt_set *set2)
 {
 	struct _set_pair	  s = { NULL, setu };
 	
-	table_for_each(set1->tbl, _union, &s);
-	table_for_each(set2->tbl, _union, &s);
+	zt_table_for_each(set1->tbl, _union, &s);
+	zt_table_for_each(set2->tbl, _union, &s);
 	
 	return 0;
 }
@@ -99,7 +99,7 @@ int zt_set_intersection(zt_set *seti, const zt_set *set1, const zt_set *set2)
 {
 	struct _set_pair p = { (zt_set *)set2, (zt_set *)seti };
 	
-	return table_for_each(set1->tbl, _intersect, &p);
+	return zt_table_for_each(set1->tbl, _intersect, &p);
 	
 }
 
@@ -118,12 +118,12 @@ int zt_set_difference(zt_set *setd, const zt_set *set1, const zt_set *set2)
 {
 	struct _set_pair p = { (zt_set *)set2, (zt_set *)setd };
 	
-	return table_for_each(set1->tbl, _difference, &p);	
+	return zt_table_for_each(set1->tbl, _difference, &p);	
 }
 
 int zt_set_is_member(const zt_set *set, const void *data)
 {
-	if(table_get(set->tbl, data) != NULL){
+	if(zt_table_get(set->tbl, data) != NULL){
 		return 1;
 	}
 	return 0;
@@ -148,7 +148,7 @@ int zt_set_is_subset(const zt_set *set1, const zt_set *set2)
 		return 0;
 	}
 	
-	return table_for_each(set1->tbl, _is_subset, &p) == 0;
+	return zt_table_for_each(set1->tbl, _is_subset, &p) == 0;
 }
 
 int zt_set_is_equal(const zt_set *set1, const zt_set *set2)
@@ -159,7 +159,7 @@ int zt_set_is_equal(const zt_set *set1, const zt_set *set2)
 		return -1;
 	}
 	
-	return table_for_each(set1->tbl, _is_subset, &p);
+	return zt_table_for_each(set1->tbl, _is_subset, &p);
 }
 
 
@@ -186,6 +186,6 @@ zt_set_for_each(zt_set *set, zt_set_iterator iterator, void *param)
 	d.iterator = iterator;
 	d.param = param;
 	
-	return table_for_each(set->tbl, _table_to_set_iterator, &d);
+	return zt_table_for_each(set->tbl, _table_to_set_iterator, &d);
 }
 

@@ -32,18 +32,18 @@ basic_tests(struct zt_unit_test *test, void *data){
 	zt_table	* table_int = NULL;
 	zt_table 	* table_str = NULL;
   
-	table_int = table_init("test int table", table_hash_int, table_compare_int, 10, 0, NULL);
-	table_str = table_init("test string table", table_hash_string,
-						   table_compare_string, 10, 0, NULL);
+	table_int = zt_table_init("test int table", zt_table_hash_int, zt_table_compare_int, 10, 0, NULL);
+	table_str = zt_table_init("test string table", zt_table_hash_string,
+						   zt_table_compare_string, 10, 0, NULL);
   
 	for( i=9; i >= 0; i--)
-		table_set (table_int, (void *)i, (void *)numbers[i]);
+		zt_table_set (table_int, (void *)i, (void *)numbers[i]);
   
-	table_for_each(table_int, int_iterator, test);
+	zt_table_for_each(table_int, int_iterator, test);
 
 	ZT_UNIT_ASSERT(test, count == 10);
 	
-	nn = (int)table_get ( table_int, (void *)5 );
+	nn = (int)zt_table_get ( table_int, (void *)5 );
 	ZT_UNIT_ASSERT(test, nn == 4);
 
 	/* string test */
@@ -55,16 +55,16 @@ basic_tests(struct zt_unit_test *test, void *data){
 		char	* b2 = NULL;
 		sprintf(buf, "%s%d", STR_TEST_PRE, i);
 		b2 = XSTRDUP(buf);
-		table_set(table_str, b2, (void *)numbers[i]);
+		zt_table_set(table_str, b2, (void *)numbers[i]);
 	}
 	
-	table_for_each(table_str, str_iterator, test);
+	zt_table_for_each(table_str, str_iterator, test);
 	ZT_UNIT_ASSERT(test, count == 10);	
 
-	table_for_each(table_str, str_free, NULL);
+	zt_table_for_each(table_str, str_free, NULL);
 	
-	table_destroy(table_int);
-	table_destroy(table_str);
+	zt_table_destroy(table_int);
+	zt_table_destroy(table_str);
 }
 
 static int

@@ -48,8 +48,8 @@ struct table_node {
 
 struct zt_table {
 	char				* name;
-	table_compare		  cmp;
-	table_hash_func 	  func;
+	zt_table_compare_cb		  cmp;
+	zt_table_hash_func_cb 	  func;
 	void				* cdata;
 	int			  		  nbits;
 	int			  		  flags;
@@ -69,8 +69,8 @@ table_pool_init(long elts)
 }
 
 zt_table *
-table_init(char *name, table_hash_func func,
-		   table_compare cmp, size_t hint, int flags,
+zt_table_init(char *name, zt_table_hash_func_cb func,
+		   zt_table_compare_cb cmp, size_t hint, int flags,
 		   void *cdata)
 {
 	zt_table 	* table;
@@ -98,7 +98,7 @@ table_init(char *name, table_hash_func func,
 	table->flags = flags;
 	table->cdata = cdata;
 	
-	if(flags & TABLE_SIZE_USE_HINT) {
+	if(flags & ZT_TABLE_SIZE_USE_HINT) {
 		nbuckets = hint;
 	} else {
 		int i = 0;
@@ -138,7 +138,7 @@ table_init(char *name, table_hash_func func,
 }
 
 void
-table_destroy(zt_table *h)
+zt_table_destroy(zt_table *h)
 {
 	int i;
   
@@ -161,7 +161,7 @@ table_destroy(zt_table *h)
 }
 
 int
-table_set(zt_table *h, const void *key, const void *datum)
+zt_table_set(zt_table *h, const void *key, const void *datum)
 {
 	unsigned long	  	  nkey = h->func(key, h->cdata);
 	struct table_node	* node;
@@ -171,7 +171,7 @@ table_set(zt_table *h, const void *key, const void *datum)
 	LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
 
 	nn = h->buckets[nkey];
-	if(! (h->flags & TABLE_ALLOW_DUP_KEYS)) {
+	if(! (h->flags & ZT_TABLE_ALLOW_DUP_KEYS)) {
 		while(nn)
 		{
 			if(h->cmp((void *)nn->key, key, h->cdata))
@@ -191,7 +191,7 @@ table_set(zt_table *h, const void *key, const void *datum)
 }
 
 void *
-table_get(zt_table *h, const void *key)
+zt_table_get(zt_table *h, const void *key)
 {
 	int nkey = h->func(key, h->cdata);
 	ZT_HASH_SUB32_MASK(nkey, h->nbits);	
@@ -206,7 +206,7 @@ table_get(zt_table *h, const void *key)
 }
 
 void *
-table_del(zt_table *h, const void *key)
+zt_table_del(zt_table *h, const void *key)
 {
 	struct table_node 	* node;
 	struct table_node	* prev;
@@ -238,7 +238,7 @@ table_del(zt_table *h, const void *key)
 }
 
 int
-table_cpy(zt_table *t1, zt_table *t2)
+zt_table_copy(zt_table *t1, zt_table *t2)
 {
 	int	  i;
 	int	  any = 0;
@@ -250,7 +250,7 @@ table_cpy(zt_table *t1, zt_table *t2)
 		{
 			any = 1;
 			/* if(!table_get(t2, node->key)) { */
-			table_set(t2, node->key, node->datum);
+			zt_table_set(t2, node->key, node->datum);
 			node = node->next;
 		}
 	}
@@ -259,7 +259,7 @@ table_cpy(zt_table *t1, zt_table *t2)
 }
 
 int
-table_for_each(zt_table *h, table_iterator iterator, void *param)
+zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 {
 	int 	  i;
 	int	  res;
@@ -283,7 +283,7 @@ table_for_each(zt_table *h, table_iterator iterator, void *param)
 
 /* common hash functions */
 unsigned long
-table_hash_int(const void *key, void *cdata)
+zt_table_hash_int(const void *key, void *cdata)
 {
 	unsigned char	* skey = (unsigned char *)key;
 	unsigned long 	  nkey = zt_hash32_buff(&skey, sizeof(int), ZT_HASH32_INIT);
@@ -291,7 +291,7 @@ table_hash_int(const void *key, void *cdata)
 }
 
 int
-table_compare_int(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
 {
 	if((int)lhs == (int)rhs) {
 		return 1;
@@ -300,7 +300,7 @@ table_compare_int(const void *lhs, const void *rhs, void *cdata)
 }
 
 unsigned long
-table_hash_string(const void *key, void *cdata)
+zt_table_hash_string(const void *key, void *cdata)
 {
 	unsigned char	* skey = (unsigned char *)key;
 	unsigned long 	  nkey = zt_hash32_cstr(skey, ZT_HASH32_INIT);
@@ -308,7 +308,7 @@ table_hash_string(const void *key, void *cdata)
 }
 
 int
-table_compare_string(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string(const void *lhs, const void *rhs, void *cdata)
 {
 	if(strcmp((char *)lhs, (char *)rhs) == 0) {
 		return 1;
@@ -317,7 +317,7 @@ table_compare_string(const void *lhs, const void *rhs, void *cdata)
 }
 
 int
-table_compare_string_case(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata)
 {
 	if(strcasecmp((char *)lhs, (char *)rhs) == 0) {
 		return 1;
