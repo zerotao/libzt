@@ -2,24 +2,43 @@
 
 import yaml
 
-def stat_suite(suite):
+class SuiteStat(object):
     assertions = 0
     tests = 0
     failures = 0
     successes = 0
+    empty_tests = None
+    errors = None
+
+    def __init__(self):
+        self.empty_tests = []
+        self.errors = []
+
+
+def stat_suite(suite):
+    ss = SuiteStat()
+    # assertions = 0
+    # tests = 0
+    # failures = 0
+    # successes = 0
+    # empty_tests = []
 
     test_section = suite['Tests']
     if test_section != None:
         for name, values in test_section.items():
-            assertions += values['assertions']
-            tests += 1
-            if values['result'] == 'success':
-                successes += 1
-            else:
-                failures += 1
+            asserts = values['assertions']
+            ss.assertions += asserts
+            if asserts == 0:
+                ss.empty_tests.append(name)
 
-    errors = suite.get('Errors', [])    
-    return tests, assertions, failures, successes, errors
+            ss.tests += 1
+            if values['result'] == 'success':
+                ss.successes += 1
+            else:
+                ss.failures += 1
+
+    ss.errors = suite.get('Errors', [])    
+    return ss #tests, assertions, failures, successes, errors, empty_tests
     
     
 def stat_ut(fd):
@@ -41,15 +60,18 @@ def print_stat(stats):
     successes = 0
     failures = 0
     errors = []
+    empty_tests = []
 
-    for st, sa, sf, ss, er in stats:
-        tests += st
-        assertions += sa
-        successes += ss
-        failures += sf
-        if er:
-            errors.append(er)
+    for suite in stats:
+        #st, sa, sf, ss, er, et 
+        tests += suite.tests
+        assertions += suite.assertions
+        successes += suite.successes
+        failures += suite.failures
+        if suite.errors:
+            errors.append(suite.errors)
 
+        empty_tests.extend(suite.empty_tests)
     print """
 ---
 Global Stats:
@@ -59,6 +81,9 @@ Global Stats:
   assertions                  : %d
   failures                    : %d
 """ % (suites, tests, successes, assertions, failures),
+    if empty_tests:
+        print "  empty_tests:"
+        print "\n".join(["     - %s" % x for x in empty_tests])
     if errors:
         print "  errors:"
         for error in errors:
