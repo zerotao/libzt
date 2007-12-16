@@ -4,7 +4,7 @@ LDADD = ../libzt/.libs/libzt.a
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
-unit_test_LDADD = ../libzt/.libs/libzt_unit.a ../libzt/.libs/libzt.a
+unit_test_LDADD = $(top_builddir)/libzt/.libs/libzt_unit.a $(top_builddir)/libzt/.libs/libzt.a
 
 TEST_APPS = 		\
 	unit_test
@@ -19,8 +19,6 @@ unit_test_SOURCES = 	\
 	table_test.c	\
 	bstream_test.c	\
 	cfg_test.c	\
-	coro_test.c	\
-	cothread_test.c	\
 	cstr_test.c	\
 	event_test.c	\
 	except_test.c	\
@@ -38,6 +36,8 @@ unit_test_SOURCES = 	\
 	time_test.c	\
 	tree_test.c
 
+#	coro_test.c	
+#	cothread_test.c	
 #	msg_queue_test.c
 #	bytearray_test.c
 # 	adt_test.c
@@ -67,7 +67,7 @@ test: $(TEST_APPS)
 	     exit 255; \
 	   fi \
 	done)
-	@(python ../tools/ut_info.py test.out)
+	@(python $(top_srcdir)/tools/ut_info.py test.out)
 
 include $(top_srcdir)/Makefile.extra
 
