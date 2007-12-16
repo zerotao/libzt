@@ -26,11 +26,6 @@ int zt_coro_init_ctx(zt_coro_ctx *ctx)
 	return 0;
 }
 
-static void _switch_context(zt_coro *old, zt_coro *new)
-{
-    swapcontext(&old->ctx, &new->ctx);
-}
-
 static uint8_t *_current_stack_pointer(void)
 {
 	uint8_t	  a;
@@ -98,6 +93,70 @@ static void _coro_run(zt_coro_ctx *ctl)
 
 typedef void (*mkcontext_fn)(void);
 
+#define USE_UCONTEXT 1
+#if defined(USE_UCONTEXT)
+static int _set_context(zt_coro_ctx *ctl, zt_coro *co, void *fn, unsigned char *stk, long size) 
+{
+	if (getcontext(&(co->ctx)) < 0) {
+		return -1;
+	}
+
+	co->ctx.uc_stack.ss_sp = stk;
+	co->ctx.uc_stack.ss_size = size;
+	co->ctx.uc_stack.ss_flags = 0;
+	co->size = size;
+	co->func = fn;
+	
+	makecontext(&(co->ctx), (mkcontext_fn)_coro_run, 1, ctl);
+
+	return 0;
+}
+
+static void _switch_context(zt_coro *old, zt_coro *new)
+{
+    if (swapcontext(&old->ctx, &new->ctx) < 0) {
+		printf("Error switch failed\n");
+		exit(1);
+	}
+}
+
+#else  /* USE_UCONTEXT */
+
+static void _switch_context(zt_coro *old, zt_coro *new) {
+
+	if (!setjmp(old->ctx))
+		longjmp(new->ctx, 1);
+}
+
+# if defined(USE_SIGCONTEXT)
+static void _bootstrap_sigcontext(void) 
+{
+	zt_coro		* volatile co_starting;
+	void		(* volatile co_starting_fn)(void);
+
+}
+
+static void _sigcontext_trampoline(void)
+{
+}
+
+static int _set_context(zt_coro_ctx *ctl, zt_coro *co, void *fn, unsigned char *stk, long size)
+{
+}
+
+# else	/* USE_SIGCONTEXT */
+
+static int _set_context(zt_coro_ctx *ctl, zt_coro *co, void *fn, unsigned char *stk, long size)
+{
+	
+}
+
+# endif	 /* USE_SIGCONTEXT */
+
+#endif	 /* USE_UCONTEXT */
+
+
+
 zt_coro *
 zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *co, size_t stack_size) {
 	unsigned char	* stack;
@@ -109,25 +168,32 @@ zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *
     }
 	
 	stack = (unsigned char *)(co+1);
-	
-    /* Assign the coroutine to the base of the stack */  
-    if(getcontext(&(co->ctx)) < 0) {
-        printf("getcontext failed");
-        abort();
-    }
-    
-    co->ctx.uc_stack.ss_sp = stack;
-    co->ctx.uc_stack.ss_size =  stack_size;
-	
-	co->size = stack_size;
-	
-#if !defined(__APPLE__) || defined(__DARWIN_UNIX03)
-    co->ctx.uc_stack.ss_flags = 0;
-    co->ctx.uc_link = NULL;
-#endif
 
-    co->func = func;
-    makecontext(&(co->ctx), (mkcontext_fn)_coro_run, 1, ctl);
+	if (_set_context(ctl, co, func, stack, stack_size) == -1) {
+		printf("create context failed");
+		abort();
+	}
+				 
+/* 
+ *     /\* Assign the coroutine to the base of the stack *\/  
+ *     if(getcontext(&(co->ctx)) < 0) {
+ *         printf("getcontext failed");
+ *         abort();
+ *     }
+ *     
+ *     co->ctx.uc_stack.ss_sp = stack;
+ *     co->ctx.uc_stack.ss_size =  stack_size;
+ * 	
+ * 	co->size = stack_size;
+ * 	
+ * #if !defined(__APPLE__) || defined(__DARWIN_UNIX03)
+ *     co->ctx.uc_stack.ss_flags = 0;
+ *     co->ctx.uc_link = NULL;
+ * #endif
+ * 
+ *     co->func = func;
+ *     makecontext(&(co->ctx), (mkcontext_fn)_coro_run, 1, ctl);
+ */
     return co;
 }
 
@@ -157,7 +223,8 @@ void *_zt_coro_call(zt_coro_ctx *ctl, zt_coro *co, void *data, int yield)
 	_except_Stack = co->except_stack;
 
 	_switch_context(old, co);
-
+	//swapcontext(&(old->ctx), &(co->ctx));
+	
 	_except_Stack = old->except_stack;
         
 	if(_except_Stack &&

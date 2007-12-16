@@ -21,7 +21,7 @@ typedef struct zt_coro {
 #if defined(__APPLE__) && defined(__DARWIN_UNIX03)
 #warning "Enabling DARWIN Broken UCONTEXT Fix"
 	//mcontext_t			  mctx;
-	unsigned char		  buffer[64]; /* buffer to catch broken makecontext on osx 10.5*/
+	unsigned char		  buffer[128]; /* buffer to catch broken makecontext on osx 10.5*/
 #endif
 } zt_coro;
 
