@@ -51,6 +51,8 @@ void zt_gc_init(gc_t *gc,
 				int marks_per_scan, 
 				int allocs_to_scan);
 
+void zt_gc_destroy(gc_t *gc);
+
 void zt_gc_enable(gc_t *gc);
 void zt_gc_disable(gc_t *gc);
 

@@ -62,6 +62,8 @@ dump_elist(char *name, zt_elist *p)
 }
 
 char	* UnbalancedGCEnabling = "The gc was enabled when it was not disabled";
+char	* FreeWhileDisabled = "Attempt to free the GC while garbage collection was disabled";
+
 
 void
 zt_gc_enable(gc_t *gc) 
@@ -119,6 +121,52 @@ zt_gc_init(gc_t *gc,
 	gc->private_data = private_data;
 	gc->mark_fn = mark_fn;
 	gc->release_fn = release_fn;
+}
+
+void
+zt_gc_destroy(gc_t *gc)
+{
+	int			  i;
+	zt_elist	* elt;
+	zt_elist	* dont_use;
+	
+	if (gc->enabled != 0) {
+		TRY_THROW(FreeWhileDisabled);
+	}
+
+	zt_gc_scan(gc, TRUE);
+
+	zt_elist_for_each_safe(gc->white, elt, dont_use){
+		zt_elist_remove(elt);
+		gc->release_fn(gc, gc->private_data, (void **)&elt);
+	}
+
+	zt_elist_for_each_safe(gc->grey, elt, dont_use){
+		zt_elist_remove(elt);
+		gc->release_fn(gc, gc->private_data, (void **)&elt);
+	}
+
+	zt_elist_for_each_safe(gc->black, elt, dont_use){
+		zt_elist_remove(elt);
+		gc->release_fn(gc, gc->private_data, (void **)&elt);
+	}
+
+	/* clear the rootset, this should force us to clear all objects in
+	 * the system
+	 */	
+	/* 
+     * for(i = 0; i < gc->rootset_next; i++){
+	 * 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)gc->rootset[i];
+	 * 	zt_elist_remove(&mark->list);
+	 * 	//zt_elist_add(gc->white, &mark->list);
+	 * }
+     */
+	
+	XFREE(gc->rootset);
+	gc->rootset = NULL;
+	gc->rootset_next = 0;
+	
+	gc->enabled = 1;
 }
 
 /*

@@ -36,6 +36,7 @@ static void
 release_atom(gc_t *gc, void *pdata, void **v)
 {
 	atom **a = (atom **)v;
+
 	atoms_freed++;
 	free(*a);
 	*a = NULL;
@@ -45,14 +46,16 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
 	gc_t		  gc;
-	atom	  	  root;
+	atom		* root;
 	int			  i;
+
+	root = XCALLOC(atom, 1);
 	
-	root.type = ATOM;
-	root.value.atom = NULL;
+	root->type = ATOM;
+	root->value.atom = NULL;
 	
 	zt_gc_init(&gc, NULL, mark_atom, release_atom, 1, 1);
-	zt_gc_register_root(&gc, &root);
+	zt_gc_register_root(&gc, root);
 
 	//zt_gc_print_heap(&gc);
 	for(i=0; i < 10; i++)
@@ -62,7 +65,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 		a->type = INT;
 		a->value.number = i;
 		if (i == 1) {
-			root.value.atom = a;
+			root->value.atom = a;
 		}
 		
 		zt_gc_register_value(&gc, a);
@@ -73,6 +76,8 @@ basic_tests(struct zt_unit_test *test, void *data)
 	ZT_UNIT_ASSERT(test, ints_marked == 10);
 	ZT_UNIT_ASSERT(test, atoms_marked = 1);
 	ZT_UNIT_ASSERT(test, atoms_freed = 10);
+	zt_gc_destroy(&gc);
+	
 }
 
 int
