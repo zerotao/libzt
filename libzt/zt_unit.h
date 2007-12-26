@@ -17,21 +17,37 @@ typedef void (*zt_unit_teardown_fn)(void *data);
 typedef void (*zt_unit_test_fn)(struct zt_unit_test *test, void *data);
 
 
-#define ZT_UNIT_ASSERT(test,expr)									\
+#define ZT_UNIT_ASSERT(test, expr)									\
 	if (!(expr)) {													\
 		zt_unit_exception = "Assertion Failed: " STR(expr);			\
 		TRY_THROW(zt_unit_exception);								\
 	}else{                                                          \
 		zt_unit_test_add_assertion(test);							\
     }
-	
+
 #define ZT_UNIT_ASSERT_EQUAL(test, expr1, expr2)						\
-	if ((expr1) != (expr2)) {											\
-		zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
-		TRY_THROW(zt_unit_exception);									\
-	} else {                                                            \
-		zt_unit_test_add_assertion(test);								\
-    }
+	ZT_UNIT_ASSERT(test, (expr1 == expr2))
+	/* 
+     * if ((expr1) != (expr2)) {											\
+	 * 	zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
+	 * 	TRY_THROW(zt_unit_exception);									\
+	 * } else {                                                            \
+	 * 	zt_unit_test_add_assertion(test);								\
+     * }
+     */
+
+#define ZT_UNIT_ASSERT_NOT_EQUAL(test, expr1, expr2)					\
+	ZT_UNIT_ASSERT(test, (expr1 != expr2))
+	/* 
+     * if ((expr1) == (expr2)) {											\
+	 * 	zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
+	 * 	TRY_THROW(zt_unit_exception);									\
+	 * } else {                                                            \
+	 * 	zt_unit_test_add_assertion(test);								\
+     * }
+     */
+
+
 	
 #define ZT_UNIT_ASSERT_RAISES(test,excpt, expr)							\
 	{																	\
