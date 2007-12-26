@@ -6,11 +6,8 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_
 
 unit_test_LDADD = $(top_builddir)/libzt/.libs/libzt_unit.a $(top_builddir)/libzt/.libs/libzt.a
 
-TEST_APPS = 		\
-	unit_test
-
 noinst_PROGRAMS = 	\
-	$(TEST_APPS)
+	unit_test
 
 unit_test_SOURCES = 	\
 	assert_test.c	\
@@ -53,27 +50,16 @@ DUMMY_TEST = $(addprefix $(srcdir)/,$(noinst_DATA))
 test.out:
 	test
 
-test: $(TEST_APPS)
+test: unit_test
 	@echo Beginning Test Run
 	@cp -p $(DUMMY_TEST) $(top_builddir)/tests
-	@$(RM) -f test.out diff.out assert.out core
-	@(for program in $^; do \
-	  ./$$program > $$program.out 2>&1;		\
-	   EXIT=$$?; 					\
-	   cat $$program.out;				\
-	   cat $$program.out >> test.out;		\
-	   if [ ! $$EXIT == 0 ]; then 			\
-	     echo "$$program exited with a non zero exitcode: $$EXIT"; \
-	     exit 255; \
-	   fi \
-	done)
-	@(python $(top_srcdir)/tools/ut_info.py test.out)
+	@$(RM) -f diff.out assert.out core
+	@python $(top_srcdir)/tools/ut_info.py ./unit_test;
 
 include $(top_srcdir)/Makefile.extra
 
 CLEANFILES += \
 	diff.out \
-	test.out \
 	assert.out \
 	log.err
 
