@@ -15,7 +15,7 @@ struct stream {
 char f[] = { '\\', '|', '/', '-' };
 int i = 0;
 
-#define DEBUG 1
+#define INTERACTIVE 0
 
 void io_cb(zt_event_sys sys, int fd, zt_event_enum type, void *data)
 {
@@ -39,7 +39,7 @@ void io_cb(zt_event_sys sys, int fd, zt_event_enum type, void *data)
 
 
 static int counter = 0;
-#define NUM_TIMERS 100
+#define NUM_TIMERS 100000
 
 void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data) 
 {
@@ -48,7 +48,7 @@ void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data)
 	counter++;
 
 /* 
- * #if DEBUG
+ * #if INTERACTIVE
  * 	printf("Timeout: %d:%d  %d:%d\n", sys->tod.tv_sec, sys->tod.tv_usec,
  * 	       tv->tv_sec, tv->tv_usec);
  * #endif
@@ -69,10 +69,6 @@ int main(int argc, char *argv[])
 	st.fd = STDIN_FILENO;
 	
 	sys = zt_event_select();
-
-#if DEBUG
-	//zt_event_register_io(sys, 0, ZT_READ_EVENT, io_cb, NULL);
-#endif
 	
 	for(i=0; i < NUM_TIMERS; i++) {
 		/* each entry must be made unique in one of:
@@ -94,7 +90,7 @@ int main(int argc, char *argv[])
 			TEST(buff, counter == NUM_TIMERS);
 			break;
 		}
-#if DEBUG
+#if INTERACTIVE
 		if(counter != last) {
 			TEST_N("TIMERS firing", i, last < counter);
 		}
@@ -102,9 +98,8 @@ int main(int argc, char *argv[])
 		last = counter;
 	}
 
-#if DEBUG	
+#if INTERACTIVE	
 	zt_event_register_io(sys, st.fd, ZT_READ_EVENT, io_cb, &st);
-
 
 	printf("\n%c", f[0]), fflush(stdout);
 	i = 1;
