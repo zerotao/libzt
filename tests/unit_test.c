@@ -44,10 +44,8 @@ extern int register_stack_suite(struct zt_unit *unit);
 extern int register_time_suite(struct zt_unit *unit);
 extern int register_tree_suite(struct zt_unit *unit);
 
-/* 
- * extern int register_coro_suite(struct zt_unit *unit);
- * extern int register_cothread_suite(struct zt_unit *unit);
- */
+extern int register_coro_suite(struct zt_unit *unit);
+extern int register_cothread_suite(struct zt_unit *unit);
 
 
 int
@@ -68,12 +66,10 @@ main(int argc, char *argv[])
 	register_assert_suite(unit);
 	register_array_suite(unit);
 	register_table_suite(unit);
-	//register_adt_suite(unit);
 	register_bstream_suite(unit);
-	//register_bytearray_suite(unit);
 	register_cfg_suite(unit);
-	//register_coro_suite(unit);
-	//register_cothread_suite(unit);
+	register_coro_suite(unit);
+	register_cothread_suite(unit);
 	register_cstr_suite(unit);
 	register_event_suite(unit);
 	register_except_suite(unit);
@@ -84,14 +80,16 @@ main(int argc, char *argv[])
 	register_llist_suite(unit);
 	register_log_suite(unit);
 	register_macros_suite(unit);
-	//register_msg_queue_suite(unit);
 	register_opts_suite(unit);
 	register_progname_suite(unit);
 	register_set_suite(unit);
 	register_stack_suite(unit);
 	register_time_suite(unit);
 	register_tree_suite(unit);
+
+	//register_adt_suite(unit);
+	//register_bytearray_suite(unit);	
+	//register_msg_queue_suite(unit);
 	
-	zt_unit_main(unit, argc, argv);
-	
+	return zt_unit_main(unit, argc, argv);	
 }

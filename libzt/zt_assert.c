@@ -29,7 +29,7 @@ char *assertion_failed = "assertion_failed";
 
 void
 _assert_fail (char *s, char *file, unsigned int line,
-			  const char *func, char fatal)
+			  const char *func)
 {
 	char	bname[PATH_MAX];
 
@@ -39,7 +39,4 @@ _assert_fail (char *s, char *file, unsigned int line,
 		log_printf(log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, bname, line, func);
 	else
 		log_printf(log_err, "Assertion \"%s\" failed at: %s[%d]", s, bname, line);
-
-	if(fatal)
-		TRY_THROW(assertion_failed);
 }

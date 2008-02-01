@@ -4,6 +4,8 @@
 #include <libzt/zt.h>
 #include <libzt/zt_macros.h>
 #include <libzt/zt_except.h>
+#include <libzt/adt/zt_list.h>
+
 BEGIN_C_DECLS
 
 extern char * zt_unit_exception;
@@ -16,6 +18,31 @@ typedef void (*zt_unit_setup_fn)(void *data);
 typedef void (*zt_unit_teardown_fn)(void *data);
 typedef void (*zt_unit_test_fn)(struct zt_unit_test *test, void *data);
 
+struct zt_unit {
+	zt_elist				  suites;
+	unsigned int			  successes;
+	unsigned int			  failures;
+};
+
+struct zt_unit_suite {
+	zt_elist				  suite;
+	zt_elist				  tests;
+	char					* name;
+	zt_unit_setup_fn		  setup_fn;
+	zt_unit_teardown_fn		  teardown_fn;
+	void					* data;
+	int						  succeeded;
+	int						  failed;
+};
+
+struct zt_unit_test {
+	zt_elist				  test;
+	char					* name;
+	zt_unit_test_fn			  test_fn;
+	int						  success;
+	char					* error;
+	long					  assertions;
+};
 
 #define ZT_UNIT_ASSERT(test, expr)									\
 	if (!(expr)) {													\

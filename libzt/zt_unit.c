@@ -10,31 +10,6 @@
 #define ZT_UNIT_EXCEPTION_DEFAULT "Unknown Error"
 char * zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
 
-
-struct zt_unit {
-	zt_elist				  suites;
-};
-
-struct zt_unit_suite {
-	zt_elist				  suite;
-	zt_elist				  tests;
-	char					* name;
-	zt_unit_setup_fn		  setup_fn;
-	zt_unit_teardown_fn		  teardown_fn;
-	void					* data;
-	int						  succeeded;
-	int						  failed;
-};
-
-struct zt_unit_test {
-	zt_elist				  test;
-	char					* name;
-	zt_unit_test_fn			  test_fn;
-	int						  success;
-	char					* error;
-	long					  assertions;
-};
-
 #define yaml_dict(name, offt)										\
 	printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
 
@@ -61,6 +36,8 @@ zt_unit_init(void)
 	log_ty			* log;
 	
 	zt_elist_reset(&unit->suites);
+	unit->failures = 0;
+	unit->successes = 0;
 	return unit;
 }
 
@@ -93,6 +70,7 @@ zt_unit_register_suite(struct zt_unit 		* unit,
 	struct zt_unit_suite	* suite = XCALLOC(struct zt_unit_suite, 1);
 	
 	assert(name != NULL);
+	len = strlen(name);
 	suite->name = XCALLOC(char, len+1);
 	strncpy(suite->name, name, len);
 	suite->setup_fn = setup_fn;
@@ -179,11 +157,15 @@ zt_unit_run(struct zt_unit	* unit)
 	int						  result = 0;
 
 	zt_elist_for_each(&unit->suites, tmp) {
+		
 		unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
-		result += zt_unit_run_suite(unit, unit_suite);
+		if(zt_unit_run_suite(unit, unit_suite) < 0) {
+			result = -1;
+		}
 	}
 	return result;
 }
+
 
 int
 zt_unit_run_suite(struct zt_unit		* unit,
@@ -204,7 +186,9 @@ zt_unit_run_suite(struct zt_unit		* unit,
 		result = zt_unit_run_test(unit, suite, unit_test);
 		if (result != TRUE) {
 			suite->failed += 1;
+			unit->failures += 1;
 		} else {
+			unit->successes += 1;
 			suite->succeeded += 1;
 		}
 	}
@@ -218,8 +202,7 @@ zt_unit_run_suite(struct zt_unit		* unit,
 			}
 		}
 	}
-
-	return suite->failed + suite->succeeded;
+	return 0;
 }
 
 
@@ -380,7 +363,7 @@ zt_unit_run_by_name(struct zt_unit		* unit,
 	}
 
 	if (count == 1) {
-		zt_unit_run_suite(unit, unit_suite);
+		result = zt_unit_run_suite(unit, unit_suite);
 		goto done;
 	}
 
@@ -400,7 +383,12 @@ zt_unit_run_by_name(struct zt_unit		* unit,
 		goto done;
 	}
 	
-	zt_unit_run_test(unit, unit_suite, unit_test);
+	if(zt_unit_run_test(unit, unit_suite, unit_test) == FALSE) {
+		unit->failures += 1;
+	} else {
+		unit->successes += 1;
+	}
+	
  done:
 	str_split_free(&targetv);
 	return result;
@@ -436,6 +424,7 @@ zt_unit_main(struct zt_unit				* unit,
 	int				  i;
 	int				  do_list = FALSE;
 	int				  run_tests = TRUE;
+	int				  result = 0;
 	
 	struct opt_args   options[] = {
 		{ 'h', "help", "This help text", opt_help, NULL, NULL},
@@ -453,18 +442,25 @@ zt_unit_main(struct zt_unit				* unit,
 	}
 
 	if (run_tests != FALSE) {
-		
 		if (argc != 0) {
 			for(i=0; i < argc; i++) {
-				if(zt_unit_run_by_name(unit, argv[i]) != 0) {
+				if(zt_unit_run_by_name(unit, argv[i]) < 0){
 					printf("Suite or Test \"%s\" not found\n", argv[i]);
+					result = -1;
 				}
 			}		
 		} else {
-			zt_unit_run(unit);
+			if((result = zt_unit_run(unit)) < 0){
+				return result;
+			}			
 		}
 	}
 	
-	return 0;
+	if (result == 0) {
+		if (unit->failures > 0) {
+			result = -1;
+		}
+	}
+	return result;
 }
 
