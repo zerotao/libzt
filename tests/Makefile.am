@@ -31,10 +31,10 @@ unit_test_SOURCES = 	\
 	set_test.c	\
 	stack_test.c	\
 	time_test.c	\
-	tree_test.c
+	tree_test.c	\
+	coro_test.c	\
+	cothread_test.c	
 
-#	coro_test.c	
-#	cothread_test.c	
 #	msg_queue_test.c
 #	bytearray_test.c
 # 	adt_test.c
