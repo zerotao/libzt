@@ -31,14 +31,15 @@ This software was developed as part of a project at MIT.
 # define HAS_UCONTEXT 1
 #endif
 
-#if defined(__APPLE__) && __APPLE_CC__ < 5465
+#if defined(__APPLE__)
 # define APPLE_MISSING_UCONTEXT 1
 #endif
 
 #if defined(__FreeBSD__) ||  defined(APPLE_MISSING_UCONTEXT)
 #include <string.h>				/* memmove */
 #include <inttypes.h>			/* intptr_t */
-#include <ucontext.h>
+//#include <ucontext.h>
+#include <signal.h>
 typedef unsigned long ulong;
 
 #  if defined(__FreeBSD__) && __FreeBSD__ < 5

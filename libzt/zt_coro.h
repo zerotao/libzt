@@ -4,9 +4,19 @@
 #include <libzt/zt.h>
 #include <libzt/zt_except.h>
 #include <libzt/zt_assert.h>
-#include <libzt/ucontext/portableucontext.h>
+
 
 BEGIN_C_DECLS
+
+#define USE_UCONTEXT
+
+#if defined(USE_UCONTEXT)
+#include <libzt/ucontext/portableucontext.h>
+# define zt_context_t	ucontext_t
+#else
+#include <setjmp.h>
+# define zt_context_t	jmp_buf
+#endif
 
 typedef struct zt_coro_ctx zt_coro_ctx;
 
@@ -17,12 +27,7 @@ typedef struct zt_coro {
 	size_t                size;
 	void				* data;
 	struct except_Frame	* except_stack;
-	ucontext_t			  ctx;
-#if defined(__APPLE__) && defined(__DARWIN_UNIX03)
-#warning "Enabling DARWIN Broken UCONTEXT Fix"
-	//mcontext_t			  mctx;
-	unsigned char		  buffer[128]; /* buffer to catch broken makecontext on osx 10.5*/
-#endif
+	zt_context_t		  ctx;
 } zt_coro;
 
 struct zt_coro_ctx {
