@@ -23,19 +23,19 @@ static zt_elist(sets);
 //static long x_sys_page_size = 0;
 
 typedef struct zt_mem_elt {
-	zt_elist		  free_elt_list;
+	zt_elist		  	  free_elt_list;
 	struct zt_mem_page	* parent_page;
 	unsigned long		  data[0];
 } zt_mem_elt;
 
 struct zt_mem_heap {
-	char		* name;
-	size_t		  size;
+	char			* name;
+	size_t			  size;
 	unsigned long	  heap[0];
 };
 
 typedef struct zt_mem_page {
-	zt_elist	  	  page_list;
+	zt_elist	  		  page_list;
 	struct zt_mem_pool	* parent_pool;
 	unsigned long		  num_free_elts;
 	unsigned long	 	  data[0];
@@ -56,14 +56,14 @@ struct zt_mem_pool {
 	long			  page_frees;	 /* number of page frees */
 	zt_page_release_test	  release_test_cb;
 	void			* release_test_cb_data;
-	int			  flags;
+	int				  flags;
 	zt_elist		  page_list;
 	zt_elist		  free_elt_list;
 };
 
 struct zt_mem_pool_group {
 	zt_elist	  group_list;
-	int		  npools;
+	int			  npools;
 	zt_mem_pool	**pools;
 };
 
@@ -280,6 +280,13 @@ zt_mem_pool_release(void **data){
 
 	elt = zt_elist_data(*data, zt_mem_elt, data);
 	page = elt->parent_page;
+	
+	if (page == NULL) {
+		/* this element was allocated by XALLOC and should just be freed */
+		XFREE(*data);
+		return;
+	}
+	
 	pool = page->parent_pool;
 	
 	/* add the element to the pools free elt list */
@@ -545,12 +552,12 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 	len = group->npools;
 
 	for(i = 0; i < len; i++) {
-		if(size < group->pools[i]->elt_size) {
+		if(size <= group->pools[i]->elt_size) {
 			return zt_mem_pool_alloc(group->pools[i]);
 		}
 	}
 	
-	return 0;
+	return XCALLOCS(size + sizeof(zt_mem_elt), 1);
 }
 
 int
