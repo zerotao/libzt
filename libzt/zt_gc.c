@@ -131,7 +131,8 @@ zt_gc_destroy(gc_t *gc)
 	zt_elist	* dont_use;
 	
 	if (gc->enabled != 0) {
-		TRY_THROW(FreeWhileDisabled);
+		printf("# Warning: destroying gc while gc is disabled\n");
+		gc->enabled = 0;
 	}
 
 	zt_gc_scan(gc, TRUE);
