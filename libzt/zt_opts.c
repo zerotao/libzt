@@ -31,7 +31,7 @@
 #include "zt_opts.h"
 
 
-static inline int optchar(int x);
+static inline int isoptchar(int x);
 
 struct
 {
@@ -81,11 +81,11 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 	
 	for(i=0; i < max_opts; i++){
 		if(opts[i].description != NULL){
-			if(optchar(opts[i].opt))
+			if(isoptchar(opts[i].opt))
 				fprintf(stderr, "-%c", opts[i].opt);
 #ifdef HAVE_GETOPT_LONG				
 			if(opts[i].long_opt){
-				if(optchar(opts[i].opt))
+				if(isoptchar(opts[i].opt))
 					fprintf(stderr, ", --%s", opts[i].long_opt);
 				else
 					fprintf(stderr, "    --%s", opts[i].long_opt);
@@ -101,7 +101,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 				fprintf(stderr, "\t: %s\n", opts[i].usage);
 			else
 				if(opts_usage_t[opts[i].type].desc) {
-					if(optchar(opts[i].opt))
+					if(isoptchar(opts[i].opt))
 						fprintf(stderr, "\t: eg. -%c %s\n", opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
 					else
 						fprintf(stderr, "\t: eg. --%s %s\n", opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
@@ -137,7 +137,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 #endif
 		
 	for(i=0;((opts[i].description != NULL) || (opts[i].type !=0) || (opts[i].val !=0)) && opt_index < OPT_MAX_DOUBLE; i++){
-		if(optchar(opts[i].opt))
+		if(isoptchar(opts[i].opt))
 			optstring[opt_index++] = opts[i].opt;
 				
 #ifdef HAVE_GETOPT_LONG
@@ -159,7 +159,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 			case opt_bool:
 				/* FALLTHRU */
 			case opt_ofunc:
-				if(optchar(opts[i].opt)) {
+				if(isoptchar(opts[i].opt)) {
 					optstring[opt_index++] = ':';
 					optstring[opt_index++] = ':';			/* '::' means argument optional */
 				}
@@ -174,7 +174,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 			case opt_string:
 				/* FALLTHRU */
 			case opt_rfunc:
-				if(optchar(opts[i].opt)) {
+				if(isoptchar(opts[i].opt)) {
 					optstring[opt_index++] = ':';			/* argument required */
 				}
 				
@@ -316,7 +316,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 /*
  * local functions 
  */
-static inline int optchar(int x)
+static inline int isoptchar(int x)
 {
 	return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
 }
