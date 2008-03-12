@@ -137,7 +137,6 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 #endif
 		
 	for(i=0;((opts[i].description != NULL) || (opts[i].type !=0) || (opts[i].val !=0)) && opt_index < OPT_MAX_DOUBLE; i++){
-		//		if(opts[i].opt != -1)
 		if(optchar(opts[i].opt))
 			optstring[opt_index++] = opts[i].opt;
 				
@@ -156,21 +155,29 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 				/* FALLTHRU */
 			case opt_func:
 				break;
+				
 			case opt_bool:
 				/* FALLTHRU */
 			case opt_ofunc:
-				optstring[opt_index++] = ':';
-				optstring[opt_index++] = ':';			/* '::' means argument optional */
+				if(optchar(opts[i].opt)) {
+					optstring[opt_index++] = ':';
+					optstring[opt_index++] = ':';			/* '::' means argument optional */
+				}
+				
 #ifdef HAVE_GETOPT_LONG
 				longopts[i].has_arg = 1;
 #endif
 				break;
+				
 			case opt_int:
 				/* FALLTHRU */
 			case opt_string:
 				/* FALLTHRU */
 			case opt_rfunc:
-				optstring[opt_index++] = ':';			/* argument required */
+				if(optchar(opts[i].opt)) {
+					optstring[opt_index++] = ':';			/* argument required */
+				}
+				
 #ifdef HAVE_GETOPT_LONG
 				longopts[i].has_arg = 1;
 #endif
@@ -182,7 +189,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 	longopts[i].has_arg = 0;
 	longopts[i].flag = NULL;
 	longopts[i].val = 0;
-#endif		
+#endif
 	max_opts = i;
 	while(1) {
 #ifdef HAVE_GETOPT_LONG

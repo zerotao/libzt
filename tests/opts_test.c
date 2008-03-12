@@ -64,11 +64,11 @@ basic_opts_tests(struct zt_unit_test *test, void *data)
 			{ 'h', "help", "This help text", opt_help, NULL, NULL},
 			{ '[', "int", "integer test", opt_int, &integer, NULL},
 			{ 'b', "bool", "boolean test", opt_bool, &bool, NULL},
-			{ 's', "string", "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times.", opt_string, &str, "-s \"Some String\""},
+			{  129, "string", "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times.", opt_string, &str, "-s \"Some String\""},
 			{ 'f', "func", "func test", opt_func, func, NULL},
 			{ 'o', "ofunc", "ofunc test", opt_ofunc, ofunc, NULL},
 			{ 'f', "rfunc", "rfunc test", opt_rfunc, rfunc, NULL},
-			{ 'F', "flag", "flag test", opt_flag, &flag, NULL},
+			{  130, "flag", "flag test", opt_flag, &flag, NULL},
 			{ 0,0,0,0 }
 		};
 
