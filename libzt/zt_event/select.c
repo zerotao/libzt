@@ -317,7 +317,7 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 			 * select sets to get which objects were set...
 			 */
 			zt_rbt_for_each(&ess->io_head, iter){
-				struct zt_event_elt	* eltp = zt_rbt_data(iter, struct zt_event_el't, node);
+				struct zt_event_elt	* eltp = zt_rbt_data(iter, struct zt_event_elt, node);
 
 				if((flags & ZT_READ_EVENTS) &&
 				   (eltp->type & ZT_READ_EVENT) &&

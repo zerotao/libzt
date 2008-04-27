@@ -80,12 +80,12 @@ u_int32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
  *    ZT_HASH_SUB32_MASK
  *****/
 #define ZT_HASH_SUB32_MASK(hash,x) \
-	if ((x) < 32) {								\
-		if ((x) < 16) {							\
+	if ((x) < 32) {												\
+		if ((x) < 16) {											\
 			(hash = ((hash>>(x)) ^ hash) & ZT_HASH_MASK(x)); 	\
-		} else {							\
+		} else {												\
 			(hash = ((hash>>(x)) ^ (hash & ZT_HASH_MASK(x)))); 	\
-		}								\
+		}														\
 	}
 
 

@@ -63,7 +63,7 @@ void zt_gc_register_root(gc_t *gc, void *value);
 
 /* void zt_gc_protect(gc *gc, void *value); */
 void zt_gc_print_heap(gc_t *gc);
-void zt_gc_mark_value(gc_t *gc, void *value);
+int zt_gc_mark_value(gc_t *gc, void *value);
 void zt_gc_scan(gc_t *gc, int full_scan);
 /* void zt_gc_mark(gc *gc); */
 

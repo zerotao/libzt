@@ -54,11 +54,11 @@ basic_tests(struct zt_unit_test *test, void *data)
 	root->type = ATOM;
 	root->value.atom = NULL;
 	
-	zt_gc_init(&gc, NULL, mark_atom, release_atom, 1, 1);
+	zt_gc_init(&gc, NULL, mark_atom, release_atom, 10, 1);
 	zt_gc_register_root(&gc, root);
 
 	//zt_gc_print_heap(&gc);
-	for(i=0; i < 10; i++)
+	for(i=0; i < 100; i++)
 	{
  		atom	* a = XCALLOC(atom, 1);
 		
@@ -72,12 +72,13 @@ basic_tests(struct zt_unit_test *test, void *data)
 	}
 	
 	zt_gc_scan(&gc, 0);
+	printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
 	zt_gc_scan(&gc, 1);
-	ZT_UNIT_ASSERT(test, ints_marked == 10);
-	ZT_UNIT_ASSERT(test, atoms_marked = 1);
-	ZT_UNIT_ASSERT(test, atoms_freed = 10);
-	zt_gc_destroy(&gc);
-	
+	printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
+	ZT_UNIT_ASSERT(test, ints_marked == 199);
+	ZT_UNIT_ASSERT(test, atoms_marked == 102);
+	ZT_UNIT_ASSERT(test, atoms_freed == 99);
+	zt_gc_destroy(&gc);	
 }
 
 int

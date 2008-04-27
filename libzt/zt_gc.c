@@ -94,6 +94,8 @@ zt_gc_init(gc_t *gc,
 		   int marks_per_scan,
 		   int allocs_before_scan)
 {
+	//assert(allocs_before_scan >= marks_per_scan);
+	
 	gc->enabled = 0;
 	
 	zt_elist_reset(&gc->list_1);
@@ -254,7 +256,8 @@ zt_gc_scan(gc_t *gc, int full_scan)
 	
 	gc->current_allocs = 0;
 	
-	if (gc->scan == gc->grey) {
+	if (gc->scan == gc->grey)
+	{
 		/* beginning of a scan */
 		int	  i;
 		for(i = 0; i < gc->rootset_next; i++) {
@@ -266,7 +269,6 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		gc->scan = gc->scan->next;
 	}
 	
-
 	while(gc->scan != gc->grey) {
 		/* move thru each object in the grey list moving it to the
 		 * black list and marking it as we go.
@@ -291,14 +293,23 @@ zt_gc_scan(gc_t *gc, int full_scan)
 
 		if (!full_scan && ++current_marks >= gc->marks_per_scan) {
 			if (gc->scan != gc->grey) {
+				/* 
+                 * fprintf(stderr, "Partial Scan\n");
+				 * zt_gc_print_heap(gc);
+                 */
 				return;
 			}
 		}
 	}
+	
+	/* 
+     * fprintf(stderr, "Completed Scan\n");
+	 * zt_gc_print_heap(gc);
+     */
 	zt_gc_switch(gc);
 }
 
-void
+int
 zt_gc_mark_value(gc_t *gc, void *value)
 {
 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
@@ -307,8 +318,10 @@ zt_gc_mark_value(gc_t *gc, void *value)
 	if (gc->is_white(mark)) {
 		gc->clear_white(mark);
 		zt_elist_remove(&mark->list);
-		zt_elist_add(gc->scan, &mark->list);
+		zt_elist_add_tail(gc->grey, &mark->list);
+		return TRUE;
 	}
+	return FALSE;
 }
 
 void
