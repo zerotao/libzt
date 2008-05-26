@@ -113,7 +113,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 }
 
 int
-opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults)
+opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
 	int i = 0;
 #define OPT_MAX 255
@@ -160,12 +160,11 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 				/* FALLTHRU */
 			case opt_ofunc:
 				if(isoptchar(opts[i].opt)) {
-					optstring[opt_index++] = ':';
 					optstring[opt_index++] = ':';			/* '::' means argument optional */
 				}
 				
 #ifdef HAVE_GETOPT_LONG
-				longopts[i].has_arg = 1;
+				longopts[i].has_arg = 2;
 #endif
 				break;
 				
@@ -263,15 +262,15 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 					}
 					break;
 				case opt_func:
-					if( (((opt_function)opts[i].val)()) == EXIT_FAILURE){
+					if( (((opt_function)opts[i].val)(cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 					}
-					break;									
+					break;	
 				case opt_ofunc:
-					if( (((opt_ofunction)opts[i].val)(optarg)) == EXIT_FAILURE){
+					if( (((opt_ofunction)opts[i].val)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
@@ -279,7 +278,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 					}
 					break;									
 				case opt_rfunc:										
-					if( (((opt_rfunction)opts[i].val)(optind-1, *argv)) == EXIT_FAILURE){
+					if( (((opt_rfunction)opts[i].val)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
