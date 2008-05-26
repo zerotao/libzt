@@ -19,25 +19,22 @@ char *str = 0;
 int bool = 0;
 int flag = 0;
 
-opt_function func (void)
+opt_function func (void * data)
 {
 	printf("func\n");
 	return EXIT_SUCCESS;
 }
 
-opt_ofunction ofunc (char *arg)
+opt_ofunction ofunc (char *arg, void * data)
 {
 	printf("ofunc %s\n", arg);
 	return EXIT_SUCCESS;	
 }
-opt_rfunction rfunc (int argc, char **argv)
+
+opt_rfunction rfunc (char * arg, void * data)
 {
 	int i = 0;
-	printf("rfunc ");
-	for(i=argc; argv[i] != NULL; i ++){
-		printf("%s ", argv[i]);
-	}
-	printf("\n");
+	printf("rfunc %s\n", arg);
 	return EXIT_SUCCESS;	
 }
 
@@ -67,7 +64,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data)
 			{  129, "string", "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times.", opt_string, &str, "-s \"Some String\""},
 			{ 'f', "func", "func test", opt_func, func, NULL},
 			{ 'o', "ofunc", "ofunc test", opt_ofunc, ofunc, NULL},
-			{ 'f', "rfunc", "rfunc test", opt_rfunc, rfunc, NULL},
+			{ 'r', "rfunc", "rfunc test", opt_rfunc, rfunc, NULL},
 			{  130, "flag", "flag test", opt_flag, &flag, NULL},
 			{ 0,0,0,0 }
 		};
@@ -78,7 +75,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data)
 	}
 	
 	pargv = argv;
-	opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE);
+	opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE, NULL);
 	ZT_UNIT_ASSERT(test, integer == 1);
 	ZT_UNIT_ASSERT(test, bool == 1);
 	ZT_UNIT_ASSERT(test, strcmp(str, "hello") == 0);

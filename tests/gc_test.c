@@ -72,9 +72,9 @@ basic_tests(struct zt_unit_test *test, void *data)
 	}
 	
 	zt_gc_scan(&gc, 0);
-	printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
+	//printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
 	zt_gc_scan(&gc, 1);
-	printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
+	//printf("Ints %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
 	ZT_UNIT_ASSERT(test, ints_marked == 199);
 	ZT_UNIT_ASSERT(test, atoms_marked == 102);
 	ZT_UNIT_ASSERT(test, atoms_freed == 99);

@@ -432,7 +432,7 @@ zt_unit_main(struct zt_unit				* unit,
 		{ 0 }
 	};
 
-	if(opts_process(&argc, &argv, options, "[options] <suite | suite.test> ...", TRUE, TRUE) != 0) {
+	if(opts_process(&argc, &argv, options, "[options] <suite | suite.test> ...", TRUE, TRUE, NULL) != 0) {
 		exit(1);
 	}
 
