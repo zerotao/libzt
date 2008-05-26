@@ -65,12 +65,13 @@ main(int argc, char *argv[])
 		zt_mem_pool_group_display(0, group, 0);
 
 		elt2 = zt_mem_pool_group_alloc(group, sizeof(char));
-		elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
+		
+		DO_TRY {
+			elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
+		} ELSE_TRY {
+			CATCH(zt_mem.pool.group,{});
+		} END_TRY;
 
-		if(elt3) {
-			printf("Error returned elt where datum is too large\n");
-			exit(1);
-		}
 		zt_mem_pool_group_display(0, group, 0);
 
 		zt_mem_pool_group_release(&elt);

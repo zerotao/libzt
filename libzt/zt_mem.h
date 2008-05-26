@@ -33,13 +33,22 @@
 /*
  *
  */
-
+#include <libzt/zt_except.h>
+EXCEPT_DESC(zt_mem, "ZT Mem Exceptions",
+			EXCEPTION(no_mem, "no memory available")
+			EXCEPT_GROUP(pool, "pool exceptions",
+						 EXCEPTION(does_not_exist, "pool does not exist")
+						 EXCEPT_GROUP(group, "group exceptions",
+									  EXCEPTION(does_not_exist, "group does not exist")
+						 )));
+#undef EXCEPT_DEFINE
 
 /****d* Memory/POOL_NEVER_FREE
  *  NAME
  *    POOL_NEVER_FREE
  *****/
 #define POOL_NEVER_FREE		1
+
 
 /* forward declarations */
 typedef struct zt_mem_heap zt_mem_heap;

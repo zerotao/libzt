@@ -4,8 +4,10 @@
 #include <unistd.h>
 
 #include "zt.h"
-#include "zt_mem.h"
 #include "adt/zt_list.h"
+
+#define EXCEPT_DEFINE 1
+#include "zt_mem.h"
 
 /*
  * FIXME: threads will need these wrapped
@@ -15,7 +17,7 @@ static struct
 	void	*(* alloc)(size_t);
 	void	 (* dealloc)(void *);
 	void	*(* realloc)(void *, size_t);
-}GLOBAL_zmt = { malloc, free, realloc };
+} GLOBAL_zmt = { malloc, free, realloc };
 
 static zt_elist(pools);
 static zt_elist(sets);
@@ -556,8 +558,9 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 			return zt_mem_pool_alloc(group->pools[i]);
 		}
 	}
-	
-	return XCALLOCS(size + sizeof(zt_mem_elt), 1);
+
+	TRY_THROW(zt_mem.pool.group.does_not_exist);
+	//return XCALLOCS(size + sizeof(zt_mem_elt), 1);
 }
 
 int
