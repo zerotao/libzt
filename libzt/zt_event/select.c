@@ -278,11 +278,11 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
 	fd_set				  except_set;
 	fd_set				  read_set;
-	int				  result;
-	int				  run_once;
-	struct timeval			  timeout;
+	int				  	  result;
+	int				  	  run_once;
+	struct timeval		  timeout;
 	fd_set				  write_set;
-	static struct timeval  		  zero_timeout = {0, 0};
+	struct timeval 		  zero_timeout = {0, 0};
 	
 	assert(ess);
 
@@ -291,8 +291,7 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 		zt_copy_timeval(&timeout, &zero_timeout);
 	} else {
 		zt_copy_timeval(&timeout, &sys->min_timeout);
-	}
-	
+	}	
 
 	reset_fd_sets(&read_set, &ess->read_set,
 		      &write_set, &ess->write_set,
@@ -300,7 +299,7 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 		      flags);
 	
 	while((result = select(ess->max_fd + 1, &read_set, &write_set,
-			       &except_set, &timeout)) != -1) {
+						   &except_set, &timeout)) != -1) {
 		
 		gettimeofday(&sys->tod, NULL);
 		
@@ -347,7 +346,13 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 			
 			sec = sys->tod.tv_sec;
 			usec = sys->tod.tv_usec;
-			
+
+			/* FIXME: we might as well be using a list here... as we
+			 * are not using the tree to eleminate any
+			 * checks... change that. Keep in mind that this is
+			 * because we comapair the data and callback as part of
+			 * the timer. maybe (time -> [(cb, data), (cb, data), ...]
+			 */
 			zt_rbt_for_each_safe(&ess->timer_events, nodep, nextp) {
 				struct zt_timer_node	* te;
 				te = zt_rbt_data(nodep, struct zt_timer_node, node);
