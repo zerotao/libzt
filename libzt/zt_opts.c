@@ -38,13 +38,13 @@ struct
 	opt_types type;
 	char *desc;
 } opts_usage_t[] = { { opt_bool, " [yes|no|true|false]" },
-		     { opt_flag, NULL },
-		     { opt_int, " [integer]" },
-		     { opt_string, " [string]" },
-		     { opt_func, NULL },
-		     { opt_ofunc, NULL },
-		     { opt_rfunc, NULL },
-		     { opt_help, NULL }, };
+					 { opt_flag, NULL },
+					 { opt_int, " [integer]" },
+					 { opt_string, " [string]" },
+					 { opt_func, NULL },
+					 { opt_ofunc, NULL },
+					 { opt_rfunc, NULL },
+					 { opt_help, NULL }, };
 
 static void
 print_default(opt_types type, void *value) 
@@ -121,6 +121,8 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 	char optstring[OPT_MAX_DOUBLE];
 	int opt_index = 0;
 	int max_opts = 0;
+	int nopt_chars = -2;
+	
 		
 #ifdef HAVE_GETOPT_LONG
 	struct option *longopts = NULL;
@@ -130,13 +132,18 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 		return -1;
 	memset(optstring, '\0', OPT_MAX_DOUBLE);
 
-	for(i=0;opts[i].description != NULL; i++);
+	for(i=0; (opts[i].description != NULL); i++) {
+		if (opts[i].opt <= 0) {
+			opts[i].opt = nopt_chars--;
+		}
+	}
 	
 #ifdef HAVE_GETOPT_LONG
 	longopts = XCALLOC(struct option, i+1);
 #endif
 		
-	for(i=0;((opts[i].description != NULL) || (opts[i].type !=0) || (opts[i].val !=0)) && opt_index < OPT_MAX_DOUBLE; i++){
+	for(i=0; ((opts[i].description != NULL) || (opts[i].type !=0) || (opts[i].val != 0)) && opt_index < OPT_MAX_DOUBLE; i++){
+		
 		if(isoptchar(opts[i].opt))
 			optstring[opt_index++] = opts[i].opt;
 				
@@ -262,7 +269,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 					}
 					break;
 				case opt_func:
-					if( (((opt_function)opts[i].val)(cb_data)) == EXIT_FAILURE){
+					if( (((opt_function)opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
@@ -270,7 +277,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 					}
 					break;	
 				case opt_ofunc:
-					if( (((opt_ofunction)opts[i].val)(optarg, cb_data)) == EXIT_FAILURE){
+					if( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
@@ -278,7 +285,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 					}
 					break;									
 				case opt_rfunc:										
-					if( (((opt_rfunction)opts[i].val)(optarg, cb_data)) == EXIT_FAILURE){
+					if( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
 							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
@@ -317,5 +324,5 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
  */
 static inline int isoptchar(int x)
 {
-	return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
+	return  (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
 }

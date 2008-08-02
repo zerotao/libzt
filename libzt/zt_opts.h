@@ -15,9 +15,11 @@
 #include <libzt/zt.h>
 
 BEGIN_C_DECLS
-typedef int (*opt_function)(void *);
-typedef int (*opt_ofunction)(char *, void *);
-typedef int (*opt_rfunction)(char *, void *);
+
+#define OPT_NSO -1
+#define OPT_NLO NULL
+
+typedef int (*opt_function)(char *, void *);
 
 typedef enum opt_types opt_types;
 enum opt_types {
@@ -34,12 +36,15 @@ enum opt_types {
 typedef struct opt_args opt_args;
 struct opt_args 
 {
-	int  opt;
-	char *long_opt;
-	char *description;
+	int  	  opt;
+	char 	* long_opt;
+	char 	* description;
 	opt_types type;
-	void *val;
-	char *usage;
+	
+	void	* val;
+	int 	(*fn)(char *, void *);
+	
+	char 	* usage;
 };
 
 extern int opts_process _(( int *argc, char **argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * data));
