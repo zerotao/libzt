@@ -91,6 +91,8 @@ BEGIN_C_DECLS
  *****/
 #define BLANK "%*s"
 
+#define NL "\n"
+
 /****d* CommonMacros/INDENT
  * NAME
  *   INDENT
