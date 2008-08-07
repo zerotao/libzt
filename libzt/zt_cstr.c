@@ -661,3 +661,23 @@ zt_cstr_dirname (char *npath, int len, const char *path)
 	memcpy(npath, path, MIN(dir_len, (len - 1)));
 	return(npath);
 }
+
+
+char *
+zt_cstr_path_append(const char *path1, const char *path2) 
+{
+	char	* rpath;
+	int		  len1;
+	int		  len2;
+	
+	len1 = strlen(path1);
+	len2 = strlen(path2);
+	
+	rpath = XMALLOC(char, len1 + len2 + 2);
+
+	memcpy(rpath, path1, len1);
+	rpath[len1] = PATH_SEPERATOR;
+	memcpy(rpath+len1+1, path2, len2);
+	
+	return rpath;
+}

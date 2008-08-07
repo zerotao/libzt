@@ -57,8 +57,7 @@ extern size_t zt_cstr_rcspn ( const char *s, const char *reject );
 /* Utility */
 extern char* zt_cstr_basename ( char *, int, const char*, const char* );
 extern char* zt_cstr_dirname ( char*, int, const char* );
-
-
+extern char* zt_cstr_path_append( const char *, const char * );
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/
