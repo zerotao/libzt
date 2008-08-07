@@ -75,38 +75,43 @@ print_default(opt_types type, void *value)
 
 void
 opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opts, int show_defaults){
-	int i = 0;
+	int 	  i = 0;
 	
-	fprintf(stderr, "Usage: %s %s\n", basename(argv[0]), option_string);
+	fprintf(stderr, "Usage: %s %s"NL, basename(argv[0]), option_string);
+
+	if(max_opts > 0) {
+		fprintf(stderr, NL"Options:"NL);
+	}
 	
 	for(i=0; i < max_opts; i++){
+		size_t		  offt;
 		if(opts[i].description != NULL){
 			if(isoptchar(opts[i].opt))
-				fprintf(stderr, "-%c", opts[i].opt);
+				offt = fprintf(stderr, BLANK "-%c", INDENT(1), opts[i].opt);
 #ifdef HAVE_GETOPT_LONG				
 			if(opts[i].long_opt){
 				if(isoptchar(opts[i].opt))
-					fprintf(stderr, ", --%s", opts[i].long_opt);
+					offt += fprintf(stderr, ", --%s", opts[i].long_opt);
 				else
-					fprintf(stderr, "    --%s", opts[i].long_opt);
+					offt += fprintf(stderr, "    --%s", opts[i].long_opt);
 			}
 #endif
-			fprintf(stderr, "\t%s", opts[i].description ? opts[i].description : "");
+			offt += fprintf(stderr, BLANK "%s", INDENT_TO(25, 5, offt), opts[i].description ? opts[i].description : "");
 			
 			if(show_defaults) {
 				print_default(opts[i].type, opts[i].val);
 			}
 			
 			if(opts[i].usage)
-				fprintf(stderr, "\t: %s\n", opts[i].usage);
+				fprintf(stderr, BLANK ": %s"NL, INDENT(1), opts[i].usage);
 			else
 				if(opts_usage_t[opts[i].type].desc) {
 					if(isoptchar(opts[i].opt))
-						fprintf(stderr, "\t: eg. -%c %s\n", opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+						fprintf(stderr, BLANK ": eg. -%c %s"NL, INDENT(1), opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
 					else
-						fprintf(stderr, "\t: eg. --%s %s\n", opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+						fprintf(stderr, BLANK ": eg. --%s %s"NL, INDENT(1), opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
 				} else {
-					fprintf(stderr, "\n");
+					fprintf(stderr, NL);
 				}
 		}
 	}
