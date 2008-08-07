@@ -87,7 +87,12 @@ extern log_ty *log_logger _(( log_ty * ));
 extern log_ty *log_debug_logger _(( log_ty * ));
 
 extern void log_lprintf _(( log_ty *, log_level, char *, ... )) FORMAT((printf, 3, 4));
+extern void log_lstrerror _(( log_ty *, log_level, int, char *, ... )) FORMAT((printf, 4, 5));
 extern void log_lvprintf _(( log_ty *, log_level, char *, va_list )) FORMAT((printf, 3, 0));
+
+
+#define log_strerror( level, errnum, fmt, args... )	\
+	log_lstrerror( 0, level, errnum, fmt, ##args )
 
 /****d* Logging/log_printf
  *  NAME
@@ -95,6 +100,7 @@ extern void log_lvprintf _(( log_ty *, log_level, char *, va_list )) FORMAT((pri
  *****/
 #define log_printf( level, fmt, args... ) \
 	log_lprintf( 0, level, fmt, ##args )
+
 
 /****d* Logging/log_vprintf
  *  NAME

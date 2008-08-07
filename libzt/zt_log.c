@@ -165,6 +165,40 @@ log_lvprintf ( log, level, fmt, ap )
 }
 
 void
+log_lstrerror ( log, level, errnum, fmt )
+	log_ty 		* log;
+    log_level     level;
+    int           errnum;
+    char		* fmt;
+{
+	va_list		  ap;
+	int			  llen;
+	char		* nfmt;
+
+	if(!log)
+		log = log_logger(NULL);
+
+	if(level > log->level)
+		return;
+	
+	llen = strlen(fmt);
+
+
+	nfmt = (char *)alloca(llen + 256);
+	memcpy(nfmt, fmt, llen);
+	nfmt[llen] = ':';
+	nfmt[llen+1] = ' ';
+	
+	strerror_r(errnum, nfmt+(llen+2), 255-2);
+	
+	va_start(ap, fmt);
+	log_lvprintf(log, level, nfmt, ap);
+	va_end(ap);
+	
+	//free(nfmt);
+}
+
+void
 _log_debug ( fmt )
      char *fmt;
 {
