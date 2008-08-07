@@ -43,6 +43,7 @@ extern int register_set_suite(struct zt_unit *unit);
 extern int register_stack_suite(struct zt_unit *unit);
 extern int register_time_suite(struct zt_unit *unit);
 extern int register_tree_suite(struct zt_unit *unit);
+extern int register_sha1_suite(struct zt_unit *unit);
 
 extern int register_coro_suite(struct zt_unit *unit);
 extern int register_cothread_suite(struct zt_unit *unit);
@@ -86,7 +87,8 @@ main(int argc, char *argv[])
 	register_stack_suite(unit);
 	register_time_suite(unit);
 	register_tree_suite(unit);
-
+	register_sha1_suite(unit);
+	
 	//register_adt_suite(unit);
 	//register_bytearray_suite(unit);	
 	//register_msg_queue_suite(unit);

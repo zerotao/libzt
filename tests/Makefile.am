@@ -33,7 +33,8 @@ unit_test_SOURCES = 	\
 	time_test.c	\
 	tree_test.c	\
 	coro_test.c	\
-	cothread_test.c	
+	cothread_test.c	\
+	sha1_test.c
 
 #	msg_queue_test.c
 #	bytearray_test.c

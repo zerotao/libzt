@@ -50,7 +50,8 @@ libzt_la_SOURCES = 		\
 	zt_event.c		\
 	zt_cothread.c		\
 	zt_gc.c			\
-	zt_int.c
+	zt_int.c		\
+	zt_sha1.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = \
@@ -73,7 +74,8 @@ pkginclude_HEADERS = \
 	zt_event.h		\
 	zt_cothread.h		\
 	zt_gc.h			\
-	zt_int.h
+	zt_int.h		\
+	zt_sha1.h
 
 
 # The following is required in the Makefile.am for common.h
