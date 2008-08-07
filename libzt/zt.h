@@ -90,6 +90,10 @@
 # define ENV_SEPERATOR ':'
 #endif
 
+#ifndef HEX_DIGITS
+# define HEX_DIGITS "0123456789abcdef"
+#endif
+
 
 /* Cover the cases where I am not using a GNU compiler */
 #if __GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)
