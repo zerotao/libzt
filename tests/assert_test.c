@@ -21,11 +21,15 @@ basic_tests(struct zt_unit_test *test, void *data)
 {
 	/* get rid of the log message for the moment */
 #warning "Hiding log messages for assertions"
-	log_ty *log = log_file("/dev/null", 0, 0);
-	log_logger(log);
+	log_ty	* olog;
+	log_ty 	* log = log_file("/dev/null", 0, 0);
+	
+	olog = log_logger(log);
 	
 	assert(1==1);			/* will produce a warning: statement with no effect which is too true */
 	ZT_UNIT_ASSERT_RAISES(test, assertion_failed, assert(1==0));
+
+	log_logger(olog);
 }
 
 int
