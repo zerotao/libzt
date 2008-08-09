@@ -23,6 +23,7 @@
 #include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
+#include "zt_log.h"
 
 /*! 
  * generate an index based on an index statement i and length len
@@ -680,4 +681,65 @@ zt_cstr_path_append(const char *path1, const char *path2)
 	memcpy(rpath+len1+1, path2, len2);
 	
 	return rpath;
+}
+
+void
+zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen) 
+{
+	size_t		  n;
+	char		* dptr = hex;
+	
+	for(n=0; (n < dlen) && (n < (hlen - 1)); n++, dptr+=2) {
+		uint8_t		  c = ((uint8_t *)data)[n];
+		
+		dptr[0] = HEX_DIGITS[((c >> 4) & 0xF)];
+		dptr[1] = HEX_DIGITS[(c & 0xF)];
+	}
+	hex[hlen] = '\0';
+}
+
+static int8_t hex_to_char(char hex) 
+{
+	uint8_t		  c = hex;
+	
+	if (c >= '0' && c <= '9') {
+		c = c - 48;
+	} else if (c >= 'A' && c <= 'F') {
+		c = c - 55;  /* 65 - 10 */
+	} else if (c >= 'a' && c <= 'f') {
+		c = c - 87;  /* 97 - 10 */
+	} else {
+		return -1;
+	}
+	return c;
+}
+
+int
+zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen) 
+{
+	size_t		  n;
+	size_t		  y;
+
+	assert(dlen >= hlen / 2);
+
+	for(n=0, y=0; n < hlen && hex[n] != '\0' && y < dlen; n++) {
+		int8_t		  c = hex_to_char(hex[n]);
+		int8_t		  c2;
+		int8_t		  cc = 0;
+
+		if (c == -1) {
+			continue;
+		}
+		
+		if ((c2 = hex_to_char(hex[n+1])) == -1) {
+			log_printf(log_err, "ivalid hex value %c%c", hex[n], hex[n+1]);
+			return -1;
+		}
+		
+		cc = (c << 4) | (c2 & 0xF);
+		((char *)data)[y++] = (char)cc;
+		
+		n++;
+	}
+	return y;
 }

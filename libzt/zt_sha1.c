@@ -164,20 +164,17 @@ zt_sha1_data(void *data, size_t len, uint8_t digest[20])
 char*
 zt_sha1_tostr(uint8_t digest[20], char sha1[41])
 {
-	int		  i;
-	int		  j;
-	char	* dptr = sha1;
-
-	for (i=0; i<20; i++, dptr+=2) {
-		uint8_t		  c = digest[i];
-		
-		dptr[0] = HEX_DIGITS[((c >> 4) & 0xF)];
-		dptr[1] = HEX_DIGITS[(c & 0xF)];
-	}
-	
-	sha1[40] = '\0';	
+	zt_binary_to_hex(digest, 20, sha1, 41);
 	return sha1;
 }
+
+uint8_t *
+zt_str_tosha1(char sha1[41], uint8_t digest[20])
+{
+	zt_hex_to_binary(sha1, 41, digest, 20);
+	return digest;
+}
+
 
 
 

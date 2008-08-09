@@ -12,6 +12,7 @@
 #ifndef _ZT_STRINGS_H_
 #define _ZT_STRINGS_H_
 
+#include <stdint.h>
 #include <unistd.h>
 #include <stdarg.h>
 #include <libzt/zt.h>
@@ -58,6 +59,10 @@ extern size_t zt_cstr_rcspn ( const char *s, const char *reject );
 extern char* zt_cstr_basename ( char *, int, const char*, const char* );
 extern char* zt_cstr_dirname ( char*, int, const char* );
 extern char* zt_cstr_path_append( const char *, const char * );
+
+extern void zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
+extern int zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
+
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/
