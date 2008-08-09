@@ -683,19 +683,21 @@ zt_cstr_path_append(const char *path1, const char *path2)
 	return rpath;
 }
 
-void
+size_t
 zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen) 
 {
 	size_t		  n;
 	char		* dptr = hex;
 	
-	for(n=0; (n < dlen) && (n < (hlen - 1)); n++, dptr+=2) {
+	for(n=0; (n < dlen) && ((n * 2) < (hlen - 1)); n++, dptr+=2) {
 		uint8_t		  c = ((uint8_t *)data)[n];
 		
 		dptr[0] = HEX_DIGITS[((c >> 4) & 0xF)];
 		dptr[1] = HEX_DIGITS[(c & 0xF)];
 	}
 	hex[hlen] = '\0';
+	
+	return n * 2;
 }
 
 static int8_t hex_to_char(char hex) 
@@ -714,16 +716,30 @@ static int8_t hex_to_char(char hex)
 	return c;
 }
 
-int
-zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen) 
+/*
+ * convert a hex string to binary
+ * hex - points to a null terminated nex string
+ * data - points to the location to store the converted data which
+ *        should be 2 times the size of the hex values in hex
+ * dlen = holds the length of data
+ *
+ * returns - -1 on error and number of bytes in data on success
+ * --
+ * if called with a NULL data will return the number of bytes required
+ * to convert all data in hex.
+ */
+size_t
+zt_hex_to_binary(char *hex, void *data, size_t dlen) 
 {
 	size_t		  n;
 	size_t		  y;
 
-	assert(dlen >= hlen / 2);
-
-	for(n=0, y=0; n < hlen && hex[n] != '\0' && y < dlen; n++) {
-		int8_t		  c = hex_to_char(hex[n]);
+	if (data == NULL) {
+		dlen = -1;
+	}
+	
+	for(n=0, y=0; *hex != '\0' && y < dlen; n++) {
+		int8_t		  c = hex_to_char(*hex++);
 		int8_t		  c2;
 		int8_t		  cc = 0;
 
@@ -731,15 +747,17 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
 			continue;
 		}
 		
-		if ((c2 = hex_to_char(hex[n+1])) == -1) {
-			log_printf(log_err, "ivalid hex value %c%c", hex[n], hex[n+1]);
+		if ((c2 = hex_to_char(*hex++)) == -1) {
+			log_printf(log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
 			return -1;
 		}
 		
 		cc = (c << 4) | (c2 & 0xF);
-		((char *)data)[y++] = (char)cc;
 		
-		n++;
+		if (data != NULL) {
+			((char *)data)[y] = (char)cc;
+		}
+		y++;
 	}
 	return y;
 }

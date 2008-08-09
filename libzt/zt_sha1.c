@@ -171,10 +171,6 @@ zt_sha1_tostr(uint8_t digest[20], char sha1[41])
 uint8_t *
 zt_str_tosha1(char sha1[41], uint8_t digest[20])
 {
-	zt_hex_to_binary(sha1, 41, digest, 20);
+	zt_hex_to_binary(sha1, digest, 20);
 	return digest;
 }
-
-
-
-

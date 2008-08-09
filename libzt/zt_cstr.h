@@ -60,8 +60,8 @@ extern char* zt_cstr_basename ( char *, int, const char*, const char* );
 extern char* zt_cstr_dirname ( char*, int, const char* );
 extern char* zt_cstr_path_append( const char *, const char * );
 
-extern void zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
-extern int zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
+extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
+extern size_t zt_hex_to_binary(char *hex, void *data, size_t dlen);
 
 
 END_C_DECLS

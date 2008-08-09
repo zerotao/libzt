@@ -32,6 +32,10 @@ basic_tests(struct zt_unit_test *test, void *data)
 	char 	  dname[255];
 	char	* free_me;
 	char	* free_me2;
+	char	* hex = "34aa973cd4c4daa4f61eeb2bdbad27316534016f";
+	char	  digest[20];
+	char	  hex2[41];
+	
   
 	zt_cstr_chomp(chomp_test);
 	ZT_UNIT_ASSERT(test, (strlen(chomp_test) == 5));
@@ -92,6 +96,11 @@ basic_tests(struct zt_unit_test *test, void *data)
 	ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, -4, 0, interface, 6, 10) == 0);
 
 	ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, -4, -1, interface, 6, 10) == -1);
+
+	ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, digest, 20) == 20);
+	ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, NULL, 0) == 20);
+	ZT_UNIT_ASSERT(test, zt_binary_to_hex(digest, 20, hex2, 41) == 40);
+	ZT_UNIT_ASSERT(test, memcmp(hex2, hex, 40) == 0);
 }
 
 int
