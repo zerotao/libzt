@@ -718,7 +718,8 @@ static int8_t hex_to_char(char hex)
 
 /*
  * convert a hex string to binary
- * hex - points to a null terminated nex string
+ * hex - points to a (possibly) null terminated hex string
+ * hlen - amount of hex to process
  * data - points to the location to store the converted data which
  *        should be 2 times the size of the hex values in hex
  * dlen = holds the length of data
@@ -729,7 +730,7 @@ static int8_t hex_to_char(char hex)
  * to convert all data in hex.
  */
 size_t
-zt_hex_to_binary(char *hex, void *data, size_t dlen) 
+zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen) 
 {
 	size_t		  n;
 	size_t		  y;
@@ -738,7 +739,7 @@ zt_hex_to_binary(char *hex, void *data, size_t dlen)
 		dlen = -1;
 	}
 	
-	for(n=0, y=0; *hex != '\0' && y < dlen; n++) {
+	for(n=0, y=0; n < hlen && *hex != '\0' && y < dlen; n++) {
 		int8_t		  c = hex_to_char(*hex++);
 		int8_t		  c2;
 		int8_t		  cc = 0;
@@ -750,6 +751,8 @@ zt_hex_to_binary(char *hex, void *data, size_t dlen)
 		if ((c2 = hex_to_char(*hex++)) == -1) {
 			log_printf(log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
 			return -1;
+		} else {
+			n++;
 		}
 		
 		cc = (c << 4) | (c2 & 0xF);
