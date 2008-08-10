@@ -20,8 +20,7 @@
 #include "zt_log/log_private.h"
 
 log_ty *
-log_logger ( log )
-     log_ty *log;
+log_logger (log_ty *log)
 {
   static log_ty *log_log_ptr = NULL;
   static int forced = 0;
@@ -41,8 +40,7 @@ log_logger ( log )
 }
 
 log_ty *
-log_debug_logger ( log )
-     log_ty *log;
+log_debug_logger (log_ty *log)
 {
   static log_ty *log_debug_ptr = NULL;
   static int forced = 0;
@@ -62,9 +60,7 @@ log_debug_logger ( log )
 }
 
 log_level
-log_set_level ( log, level )
-     log_ty *log;
-     log_level level;
+log_set_level (log_ty *log, log_level level)
 {
   log_level olevel;
   olevel = log->level;
@@ -73,16 +69,13 @@ log_set_level ( log, level )
 }
 
 log_level
-log_get_level ( log )
-     log_ty *log;
+log_get_level (log_ty *log)
 {
   return log->level;
 }
 
 unsigned int 
-log_set_opts ( log, opts )
-     log_ty *log;
-     unsigned int opts;
+log_set_opts (log_ty *log, unsigned int opts)
 {
   unsigned int oopts;
   
@@ -92,19 +85,13 @@ log_set_opts ( log, opts )
 }
 
 unsigned int
-log_get_opts( log )
-     log_ty *log;
+log_get_opts(log_ty *log)
 {
-
   return log->opts;
 }
 
 void
-log_set_debug_info ( log, file, line, func )
-     log_ty *log;
-     const char *file;
-     int line;
-     const char *func;
+log_set_debug_info (log_ty *log, const char *file, int line, const char *func)
 {
 	if(!log)
 		log = log_logger(NULL);
@@ -115,11 +102,7 @@ log_set_debug_info ( log, file, line, func )
 }
 
 void
-log_get_debug_info ( log, file, line, func )
-     log_ty *log;
-     char **file;
-     int *line;
-     char **func;
+log_get_debug_info (log_ty *log, char **file, int *line, char **func)
 {
 	if(!log)
 		log = log_logger(NULL);
@@ -130,10 +113,7 @@ log_get_debug_info ( log, file, line, func )
 }
 
 void
-log_lprintf ( log, level, fmt )
-     log_ty *log;
-     log_level level;
-     char *fmt;
+log_lprintf (log_ty *log, log_level level, char *fmt, ...)
 {
   va_list ap;
 
@@ -148,11 +128,7 @@ log_lprintf ( log, level, fmt )
 }
 
 void
-log_lvprintf ( log, level, fmt, ap )
-     log_ty *log;
-     log_level level;
-     char *fmt;
-     va_list ap;
+log_lvprintf (log_ty *log, log_level level, char *fmt, va_list ap)
 {
   if(!log)
     log = log_logger(NULL);
@@ -165,11 +141,7 @@ log_lvprintf ( log, level, fmt, ap )
 }
 
 void
-log_lstrerror ( log, level, errnum, fmt )
-	log_ty 		* log;
-    log_level     level;
-    int           errnum;
-    char		* fmt;
+log_lstrerror (log_ty *log, log_level level, int errnum, char *fmt, ...)
 {
 	va_list		  ap;
 	int			  llen;
@@ -199,8 +171,7 @@ log_lstrerror ( log, level, errnum, fmt )
 }
 
 void
-_log_debug ( fmt )
-     char *fmt;
+_log_debug (char *fmt, ...)
 {
   va_list ap;
   log_level level = log_debug;
@@ -214,9 +185,7 @@ _log_debug ( fmt )
 }
 
 void
-_log_vdebug ( fmt, ap )
-     char *fmt;
-     va_list ap;
+_log_vdebug (char *fmt, va_list ap)
 {
   log_level level = log_debug;
   log_ty *log = log_debug_logger(NULL);
@@ -230,8 +199,7 @@ _log_vdebug ( fmt, ap )
 
 
 void
-log_close( log )
-     log_ty *log;
+log_close(log_ty *log)
 {
   if(log->vtbl->destructor)
     log->vtbl->destructor(log);

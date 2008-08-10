@@ -24,8 +24,7 @@ struct log_file_ty {
   FILE    *file;
 };
 
-static void destructor ( log )
-     log_ty *log;
+static void destructor (log_ty *log)
 {
   log_file_ty *this = (log_file_ty *)log;
   fclose(this->file);
@@ -33,11 +32,7 @@ static void destructor ( log )
 }
 
 static void
-print ( log, level, fmt, ap )
-     log_ty    *log;
-     log_level level;
-     char      *fmt;
-     va_list   ap;
+print (log_ty *log, log_level level, char *fmt, va_list ap)
 {
   char *nfmt = NULL;
   log_file_ty *this = (log_file_ty *)log;
@@ -55,10 +50,7 @@ static log_vtbl_ty vtbl = {
 };
 
 log_ty *
-log_file( file, fopts, lopts )
-     char *file;
-     int  fopts;
-     int  lopts;
+log_file(char *file, int  fopts, int  lopts)
 {
   log_file_ty *this;
   log_ty      *result;

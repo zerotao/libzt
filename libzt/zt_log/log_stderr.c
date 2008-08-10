@@ -17,18 +17,13 @@
 #include "../zt.h"
 #include "log_private.h"
 
-static void destructor ( log )
-    log_ty *log;
+static void destructor (log_ty *log)
 {
 	XFREE(log);
 	return;
 }
 
-static void print ( log, level, fmt, ap)
-     log_ty    *log;
-     log_level level;
-     char      *fmt;
-     va_list   ap;
+static void print (log_ty *log, log_level level, char *fmt, va_list ap)
 {
   char *nfmt = log_gen_fmt( log, fmt, level, log->opts);
   vfprintf(stderr, nfmt, ap);
@@ -43,8 +38,7 @@ static log_vtbl_ty vtbl = {
 };
 
 log_ty *
-log_stderr( opts)
-     unsigned int opts;
+log_stderr(unsigned int opts)
 {
     return log_new(&vtbl, opts);
 }

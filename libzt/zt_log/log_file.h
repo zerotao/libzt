@@ -21,8 +21,7 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-extern log_ty *
-log_file _(( char *, int, int ));
+extern log_ty *log_file (char *name, int fopts, int lopts);
 
 #ifdef __cplusplus
 }

@@ -16,19 +16,14 @@
 
 #include "log_private.h"
 
-static void destructor ( log )
-    log_ty *log;
+static void destructor (log_ty *log)
 {
 	closelog();
 	XFREE(log);
 	return;
 }
 
-static void print( log, level, fmt, ap )
-log_ty	 	 *log;
-log_level	  level;
-char		 *fmt;
-va_list		  ap;
+static void print(log_ty *log, log_level level, char *fmt, va_list ap)
 {
 	int syslog_level = 0;
 	switch(level){
@@ -71,15 +66,13 @@ static log_vtbl_ty vtbl = {
 };
 
 log_ty *
-log_syslog( void )
+log_syslog(void)
 {
 	return log_syslog2(LOG_WITH_PID, LOG_USER);
 }
 
 log_ty *
-log_syslog2( opt, facility )
-int	  opt;
-int	  facility;
+log_syslog2(int opt, int facility)
 {
 	char	 *name = progname(0, 0);
 	int	  sysopts = 0;

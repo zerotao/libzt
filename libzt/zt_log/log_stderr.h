@@ -18,8 +18,7 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-extern log_ty *
-log_stderr ( unsigned int );
+extern log_ty *log_stderr (unsigned int opts);
 
 #ifdef __cplusplus
 }

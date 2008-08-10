@@ -45,9 +45,7 @@ log_level_desc_ty log_level_desc[] = {
 };
 
 log_ty*
-log_new ( vptr, opts )
-  log_vtbl_ty *vptr;
-  unsigned int opts;
+log_new (log_vtbl_ty *vptr, unsigned int opts)
 {
   log_ty *result;
 
@@ -66,11 +64,7 @@ log_new ( vptr, opts )
 }
 
 char*
-log_gen_fmt ( log, fmt, level, opts )
-     log_ty        *log;
-     char          *fmt;
-     log_level     level;
-     unsigned int  opts;
+log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
 {
   int len = 0;
   char *buff = NULL;

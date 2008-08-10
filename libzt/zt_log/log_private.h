@@ -46,12 +46,12 @@ typedef struct log_vtbl_ty log_vtbl_ty;
 struct log_vtbl_ty {
   size_t size;
   /* virtual function pointers */
-  void (* destructor)(log_ty *);
-  void (* print)(log_ty *, log_level, char *, va_list ap);
+  void (* destructor)(log_ty *log);
+  void (* print)(log_ty *log, log_level level, char *fmt, va_list ap);
 };
 
-log_ty *log_new (log_vtbl_ty *, unsigned int);
-char* log_gen_fmt _(( log_ty *, char*, log_level, unsigned int ));
+log_ty *log_new (log_vtbl_ty *vptr, unsigned int opts);
+char* log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int opts);
 
 #ifdef __cplusplus
 }

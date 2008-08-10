@@ -26,9 +26,7 @@
 static char _progname[PATH_MAX];
 
 char *
-progname ( name, opts )
-     char *name;
-     int opts;
+progname (char *name, int opts)
 {
 	if(name){
 		memset(_progname, '\0', PATH_MAX);
