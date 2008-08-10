@@ -683,20 +683,22 @@ zt_cstr_path_append(const char *path1, const char *path2)
 	return rpath;
 }
 
+/* converts binary data to a hex string
+ * it does not NULL terminate the string
+ */
 size_t
 zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen) 
 {
 	size_t		  n;
 	char		* dptr = hex;
 	
-	for(n=0; (n < dlen) && ((n * 2) < (hlen - 1)); n++, dptr+=2) {
+	for(n=0; (n < dlen) && ((n * 2) < hlen); n++, dptr+=2) {
 		uint8_t		  c = ((uint8_t *)data)[n];
-		
-		dptr[0] = HEX_DIGITS[((c >> 4) & 0xF)];
-		dptr[1] = HEX_DIGITS[(c & 0xF)];
-	}
-	hex[hlen] = '\0';
-	
+		if(hex != NULL) {
+			dptr[0] = HEX_DIGITS[((c >> 4) & 0xF)];
+			dptr[1] = HEX_DIGITS[(c & 0xF)];
+		}
+	}	
 	return n * 2;
 }
 
