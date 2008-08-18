@@ -84,7 +84,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 	}
 	
 	for(i=0; i < max_opts; i++){
-		size_t		  offt;
+		size_t		  offt = 0;
 		if(opts[i].description != NULL){
 			if(isoptchar(opts[i].opt))
 				offt = fprintf(stderr, BLANK "-%c", INDENT(1), opts[i].opt);
@@ -93,10 +93,10 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 				if(isoptchar(opts[i].opt))
 					offt += fprintf(stderr, ", --%s", opts[i].long_opt);
 				else
-					offt += fprintf(stderr, "    --%s", opts[i].long_opt);
+					offt += fprintf(stderr, BLANK "    --%s", INDENT(1), opts[i].long_opt);
 			}
 #endif
-			offt += fprintf(stderr, BLANK "%s", INDENT_TO(25, 5, offt), opts[i].description ? opts[i].description : "");
+			offt += fprintf(stderr, BLANK "%s", INDENT_TO(30, 5, offt), opts[i].description ? opts[i].description : "");
 			
 			if(show_defaults) {
 				print_default(opts[i].type, opts[i].val);
