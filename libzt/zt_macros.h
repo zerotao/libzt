@@ -122,16 +122,16 @@ BEGIN_C_DECLS
 
 
 #define BIT_SET(target, bit) \
-	(target) |= (bit)
+	((target) |= (bit))
 
 #define BIT_UNSET(target, bit) \
-	(target) &= ~(bit)
+	((target) &= ~(bit))
 
 #define BIT_ISSET(target, bit) \
-	((target) & (bit)) ? TRUE : FALSE
+	(((target) & (bit)) ? TRUE : FALSE)
 
 #define BIT_ISUNSET(target, bit) \
-	BIT_ISSET(target, bit) ? FALSE : TRUE
+	(BIT_ISSET(target, bit) ? FALSE : TRUE)
 
 END_C_DECLS
 #endif /*_ZT_MACROS_H_*/
