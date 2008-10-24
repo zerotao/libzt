@@ -6,6 +6,7 @@
 
 /* SHA-1 origional by Steve Reid <steve@edmweb.com> */
 #include "zt_sha1.h"
+#include "zt_cstr.h"
 
 typedef union {
 	uint8_t	  	  c[64];

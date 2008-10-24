@@ -18,14 +18,14 @@
 struct zt_event_elt {
 	zt_rbt_node		  node;
 	
-	zt_event_enum		  type;
-	int	  		  fd;
+	zt_event_enum	  type;
+	int	  			  fd;
 	
 	long			  tod;
 	
-	zt_event_io_cb		* read_cb;
-	zt_event_io_cb		* write_cb;
-	zt_event_io_cb		* except_cb;
+	zt_event_io_cb	* read_cb;
+	zt_event_io_cb	* write_cb;
+	zt_event_io_cb	* except_cb;
 	
 	void			* read_data;
 	void			* write_data;
@@ -40,16 +40,16 @@ typedef struct zt_event_sys_select zt_event_sys_select;
 struct zt_event_sys_select {
 	struct zt_event_sys	  sys;
 
-	int			  max_fd;
+	int					  max_fd;
 	
-	fd_set			  read_set;
-	fd_set			  write_set;
-	fd_set			  except_set;
+	fd_set				  read_set;
+	fd_set				  write_set;
+	fd_set				  except_set;
 
-	zt_rbt			* io_head;
+	zt_rbt				* io_head;
 	
-	zt_rbt			* timer_events;
-	zt_rbt			* signal_events;
+	zt_rbt				* timer_events;
+	zt_rbt				* signal_events;
 
 };
 
@@ -63,9 +63,9 @@ static int
 register_io(zt_event_sys sys, int fd, zt_event_enum type, zt_event_io_cb cb, void *data)
 {
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
-	struct zt_event_elt		* eltp;
-	struct zt_event_elt		  elt;
-	zt_rbt_node			* nodep;
+	struct zt_event_elt			* eltp;
+	struct zt_event_elt			  elt;
+	zt_rbt_node					* nodep;
 
 	elt.fd = fd;
 	
@@ -110,9 +110,9 @@ static int
 remove_io(zt_event_sys sys, int fd, zt_event_enum type) /* , zt_event_io_cb cb, void *data) */
 {
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
-	struct zt_event_elt		  elt;
-	struct zt_event_elt		* eltp;
-	zt_rbt_node			* nodep;
+	struct zt_event_elt			  elt;
+	struct zt_event_elt			* eltp;
+	zt_rbt_node				* nodep;
 	
 	elt.fd = fd;	
 	nodep = zt_rbt_find(&ess->io_head, &elt.node,  elt_cmp);
@@ -187,8 +187,8 @@ register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, voi
 {
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
 	struct zt_timer_node		* new;
-	zt_rbt_node			* nodep;
-	struct timeval			  ntime;
+	zt_rbt_node					* nodep;
+	struct timeval				  ntime;
 	
 	assert(ess);
 	assert(time);
@@ -224,7 +224,7 @@ remove_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void 
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
 	struct zt_timer_node		  node;
 	struct zt_timer_node		* eltp;
-	zt_rbt_node			* nodep;
+	zt_rbt_node					* nodep;
 	
 	assert(time);
 	assert(ess);
@@ -246,9 +246,9 @@ remove_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void 
 
 
 static void reset_fd_sets(fd_set *read_set, fd_set *orig_read_set,
-			  fd_set *write_set, fd_set *orig_write_set,
-			  fd_set *except_set, fd_set *orig_except_set,
-			  zt_event_flags flags)
+						  fd_set *write_set, fd_set *orig_write_set,
+						  fd_set *except_set, fd_set *orig_except_set,
+						  zt_event_flags flags)
 {
 
 	FD_ZERO(read_set);
@@ -256,17 +256,17 @@ static void reset_fd_sets(fd_set *read_set, fd_set *orig_read_set,
 	FD_ZERO(except_set);
 	
 	if(flags & ZT_READ_EVENTS) {
-	  *read_set = *orig_read_set;
+		*read_set = *orig_read_set;
 		/* FD_COPY(orig_read_set, read_set); */
 	}
 
 	if(flags & ZT_WRITE_EVENTS) {
-	  *write_set = *orig_write_set;
+		*write_set = *orig_write_set;
 		/* FD_COPY(orig_write_set, write_set); */
 	}
 
 	if(flags & ZT_EXCEPT_EVENTS) {
-	  *except_set = *orig_except_set;
+		*except_set = *orig_except_set;
 		/* FD_COPY(orig_except_set, except_set); */
 	}
 
@@ -294,9 +294,9 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 	}	
 
 	reset_fd_sets(&read_set, &ess->read_set,
-		      &write_set, &ess->write_set,
-		      &except_set, &ess->except_set,
-		      flags);
+				  &write_set, &ess->write_set,
+				  &except_set, &ess->except_set,
+				  flags);
 	
 	while((result = select(ess->max_fd + 1, &read_set, &write_set,
 						   &except_set, &timeout)) != -1) {
@@ -377,9 +377,9 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 		}
 		
 		reset_fd_sets(&read_set, &ess->read_set,
-			      &write_set, &ess->write_set,
-			      &except_set, &ess->except_set,
-			      flags);
+					  &write_set, &ess->write_set,
+					  &except_set, &ess->except_set,
+					  flags);
 	}
 	
 	
@@ -467,7 +467,7 @@ static int gtimer_cmp(zt_rbt_node *n1, zt_rbt_node *n2)
 
 static void recalc_min_interval(zt_event_sys sys) {
 	struct zt_event_sys_select	* ess = (struct zt_event_sys_select *)sys;
-	zt_rbt_node			* nodep;
+	zt_rbt_node					* nodep;
 		
 	nodep = zt_rbt_min(&ess->timer_events);
 	if(nodep) {

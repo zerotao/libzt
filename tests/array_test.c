@@ -8,7 +8,7 @@ int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-	int	  i, n, v;
+	int	  i, n;
 	int	* pv;
 	
 	zt_array array = zt_array_new(10, sizeof(int));

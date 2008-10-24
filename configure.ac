@@ -23,7 +23,7 @@ AC_PROG_CC
 
 dnl Add -Wall if gcc
 if test "$GCC" = "yes"; then
-   CFLAGS="-Wall -fkeep-inline-functions"
+   CFLAGS="-Wall -fkeep-inline-functions -fno-strict-aliasing"
 fi
 
 AC_PROG_CPP
@@ -31,8 +31,6 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AM_PROG_LIBTOOL
-
-CFLAGS="-fno-strict-aliasing"
 
 case $host in
 	*-*-darwin*)

@@ -56,7 +56,6 @@ main(int argc, char *argv[])
 	struct zt_unit			* unit;
 	struct zt_unit_suite	* suite1;
 	struct zt_unit_test		* test1;
-	int						  result;
 	
 	unit = zt_unit_init();
 

@@ -197,7 +197,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	/*Test Unwind Protect*/
 	{
 		char *unwind = Fail;
-		char *dummy = Fail;
+		//char *dummy = Fail;
 		
 		DO_TRY
 			UNWIND_PROTECT({

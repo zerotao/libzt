@@ -110,6 +110,16 @@
 # define INLINE    
 #endif
 
+#if defined (_WIN32)
+# if defined libzt_EXPORTS
+#  define ZT_EXTERN __declspec(dllexport)
+# else	/* SHARED_LIB */
+#  define ZT_EXTERN __declspec(dllimport)
+# endif
+#else  /* _WIN32 */
+# define ZT_EXTERN
+#endif	/* _WIN32 */
+
 #ifndef __GNUC__
 # define __FUNCTION__        ""
 # define __PRETTY_FUNCTION__ ""

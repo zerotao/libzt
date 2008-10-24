@@ -18,7 +18,7 @@ extern char    * arithmetic_overflow;
 extern char    * arithmetic_divide_by_zero;
 
 #define IS_SIGNED(u) ((u)-1 < 0)
-#define SAME_SIGN(u,v) (!((u) ^ (v) < 0))
+#define SAME_SIGN(u,v) (!(((u) ^ (v)) < 0))
 
 #define UNSIGNED_ADD(ltype, sltype, sutype)                              	\
         INLINE static ltype CONC(sltype,_add)(ltype lhs,                         	\
@@ -121,6 +121,7 @@ SIGNED_SUB(signed long, long, LONG);
 		if(((_tmp) >> (sizeof(ltype) * 8)) > 0) {			\
 			THROW(arithmetic_overflow);				\
 		}								\
+		return _tmp;					\
 	}									\
 	
 UNSIGNED_MUL(unsigned char, uchar, UCHAR, unsigned int);
@@ -142,8 +143,8 @@ UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long);
 				if(IS_SIGNED(rhs) ||				\
 				   IS_SIGNED(lhs)) 				\
 				{						\
-					if((_tmp & 0xffffffff80000000LL != 0) && \
-					   (_tmp & 0xffffffff80000000LL != 0xffffffff80000000LL)) { \
+					if(((_tmp & 0xffffffff80000000LL) != 0) &&			\
+					   ((_tmp & 0xffffffff80000000LL) != 0xffffffff80000000LL)) { \
 						THROW(arithmetic_overflow) 	\
 					}					\
 				} else {					\
@@ -155,8 +156,8 @@ UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long);
 			case 2:							\
 				if(IS_SIGNED(rhs) ||				\
 				   IS_SIGNED(lhs)) {				\
-					if((_tmp & 0xffff8000 != 0) &&		\
-					   (_tmp & 0xffff8000 != 0xffff8000)) { \
+					if(((_tmp & 0xffff8000) != 0) &&		\
+					   ((_tmp & 0xffff8000) != 0xffff8000)) {	\
 						THROW(arithmetic_overflow); 	\
 					}					\
 				} else {					\
@@ -169,8 +170,8 @@ UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long);
 				if(IS_SIGNED(rhs) ||				\
 				   IS_SIGNED(lhs))				\
 				{						\
-					if((_tmp & 0xff80 != 0) &&		\
-					   (_tmp & 0xff80 != 0xff80)) {		\
+					if(((_tmp & 0xff80) != 0) &&		\
+					   ((_tmp & 0xff80) != 0xff80)) {	\
 						THROW(arithmetic_overflow); 	\
 					}					\
 				} else {					\

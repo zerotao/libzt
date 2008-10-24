@@ -7,7 +7,8 @@ EXAMPLE_APPS = 		\
 	events		\
 	mem_pools	\
 	mem_timing	\
-	types
+	types			\
+	coro_io
 
 all: $(EXAMPLE_APPS)
 

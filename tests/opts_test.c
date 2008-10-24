@@ -36,7 +36,6 @@ ofunc (char *arg, void * data)
 int
 rfunc (char * arg, void * data)
 {
-	int i = 0;
 	printf("rfunc %s\n", arg);
 	return EXIT_SUCCESS;	
 }
@@ -53,7 +52,6 @@ static char *s_argv[] = {"unit_test",
 static void
 basic_opts_tests(struct zt_unit_test *test, void *data)
 {
-	int				  offt;
 	int				  argc = 7;
 	char			**argv;
 	char			**pargv;

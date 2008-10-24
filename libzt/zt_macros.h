@@ -11,6 +11,8 @@
 #ifndef _ZT_MACROS_H_
 #define _ZT_MACROS_H_
 
+#include <libzt/zt.h>
+
 BEGIN_C_DECLS
 
 /****d* CommonMacros/ABS
@@ -112,7 +114,7 @@ BEGIN_C_DECLS
  * NAME
  *   INDENT_PAD
  *****/
-#define INDENT_PAD(lvl,step,pad) (((lvl) * step) + (pad)), ""
+#define INDENT_PAD(lvl,step,pad) ((int)(((lvl) * step) + (pad))), ""
 
 /******
  * Apply macros

@@ -67,13 +67,13 @@ pkginclude_HEADERS = \
 	zt_log.h		\
 	zt_mem.h		\
 	zt_opts.h		\
-	zt_progname.h		\
+	zt_progname.h	\
 	zt_cstr.h		\
 	zt_time.h		\
 	zt_coro.h		\
-        zt_macros.h		\
+    zt_macros.h		\
 	zt_event.h		\
-	zt_cothread.h		\
+	zt_cothread.h	\
 	zt_gc.h			\
 	zt_int.h		\
 	zt_sha1.h		\

@@ -10,10 +10,10 @@
 #include <libzt/zt_unit.h>
 
 struct io_request {
-    int   fd;
-    int   bsize;
-    int   rlen;
-    int   result;
+    int   	  fd;
+    int 	  bsize;
+    int 	  rlen;
+    int 	  result;
     char    * buffer;
 };
 
@@ -21,37 +21,7 @@ struct test_data {
 	struct zt_unit_test	* test;
 	int				  	  i;
 };
-	
-void *_call_read(zt_coro_ctx *ctx, void *data) 
-{
-    struct io_request   * req = (struct io_request *)data;
-    int           res = 0;
-    
-    while((res = read(req->fd, req->buffer, req->bsize)) != 0) {
-        if(res == -1) {
-            switch(errno){
-                case EAGAIN:
-                case EINTR:
-                    req->rlen = 0;
-                    req->result = 0;
-                    zt_coro_yield(ctx, data);
-                    break;
-                default:
-                    req->rlen = 0;
-                    req->result = errno;
-                    zt_coro_exit(ctx, data);
-                    break;
-            }
-        } else {
-            req->rlen = res;
-            req->result = 0;
-            zt_coro_yield(ctx, data);
-        }
-    }
-    req->rlen = res;
-    req->result = -1;
-    return data;
-}
+
 
 void *_call2(zt_coro_ctx *ctx, void *data) 
 {
@@ -120,23 +90,16 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
     zt_coro         	* co;
-    zt_coro         	* read_coro;
 	zt_coro_ctx			  ctx;
 	
-    int           	  i;
-    struct io_request     r1;
-    struct io_request     r2;
-    char              	  b1[1024];
-    char              	  b2[1024];
-    struct except_Frame * stack = _except_Stack;
-    struct test_data	  td;
+	struct except_Frame * stack = _except_Stack;
+	struct test_data	  td;
 	struct test_data	* tdp;
 	
     /* Stacks using the "Default" minimum stack size should not
      * make any use of zt_except (it expects alot more stack to be available
      */
 	zt_coro_init_ctx(&ctx);
-    //co = zt_coro_create(&ctx, _call1, 0, ZT_CORO_MIN_STACK_SIZE + 2048);
 	co = zt_coro_create(&ctx, _call1, 0, ZT_CORO_MIN_STACK_SIZE);
 		
     if(co == NULL) {
@@ -165,28 +128,6 @@ basic_tests(struct zt_unit_test *test, void *data)
        no need to delete it */
     /* zt_coro_delete(co); */
     ZT_UNIT_ASSERT(test, stack == _except_Stack);
-    
-    read_coro = zt_coro_create(&ctx, _call_read, 0, ZT_CORO_MIN_STACK_SIZE);
-
-    r1.fd = 0;
-    r1.buffer = b1;
-    r1.bsize = sizeof(b1);
-    memset(b1, 0, sizeof(b1));
-    fcntl(0, F_SETFL, O_NONBLOCK);
-    
-    /* 
-     * r2.fd = XX;
-     * r1.buffer = b2;
-     * r2.bsize = sizeof(b2);
-     */
-    
-    /*  while(1) { */
-    /*      struct io_request   * res; */
-    /*      res = zt_coro_call(read_coro, &r1); */
-    /*      if(res->result == 0 && res->rlen > 0){ */
-    /*          printf("result: %s", res->buffer); */
-    /*      } */
-    /*  } */
 }
 
 int

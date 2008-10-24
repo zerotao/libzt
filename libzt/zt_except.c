@@ -205,4 +205,5 @@ void _except_unhandled_exception(char *etext, const char *efile, unsigned int el
 int domain_default_except_handler(void *exc, void *type, char *etext, char *file, char *func, int line) 
 {
 	_except_unhandled_exception(*(char **)exc, file, line, func, 1);
+	return 0;
 }

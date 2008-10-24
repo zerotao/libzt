@@ -29,7 +29,6 @@ basic_tests(struct zt_unit_test *test, void *data)
 	uint8_t		  digest2[20];
 	char		  sha1[41];
 	
-	char		* result;
 	int			  i;
 	zt_sha1_ctx	  ctx;
 	

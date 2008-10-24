@@ -1,21 +1,51 @@
 #include "zt_gc.h"
+#include "zt_macros.h"
 #include "zt_assert.h"
+
 /*
  * Implements a form of Baker's treadmill with 'write protection'
  *
  */
 
-static int one_is_white(zt_gc_collectable_t *mark) { return mark->colour == 1 ? 1 : 0; }
-static void one_clear_white(zt_gc_collectable_t *mark) { mark->colour = 0; }
-static void one_set_white(zt_gc_collectable_t *mark) { mark->colour = 1; }
+static int one_is_white(zt_gc_collectable_t *mark) { return BIT_ISSET(mark->colour, colour); } /* mark->colour == 1 ? 1 : 0; */
+static void one_clear_white(zt_gc_collectable_t *mark) { BIT_UNSET(mark->colour, colour);/* mark->colour = 0; */ }
+static void one_set_white(zt_gc_collectable_t *mark) { BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
 
-static int zero_is_white(zt_gc_collectable_t *mark) { return mark->colour == 0 ? 1 : 0; }
-static void zero_clear_white(zt_gc_collectable_t *mark) { mark->colour = 1; }
-static void zero_set_white(zt_gc_collectable_t *mark) { mark->colour = 0; }
+static int zero_is_white(zt_gc_collectable_t *mark) { return BIT_ISUNSET(mark->colour, colour); /* mark->colour == 0 ? 1 : 0; */ }
+static void zero_clear_white(zt_gc_collectable_t *mark) { BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
+static void zero_set_white(zt_gc_collectable_t *mark) { BIT_UNSET(mark->colour, colour); /* mark->colour = 0; */ }
+
+static int is_protected(zt_gc_collectable_t *mark) { return BIT_ISSET(mark->colour, protected); }
+
+void
+zt_gc_protect(gc_t *gc, void *value)
+{
+	zt_gc_collectable_t	* mark;
+	mark = (zt_gc_collectable_t	*)value;
+	
+	gc->clear_white(mark);
+	zt_elist_remove(&mark->list);
+	zt_elist_add(gc->grey, &mark->list);
+	BIT_SET(mark->colour, protected);
+}
+
+void
+zt_gc_unprotect(gc_t *gc, void *value)
+{
+	zt_gc_collectable_t	* mark;
+	mark = (zt_gc_collectable_t	*)value;
+	
+	/* 
+     * zt_elist_remove(&mark->list);
+	 * zt_elist_add_tail(gc->grey, &mark->list);
+     */
+	
+	BIT_UNSET(((zt_gc_collectable_t *)value)->colour, protected);
+}
 
 static void switch_white(gc_t *gc)
 {
-	if (gc->is_white == NULL || gc->is_white == one_is_white) {
+	if (gc->is_white == one_is_white) {
 		gc->is_white = zero_is_white;
 		gc->clear_white = zero_clear_white;
 		gc->set_white = zero_set_white;
@@ -49,14 +79,24 @@ dump_elist(char *name, zt_elist *p)
 {
 	zt_elist	* tmp;
 	int			  c;
+	int			  count;
 	
-	printf("%s [", name);
+	printf("%s %p [", name, (void *)p);
 	c = 1;
+	count = 0;
 	zt_elist_for_each(p, tmp){
 		if (tmp->next == p) {
 			c = 0;
 		}
-		printf("%p%s", tmp, c ? ", " : "");
+		if(is_protected(zt_elist_data(tmp, zt_gc_collectable_t, list))) {
+			printf("p(%p)%s", tmp, c ? ", " : "");
+		} else {
+			printf("%p%s", tmp, c ? ", " : "");
+		}
+		if(++count >= 10) {
+			printf("\n"BLANK, INDENT_TO(strlen(name)+2, 1, 0));
+			count = 0;
+		}
 	}
 	printf("]\n");	
 }
@@ -73,10 +113,8 @@ zt_gc_enable(gc_t *gc)
 		TRY_THROW(UnbalancedGCEnabling);
 	}
 	
-	if (gc->enabled == 0) {
-		if(gc->current_allocs >= gc->allocs_before_scan){
-			zt_gc_scan(gc, 0);
-		}
+	if (gc->enabled == 0 && gc->current_allocs >= gc->allocs_before_scan) {
+		zt_gc_scan(gc, 0);
 	}
 }
 
@@ -86,6 +124,7 @@ zt_gc_disable(gc_t *gc)
 	gc->enabled--;
 }
 
+
 void
 zt_gc_init(gc_t *gc,
 		   void *private_data,
@@ -94,8 +133,6 @@ zt_gc_init(gc_t *gc,
 		   int marks_per_scan,
 		   int allocs_before_scan)
 {
-	//assert(allocs_before_scan >= marks_per_scan);
-	
 	gc->enabled = 0;
 	
 	zt_elist_reset(&gc->list_1);
@@ -128,7 +165,6 @@ zt_gc_init(gc_t *gc,
 void
 zt_gc_destroy(gc_t *gc)
 {
-	int			  i;
 	zt_elist	* elt;
 	zt_elist	* dont_use;
 	
@@ -182,10 +218,16 @@ zt_gc_register_root(gc_t *gc, void *v)
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	zt_elist_reset(&mark->list);
 	
-	gc->rootset[gc->rootset_next++] = &mark->list;
-	if (gc->rootset_next > gc->rootset_size) {
-		resize_rootset(gc, gc->rootset_size + 1024);
-	}
+	zt_gc_protect(gc, v);
+	//gc->clear_white(mark);
+	//zt_elist_add(gc->grey, &mark->list);
+	
+	/* 
+     * gc->rootset[gc->rootset_next++] = &mark->list;
+	 * if (gc->rootset_next >= gc->rootset_size) {
+	 * 	resize_rootset(gc, gc->rootset_size + 1024);
+	 * }
+     */
 }
 
 void
@@ -200,34 +242,63 @@ zt_gc_unregister_value(gc_t *gc, void *v)
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	zt_elist_remove(&mark->list);
+	
 }
 
 void
 zt_gc_register_value(gc_t *gc, void *v) 
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
+
 	zt_elist_reset(&mark->list);
 	gc->clear_white(mark);
 	/* The mutator is registering interest in this value so we must
 	 * place it in the the grey list not the white.
 	 */
-	zt_elist_add_tail(gc->grey, &mark->list);
 	
 	if(++gc->current_allocs >= gc->allocs_before_scan){
 		zt_gc_scan(gc, 0);
 	}
+	
+	zt_elist_add_tail(gc->grey, &mark->list);
 }
 
 void
 zt_gc_free_white(gc_t *gc)
 {
-	zt_elist	* elt;
-	zt_elist	* dont_use;
+	zt_elist			* elt = NULL;
+	zt_elist			* dont_use = NULL;
+	zt_gc_collectable_t	* mark;
 	
-	zt_elist_for_each_safe(gc->white, elt, dont_use){
+	if(zt_elist_empty(gc->white)) {
+		return;
+	}
+	
+	zt_elist_for_each_safe(gc->white, elt, dont_use) {
+		/* 
+         * if(is_protected((zt_gc_collectable_t *)elt)) {
+		 * 	zt_elist_remove(elt);
+		 * 	zt_elist_add(gc->grey, elt);
+		 * } else {
+         */
+		if(elt == gc->black || elt == gc->white || elt == gc->grey) {
+			//zt_gc_print_heap(gc);
+			assert(elt != gc->grey);
+			assert(elt != gc->white);
+			assert(elt != gc->black);
+		}
+
+		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
+		assert(!is_protected(mark));
+		//printf("Releasing: %p\n", (void *)elt);
+
+		
 		zt_elist_remove(elt);
 		gc->release_fn(gc, gc->private_data, (void **)&elt);
+			//}
 	}
+	//printf("Done\n");
+	
 }
 
 void
@@ -235,14 +306,19 @@ zt_gc_switch(gc_t *gc)
 {
 	zt_elist	* tmp_white;
 	/* in a traditional GC we would scan and reset the values here we
-	 * just swap the the white with the black
+	 * free the white list and swap the white list with the black list
 	 */
+	gc->enabled--;
+	
 	zt_gc_free_white(gc);
+	
 	tmp_white = gc->white;
 	gc->white = gc->black;
 	gc->black = tmp_white;
+	
 	switch_white(gc);
 	
+	gc->enabled++;
 }
 
 void
@@ -250,22 +326,27 @@ zt_gc_scan(gc_t *gc, int full_scan)
 {
 	int	  current_marks = 0;
 
-	if (gc->enabled < 0) {
+	if(gc->enabled < 0 ||
+	   (!full_scan && gc->current_allocs < gc->allocs_before_scan)) {
 		return;
 	}
 	
+	gc->enabled--;
+	//printf("Start Scan\n");
 	gc->current_allocs = 0;
 	
 	if (gc->scan == gc->grey)
 	{
 		/* beginning of a scan */
-		int	  i;
-		for(i = 0; i < gc->rootset_next; i++) {
-			/* add each object in the rootset into the grey list */
-			zt_gc_collectable_t	* mark	= (zt_gc_collectable_t *) gc->rootset[i];
-			zt_elist_remove(&mark->list);
-			zt_elist_add(gc->grey, &mark->list);
-		}
+		/* 
+         * int	  i;
+		 * for(i = 0; i < gc->rootset_next; i++) {
+		 * 	/\* add each object in the rootset into the grey list *\/
+		 * 	zt_gc_collectable_t	* mark	= (zt_gc_collectable_t *) gc->rootset[i];
+		 * 	zt_elist_remove(&mark->list);
+		 * 	zt_elist_add(gc->grey, &mark->list);
+		 * }
+         */
 		gc->scan = gc->scan->next;
 	}
 	
@@ -278,34 +359,36 @@ zt_gc_scan(gc_t *gc, int full_scan)
 		zt_gc_collectable_t	* mark;
 		
 		elt = gc->scan;
-		
+
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
-		
-		next = gc->scan->next;
 
 		gc->clear_white(mark);
-		zt_elist_remove(elt);
-		zt_elist_add(gc->black, elt);
-		
 		gc->mark_fn(gc, gc->private_data, elt);
+		
+		next = gc->scan->next;
+		
+		if(!is_protected(mark)) {
+			/* if it is protected leave it in the grey list */
+			zt_elist_remove(elt);
+			zt_elist_add(gc->black, elt);
+		}
 		
 		gc->scan = next;
 
 		if (!full_scan && ++current_marks >= gc->marks_per_scan) {
 			if (gc->scan != gc->grey) {
-				/* 
-                 * fprintf(stderr, "Partial Scan\n");
-				 * zt_gc_print_heap(gc);
-                 */
+				//zt_gc_print_heap(gc);
+				//printf("End Partial Scan\n");
+				gc->enabled++;
 				return;
 			}
 		}
 	}
 	
-	/* 
-     * fprintf(stderr, "Completed Scan\n");
-	 * zt_gc_print_heap(gc);
-     */
+	//fprintf(stderr, "Completed Scan\n");
+	//zt_gc_print_heap(gc);
+	//printf("End Full Scan\n");
+	gc->enabled++;
 	zt_gc_switch(gc);
 }
 
@@ -315,7 +398,14 @@ zt_gc_mark_value(gc_t *gc, void *value)
 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
 	assert(value != NULL);
 	
-	if (gc->is_white(mark)) {
+	/* if (is_protected(mark)) {
+	 * 	//printf("marking protected\n");
+	 * 	gc->clear_white(mark);
+	 * 	zt_elist_remove(&mark->list);
+	 * 	zt_elist_add_tail(gc->grey, &mark->list);
+	 * 	return TRUE;
+	 * } else  */
+	if (!is_protected(mark) && gc->is_white(mark)) {
 		gc->clear_white(mark);
 		zt_elist_remove(&mark->list);
 		zt_elist_add_tail(gc->grey, &mark->list);

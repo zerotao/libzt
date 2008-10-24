@@ -2,6 +2,7 @@
 #include "zt_log.h"
 #include "zt_sha1.h"
 #include "zt_uuid.h"
+#include "zt_cstr.h"
 
 #define UUID_VERSION_OFFT 6
 #define UUID_CLOCK_SEQ_OFFT 8

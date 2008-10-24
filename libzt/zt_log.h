@@ -1,13 +1,13 @@
-/****h* libZT/Logging
- * DESCRIPTION
+/****h* libZT/Logging/zt_log.h
+ *  NAME
+ *    zt_log.h
+ *  DESCRIPTION
  *
  * COPYRIGHT
  *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.org>.
  *   All Rights Reserved.
  *   See file COPYING for details.
- *
- ****/
-
+ *********/
 #ifndef _ZT_LOG_H_
 #define _ZT_LOG_H_
 
@@ -18,45 +18,58 @@
 /****d* Logging/LOG_RAW
  *  NAME
  *    LOG_RAW
- *****/
+ *  SOURCE
+ */
 #define LOG_RAW           0
+/***** LOG_RAW */
 
 /****d* Logging/LOG_WITH_DATE
  *  NAME
  *    LOG_WITH_DATE
- *****/
+ *  SOURCE
+ */
 #define LOG_WITH_DATE     1
+/***** LOG_WITH_DATE */
 
 /****d* Logging/LOG_WITH_LEVEL
  *  NAME
  *    LOG_WITH_LEVEL
- *****/
+ *  SOURCE
+ */
 #define LOG_WITH_LEVEL    2
+/***** LOG_WITH_LEVEL */
 
 /****d* Logging/LOG_WITH_SYSNAME
  *  NAME
  *    LOG_WITH_SYSNAME
- *****/
+ *  SOURCE
+ */
 #define LOG_WITH_SYSNAME  4
+/***** LOG_WITH_SYSNAME */
 
 /****d* Logging/LOG_WITH_PROGNAME
  *  NAME
  *    LOG_WITH_PROGNAME
- *****/
+ *  SOURCE
+ */
 #define LOG_WITH_PROGNAME 8
+/***** LOG_WITH_PROGNAME */
 
 /****d* Logging/LOG_WITH_PID
  *  NAME
  *    LOG_WITH_PID
- *****/
+ *  SOURCE
+ */
 #define LOG_WITH_PID      16
+/***** LOG_WITH_PID */
 
 /****d* Logging/LOG_EMU_SYSLOG
  *  NAME
  *    LOG_EMU_SYSLOG
- *****/
+ *  SOURCE
+ */
 #define LOG_EMU_SYSLOG    (LOG_WITH_DATE | LOG_WITH_SYSNAME | LOG_WITH_PROGNAME | LOG_WITH_PID)
-
+/***** LOG_EMU_SYSLOG */
 BEGIN_C_DECLS
 
 typedef enum log_level log_level;

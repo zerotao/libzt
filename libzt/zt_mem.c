@@ -561,6 +561,7 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 
 	TRY_THROW(zt_mem.pool.group.does_not_exist);
 	//return XCALLOCS(size + sizeof(zt_mem_elt), 1);
+	return NULL;				/* never reached */
 }
 
 int

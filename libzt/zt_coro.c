@@ -13,7 +13,7 @@
 	if (co != &ctl->main) {												\
 		ptrdiff_t left = _stack_left(co);								\
 		if((left <= 0) || (left > (co->size))) {						\
-			printf("Stack Overflow (by %d bytes of %d) for coroutine @ %p\n", left, co->size, co); \
+			printf("Stack Overflow (by %d bytes of %ld) for coroutine @ %p\n", left, co->size, co); \
 			exit(1);                            						\
 		}																\
 	}

@@ -54,7 +54,6 @@ basic_tests(struct zt_unit_test *test, void *data)
 	zt_rbt_node	* next;
 	struct int_set	* node;
 	struct int_set	  rem1;
-	int		  insert_n = 0;
 	
 	int i;
 	

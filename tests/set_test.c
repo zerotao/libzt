@@ -17,7 +17,6 @@ static int union_test(void *data, void *param)
 {
 	struct zt_unit_test	* test = (struct zt_unit_test *)param;
 	int		  			  result = (int) data;
-	static int	  		  t = 0;
 
 	ZT_UNIT_ASSERT(test, values0_19_fill[result] == 0);
 	
@@ -30,7 +29,6 @@ static int intersection_test(void *data, void *param)
 {
 	struct zt_unit_test	* test = (struct zt_unit_test *)param;
 	int		  			  result = (int) data;
-	static int			  t = 0;
 
 	ZT_UNIT_ASSERT(test,
 	       (values0_19_fill[result] == 0) &&
@@ -45,7 +43,6 @@ static int difference_test(void *data, void *param)
 {
 	struct zt_unit_test	* test = (struct zt_unit_test *)param;
 	int		  			  result = (int) data;
-	static int	  		  t = 0;
 
 	ZT_UNIT_ASSERT(test,
 	       (values0_19_fill[result] == 0) &&

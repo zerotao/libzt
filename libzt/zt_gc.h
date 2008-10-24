@@ -10,6 +10,11 @@ typedef struct zt_gc_collectable {
  	int	  		  colour;
 } zt_gc_collectable_t;
 
+enum {
+	colour = 1,
+	protected = 2,
+};
+
 typedef struct gc {
 	int			  enabled;
 	
@@ -26,7 +31,7 @@ typedef struct gc {
 	void 		(*set_white)(zt_gc_collectable_t *mark);
 
 	zt_elist	  **rootset;
-	
+
 	zt_elist	  list_1;
 	zt_elist	  list_2;
 	zt_elist	  list_3;
@@ -61,7 +66,9 @@ void zt_gc_register_value(gc_t *gc, void *value);
 void zt_gc_unregister_value(gc_t *gc, void *value);
 void zt_gc_register_root(gc_t *gc, void *value);
 
-/* void zt_gc_protect(gc *gc, void *value); */
+void zt_gc_protect(gc_t *gc, void *value);
+void zt_gc_unprotect(gc_t *gc, void *value);
+
 void zt_gc_print_heap(gc_t *gc);
 int zt_gc_mark_value(gc_t *gc, void *value);
 void zt_gc_scan(gc_t *gc, int full_scan);

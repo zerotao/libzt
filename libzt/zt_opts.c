@@ -84,7 +84,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 	}
 	
 	for(i=0; i < max_opts; i++){
-		size_t		  offt = 0;
+		int		  offt = 0;
 		if(opts[i].description != NULL){
 			if(isoptchar(opts[i].opt))
 				offt = fprintf(stderr, BLANK "-%c", INDENT(1), opts[i].opt);

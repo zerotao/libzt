@@ -47,15 +47,26 @@ struct zt_cothread_sched {
 	struct event_queue	  queues[2];
 };
 
+/* create a new cothread scheduler */
 zt_cothread_sched *zt_cothread_sched_new(void);
-void zt_cothread_sched_delete(zt_cothread_sched *);
 
-zt_cothread *zt_cothread_new(zt_cothread_sched *, void *(*)(), int, ...);
-int zt_cothread_wait(zt_cothread_sched *, int, ...);
+/* delete a cothread scheduler */
+void zt_cothread_sched_delete(zt_cothread_sched * cts);
 
-void zt_cothread_join(zt_cothread_sched *cts);
+/* create a new cothread and call fn with stack_size and args ...*/
+zt_cothread *zt_cothread_new(zt_cothread_sched * cts, void *(* fn)(), int stack_size, ...);
 
-#define zt_cothread_sched_empty(cts) (((cts->active->req == 0) && (cts->wait->req == 0)) && (cts->revents == cts->hevents))
+/* sleep the current cothread, waiting for event, an event of 0 deletes the current cothread */
+int zt_cothread_wait(zt_cothread_sched * cts, int event, ...);
+
+/* join all cothreads */
+void zt_cothread_join(zt_cothread_sched * cts);
+
+int zt_cothread_enable(zt_cothread_sched * cts);
+int zt_cothread_disable(zt_cothread_sched * cts);
+
+#define zt_cothread_sched_empty(cts) \
+	(((cts->active->req == 0) && (cts->wait->req == 0)) && (cts->revents == cts->hevents))
 
 END_C_DECLS
 
