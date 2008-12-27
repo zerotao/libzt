@@ -429,3 +429,25 @@ zt_gc_print_heap(gc_t *gc)
 }
 
 
+void zt_gc_for_each(gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data)
+{
+	zt_elist			* elt = NULL;
+	zt_elist			* dont_use = NULL;
+	zt_gc_collectable_t	* mark;
+	
+	zt_elist_for_each_safe(gc->black, elt, dont_use){
+		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
+		cb(mark, cb_data, 0);
+	}
+
+	zt_elist_for_each_safe(gc->grey, elt, dont_use){
+		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
+		cb(mark, cb_data, 1);
+	}
+	
+	zt_elist_for_each_safe(gc->white, elt, dont_use){
+		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
+		cb(mark, cb_data, 2);
+	}
+	
+}

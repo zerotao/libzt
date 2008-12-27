@@ -72,6 +72,7 @@ void zt_gc_unprotect(gc_t *gc, void *value);
 void zt_gc_print_heap(gc_t *gc);
 int zt_gc_mark_value(gc_t *gc, void *value);
 void zt_gc_scan(gc_t *gc, int full_scan);
+void zt_gc_for_each(gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data);
 /* void zt_gc_mark(gc *gc); */
 
 END_C_DECLS
