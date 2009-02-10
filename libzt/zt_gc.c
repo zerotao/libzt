@@ -259,7 +259,11 @@ zt_gc_register_value(gc_t *gc, void *v)
 	if(++gc->current_allocs >= gc->allocs_before_scan){
 		zt_gc_scan(gc, 0);
 	}
-	
+	/* rather then place the object in white and require the need for a 
+     * write barrier we place the object in grey with the expectation that 
+     * it is immediatly used.  This means that we may hold a newly allocated 
+     * object longer then necessary (one cycle).
+     */
 	zt_elist_add_tail(gc->grey, &mark->list);
 }
 
