@@ -242,7 +242,7 @@ void log_lstrerror (log_ty *log, log_level level, int errnum, char *fmt, ...)
 	log_lvprintf(log, level, nfmt, ap);
 	va_end(ap);
 	
-	//free(nfmt);
+	/* free(nfmt); */
 }
 /************ log_lstrerror */
 

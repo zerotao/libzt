@@ -197,7 +197,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	/*Test Unwind Protect*/
 	{
 		char *unwind = Fail;
-		//char *dummy = Fail;
+		/* char *dummy = Fail; */
 		
 		DO_TRY
 			UNWIND_PROTECT({
@@ -309,7 +309,7 @@ basic_tests(struct zt_unit_test *test, void *data)
  * 		REMOVE_EXCEPT_HANDLER(foo, foo);
  * 		REMOVE_EXCEPT_HANDLER(foo, foo);
  * 		REMOVE_EXCEPT_HANDLER(foo, foo);
- * 		//REMOVE_EXCEPT_HANDLER(foo, foo);
+ * 		/\* REMOVE_EXCEPT_HANDLER(foo, foo); *\/
  * 
  * 		test_count = 0;
  * 		INSTALL_DEFAULT_HANDLER(foo);

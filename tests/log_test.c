@@ -21,7 +21,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 {
 	char position1[255];
 	char position2[255];
-	//  log_ty *lstderr = log_stderr((LOG_WITH_PROGNAME | LOG_WITH_LEVEL)); 
+	/* log_ty *lstderr = log_stderr((LOG_WITH_PROGNAME | LOG_WITH_LEVEL));  */
 	log_ty *lfile = log_file( "log.err",  
 							  LOG_FILE_OVERWRITE,  
 							  (LOG_EMU_SYSLOG | LOG_WITH_LEVEL)); 

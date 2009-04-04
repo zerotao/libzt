@@ -38,7 +38,7 @@ This software was developed as part of a project at MIT.
 #if defined(__FreeBSD__) ||  defined(APPLE_MISSING_UCONTEXT)
 #include <string.h>				/* memmove */
 #include <inttypes.h>			/* intptr_t */
-//#include <ucontext.h>
+/* #include <ucontext.h> */
 #include <signal.h>
 typedef unsigned long ulong;
 
@@ -91,7 +91,7 @@ extern pid_t rfork_thread(int, void*, int(*)(void*), void*);
 #   define	getcontext(u)	getmcontext(&(u)->uc_mcontext)
 #endif	/* defined(__arm__) */
 
-// --------------------------
+/* -------------------------- */
 
 #if defined(APPLE_MISSING_UCONTEXT) && defined(__i386__)
 #   define NEEDX86MAKECONTEXT

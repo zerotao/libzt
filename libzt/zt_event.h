@@ -17,7 +17,7 @@ typedef enum zt_event_flags {
 	ZT_WRITE_EVENTS   = 8,
 	ZT_EXCEPT_EVENTS  = 16,
 	ZT_TIMER_EVENTS   = 32,
-	ZT_SIGNAL_EVENTS  = 64,
+	ZT_SIGNAL_EVENTS  = 64
 }zt_event_flags;
 #define ZT_ALL_EVENTS (ZT_READ_EVENTS | ZT_WRITE_EVENTS | ZT_EXCEPT_EVENTS | ZT_TIMER_EVENTS | ZT_SIGNAL_EVENTS)
 #define ZT_ALL_IO_EVENTS (ZT_READ_EVENTS | ZT_WRITE_EVENTS | ZT_EXCEPT_EVENTS)
@@ -26,14 +26,14 @@ typedef enum zt_event_enum {
 	ZT_READ_EVENT     = 1,
 	ZT_WRITE_EVENT    = 2,
 	ZT_EXCEPT_EVENT   = 4,
-	ZT_TIMER_EVENT	  = 8,
+	ZT_TIMER_EVENT	  = 8
 }zt_event_enum;
 #define ZT_ANY_IO_EVENT (ZT_READ_EVENT | ZT_WRITE_EVENT | ZT_EXCEPT_EVENT)
 #define ZT_ANY_EVENT (ZT_ANY_IO_EVENT | ZT_TIMER_EVENT)
 
 typedef enum zt_event_timer_flags {
 	ZT_EVENT_TIMER_ONCE	  = 1,
-	ZT_EVENT_TIMER_ABSOLUTE   = 2,
+	ZT_EVENT_TIMER_ABSOLUTE   = 2
 }zt_event_timer_flags;
 
 typedef struct zt_event_sys *zt_event_sys;

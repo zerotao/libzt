@@ -22,7 +22,7 @@ static struct
 static zt_elist(pools);
 static zt_elist(sets);
 
-//static long x_sys_page_size = 0;
+/* static long x_sys_page_size = 0; */
 
 typedef struct zt_mem_elt {
 	zt_elist		  	  free_elt_list;
@@ -207,7 +207,7 @@ zt_mem_pool_init(char *name, long elts,
 	pool->rcache = elts;
 	pool->ncache = pcache * epp;
 	pool->pcache = pcache;
-	// > 0 ? cache : 0; /* cache should never be negative*/
+	 /* > 0 ? cache : 0; */ /* cache should never be negative*/
 	pool->nfree_pages = 0;
 	pool->npages = 0;
 	/* pool->elts_per_page = elts; */
@@ -415,7 +415,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	       BLANK "page usage (num elts * elt size): %ld bytes\n"
 	       BLANK "page memory (page size * total pages): %ld bytes\n"
 	       BLANK "}\n",
-	       INDENT(offset), pool->name, pool,
+	       INDENT(offset), pool->name, (void *)pool,
 	       INDENT(offset+1),
 	       INDENT(offset+2), pool->rcache,
 	       INDENT(offset+2), pool->ncache,
@@ -434,7 +434,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 	       INDENT(offset+2), (long)pool->elt_size, (unsigned long)(sizeof(zt_mem_elt) + pool->elt_size),
 	       INDENT(offset+2), (sizeof(zt_mem_elt) + pool->elt_size) * pool->elts_per_page,
 	       INDENT(offset+2), pool->page_size * pool->npages,
-               INDENT(offset+1));
+           INDENT(offset+1));
 
 	if(flags & DISPLAY_POOL_FREE_LIST) {
 		printf(BLANK "free_list {\n", INDENT(offset+1));
@@ -560,7 +560,7 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 	}
 
 	TRY_THROW(zt_mem.pool.group.does_not_exist);
-	//return XCALLOCS(size + sizeof(zt_mem_elt), 1);
+	/* return XCALLOCS(size + sizeof(zt_mem_elt), 1); */
 	return NULL;				/* never reached */
 }
 
@@ -721,7 +721,7 @@ zt_mem_elt_list_display(int offset, zt_elist *head)
 	{
 		elt = zt_elist_data(tmp, zt_mem_elt, free_elt_list);
 		if(i){ printf("\n"); }
-		printf(BLANK "elt: %p  parent_page: %p  data: %p", INDENT(offset), elt, elt->parent_page, elt->data);
+		printf(BLANK "elt: %p  parent_page: %p  data: %p", INDENT(offset), (void *)elt, (void *)elt->parent_page, (void *)elt->data);
 		i = 1;
 	}
 }
@@ -730,9 +730,9 @@ zt_mem_elt_list_display(int offset, zt_elist *head)
 static void
 zt_mem_page_display(int offset, zt_mem_page *page)
 {	
-	printf(BLANK "page: %p {\n", INDENT(offset), page);
+	printf(BLANK "page: %p {\n", INDENT(offset), (void *)page);
 	printf(BLANK "num_free_elts: %ld\n", INDENT(offset+1), page->num_free_elts);
-	printf(BLANK "parent pool: %p\n", INDENT(offset+1), page->parent_pool);
+	printf(BLANK "parent pool: %p\n", INDENT(offset+1), (void *)page->parent_pool);
 	printf(BLANK "}\n", INDENT(offset));
 }
 

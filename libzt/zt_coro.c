@@ -13,7 +13,7 @@
 	if (co != &ctl->main) {												\
 		ptrdiff_t left = _stack_left(co);								\
 		if((left <= 0) || (left > (co->size))) {						\
-			printf("Stack Overflow (by %d bytes of %ld) for coroutine @ %p\n", left, co->size, co); \
+			printf("Stack Overflow (by %d bytes of %ld) for coroutine @ %p\n", left, co->size, (void *)co); \
 			exit(1);                            						\
 		}																\
 	}
@@ -39,7 +39,7 @@ static ptrdiff_t _stack_left(zt_coro *co)
 	intptr_t		  p1 = (intptr_t)(&dummy);
 	intptr_t		  p2 = (intptr_t)_current_stack_pointer();
 	register int	  stack_up = p2 > p1;
-	register intptr_t start = (int)&co->ctx + (int)sizeof(co->ctx); //((intptr_t)co->ctx.uc_stack.ss_sp);	
+	register intptr_t start = (int)&co->ctx + (int)sizeof(co->ctx); /* ((intptr_t)co->ctx.uc_stack.ss_sp);	 */
 	register intptr_t end = start + co->size;
 	
 	if (stack_up) {
@@ -123,7 +123,7 @@ static void _switch_context(zt_coro *old, zt_coro *new)
 
 static void _switch_context(zt_coro *old, zt_coro *new) {
 	if (!setjmp(old->ctx)) {
-		printf("%p %p\n", old->ctx, new->ctx);
+		printf("%p %p\n", (void *)old->ctx, (void *)new->ctx);
 		longjmp(new->ctx, 1);
 	}
 }

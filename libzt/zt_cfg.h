@@ -29,7 +29,6 @@ typedef struct cfg_ty cfg_ty;
  *   cfg_type - enumeration of supported variable types
  * SOURCE
  */
-typedef enum cfg_type cfg_type;
 enum cfg_type {
   cfg_bool = 0,
   cfg_int,
@@ -37,6 +36,7 @@ enum cfg_type {
   cfg_string,
   cfg_ref
 };
+typedef enum cfg_type cfg_type;
 /*** Cfg/cfg_type ***/
 
 

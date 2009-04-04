@@ -21,7 +21,7 @@ extern char    * arithmetic_divide_by_zero;
 #define SAME_SIGN(u,v) (!(((u) ^ (v)) < 0))
 
 #define UNSIGNED_ADD(ltype, sltype, sutype)                              	\
-        INLINE static ltype CONC(sltype,_add)(ltype lhs,                         	\
+        static INLINE ltype CONC(sltype,_add)(ltype lhs,                         	\
                                        ltype rhs)                         	\
         {                                                               	\
                 if(lhs > CONC(sutype,_MAX) - rhs) {                         	\
@@ -36,7 +36,7 @@ UNSIGNED_ADD(unsigned int, uint, UINT);
 UNSIGNED_ADD(unsigned long, ulong, ULONG);
 
 #define SIGNED_ADD(ltype, sltype, sutype)					\
-	INLINE static ltype CONC(sltype,_add)(ltype lhs,				\
+	static INLINE ltype CONC(sltype,_add)(ltype lhs,				\
 			      ltype rhs) 					\
 	{									\
 		if(SAME_SIGN(lhs, rhs)) {					\

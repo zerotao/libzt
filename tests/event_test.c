@@ -12,7 +12,7 @@ static int counter = 0;
 
 void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data) 
 {
-	//static struct timeval	ntv = {0, 0};
+	/* static struct timeval	ntv = {0, 0}; */
 	counter++;
 }
 

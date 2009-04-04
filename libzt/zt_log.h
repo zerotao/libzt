@@ -72,7 +72,6 @@
 /***** LOG_EMU_SYSLOG */
 BEGIN_C_DECLS
 
-typedef enum log_level log_level;
 enum log_level {
   log_emerg = 0,
   log_alert,
@@ -82,8 +81,9 @@ enum log_level {
   log_notice,
   log_info,
   log_debug,
-  log_max,
+  log_max
 };
+typedef enum log_level log_level;
 
 typedef struct log_ty log_ty;
 

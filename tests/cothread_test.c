@@ -110,7 +110,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	/* Wait for all events to complete */
 	zt_cothread_join(glbl.cts);	
 	
-	//ZT_UNIT_ASSERT(test, glbl.cts->revents == glbl.cts->hevents);
+	/* ZT_UNIT_ASSERT(test, glbl.cts->revents == glbl.cts->hevents); */
 	
 	ZT_UNIT_ASSERT(test, CORO_N * YIELDS_PER_THREAD == loops);
 	ZT_UNIT_ASSERT(test, zt_cothread_sched_empty(glbl.cts) == 1);

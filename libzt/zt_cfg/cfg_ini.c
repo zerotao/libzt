@@ -85,7 +85,7 @@ static int parse_block(FILE* file, struct bvv_ty* bvv)
 	}
 
 	if(i >= BUFMAX){
-//		errno = EOVERFLOW;
+		/* errno = EOVERFLOW; */
 		return -1;
 	}
 	
@@ -115,7 +115,7 @@ static int parse_line(FILE* file, struct bvv_ty* bvv)
 	}
 	val = strstr(buff, "=");
 	if(!val){
-//		errno = EPROTO;
+		/* errno = EPROTO; */
 		return (0);
 	}
 	len = strlen(buff) -1;
@@ -125,7 +125,7 @@ static int parse_line(FILE* file, struct bvv_ty* bvv)
 		c = fgetc(file);
 		ungetc(c, file);	
 		if(c != EOF){
-//			errno = EPROTO;	/* Nope no EOF so some sort of protocol error */
+			/* errno = EPROTO; */	/* Nope no EOF so some sort of protocol error */
 			return 0;
 		}
 	}
@@ -155,7 +155,7 @@ static int parse_line(FILE* file, struct bvv_ty* bvv)
 	}
 	
 	if(val >= buff+len){
-//		errno = EPROTO;
+		/* errno = EPROTO; */
 		return 0;
 	}
 	bvv->variable = strdup(var);

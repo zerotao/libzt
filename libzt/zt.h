@@ -96,7 +96,7 @@
 
 
 /* Cover the cases where I am not using a GNU compiler */
-#if __GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)
+#if (__GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)) && (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0)
 # define NORETURN  __attribute__((noreturn))
 # define CONST     __attribute__((const))
 # define UNUSED    __attribute__((unused))

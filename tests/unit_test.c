@@ -90,9 +90,11 @@ main(int argc, char *argv[])
 	register_sha1_suite(unit);
 	register_uuid_suite(unit);
 	
-	//register_adt_suite(unit);
-	//register_bytearray_suite(unit);	
-	//register_msg_queue_suite(unit);
+	/* 
+     * register_adt_suite(unit);
+	 * register_bytearray_suite(unit);	
+	 * register_msg_queue_suite(unit);
+     */
 	
 	return zt_unit_main(unit, argc, argv);	
 }

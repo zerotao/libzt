@@ -74,7 +74,7 @@ void _except_install_handler(void *e, except_handler h){
 		stack->next->handlers = newh;
 		return;
 	}
-	//  stack = stack->next;
+    /* stack = stack->next; */
 	if(stack->handlers == NULL){
 		stack->handlers = newh;
 		return;

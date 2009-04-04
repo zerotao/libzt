@@ -27,10 +27,10 @@ static void mark_atom(gc_t *gc, void *pdata, void *v)
 	
 	
 	if(a->type == INT) {
-		//printf("Marking Int: %p\n", (void *)a);
+		/* printf("Marking Int: %p\n", (void *)a); */
 		ints_marked++;
 	} else {
-		//printf("Marking Atom: %p %p\n", (void *)a, (void *)a->value.atom);
+		/* printf("Marking Atom: %p %p\n", (void *)a, (void *)a->value.atom); */
 		atoms_marked++;
 		if (a->value.atom != NULL) {
 			zt_gc_mark_value(gc, a->value.atom);
@@ -43,7 +43,7 @@ static void
 release_atom(gc_t *gc, void *pdata, void **v)
 {
 	atom **a = (atom **)v;
-	//printf("release %p\n", *v);
+	/* printf("release %p\n", *v); */
 	
 	atoms_freed++;
 	free(*a);
@@ -72,7 +72,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	zt_gc_init(&gc, NULL, mark_atom, release_atom, MARKS_PER, ALLOCS_PER);
 	zt_gc_register_root(&gc, root);
 
-	//zt_gc_print_heap(&gc);
+	/* zt_gc_print_heap(&gc); */
 	for(i=RSTART; i <= REND; i++)
 	{
  		atom	* a = XCALLOC(atom, 1);
@@ -91,14 +91,14 @@ basic_tests(struct zt_unit_test *test, void *data)
 			a->value.number = i;
 			zt_gc_protect(&gc, a);
 			protected = a;
-		} else { //if(i / 2 == 0 || last == NULL) {
+		} else { /* if(i / 2 == 0 || last == NULL) { */
 			a->type = INT;
 			a->value.number = i;
-			//last = a;
+			/* last = a; */
 			/* protecting a value makes certain that it will be
 			 * checked each scan
 			 */
-			//zt_gc_protect(&gc, a);
+			/* zt_gc_protect(&gc, a); */
 		} /* else {
 		 * 	a->type = ATOM;
 		 * 	a->value.atom = last;
@@ -155,7 +155,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 		/* final */
 		zt_gc_destroy(&gc);
-		//printf("Destory %d %d %d\n", ints_marked, atoms_marked, atoms_freed);
+		/* printf("Destory %d %d %d\n", ints_marked, atoms_marked, atoms_freed); */
 		
 		int_seen_base += 2;
 		mark_base += 1;			/* root->value.a */

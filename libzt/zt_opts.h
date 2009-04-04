@@ -21,7 +21,6 @@ BEGIN_C_DECLS
 
 typedef int (*opt_function)(char *, void *);
 
-typedef enum opt_types opt_types;
 enum opt_types {
 		opt_bool=0,
 		opt_flag,
@@ -32,6 +31,7 @@ enum opt_types {
 		opt_rfunc,
 		opt_help
 };
+typedef enum opt_types opt_types;
 
 typedef struct opt_args opt_args;
 struct opt_args 

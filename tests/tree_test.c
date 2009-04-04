@@ -89,7 +89,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	iter = zt_rbt_find(&br_root, &rem1.node, int_compare);
 	if(iter) {
 		struct int_set *n = zt_rbt_data(iter, struct int_set, node);
-		//struct int_set *n2;
+		/* struct int_set *n2; */
 		iter = zt_rbt_remove(&br_root, iter);
 		
 		ZT_UNIT_ASSERT(test, n->i == REMOVED);
@@ -102,7 +102,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	iter = zt_rbt_find(&br_root, &rem1.node, int_compare);
 	if(iter) {
 		struct int_set *n = zt_rbt_data(iter, struct int_set, node);
-		//struct int_set *n2;
+		/* struct int_set *n2; */
 		iter = zt_rbt_remove(&br_root, iter);
 		
 		ZT_UNIT_ASSERT(test, n->i == REMOVED2);

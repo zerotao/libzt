@@ -24,7 +24,8 @@ zt_set_init(int (*match) (const void *key1,
 static int
 _destroy(void *key, void *datum, void *param) 
 {
-	void	(*destroy)(void *) = param;
+	void	(*destroy)(void *) = ((zt_set *)param)->destroy;
+    
 	if(destroy) {
 		destroy((void *)datum);
 	}
@@ -36,7 +37,8 @@ void
 zt_set_destroy(zt_set *set)
 {
 	assert(set);
-	zt_table_for_each(set->tbl, _destroy, set->destroy);
+    
+	zt_table_for_each(set->tbl, _destroy, set);
 	zt_table_destroy(set->tbl);
 
 	XFREE(set);
@@ -76,8 +78,10 @@ static int _union(void *key, void *datum, void *param)
 
 int zt_set_union(zt_set *setu, const zt_set *set1, const zt_set *set2)
 {
-	struct _set_pair	  s = { NULL, setu };
-	
+	struct _set_pair	  s = { NULL, NULL };
+    
+    s.s2 = setu;
+    
 	zt_table_for_each(set1->tbl, _union, &s);
 	zt_table_for_each(set2->tbl, _union, &s);
 	
@@ -97,8 +101,11 @@ static int _intersect(void *key, void *datum, void *param)
 
 int zt_set_intersection(zt_set *seti, const zt_set *set1, const zt_set *set2)
 {
-	struct _set_pair p = { (zt_set *)set2, (zt_set *)seti };
-	
+	struct _set_pair p = { NULL, NULL };
+    
+    p.s1 = (zt_set *)set2;
+    p.s2 = (zt_set *)seti;
+    
 	return zt_table_for_each(set1->tbl, _intersect, &p);
 	
 }
@@ -116,8 +123,11 @@ static int _difference(void *key, void *datum, void *param)
 
 int zt_set_difference(zt_set *setd, const zt_set *set1, const zt_set *set2)
 {
-	struct _set_pair p = { (zt_set *)set2, (zt_set *)setd };
-	
+	struct _set_pair p = { NULL, NULL };
+    
+    p.s1 = (zt_set *)set2;
+    p.s2 = (zt_set *)setd;
+    
 	return zt_table_for_each(set1->tbl, _difference, &p);	
 }
 
@@ -142,8 +152,10 @@ int _is_subset(void *key, void *datum, void *param)
 
 int zt_set_is_subset(const zt_set *set1, const zt_set *set2)
 {
-	struct _set_pair	  p = { (zt_set *)set2, NULL };
-	
+	struct _set_pair	  p = { NULL, NULL };
+    
+    p.s1 = (zt_set *)set2;
+    
 	if(set1->length > set2->length) {
 		return 0;
 	}
@@ -153,8 +165,10 @@ int zt_set_is_subset(const zt_set *set1, const zt_set *set2)
 
 int zt_set_is_equal(const zt_set *set1, const zt_set *set2)
 {
-	struct _set_pair p = { (zt_set *)set2, NULL };
-	
+	struct _set_pair p = { NULL, NULL };
+
+    p.s1 = (zt_set *)set2;
+    
 	if(set1->length != set2->length) {
 		return -1;
 	}

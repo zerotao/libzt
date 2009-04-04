@@ -63,7 +63,7 @@ xstrdup (const char *string)
 	char *new_string = NULL;		
 	if( string ){
 		if(!(new_string = strdup(string))){
-			// log_printf( log_emerg, "Could not xstrdup string.");
+			/* log_printf( log_emerg, "Could not xstrdup string."); */
 			TRY_THROW(memoryError);
 		}
 	}

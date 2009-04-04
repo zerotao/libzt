@@ -14,7 +14,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         /* mixed sign addition */
         ZT_UNIT_ASSERT(test, int_add(-128, 0) == -128);
         ZT_UNIT_ASSERT(test, int_add(127, -128) == -1);
-        //printf("%d\n", c);        
+        /* printf("%d\n", c); */
 }
 
 int

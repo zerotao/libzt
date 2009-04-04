@@ -56,7 +56,7 @@ zt_cothread_new(zt_cothread_sched *cts, void *(*func)(va_list), int stacksize, .
 {
 	zt_cothread			* co;
 	struct boot_strap	  bs;
-	//va_list			  	  args;
+	/* va_list			  	  args; */
 	struct event_req	  req[1];
 
 	memset(&req, 0, sizeof(struct event_req));
@@ -92,7 +92,7 @@ void
 zt_cothread_join(zt_cothread_sched *cts)
 {
 	while(! zt_cothread_sched_empty(cts)) {
-		//printf("%p %p %ld %ld\n", cts->active->req, cts->wait->req, cts->revents, cts->hevents);
+		/* printf("%p %p %ld %ld\n", cts->active->req, cts->wait->req, cts->revents, cts->hevents); */
 		zt_cothread_wait(cts, ZT_TIMER_EVENT, 10);
 	}
 }

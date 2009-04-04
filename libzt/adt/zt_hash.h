@@ -14,11 +14,24 @@
 
 #include <libzt/zt.h>
 
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+
 /****d* Hashing/ZT_HASH64_INIT
  *  NAME
  *    ZT_HASH64_INIT
  *****/
 #define ZT_HASH64_INIT ((u_int64_t)0xcbf29ce484222325ULL)
+
+/****d* Hashing/ZT_HASH64_PRIME
+ *  NAME
+ *    ZT_HASH64_PRIME
+ *****/
+#define ZT_HASH64_PRIME ((u_int64_t)0x100000001b3ULL)
+
+u_int64_t zt_hash64_buff(void *buf, size_t len, u_int64_t init);
+u_int64_t zt_hash64_cstr(const u_int8_t *buf, u_int64_t init);
+
+#endif /* __STDC_VERSION__ */
 
 /****d* Hashing/ZT_HASH32_INIT
  *  NAME
@@ -32,11 +45,6 @@
  *****/
 #define ZT_HASH32_PRIME ((u_int32_t)0x01000193U)
 
-/****d* Hashing/ZT_HASH64_PRIME
- *  NAME
- *    ZT_HASH64_PRIME
- *****/
-#define ZT_HASH64_PRIME ((u_int64_t)0x100000001b3ULL)
 
 u_int32_t zt_hash32_buff(void *buf, size_t len, u_int32_t init);
 u_int32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
@@ -88,9 +96,6 @@ u_int32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
 		}														\
 	}
 
-
-u_int64_t zt_hash64_buff(void *buf, size_t len, u_int64_t init);
-u_int64_t zt_hash64_cstr(const u_int8_t *buf, u_int64_t init);
 
 #endif	/* _ZT_HASH_H_ */
 

@@ -49,7 +49,7 @@ extern void _assert_fail (char *condition, char *file,
 # define assert(c)
 # define assert_nf(c)
 #else
-//# define assert(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0)))
+/* # define assert(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0))) */
 # define assert(c) if (!(c)) {									\
 		_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);	\
 		TRY_THROW(assertion_failed);							\

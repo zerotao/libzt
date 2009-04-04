@@ -23,7 +23,8 @@ AC_PROG_CC
 
 dnl Add -Wall if gcc
 if test "$GCC" = "yes"; then
-   CFLAGS="-Wall -fkeep-inline-functions -fno-strict-aliasing"
+   dnl -Werror
+   CFLAGS="-Wall -Wcast-align -Wno-uninitialized -Wformat-security -fkeep-inline-functions -fno-strict-aliasing --ansi --pedantic"
 fi
 
 AC_PROG_CPP

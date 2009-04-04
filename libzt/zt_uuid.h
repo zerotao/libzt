@@ -23,7 +23,7 @@ typedef enum {
 	UUID_NS_DNS,
 	UUID_NS_URL,
 	UUID_NS_OID,
-	UUID_NS_X500,
+	UUID_NS_X500
 } zt_uuid_ns;
 
 

@@ -89,9 +89,9 @@ dump_elist(char *name, zt_elist *p)
 			c = 0;
 		}
 		if(is_protected(zt_elist_data(tmp, zt_gc_collectable_t, list))) {
-			printf("p(%p)%s", tmp, c ? ", " : "");
+			printf("p(%p)%s", (void *)tmp, c ? ", " : "");
 		} else {
-			printf("%p%s", tmp, c ? ", " : "");
+			printf("%p%s", (void *)tmp, c ? ", " : "");
 		}
 		if(++count >= 10) {
 			printf("\n"BLANK, INDENT_TO(strlen(name)+2, 1, 0));
@@ -197,7 +197,7 @@ zt_gc_destroy(gc_t *gc)
      * for(i = 0; i < gc->rootset_next; i++){
 	 * 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)gc->rootset[i];
 	 * 	zt_elist_remove(&mark->list);
-	 * 	//zt_elist_add(gc->white, &mark->list);
+	 * 	/\* zt_elist_add(gc->white, &mark->list); *\/
 	 * }
      */
 	
@@ -219,8 +219,10 @@ zt_gc_register_root(gc_t *gc, void *v)
 	zt_elist_reset(&mark->list);
 	
 	zt_gc_protect(gc, v);
-	//gc->clear_white(mark);
-	//zt_elist_add(gc->grey, &mark->list);
+	/* 
+     * gc->clear_white(mark);
+	 * zt_elist_add(gc->grey, &mark->list);
+     */
 	
 	/* 
      * gc->rootset[gc->rootset_next++] = &mark->list;
@@ -286,7 +288,7 @@ zt_gc_free_white(gc_t *gc)
 		 * } else {
          */
 		if(elt == gc->black || elt == gc->white || elt == gc->grey) {
-			//zt_gc_print_heap(gc);
+			/* zt_gc_print_heap(gc); */
 			assert(elt != gc->grey);
 			assert(elt != gc->white);
 			assert(elt != gc->black);
@@ -294,14 +296,14 @@ zt_gc_free_white(gc_t *gc)
 
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
 		assert(!is_protected(mark));
-		//printf("Releasing: %p\n", (void *)elt);
+		/* printf("Releasing: %p\n", (void *)elt); */
 
 		
 		zt_elist_remove(elt);
 		gc->release_fn(gc, gc->private_data, (void **)&elt);
-			//}
+			/* } */
 	}
-	//printf("Done\n");
+	/* printf("Done\n"); */
 	
 }
 
@@ -336,7 +338,7 @@ zt_gc_scan(gc_t *gc, int full_scan)
 	}
 	
 	gc->enabled--;
-	//printf("Start Scan\n");
+	/* printf("Start Scan\n"); */
 	gc->current_allocs = 0;
 	
 	if (gc->scan == gc->grey)
@@ -381,17 +383,21 @@ zt_gc_scan(gc_t *gc, int full_scan)
 
 		if (!full_scan && ++current_marks >= gc->marks_per_scan) {
 			if (gc->scan != gc->grey) {
-				//zt_gc_print_heap(gc);
-				//printf("End Partial Scan\n");
+				/* 
+                 * zt_gc_print_heap(gc);
+				 * printf("End Partial Scan\n");
+                 */
 				gc->enabled++;
 				return;
 			}
 		}
 	}
 	
-	//fprintf(stderr, "Completed Scan\n");
-	//zt_gc_print_heap(gc);
-	//printf("End Full Scan\n");
+	/* 
+     * fprintf(stderr, "Completed Scan\n");
+	 * zt_gc_print_heap(gc);
+	 * printf("End Full Scan\n");
+     */
 	gc->enabled++;
 	zt_gc_switch(gc);
 }
@@ -402,13 +408,15 @@ zt_gc_mark_value(gc_t *gc, void *value)
 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
 	assert(value != NULL);
 	
-	/* if (is_protected(mark)) {
-	 * 	//printf("marking protected\n");
+	/* 
+     * if (is_protected(mark)) {
+	 * 	/\* printf("marking protected\n"); *\/
 	 * 	gc->clear_white(mark);
 	 * 	zt_elist_remove(&mark->list);
 	 * 	zt_elist_add_tail(gc->grey, &mark->list);
 	 * 	return TRUE;
-	 * } else  */
+	 * } else
+     */
 	if (!is_protected(mark) && gc->is_white(mark)) {
 		gc->clear_white(mark);
 		zt_elist_remove(&mark->list);
@@ -423,8 +431,8 @@ zt_gc_print_heap(gc_t *gc)
 {
 	printf("Heap Dump\n============\n");
 	printf("l1: %p l2: %p l3: %p\nblack: %p grey: %p white: %p\nscan: %p\n",
-		   &gc->list_1, &gc->list_2, &gc->list_3,
-		   gc->black, gc->grey, gc->white, gc->scan);
+		   (void *)&gc->list_1, (void *)&gc->list_2, (void *)&gc->list_3,
+		   (void *)gc->black, (void *)gc->grey, (void *)gc->white, (void *)gc->scan);
 
 	
 	dump_elist("Black", gc->black);

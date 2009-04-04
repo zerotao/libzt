@@ -37,7 +37,7 @@ struct zt_coro_ctx {
 };
 
 #define ZT_CORO_MIN_STACK_SIZE (32 * 1024) /* 32k stack */
-//#define ZT_CORO_MIN_STACK_SIZE ((128 * 1024))
+/* #define ZT_CORO_MIN_STACK_SIZE ((128 * 1024)) */
 
 extern char     * zt_coro_except_exit;
 

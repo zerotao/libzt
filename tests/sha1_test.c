@@ -49,7 +49,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	memset(digest2, 0, 20);
 	
 	zt_str_tosha1(sha1, digest2);
-	//printf("%20s %20s\n", digest2, digest);
+	/* printf("%20s %20s\n", digest2, digest); */
 	ZT_UNIT_ASSERT(test, memcmp(digest2, digest, 20) == 0);
 }
 

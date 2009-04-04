@@ -70,7 +70,7 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
   char *buff = NULL;
 
   len = strlen(fmt) + 4;	/* format + seperator + "\n" + null */
-  buff = (char *)XCALLOC(char, len); //mem_calloc(len, sizeof(char));
+  buff = (char *)XCALLOC(char, len); /* mem_calloc(len, sizeof(char)); */
 
   if(opts & LOG_WITH_DATE){
     char sbuf[255];
@@ -128,7 +128,7 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
       nlen += strlen(log->file);
       nlen += strlen(log->function);
       nlen += 10;			/* length of a int to str */
-      nbuff = XCALLOC(char, nlen); //mem_calloc(nlen, sizeof(char));
+      nbuff = XCALLOC(char, nlen); /* mem_calloc(nlen, sizeof(char)); */
       sprintf(nbuff, ": in %s at (%s:%d)", log->function, log->file, log->line);
       len += nlen;
       buff = XREALLOC(char, buff, len);

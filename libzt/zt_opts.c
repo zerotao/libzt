@@ -31,7 +31,7 @@
 #include "zt_opts.h"
 
 
-static inline int isoptchar(int x);
+static INLINE int isoptchar(int x);
 
 struct
 {
@@ -132,7 +132,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 #ifdef HAVE_GETOPT_LONG
 	struct option *longopts = NULL;
 #endif
-	//		opterr = 0;												/* turn off the default error message */
+    /* opterr = 0; */               /* turn off the default error message */
 	if(!opts)
 		return -1;
 	memset(optstring, '\0', OPT_MAX_DOUBLE);
@@ -327,7 +327,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 /*
  * local functions 
  */
-static inline int isoptchar(int x)
+static INLINE int isoptchar(int x)
 {
 	return  (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
 }

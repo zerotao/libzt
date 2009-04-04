@@ -296,8 +296,10 @@ int cfg_priv_get ( cfg, block_name, variable_name, var, type )
 		log_printf(log_err, "Unknown type in cfg variable list");
 		return -1;
 	}
-//	if(value->type != type)
-//		return 1;
+	/* 
+     * if(value->type != type)
+	 * 	return 1;
+     */
 	return value->type;
 }
 

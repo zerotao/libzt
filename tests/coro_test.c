@@ -53,8 +53,8 @@ void *_call1(zt_coro_ctx *ctx, void *data)
 	struct test_data	  	* td = (struct test_data *) data;
     zt_coro                 * co = zt_coro_create(ctx, _call2, 0, ZT_CORO_MIN_STACK_SIZE);
     struct except_Frame     * stack = _except_Stack;
-	// uncomment to force a stack overflow
-	//int ** 				  p = (int **)alloca(1024 * sizeof(int));
+	/* uncomment to force a stack overflow */
+	/* int ** 				  p = (int **)alloca(1024 * sizeof(int)); */
 	
 	zt_coro_check_stack(ctx);
 	zt_coro_stack_left(ctx);

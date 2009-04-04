@@ -166,11 +166,13 @@ zt_array_get(zt_array array, int offt)
 {
 	assert(array);
 	assert(offt >= 0 && offt < array->length);
-	//assert(elem);
-
-	//memcpy(elem, array->data + offt * array->size, array->size);
-	//*elem = ;
-	return (array->data + offt * array->size); //*elem;
+	/* 
+     * assert(elem);
+     * 
+	 * memcpy(elem, array->data + offt * array->size, array->size);
+	 * *elem = ;
+     */
+	return (array->data + offt * array->size); /* *elem; */
 }
 
 void *

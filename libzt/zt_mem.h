@@ -41,6 +41,7 @@ EXCEPT_DESC(zt_mem, "ZT Mem Exceptions",
 						 EXCEPT_GROUP(group, "group exceptions",
 									  EXCEPTION(does_not_exist, "group does not exist")
 						 )));
+
 #undef EXCEPT_DEFINE
 
 /****d* Memory/POOL_NEVER_FREE

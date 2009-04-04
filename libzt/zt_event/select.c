@@ -450,11 +450,13 @@ static int gtimer_cmp(zt_rbt_node *n1, zt_rbt_node *n2)
 		return 1;
 	}
 
-	if(g1->cb > g2->cb) {
-		return -1;
-	} else if (g1->cb < g2->cb) {
-		return 1;
-	}
+	/* 
+     * if(g1->cb > g2->cb) {
+	 * 	return -1;
+	 * } else if (g1->cb < g2->cb) {
+	 * 	return 1;
+	 * }
+     */
 
 	if(g1->data > g2->data) {
 		return -1;

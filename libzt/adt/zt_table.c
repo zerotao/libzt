@@ -193,9 +193,12 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
 void *
 zt_table_get(zt_table *h, const void *key)
 {
-	int nkey = h->func(key, h->cdata);
+    struct table_node *node;
+	int nkey;
+    
+    nkey = h->func(key, h->cdata);
 	ZT_HASH_SUB32_MASK(nkey, h->nbits);	
-	struct table_node *node = h->buckets[nkey];
+	node = h->buckets[nkey];
 	while(node)
 	{
 		if(h->cmp ((void *)node->key, key, h->cdata))

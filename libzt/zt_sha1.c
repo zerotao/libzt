@@ -46,7 +46,7 @@ _sha1_transform(uint32_t state[5], uint8_t buffer[64])
 	uint32_t		  e;
 	CHAR64LONG16	* block;
 	
-	//uint32_t		  block[80];
+	/* uint32_t		  block[80]; */
 
 	block = (CHAR64LONG16 *)buffer;
 	
