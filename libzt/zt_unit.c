@@ -33,7 +33,7 @@ struct zt_unit *
 zt_unit_init(void)
 {
 	struct zt_unit	* unit = XCALLOC(struct zt_unit, 1);
-	log_ty			* log;
+	/* log_ty			* log; */
 	
 	zt_elist_reset(&unit->suites);
 	unit->failures = 0;
@@ -174,7 +174,7 @@ zt_unit_run_suite(struct zt_unit		* unit,
 	zt_elist			* tmp;
 	struct zt_unit_test	* unit_test;
 	int					  result;
-	int					  len;
+	/* int					  len; */
 	
 	suite->failed = 0;
 	suite->succeeded = 0;
@@ -241,8 +241,6 @@ zt_unit_run_test(struct zt_unit			* unit,
 				 struct zt_unit_suite 	* suite,
 				 struct zt_unit_test 	* test) 
 {
-	int	  	  offt;
-	
 	test->success = FALSE;
 	assert(test);
 
@@ -267,7 +265,7 @@ zt_unit_run_test(struct zt_unit			* unit,
 		});
 
 
-	yaml_value("assertions", 6, "%d", test->assertions);
+	yaml_value("assertions", 6, "%ld", test->assertions);
 	yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 	
 	return test->success;
@@ -283,7 +281,7 @@ char **str_split(char *str, char * delim, int *elts)
 	char	* tmp;
 	size_t	  memsize;
 	
-	if (str == NULL | delim == NULL) {
+	if (str == NULL || delim == NULL) {
 		return (NULL);
 	}
 	
@@ -330,7 +328,6 @@ int
 zt_unit_run_by_name(struct zt_unit		* unit,
 					char				* name)
 {
-	int	  					  i;
 	int						  count;
 	char					**targetv;
 	struct zt_unit_suite	* unit_suite = NULL;
@@ -401,7 +398,6 @@ zt_unit_list(struct zt_unit *unit)
 	zt_elist				* tmp2;
 	struct zt_unit_suite	* unit_suite;
 	struct zt_unit_test		* unit_test;
-	int						  offt;
 	
 	yaml_dict("Test Suites", 0);
 	

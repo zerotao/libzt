@@ -21,15 +21,6 @@
 
 BEGIN_C_DECLS
 
-#define _MACRO_EVAL_1A(OP, F1, F2, ARGS) OP(F1, ARGS, _MACRO_EVAL_1B)
-#define _MACRO_EVAL_1B(OP, F1, F2, ARGS) OP(F1, ARGS, _MACRO_EVAL_1A)
-
-#define _MACRO_EVAL_2A(OP, F1, F2, ARGS) OP(F2, ARGS, _MACRO_EVAL_2B)
-#define _MACRO_EVAL_2B(OP, F1, F2, ARGS) OP(F2, ARGS, _MACRO_EVAL_2A)
-
-#define MACRO_EVAL_1(FORMS) _MACRO_EVAL_1A FORMS
-#define MACRO_EVAL_2(FORMS) _MACRO_EVAL_2A FORMS
-
 /** Exception primitives **/
 
 /* declare exception */
@@ -60,9 +51,9 @@ BEGIN_C_DECLS
   },
 
 #define EXCEPT_GROUP(NAME, STR, REST)                       \
-  (MACRO_APPLY, _EXCEPT_GROUP_DECL_INIT, _EXCEPT_GROUP_DEFN_INIT, (STR))    \
-  REST                                      \
-  (MACRO_APPLY, _EXCEPT_GROUP_DECL_CLOSE, _EXCEPT_GROUP_DEFN_CLOSE, (NAME))
+    (MACRO_APPLY, _EXCEPT_GROUP_DECL_INIT, _EXCEPT_GROUP_DEFN_INIT, (STR)) \
+    REST                                                                \
+    (MACRO_APPLY, _EXCEPT_GROUP_DECL_CLOSE, _EXCEPT_GROUP_DEFN_CLOSE, (NAME))
 
 
 /* TOP GROUP */
@@ -79,7 +70,7 @@ BEGIN_C_DECLS
 #endif
 
 #define _EXCEPT_TOP_GROUP_DECL_CLOSE(NAME)      \
-  } _EXCEPT_TYPE(NAME);                 \
+    } _EXCEPT_TYPE(NAME);                       \
     _EXTERN_DECL(NAME)
                   
 
@@ -89,10 +80,10 @@ BEGIN_C_DECLS
 #define _EXCEPT_TOP_GROUP_DEFN_CLOSE(NAME)      \
   }
                  
-#define _EXCEPT_FORMS(NAME, STR, REST)                          \
-  (MACRO_APPLY, _EXCEPT_TOP_GROUP_DECL_INIT, _EXCEPT_TOP_GROUP_DEFN_INIT, (NAME, STR))  \
-  REST                                          \
-  (MACRO_APPLY_STOP, _EXCEPT_TOP_GROUP_DECL_CLOSE, _EXCEPT_TOP_GROUP_DEFN_CLOSE, (NAME))
+#define _EXCEPT_FORMS(NAME, STR, REST)                                  \
+    (MACRO_APPLY, _EXCEPT_TOP_GROUP_DECL_INIT, _EXCEPT_TOP_GROUP_DEFN_INIT, (NAME, STR)) \
+    REST                                                                \
+    (MACRO_APPLY_STOP, _EXCEPT_TOP_GROUP_DECL_CLOSE, _EXCEPT_TOP_GROUP_DEFN_CLOSE, (NAME))
 
 /* actual definition */
 #define EXCEPT_DECL(NAME, STR, REST) MACRO_EVAL_1(_EXCEPT_FORMS(NAME, STR, REST))
@@ -100,10 +91,11 @@ BEGIN_C_DECLS
 
 #ifdef EXCEPT_DEFINE
 # define EXCEPT_DESC(NAME, STR, REST)           \
-    EXCEPT_DECL(NAME, STR, REST);           \
+    EXCEPT_DECL(NAME, STR, REST)               \
     EXCEPT_DEFN(NAME, STR, REST)
 #else
-# define EXCEPT_DESC(NAME, STR, REST) EXCEPT_DECL(NAME, STR, REST)
+# define EXCEPT_DESC(NAME, STR, REST)           \
+    EXCEPT_DECL(NAME, STR, REST)
 #endif  /* EXCEPT_DEFINE */
 #undef EXCEPT_DEFINE
 
@@ -211,7 +203,7 @@ extern void _except_remove_handler(void*, except_handler);
  *  SOURCE
  */
 #define TRY_THROW(EXCEPTION)                        \
-    TRY(THROW(EXCEPTION))
+    TRY(THROW(EXCEPTION), {})
 
 /************ TRY_THROW */
 
@@ -322,11 +314,11 @@ extern void _except_remove_handler(void*, except_handler);
  *
  *  SOURCE
  */
-#define TRY(WIND_DATA, UNWIND_DATA...)                      \
+#define TRY(WIND_DATA, ...)                                 \
     DO_TRY                                                  \
     { WIND_DATA; }											\
     ELSE_TRY                                                \
-    { UNWIND_DATA; }										\
+    { __VA_ARGS__; }										\
     END_TRY
 
 /************ TRY */

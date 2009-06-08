@@ -103,22 +103,15 @@ extern void log_lprintf ( log_ty *, log_level, char *, ... )FORMAT((printf, 3, 4
 extern void log_lstrerror ( log_ty *, log_level, int, char *, ... )FORMAT((printf, 4, 5));
 extern void log_lvprintf ( log_ty *, log_level, char *, va_list )FORMAT((printf, 3, 0));
 
+/* log_strerror(level, errnum, fmt, ...) */
+#define log_strerror( level, errnum, ... )	\
+	log_lstrerror( 0, level, errnum, __VA_ARGS__ )
 
-#define log_strerror( level, errnum, fmt, args... )	\
-	log_lstrerror( 0, level, errnum, fmt, ##args )
-
-/****d* Logging/log_printf
- *  NAME
- *    log_printf
- *****/
-#define log_printf( level, fmt, args... ) \
-	log_lprintf( 0, level, fmt, ##args )
+/* log_printf(level, fmt, ...) */
+#define log_printf( level, ... ) \
+	log_lprintf( 0, level, __VA_ARGS__ )
 
 
-/****d* Logging/log_vprintf
- *  NAME
- *    log_vprintf
- *****/
 #define log_vprintf( level, fmt, ap ) \
 	log_lvprintf ( NULL, level, fmt, ap )
 
@@ -127,62 +120,41 @@ extern void _log_vdebug ( char *, va_list )FORMAT((printf, 1, 0));
 
 extern void log_close ( log_ty *log );
 
-/****d* Logging/LOG_DEBUG_INFO
- *  NAME
- *    LOG_DEBUG_INFO
- *****/
 #define LOG_DEBUG_INFO( log ) \
 	log_set_debug_info ( log, __FILE__, __LINE__, __FUNCTION__ )
 
-/****d* Logging/log_dprintf
- *  NAME
- *    log_dprintf
- *****/
-#define log_dprintf( level, fmt, args... )\
-	LOG_DEBUG_INFO ( NULL ); log_printf( level, fmt, ##args )
+/* log_dprintf(level, fmt, ...) */
+#define log_dprintf( level, ... )\
+	LOG_DEBUG_INFO ( NULL ); log_printf( level, __VA_ARGS__ )
 
-/****d* Logging/log_dvprintf
- *  NAME
- *    log_dvprintf
- *****/
 #define log_dvprintf( level, fmt, ap ) \
 	log_vprintf( level, fmt, ap)
 
 /* normal debugging logging */
 #ifdef DEBUG
-/****d* Logging/LOG_XDEBUG
- *  NAME
- *    LOG_XDEBUG
- *****/
-#  define LOG_XDEBUG( fmt, args... ) \
-	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
-/****d* Logging/LOG_XDEBUGV
- *  NAME
- *    LOG_XDEBUGV
- *****/
+/* LOG_XDEBUG(fmt, ...) */
+#  define LOG_XDEBUG( ... ) \
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( __VA_ARGS__ )
+
 #  define LOG_XDEBUGV( fmt, ap ) \
 	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
 #else
-#  define LOG_XDEBUG( fmt, args... ) 
+/* LOG_XDEBUG(fmt, ...) */
+#  define LOG_XDEBUG( ... ) 
 #  define LOG_XDEBUGV( fmt, ap ) 
 #endif
 
 /* associated with assert */
 #ifndef NDEBUG
-/****d* Logging/LOG_NDEBUG
- *  NAME
- *    LOG_NDEBUG
- *****/
-#  define LOG_NDEBUG( fmt, args... ) \
-	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ##args )
-/****d* Logging/LOG_NDEBUGV
- *  NAME
- *    LOG_NDEBUGV
- *****/
+/* LOG_NDEBUG(fnt, ...) */
+#  define LOG_NDEBUG( ... ) \
+	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( __VA_ARGS__ )
+
 #  define LOG_NDEBUGV( fmt, ap ) \
 	LOG_DEBUG_INFO ( log_debug_logger(NULL) ); _log_debug ( fmt , ap )
 #else
-#  define LOG_NDEBUG( fmt, args... ) 
+/* LOG_NDEBUG(fmt, ...) */
+#  define LOG_NDEBUG( ... )
 #  define LOG_NDEBUGV( fmt, ap ) 
 #endif
 

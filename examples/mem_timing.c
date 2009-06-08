@@ -28,9 +28,6 @@ void
 timetest(char *name, int n, void *(*test)(void *), void *data)
 {
 	struct time_result	  result;
-	float			  	  usr;
-	float				  sys;
-	float				  total;
 	
 	zt_time(n, &result, test, data);
 	zt_time_print_result(&result, name, n);	

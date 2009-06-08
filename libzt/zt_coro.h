@@ -50,6 +50,7 @@ void zt_coro_exit_to(zt_coro_ctx *ctx, zt_coro *co, void *data) NORETURN;
 void zt_coro_exit(zt_coro_ctx *ctx, void * data) NORETURN;
 zt_coro *zt_coro_get_current(zt_coro_ctx *ctx);
 int zt_coro_stack_left(zt_coro_ctx *ctx);
+void zt_coro_check_stack(zt_coro_ctx *ctl);
 
 END_C_DECLS
 #endif /* _zt_coroutine_h_ */

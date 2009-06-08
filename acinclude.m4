@@ -1,4 +1,29 @@
 dnl Your own macros go here
+AC_DEFUN([AC_WITH_PEDANTIC],
+[ AC_MSG_CHECKING(whether to enable pedantic ansi flags)
+  AC_ARG_WITH(pedantic,
+  [  --with-pedantic[=flags]  Enable padantic ansi flags (--ansi --pedantic).
+  --without-pedantic      Disable pedantic ansi flags (default). ],
+  [
+	case "$with_pedantic" in
+	    no)
+         	AC_MSG_RESULT(no)
+		;;
+	    yes)
+	        AC_MSG_RESULT(yes)
+		    CFLAGS="$CFLAGS --ansi --pedantic"
+		;;
+	      *)
+	        AC_MSG_RESULT($with_pedantic)
+            CFLAGS="$CFLAGS $with_pedantic"
+		;;
+	esac
+  ],
+  [ 
+    AC_MSG_RESULT(no)
+  ])
+])
+
 AC_DEFUN([AC_WITH_OPTFLAGS],
 [ AC_MSG_CHECKING(whether to enable optimization flags)
   AC_ARG_WITH(optflags,

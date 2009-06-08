@@ -101,14 +101,24 @@
 # define CONST     __attribute__((const))
 # define UNUSED    __attribute__((unused))
 # define FORMAT(x) __attribute__((format x))
-# define INLINE    inline
 #else
 # define NORETURN  
 # define CONST     
 # define UNUSED
 # define FORMAT(x)
-# define INLINE    
 #endif
+
+#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3 && defined(__GNUC_STDC_INLINE__) && !defined(C99_INLINE)) || \
+    (__APPLE_CC__ > 5400 && !defined(C99_INLINE) && __STDC_VERSION__ >= 199901L)
+# define C99_INLINE 1
+#endif
+
+#if C99_INLINE || defined(__GNUC_STDC_INLINE__)
+# define INLINE     inline
+#else
+# define INLINE     /* no inline */
+#endif
+
 
 #if defined (_WIN32)
 # if defined libzt_EXPORTS

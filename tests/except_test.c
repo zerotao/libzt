@@ -76,7 +76,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	{
 		char *do_try = Fail;
 		TRY({
-			    TRY(THROW(do_try)); 
+			    TRY(THROW(do_try), {}); 
 		    },{
 			    CATCH(do_try, do_try = Pass;);
 		    });
@@ -88,7 +88,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 	{
 		char *nest = Fail;
 		TRY({
-			    TRY(TRY(TRY(TRY(TRY(THROW(nest))))));
+			    TRY(TRY(TRY(TRY(TRY(THROW(nest), {}), {}), {}), {}), {});
 		    },
 		    {
 			    CATCH(nest, { nest = Pass; });

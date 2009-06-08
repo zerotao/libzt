@@ -4,6 +4,7 @@
 #include <libzt/zt_event.h>
 #include <libzt/zt_event/private.h>
 #include <libzt/zt_log.h>
+#include <libzt/zt_macros.h>
 #include "test.h"
 
 typedef struct stream *stream;
@@ -43,7 +44,7 @@ static int counter = 0;
 
 void timeout_cb(zt_event_sys sys, struct timeval *tv, void *data) 
 {
-	static struct timeval	ntv = {0, 0};
+	/* static struct timeval	ntv = {0, 0}; */
 	
 	counter++;
 
@@ -62,9 +63,7 @@ int main(int argc, char *argv[])
 	struct stream	  st;
 	struct timeval	  ntv = {0, 0};
 	int				  i;
-	int				  n;
 	long		  	  last = 0;
-	char 			  buff[256];
 	
 	st.fd = STDIN_FILENO;
 	
@@ -83,11 +82,9 @@ int main(int argc, char *argv[])
 	
 	i = 0;
 
-	sprintf(buff, "%d timers", NUM_TIMERS);
-	
 	while(zt_event_run(sys, ZT_ALL_EVENTS|ZT_RUN_ONCE|ZT_NON_BLOCK) != -1) {
 		if(counter == NUM_TIMERS) {
-			TEST(buff, counter == NUM_TIMERS);
+			TEST("correct number of timers", counter == NUM_TIMERS);
 			break;
 		}
 #if INTERACTIVE

@@ -24,7 +24,7 @@ AC_PROG_CC
 dnl Add -Wall if gcc
 if test "$GCC" = "yes"; then
    dnl -Werror
-   CFLAGS="-Wall -Wcast-align -Wno-uninitialized -Wformat-security -fkeep-inline-functions -fno-strict-aliasing --ansi --pedantic"
+   CFLAGS="-Wall -Wcast-align -Wno-uninitialized -Wformat-security -fkeep-inline-functions -fno-strict-aliasing"
 fi
 
 AC_PROG_CPP
@@ -64,6 +64,7 @@ AC_TYPE_SIZE_T
 
 AC_TRY_COMPILE(,[long long i;],
 		AC_DEFINE(HAVE_LONG_LONG, 1, [Define if C compiler supports long long type]))
+
 AC_TRY_COMPILE(,[long double d;],
 		AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define if C compiler supports long double type]))
 
@@ -98,6 +99,7 @@ AC_EGREP_HEADER(sys_errlist, stdio.h, AC_DEFINE(HAS_SYS_ERRLIST, [], [extern cha
 
 AM_WITH_DMALLOC
 
+AC_WITH_PEDANTIC
 AC_WITH_OPTFLAGS
 AC_WITH_DEBUG
 AC_WITH_DIST_RELEASE

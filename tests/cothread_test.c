@@ -21,7 +21,8 @@ static void *test1(va_list args) {
 	char *str = va_arg(args, char *);
 	int limit = va_arg(args, int);
 	int i = 0;
-	
+
+    str = NULL;                 /* get rid of warning */
 	inits++;
 	/* We have been called initially, so we want to wait for a little
 	 * while, charging the schedular with a large number of threads.
@@ -49,25 +50,29 @@ static void *test1(va_list args) {
 }
 
 
-static void *test2(va_list args) {
-	char *str = va_arg(args, char *);
-	int in = va_arg(args, int);
-	int out = va_arg(args, int);
-	char buf[256];
-	int n;
-
-	for (;;) {
-		zt_cothread_wait(glbl.cts, ZT_READ_EVENT, in);
-		if ((n = read(in, buf, sizeof(buf))) <= 0)
-			break;
-		
-		zt_cothread_wait(glbl.cts, ZT_WRITE_EVENT, out);
-		write(out, buf, n);
-	}
-	
-	zt_cothread_wait(glbl.cts, 0, NULL);
-	return NULL;
-}
+/* 
+ * static void *test2(va_list args) {
+ * 	char *str = va_arg(args, char *);
+ * 	int in = va_arg(args, int);
+ * 	int out = va_arg(args, int);
+ * 	char buf[256];
+ * 	int n;
+ * 
+ *     str = NULL;                 /\* get rid of the warning *\/
+ *     
+ * 	for (;;) {
+ * 		zt_cothread_wait(glbl.cts, ZT_READ_EVENT, in);
+ * 		if ((n = read(in, buf, sizeof(buf))) <= 0)
+ * 			break;
+ * 		
+ * 		zt_cothread_wait(glbl.cts, ZT_WRITE_EVENT, out);
+ * 		write(out, buf, n);
+ * 	}
+ * 	
+ * 	zt_cothread_wait(glbl.cts, 0, NULL);
+ * 	return NULL;
+ * }
+ */
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)

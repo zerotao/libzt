@@ -27,20 +27,20 @@ static zt_elist(sets);
 typedef struct zt_mem_elt {
 	zt_elist		  	  free_elt_list;
 	struct zt_mem_page	* parent_page;
-	unsigned long		  data[0];
+	unsigned long		  data[];
 } zt_mem_elt;
 
 struct zt_mem_heap {
 	char			* name;
 	size_t			  size;
-	unsigned long	  heap[0];
+	unsigned long	  heap[];
 };
 
 typedef struct zt_mem_page {
 	zt_elist	  		  page_list;
 	struct zt_mem_pool	* parent_pool;
 	unsigned long		  num_free_elts;
-	unsigned long	 	  data[0];
+	unsigned long	 	  data[];
 } zt_mem_page;
 
 struct zt_mem_pool {
@@ -669,10 +669,10 @@ zt_mem_page_destroy(zt_mem_page *page)
 static zt_mem_page *
 zt_mem_page_alloc(zt_mem_pool *pool)
 {
-	zt_mem_page	 *page;
-	zt_mem_elt	 *head;
-	zt_mem_elt	 *elt;
-	size_t			  size;
+	zt_mem_page * page;
+	zt_mem_elt	* head;
+	zt_mem_elt	* elt;
+	size_t		  size;
 	int			  i;
 	int			  epp;
 	

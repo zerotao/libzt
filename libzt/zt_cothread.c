@@ -5,7 +5,7 @@
 static int _schedule(zt_cothread_sched *);
 static void _add_req(zt_cothread_sched *, struct event_req *, int, ...);
 static void _vadd_req(zt_cothread_sched *, struct event_req *, int, va_list);
-static int _check(struct event_req *, struct timeval *);
+/* static int _check(struct event_req *, struct timeval *); */
 static void _enqueue(zt_cothread_sched *, struct event_queue *, struct event_req *);
 static void _enqueue_timer(zt_event_sys, struct timeval *, void *);
 static void _enqueue_io(zt_event_sys, int, zt_event_enum, void *);
@@ -158,29 +158,31 @@ static void _vadd_req(zt_cothread_sched *cts, struct event_req *req, int mode, v
 	_enqueue(cts, cts->wait, req);
 }
 
-static int _check(struct event_req *req, struct timeval *ctime)
-{
-#define tst_fde(r, e) (((r)->mode & (e)) && ((r)->rmode & (e))) ? e : 0
-	int	  res = 0;
-
-	if(req->mode & ZT_ANY_IO_EVENT) {
-		res |= tst_fde(req, ZT_READ_EVENT);
-		res |= tst_fde(req, ZT_WRITE_EVENT);
-		res |= tst_fde(req, ZT_EXCEPT_EVENT);
-		req->rmode = 0;
-	}
-
-	if (res == 0) {
-		if (req->mode & ZT_TIMER_EVENT) {			
-			if (zt_cmp_time(&req->timeout, ctime) <= 0) {
-				res |= ZT_TIMER_EVENT;
-			}
-		}
-	}
-	
-	return res;
-#undef tst_fde
-}
+/* 
+ * static int _check(struct event_req *req, struct timeval *ctime)
+ * {
+ * #define tst_fde(r, e) (((r)->mode & (e)) && ((r)->rmode & (e))) ? e : 0
+ * 	int	  res = 0;
+ * 
+ * 	if(req->mode & ZT_ANY_IO_EVENT) {
+ * 		res |= tst_fde(req, ZT_READ_EVENT);
+ * 		res |= tst_fde(req, ZT_WRITE_EVENT);
+ * 		res |= tst_fde(req, ZT_EXCEPT_EVENT);
+ * 		req->rmode = 0;
+ * 	}
+ * 
+ * 	if (res == 0) {
+ * 		if (req->mode & ZT_TIMER_EVENT) {			
+ * 			if (zt_cmp_time(&req->timeout, ctime) <= 0) {
+ * 				res |= ZT_TIMER_EVENT;
+ * 			}
+ * 		}
+ * 	}
+ * 	
+ * 	return res;
+ * #undef tst_fde
+ * }
+ */
 
 static void _enqueue(zt_cothread_sched *cts, struct event_queue *queue, struct event_req *req)
 {

@@ -20,9 +20,10 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
 	/* get rid of the log message for the moment */
-#warning "Hiding log messages for assertions"
 	log_ty	* olog;
-	log_ty 	* log = log_file("/dev/null", 0, 0);
+	log_ty 	* log;
+
+    log = log_file("/dev/null", 0, 0);
 	
 	olog = log_logger(log);
 	

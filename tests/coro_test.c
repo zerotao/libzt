@@ -44,6 +44,8 @@ void *_call2(zt_coro_ctx *ctx, void *data)
         
     THROW(td);
     zt_coro_exit(ctx, (void *)td);
+
+    return NULL;
 }
 
 
@@ -84,6 +86,8 @@ void *_call1(zt_coro_ctx *ctx, void *data)
     ZT_UNIT_ASSERT(td->test, td->i == 7);
     ZT_UNIT_ASSERT(td->test, stack == _except_Stack);
     zt_coro_exit(ctx, (void *)td);
+
+    return NULL;
 }
 
 static void
