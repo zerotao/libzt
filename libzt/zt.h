@@ -113,8 +113,9 @@
 # define C99_INLINE 1
 #endif
 
-#if C99_INLINE || defined(__GNUC_STDC_INLINE__)
+#if C99_INLINE || __GNUC_GNU_INLINE__
 # define INLINE     inline
+# define HAS_ININE  1
 #else
 # define INLINE     /* no inline */
 #endif
