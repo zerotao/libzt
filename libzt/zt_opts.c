@@ -54,6 +54,8 @@ print_default(opt_types type, void *value)
 			fprintf(stderr, " (default %s)", *(int *)value ? "true" : "false");
 			break;
 		case opt_flag:
+			fprintf(stderr, " (default %s)", *(int *)value ? "enabled" : "disabled");
+			break;
 		case opt_int:			
 			fprintf(stderr, " (default %d)", *(int *)value);
 			break;
