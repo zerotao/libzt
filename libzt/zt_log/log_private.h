@@ -4,7 +4,7 @@
  * Copyright (C) 2000-2002, 2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
- * $Id: log_private.h,v 1.2 2003/06/09 13:42:12 jshiffer Exp $
+ * $Id: zt_log_private.h,v 1.2 2003/06/09 13:42:12 jshiffer Exp $
  *
  */
 
@@ -23,35 +23,35 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-typedef struct log_level_desc_ty log_level_desc_ty;
-struct log_level_desc_ty {
-  log_level level;
+typedef struct zt_log_level_desc_ty zt_log_level_desc_ty;
+struct zt_log_level_desc_ty {
+  zt_log_level level;
   char *desc;
 };
-extern log_level_desc_ty log_level_desc[];
+extern zt_log_level_desc_ty zt_log_level_desc[];
 
-#define LOG_LEVEL_MAX 8+1
+#define ZT_LOG_LEVEL_MAX 8+1
 
-struct log_ty {
-  struct log_vtbl_ty *vtbl;
+struct zt_log_ty {
+  struct zt_log_vtbl_ty *vtbl;
   unsigned int opts;
-  log_level level;
+  zt_log_level level;
   char *file;
   char *function;
   int line;
   /* rest of opts */
 };
   
-typedef struct log_vtbl_ty log_vtbl_ty;
-struct log_vtbl_ty {
+typedef struct zt_log_vtbl_ty zt_log_vtbl_ty;
+struct zt_log_vtbl_ty {
   size_t size;
   /* virtual function pointers */
-  void (* destructor)(log_ty *log);
-  void (* print)(log_ty *log, log_level level, char *fmt, va_list ap);
+  void (* destructor)(zt_log_ty *log);
+  void (* print)(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap);
 };
 
-log_ty *log_new (log_vtbl_ty *vptr, unsigned int opts);
-char* log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int opts);
+zt_log_ty *zt_log_new (zt_log_vtbl_ty *vptr, unsigned int opts);
+char* zt_log_gen_fmt (zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts);
 
 #ifdef __cplusplus
 }

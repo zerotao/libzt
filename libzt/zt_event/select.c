@@ -162,7 +162,7 @@ remove_io(zt_event_sys sys, int fd, zt_event_enum type) /* , zt_event_io_cb cb, 
 		}
 		
 	} else {
-		log_printf(log_err, "attempt to remove io event which was never added for fd: %d", fd);
+		zt_log_printf(zt_log_err, "attempt to remove io event which was never added for fd: %d", fd);
 	}	
 	
 	return 0;

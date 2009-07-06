@@ -24,8 +24,8 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-extern log_ty *log_syslog (void);
-extern log_ty *log_syslog2 (int opt, int facility);
+extern zt_log_ty *zt_log_syslog (void);
+extern zt_log_ty *zt_log_syslog2 (int opt, int facility);
 
 #ifdef __cplusplus
 }

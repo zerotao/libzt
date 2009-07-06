@@ -33,7 +33,7 @@ struct zt_unit *
 zt_unit_init(void)
 {
 	struct zt_unit	* unit = XCALLOC(struct zt_unit, 1);
-	/* log_ty			* log; */
+	/* zt_log_ty			* log; */
 	
 	zt_elist_reset(&unit->suites);
 	unit->failures = 0;

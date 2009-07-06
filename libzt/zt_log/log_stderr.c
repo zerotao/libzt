@@ -17,29 +17,29 @@
 #include "../zt.h"
 #include "log_private.h"
 
-static void destructor (log_ty *log)
+static void destructor (zt_log_ty *log)
 {
 	XFREE(log);
 	return;
 }
 
-static void print (log_ty *log, log_level level, char *fmt, va_list ap)
+static void print (zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 {
-  char *nfmt = log_gen_fmt( log, fmt, level, log->opts);
-  vfprintf(stderr, nfmt, ap);
-  XFREE(nfmt);
+    char *nfmt = zt_log_gen_fmt( log, fmt, level, log->opts);
+    vfprintf(stderr, nfmt, ap);
+    XFREE(nfmt);
 }
 
 /* component data */
-static log_vtbl_ty vtbl = {
-  sizeof(log_ty),
-  destructor,
-  print,
+static zt_log_vtbl_ty vtbl = {
+    sizeof(zt_log_ty),
+    destructor,
+    print,
 };
 
-log_ty *
-log_stderr(unsigned int opts)
+zt_log_ty *
+zt_log_stderr(unsigned int opts)
 {
-    return log_new(&vtbl, opts);
+    return zt_log_new(&vtbl, opts);
 }
 

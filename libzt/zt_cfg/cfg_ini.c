@@ -202,7 +202,7 @@ static int parse_file(cfg_ty* cfg, FILE* file)
 		default:
 			ungetc(c, file);
 			if(!(parse_line(file, &bvv))){
-				log_printf(log_err, "Syntax error in config file at line: %d\n", line);
+				zt_log_printf(zt_log_err, "Syntax error in config file at line: %d\n", line);
 				return -1;
 			}
 			insert_bvv(cfg, &bvv);

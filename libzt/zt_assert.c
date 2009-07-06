@@ -36,7 +36,7 @@ _assert_fail (char *s, char *file, unsigned int line,
 	zt_cstr_basename(bname, PATH_MAX, file, NULL);
 	
 	if(func)
-		log_printf(log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, bname, line, func);
+		zt_log_printf(zt_log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, bname, line, func);
 	else
-		log_printf(log_err, "Assertion \"%s\" failed at: %s[%d]", s, bname, line);
+		zt_log_printf(zt_log_err, "Assertion \"%s\" failed at: %s[%d]", s, bname, line);
 }

@@ -48,7 +48,7 @@ void _except_install_handler(void *e, except_handler h){
 	/* make space for a new handler */
 	struct except_Handler *newh = calloc(1, sizeof(struct except_Handler));
 	if(!newh){
-		log_printf(log_crit, "Could not calloc space for new handler");
+		zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
 		exit(255);
 	}
 	newh->next = NULL;
@@ -67,7 +67,7 @@ void _except_install_handler(void *e, except_handler h){
 	if((stack->next == NULL) && (stack->e != e)){
 		stack->next = calloc(1, sizeof(struct except_Handlers));
 		if(!stack->next){
-			log_printf(log_crit, "Could not calloc space for new handler");
+			zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
 			exit(255);
 		}
 		stack->next->e = e;
@@ -108,13 +108,13 @@ void _except_remove_handler(void *e, except_handler h){
 			prev->next = handler->next;
 			free(handler);
 		}else{
-			log_printf(log_crit, "Attempt to remove a non installed exception Handler.");
+			zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
 		} 
 		if(stack->handlers == NULL){
 			stack->e = NULL;
 		}
 	}else{
-		log_printf(log_crit, "Attempt to remove a non installed exception Handler.");
+		zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
 	}
 }
 
@@ -150,15 +150,15 @@ void _except_call_handlers(struct except_Frame *estack)
 					continue;
 					break;
 				default:
-					log_printf(log_crit,
-						 "Exception handler for '%s' has "
-						 "requested an exit for exception "
-						 "'%s' @ %s[%d]:%s",
-						 estack->etext,
-						 estack->etext,
-						 estack->efile,
-						 estack->eline,
-						 estack->efunc);
+					zt_log_printf(zt_log_crit,
+                                  "Exception handler for '%s' has "
+                                  "requested an exit for exception "
+                                  "'%s' @ %s[%d]:%s",
+                                  estack->etext,
+                                  estack->etext,
+                                  estack->efile,
+                                  estack->eline,
+                                  estack->efunc);
 					exit(ret);
 					break;
 			}
@@ -195,7 +195,7 @@ void _except_unhandled_exception(char *etext, const char *efile, unsigned int el
 	char	  bname[PATH_MAX];
 	zt_cstr_basename(bname, PATH_MAX, efile, NULL);
 	
-	log_printf(log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
+	zt_log_printf(zt_log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
 		   etext, bname, eline, efunc);
         if(flags) {
                 abort();

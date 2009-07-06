@@ -751,7 +751,7 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
 		}
 		
 		if ((c2 = hex_to_char(*hex++)) == -1) {
-			log_printf(log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
+			zt_log_printf(zt_log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
 			return -1;
 		} else {
 			n++;

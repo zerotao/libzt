@@ -20,17 +20,17 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
 	/* get rid of the log message for the moment */
-	log_ty	* olog;
-	log_ty 	* log;
+zt_log_ty	* olog;
+zt_log_ty 	* log;
 
-    log = log_file("/dev/null", 0, 0);
+    log = zt_log_file("/dev/null", 0, 0);
 	
-	olog = log_logger(log);
+	olog = zt_log_logger(log);
 	
 	assert(1==1);			/* will produce a warning: statement with no effect which is too true */
 	ZT_UNIT_ASSERT_RAISES(test, assertion_failed, assert(1==0));
 
-	log_logger(olog);
+	zt_log_logger(olog);
 }
 
 int

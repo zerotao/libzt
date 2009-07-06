@@ -216,7 +216,7 @@ int cfg_priv_set ( cfg, block_name, variable_name, var, type )
 		break;
 	case cfg_bool:
 		if((*(short int *)var == 1) || (*(short int *)var == 0)){
-			log_printf(log_err, "Invalid value for type cfg_bool in cfg_set!  Must be a string of (true|yes|no|false).");
+			zt_log_printf(zt_log_err, "Invalid value for type cfg_bool in cfg_set!  Must be a string of (true|yes|no|false).");
 			return -1;
 		}
 		/* FALLTHRU */
@@ -224,7 +224,7 @@ int cfg_priv_set ( cfg, block_name, variable_name, var, type )
 		snprintf(bvv.value, BUFMAX, "%s", *(char **)var);
 		break;
 	default:
-		log_printf(log_err, "Unknown type in cfg variable list");
+		zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
 		return -1;
 	}
 
@@ -287,13 +287,13 @@ int cfg_priv_get ( cfg, block_name, variable_name, var, type )
 			*(char **)var = ref->v.s;
 			break;
 		default:
-			log_printf(log_err, "Unknown type in cfg variable list");
+			zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
 			return -1;
 		}
 		break;
 	}
 	default:
-		log_printf(log_err, "Unknown type in cfg variable list");
+		zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
 		return -1;
 	}
 	/* 

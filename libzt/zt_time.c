@@ -176,9 +176,9 @@ zt_time_print_result(struct time_result *tr, char *name, int n)
 	zt_time_result_to_elapsed(tr, &usr, &sys, &total);
 
 	if(n <= 1) {
-		log_printf(log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total", name, usr, sys, total);
+		zt_log_printf(zt_log_info, "%s took: %4.2fs user %4.2fs system %4.2fs total", name, usr, sys, total);
 	} else {
-		log_printf(log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total",n, name, usr, sys, total);
+		zt_log_printf(zt_log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total",n, name, usr, sys, total);
 	}
 	
 }

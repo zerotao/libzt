@@ -33,19 +33,19 @@ daemonize( char *root, mode_t mask, int options)
 	int status;
 
 	if((pid = fork()) == (pid_t)(-1)){ /* first error */
-		log_printf(log_emerg, "failed to fork(): %s", strerror(errno));
+		zt_log_printf(zt_log_emerg, "failed to fork(): %s", strerror(errno));
 		exit(1);
 	}else if(pid == 0){	/* first child */
 		/* FIXME: Not everyone has setsid.  Add support for them. */
 		if(setsid() == -1){
-			log_printf(log_emerg, "faild to setsid(): %s", strerror(errno));
+			zt_log_printf(zt_log_emerg, "faild to setsid(): %s", strerror(errno));
 			exit(1);
 		}
 
 		/* get the max number of open fd and close them */
 		memset(&rlimits, 0, sizeof(struct rlimit));
 		if(getrlimit(RLIMIT_NOFILE, &rlimits) == -1){
-			log_printf(log_emerg, "faild to getlimit(): %s", strerror(errno));
+			zt_log_printf(zt_log_emerg, "faild to getlimit(): %s", strerror(errno));
 			exit(1);
 		}
 		for(i = 0; i < rlimits.rlim_cur; i++){ close(i); } /* Close all of the filehandles */

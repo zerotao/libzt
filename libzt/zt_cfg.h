@@ -59,7 +59,7 @@ typedef enum cfg_type cfg_type;
  */
 void cfg_close ( cfg_ty * );
 #define cfg_close( cfg ) 	\
-	LOG_DEBUG_INFO(NULL);	\
+	ZT_LOG_DEBUG_INFO(NULL);	\
 	cfg_close( cfg )
 
 /****f* Cfg/cfg_get
@@ -88,7 +88,7 @@ void cfg_close ( cfg_ty * );
  */
 int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
 #define cfg_get( cfg, block, name, addr, type )	\
-	LOG_DEBUG_INFO(NULL);			\
+	ZT_LOG_DEBUG_INFO(NULL);                       \
 	cfg_get(cfg, block, name, addr, type)
 
 
@@ -116,7 +116,7 @@ int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
 
 int cfg_set ( cfg_ty *, char *, char *, void *, cfg_type );
 #define cfg_set( cfg, block, name, addr, type )	\
-	LOG_DEBUG_INFO(NULL);			\
+	ZT_LOG_DEBUG_INFO(NULL);                       \
 	cfg_set(cfg, block, name, addr, type)
 
 END_C_DECLS

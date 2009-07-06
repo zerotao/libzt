@@ -32,7 +32,7 @@ int zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t *uuid)
 			zt_sha1_update(&ctx, NAMESPACE_X500.bytes, UUID_ALEN);
 			break;
 		default:
-			log_printf(log_err, "unknown namespace %d", type);
+			zt_log_printf(zt_log_err, "unknown namespace %d", type);
 			return -1;
 	}
 	zt_sha1_update(&ctx, (uint8_t *)value, vlen);

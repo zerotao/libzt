@@ -70,7 +70,7 @@ zt_event_sys
 zt_event_epoll(void) 
 {
 	
-	log_printf(log_err, "Unsupported interface: epoll");
+	zt_log_printf(zt_log_err, "Unsupported interface: epoll");
 	return NULL;
 	return zt_event_new(&vtbl);
 }

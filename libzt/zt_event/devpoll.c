@@ -70,7 +70,7 @@ zt_event_sys
 zt_event_devpoll(void) 
 {
 	
-	log_printf(log_err, "Unsupported interface: devpoll");
+	zt_log_printf(zt_log_err, "Unsupported interface: devpoll");
 	return NULL;
 	return zt_event_new(&vtbl);
 }

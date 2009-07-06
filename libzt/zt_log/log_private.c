@@ -4,7 +4,7 @@
  * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
- * $Id: log_private.c,v 1.4 2003/11/26 17:47:29 jshiffer Exp $
+ * $Id: zt_log_private.c,v 1.4 2003/11/26 17:47:29 jshiffer Exp $
  *
  */
 
@@ -32,22 +32,22 @@
 #include "../zt_progname.h"
 #include "log_private.h"
 
-log_level_desc_ty log_level_desc[] = {
-  { log_emerg,   "Emergency" },
-  { log_alert,   "Alert"     },
-  { log_crit,    "Critical"  },
-  { log_err,     "Error"     },
-  { log_warning, "Warning"   },
-  { log_notice,  "Notice"    },
-  { log_info,    "Info"      },
-  { log_debug,   "Debug"     },
+zt_log_level_desc_ty zt_log_level_desc[] = {
+  { zt_log_emerg,   "Emergency" },
+  { zt_log_alert,   "Alert"     },
+  { zt_log_crit,    "Critical"  },
+  { zt_log_err,     "Error"     },
+  { zt_log_warning, "Warning"   },
+  { zt_log_notice,  "Notice"    },
+  { zt_log_info,    "Info"      },
+  { zt_log_debug,   "Debug"     },
   { -1, NULL },
 };
 
-log_ty*
-log_new (log_vtbl_ty *vptr, unsigned int opts)
+zt_log_ty *
+zt_log_new (zt_log_vtbl_ty *vptr, unsigned int opts)
 {
-  log_ty *result;
+  zt_log_ty *result;
 
   result = calloc(1, vptr->size);
   if(!result){
@@ -59,12 +59,12 @@ log_new (log_vtbl_ty *vptr, unsigned int opts)
   result->function = NULL;
   result->line = 0;
   result->opts = opts;
-  result->level = log_max;
+  result->level = zt_log_max;
   return(result);
 }
 
 char*
-log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
+zt_log_gen_fmt (zt_log_ty *log, char *fmt, zt_log_level level, unsigned int  opts)
 {
   int len = 0;
   char *buff = NULL;
@@ -72,7 +72,7 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
   len = strlen(fmt) + 4;	/* format + seperator + "\n" + null */
   buff = (char *)XCALLOC(char, len); /* mem_calloc(len, sizeof(char)); */
 
-  if(opts & LOG_WITH_DATE){
+  if(opts & ZT_LOG_WITH_DATE){
     char sbuf[255];
     time_t tt = time(NULL);
     len += strftime(sbuf, 254, "%b %e %H:%M:%S ", localtime(&tt));
@@ -80,7 +80,7 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
     sprintf(buff, "%s", sbuf);
   }
 
-  if(opts & LOG_WITH_SYSNAME){
+  if(opts & ZT_LOG_WITH_SYSNAME){
     char sbuf[255];
     char *t = NULL;
     gethostname(sbuf, 254);
@@ -90,17 +90,17 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
     len += strlen(sbuf) + 1;	/* sbuf + space */
     buff = XREALLOC(char, buff, len);
     strcat(buff, sbuf);
-    if((opts > LOG_WITH_SYSNAME))
+    if((opts > ZT_LOG_WITH_SYSNAME))
       strcat(buff, " ");
   }
 
-  if(opts & LOG_WITH_PROGNAME){
+  if(opts & ZT_LOG_WITH_PROGNAME){
     len += strlen(zt_progname(NULL, 0)); /* progname */
     buff = XREALLOC(char, buff, len);
     strcat(buff, zt_progname(NULL, 0));
   }
 
-  if(opts & LOG_WITH_PID){
+  if(opts & ZT_LOG_WITH_PID){
     char sbuf[10 + 3];		/* pid + [] + null */
     pid_t pid = getpid();
     sprintf(sbuf, "[%u]", pid);
@@ -109,16 +109,16 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
     strcat(buff, sbuf);
   }
 
-  if(opts & LOG_WITH_LEVEL){
-    if((level < log_max) || (level >= 0)){
-      len += strlen(log_level_desc[level].desc) + 2; /* ': ' + level desc */
+  if(opts & ZT_LOG_WITH_LEVEL){
+    if((level < zt_log_max) || (level >= 0)){
+      len += strlen(zt_log_level_desc[level].desc) + 2; /* ': ' + level desc */
       buff = XREALLOC(char, buff, len);
-      if (opts != LOG_WITH_LEVEL)
+      if (opts != ZT_LOG_WITH_LEVEL)
 	strcat(buff, ": ");
-      strcat(buff, log_level_desc[level].desc);
+      strcat(buff, zt_log_level_desc[level].desc);
     }
   }
-  if(opts != LOG_RAW){
+  if(opts != ZT_LOG_RAW){
     strcat(buff, ": ");
   }
   strcat(buff, fmt);

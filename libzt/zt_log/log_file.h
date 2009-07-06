@@ -13,15 +13,15 @@
 #include <libzt/zt.h>
 #include <libzt/zt_log.h>
 
-#define LOG_FILE_OVERWRITE 0
-#define LOG_FILE_APPEND    1
+#define ZT_LOG_FILE_OVERWRITE 0
+#define ZT_LOG_FILE_APPEND    1
 
 #ifdef __cplusplus
 extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-extern log_ty *log_file (char *name, int fopts, int lopts);
+extern zt_log_ty *zt_log_file (char *name, int fopts, int lopts);
 
 #ifdef __cplusplus
 }

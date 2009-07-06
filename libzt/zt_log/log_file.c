@@ -18,56 +18,56 @@
 
 #include "log_private.h"
 
-typedef struct log_file_ty log_file_ty;
-struct log_file_ty {
-  log_ty  inherited;
-  FILE    *file;
+typedef struct zt_log_file_ty zt_log_file_ty;
+struct zt_log_file_ty {
+    zt_log_ty  inherited;
+    FILE    *file;
 };
 
-static void destructor (log_ty *log)
+static void destructor(zt_log_ty *log)
 {
-  log_file_ty *this = (log_file_ty *)log;
-  fclose(this->file);
-  XFREE(this);
+    zt_log_file_ty *this = (zt_log_file_ty *)log;
+    fclose(this->file);
+    XFREE(this);
 }
 
 static void
-print (log_ty *log, log_level level, char *fmt, va_list ap)
+print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 {
-  char *nfmt = NULL;
-  log_file_ty *this = (log_file_ty *)log;
-  nfmt = log_gen_fmt(log, fmt, level, log->opts);
-  vfprintf(this->file, nfmt, ap);
-  fflush(this->file);
-  free(nfmt);
+    char *nfmt = NULL;
+    zt_log_file_ty *this = (zt_log_file_ty *)log;
+    nfmt = zt_log_gen_fmt(log, fmt, level, log->opts);
+    vfprintf(this->file, nfmt, ap);
+    fflush(this->file);
+    free(nfmt);
 }
 
 /* component data */
-static log_vtbl_ty vtbl = {
-  sizeof(log_file_ty),
-  destructor,
-  print,
+static zt_log_vtbl_ty vtbl = {
+    sizeof(zt_log_file_ty),
+    destructor,
+    print,
 };
 
-log_ty *
-log_file(char *file, int  fopts, int  lopts)
+zt_log_ty *
+zt_log_file(char *file, int  fopts, int  lopts)
 {
-  log_file_ty *this;
-  log_ty      *result;
+    zt_log_file_ty *this;
+    zt_log_ty      *result;
 
-  result = log_new(&vtbl, lopts);
-  this = (log_file_ty *)result;
+    result = zt_log_new(&vtbl, lopts);
+    this = (zt_log_file_ty *)result;
 
-  if(fopts == LOG_FILE_APPEND){
-    this->file = fopen(file, "a");
-  }else{
-    this->file = fopen(file, "w");
-  }
-  if(!this->file){
-    fprintf(stderr, "Could not open file %s: %s\n", file, strerror(errno));
-    return NULL;
-  }
+    if(fopts == ZT_LOG_FILE_APPEND){
+        this->file = fopen(file, "a");
+    }else{
+        this->file = fopen(file, "w");
+    }
+    if(!this->file){
+        fprintf(stderr, "Could not open file %s: %s\n", file, strerror(errno));
+        return NULL;
+    }
 
-  return result;
+    return result;
 }
 

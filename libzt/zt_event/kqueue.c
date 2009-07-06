@@ -70,7 +70,7 @@ zt_event_sys
 zt_event_kqueue(void) 
 {
 	
-	log_printf(log_err, "Unsupported interface: kqueue");
+	zt_log_printf(zt_log_err, "Unsupported interface: kqueue");
 	return NULL;
 	return zt_event_new(&vtbl);
 }

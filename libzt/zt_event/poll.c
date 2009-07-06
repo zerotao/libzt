@@ -70,7 +70,7 @@ zt_event_sys
 zt_event_poll(void) 
 {
 	
-	log_printf(log_err, "Unsupported interface: poll");
+	zt_log_printf(zt_log_err, "Unsupported interface: poll");
 	return NULL;
 	return zt_event_new(&vtbl);
 }
