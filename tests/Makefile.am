@@ -54,7 +54,13 @@ test.out:
 
 test: unit_test
 	@echo Beginning Test Run
-	@-cp -p $(DUMMY_TEST) $(top_builddir)/tests
+	@DTD=`cd $(srcdir) && pwd`;	\
+	DTBD=`cd $(top_builddir)/tests && pwd`; \
+	if [ $$DTD != $$DTBD ]; then \
+		echo $$DTD;		\
+		echo $$DTBD;	\
+		cp -np $(DUMMY_TEST) $(top_builddir)/tests; \
+	fi
 	@$(RM) -f diff.out assert.out core
 	@python $(top_srcdir)/tools/ut_info.py ./unit_test;
 
