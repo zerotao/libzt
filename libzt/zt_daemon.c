@@ -25,7 +25,7 @@
 #include "zt_log.h"
 
 int
-daemonize( char *root, mode_t mask, int options)
+zt_daemonize( char *root, mode_t mask, int options)
 {
 	pid_t pid, pid2;
 	int i;

@@ -17,9 +17,9 @@
 
 BEGIN_C_DECLS
 
-/****f* Daemon/daemonize
+/****f* Daemon/zt_daemonize
  * NAME
- *   daemonize - do everything necessary in order to become a proper daemon
+ *   zt_daemonize - do everything necessary in order to become a proper daemon
  *
  * DESCRIPTION
  *   daemonize a process following (for the most part) the rules
@@ -34,7 +34,7 @@ BEGIN_C_DECLS
  *   0 on success
  *
  ****/
-extern int daemonize( char *root, mode_t umask, int options);
+extern int zt_daemonize( char *root, mode_t umask, int options);
 
 END_C_DECLS
 #endif /*_ZT_DAEMON_H_*/
