@@ -21,27 +21,27 @@
 
 static char* valid_variable_name = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
-static int parse_cfg(cfg_ty* cfg);
-static int parse_file(cfg_ty* cfg, FILE* file);
-static int parse_line(FILE* file, struct bvv_ty* bvv);
-static int parse_block(FILE* file, struct bvv_ty* bvv);
+static int parse_cfg(zt_cfg_ty* cfg);
+static int parse_file(zt_cfg_ty* cfg, FILE* file);
+static int parse_line(FILE* file, struct cfg_bvv_ty* bvv);
+static int parse_block(FILE* file, struct cfg_bvv_ty* bvv);
 
 
 /* component data */
-static cfg_vtbl_ty vtbl = {
-  sizeof(cfg_ty),
+static zt_cfg_vtbl_ty vtbl = {
+  sizeof(zt_cfg_ty),
   0,
-  cfg_priv_destructor,
-  cfg_priv_get,
-  cfg_priv_set
+  zt_cfg_priv_destructor,
+  zt_cfg_priv_get,
+  zt_cfg_priv_set
 };
 
-cfg_ty *
-cfg_ini( file, opts )
+zt_cfg_ty *
+zt_cfg_ini( file, opts )
      char *file;
 	 int opts;
 {
-	cfg_ty *cfg = cfg_new(&vtbl);
+	zt_cfg_ty *cfg = zt_cfg_new(&vtbl);
 	cfg->filename = strdup(file);
 	cfg->opts = opts;
 	if(parse_cfg(cfg) < 0){
@@ -53,7 +53,7 @@ cfg_ini( file, opts )
 	return cfg;
 }
 
-int parse_cfg(cfg_ty* cfg)
+int parse_cfg(zt_cfg_ty* cfg)
 {
 	int ret = 0;
 	FILE* file;
@@ -68,7 +68,7 @@ int parse_cfg(cfg_ty* cfg)
 }
 
 
-static int parse_block(FILE* file, struct bvv_ty* bvv)
+static int parse_block(FILE* file, struct cfg_bvv_ty* bvv)
 {
 	char buff[BUFMAX];
 	int c;
@@ -97,7 +97,7 @@ static int parse_block(FILE* file, struct bvv_ty* bvv)
 	return(0);	
 }
 
-static int parse_line(FILE* file, struct bvv_ty* bvv)
+static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
 {
 	char buff[BUFMAX];
 	int end;
@@ -163,16 +163,16 @@ static int parse_line(FILE* file, struct bvv_ty* bvv)
 	return 1;
 }
 
-static int parse_file(cfg_ty* cfg, FILE* file)
+static int parse_file(zt_cfg_ty* cfg, FILE* file)
 {
 	int c;
 	char block[BUFMAX];
-	struct bvv_ty bvv;
+	struct cfg_bvv_ty bvv;
 	int numents = 0;
 	int line = 1;
 
 	assert(cfg);
-	memset(&bvv, '\0', sizeof(struct bvv_ty));
+	memset(&bvv, '\0', sizeof(struct cfg_bvv_ty));
 	sprintf(block, "Global");									/* default blockname */
 	bvv.block = strdup(block);
 	
@@ -187,7 +187,7 @@ static int parse_file(cfg_ty* cfg, FILE* file)
 				bvv.block = NULL;
 			}
 			parse_block(file, &bvv);
-			discard_line(file);
+			cfg_discard_line(file);
 			break;
 		case ';':
 			/* FALL-THRU */
@@ -197,7 +197,7 @@ static int parse_file(cfg_ty* cfg, FILE* file)
 		case ' ':
 			/* FALL-TRHU */
 		case '\t':												/* whitespace */
-			discard_whitespace(file);
+			cfg_discard_whitespace(file);
 			break;
 		default:
 			ungetc(c, file);
@@ -205,7 +205,7 @@ static int parse_file(cfg_ty* cfg, FILE* file)
 				zt_log_printf(zt_log_err, "Syntax error in config file at line: %d\n", line);
 				return -1;
 			}
-			insert_bvv(cfg, &bvv);
+			cfg_insert_bvv(cfg, &bvv);
 			free(bvv.variable);
 			free(bvv.value);
 			numents++;

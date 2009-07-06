@@ -17,32 +17,32 @@
 
 
 
-#undef cfg_close
-void cfg_close ( cfg_ty *cfg )
+#undef zt_cfg_close
+void zt_cfg_close ( zt_cfg_ty *cfg )
 {
 	if(cfg && cfg->vtbl->destructor)
 		cfg->vtbl->destructor(cfg);
 	return;
 }
 
-#undef cfg_get
-int cfg_get ( cfg_ty	* cfg,
-	      char 	* block,
-	      char 	* name,
-	      void 	* value,
-	      cfg_type 	  type )
+#undef zt_cfg_get
+int zt_cfg_get ( zt_cfg_ty	* cfg,
+                 char 	* block,
+                 char 	* name,
+                 void 	* value,
+                 zt_cfg_type 	  type )
 {
 	if(cfg && cfg->vtbl->get) 
 		return cfg->vtbl->get(cfg, block, name, value, type);
 	return 0;
 }
 
-#undef cfg_set
-int cfg_set ( cfg_ty	* cfg,
-	      char 	* block,
-	      char 	* name,
-	      void 	* value,
-	      cfg_type 	  type )
+#undef zt_cfg_set
+int zt_cfg_set ( zt_cfg_ty	* cfg,
+                 char 	* block,
+                 char 	* name,
+                 void 	* value,
+                 zt_cfg_type 	  type )
 {
 	if(cfg && cfg->vtbl->set) 		
 		return cfg->vtbl->set(cfg, block, name, value, type);

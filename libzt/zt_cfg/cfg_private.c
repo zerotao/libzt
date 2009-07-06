@@ -23,17 +23,24 @@
 #include "../zt_log.h"
 #include "cfg_private.h"
 
-cfg_ty*
-cfg_new ( vptr )
-  cfg_vtbl_ty *vptr;
+
+struct zt_cfg_block_ty* get_block(struct zt_cfg_block_ty* head, char* name);
+struct zt_cfg_block_ty* add_block(struct zt_cfg_ty* cfg, char* name);
+struct zt_cfg_value_ty* get_variable(struct zt_cfg_value_ty* head, char*vname);
+struct zt_cfg_value_ty* add_variable(struct zt_cfg_block_ty* block, char *name);
+zt_cfg_type get_type(char* value, void* nvalue);
+
+zt_cfg_ty*
+zt_cfg_new ( vptr )
+zt_cfg_vtbl_ty *vptr;
 {
-  cfg_ty *result;
-  result = calloc(1, vptr->size);
-  result->vtbl = vptr;
-  return(result);
+    zt_cfg_ty *result;
+    result = calloc(1, vptr->size);
+    result->vtbl = vptr;
+    return(result);
 }
 
-void discard_line(FILE* file)
+void cfg_discard_line(FILE* file)
 {
 	int c = 0;
 	while((c = fgetc(file)) !=  EOF){
@@ -41,7 +48,7 @@ void discard_line(FILE* file)
 	}
 }
 
-void discard_whitespace(FILE* file)
+void cfg_discard_whitespace(FILE* file)
 {
 	int c = 0;
 	while((c = fgetc(file)) != EOF){
@@ -52,8 +59,8 @@ void discard_whitespace(FILE* file)
 	}
 }
 
-struct cfg_block_ty*
-get_block(struct cfg_block_ty* head, char* name)
+struct zt_cfg_block_ty*
+get_block(struct zt_cfg_block_ty* head, char* name)
 {
 	while(head){
 		if(!strcmp(name, head->name)){
@@ -64,17 +71,17 @@ get_block(struct cfg_block_ty* head, char* name)
 	return head;
 }
 
-struct cfg_block_ty*
-add_block(struct cfg_ty* cfg, char* name)
+struct zt_cfg_block_ty*
+add_block(struct zt_cfg_ty* cfg, char* name)
 {
-	struct cfg_block_ty* head = cfg->head;	
-	struct cfg_block_ty* new = head;
+	struct zt_cfg_block_ty* head = cfg->head;	
+	struct zt_cfg_block_ty* new = head;
 	
 	if(head){
 		new = get_block(head, name);
 	}
 	if(!new){
-		new = XCALLOC(struct cfg_block_ty, 1);
+		new = XCALLOC(struct zt_cfg_block_ty, 1);
 		new->name = strdup(name);
 		new->next = cfg->head;
 		cfg->head = new;
@@ -82,8 +89,8 @@ add_block(struct cfg_ty* cfg, char* name)
 	return new;
 }
 
-struct cfg_value_ty*
-get_variable(struct cfg_value_ty* head, char*vname)
+struct zt_cfg_value_ty*
+get_variable(struct zt_cfg_value_ty* head, char*vname)
 {
 	while(head){
 		if(!strcmp(head->name, vname)){
@@ -94,17 +101,17 @@ get_variable(struct cfg_value_ty* head, char*vname)
 	return head;
 }
 
-struct cfg_value_ty*
-add_variable(struct cfg_block_ty* block, char *name)
+struct zt_cfg_value_ty*
+add_variable(struct zt_cfg_block_ty* block, char *name)
 {
-	struct cfg_value_ty* head = block->head;
-	struct cfg_value_ty* new = head;
+	struct zt_cfg_value_ty* head = block->head;
+	struct zt_cfg_value_ty* new = head;
 	
 	if(head){
 		new = get_variable(head, name);
 	}
 	if(!new){
-		new = XCALLOC(struct cfg_value_ty, 1);
+		new = XCALLOC(struct zt_cfg_value_ty, 1);
 		new->name = strdup(name);
 		new->next = block->head;
 		block->head = new;
@@ -112,7 +119,7 @@ add_variable(struct cfg_block_ty* block, char *name)
 	return new;	
 }
 
-cfg_type
+zt_cfg_type
 get_type(char* value, void* nvalue)
 {
 	char* endptr = NULL;
@@ -121,25 +128,25 @@ get_type(char* value, void* nvalue)
 	/* check for int/long */	
 	*(long *)nvalue = strtol(pvalue, &endptr, 0);
 	if(((*pvalue != '\0') && (*endptr == '\0'))){
-		return cfg_int;
+		return zt_cfg_int;
 	}
 	
 	pvalue = value;
 	*(double *)nvalue = strtod(pvalue, &endptr);
 	if(((*pvalue != '\0') && (*endptr == '\0'))){
-		return cfg_float;
+		return zt_cfg_float;
 	}
 	pvalue = value;	
 	if((!strcasecmp(pvalue, "yes")) ||
 	   (!strcasecmp(pvalue, "true")))
 	{
 		*(short int*)nvalue = 1;
-		return cfg_bool;		
+		return zt_cfg_bool;		
 	}else if((!strcasecmp(pvalue, "no")) ||
 			 (!strcasecmp(pvalue, "false")))
 	{
 		*(short int*)nvalue = 0;		
-		return cfg_bool;
+		return zt_cfg_bool;
 	}
 
 	if(value[0] == '\'' || value[0] == '\"')
@@ -155,13 +162,14 @@ get_type(char* value, void* nvalue)
 		*(char **)nvalue = strdup(value);
 	}
 	
-	return cfg_string;
+	return zt_cfg_string;
 }
 
-int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv)
+int
+cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv)
 {
-	struct cfg_block_ty* block_head = NULL;	
-	struct cfg_value_ty* value = NULL;
+	struct zt_cfg_block_ty* block_head = NULL;	
+	struct zt_cfg_value_ty* value = NULL;
 	char* variable = NULL;
 
 	block_head = add_block(cfg, bvv->block);
@@ -173,11 +181,11 @@ int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv)
 	value->type = get_type(bvv->value, &value->v);
 
 	/* Check for refrences */
-	if(value->type == cfg_string){
+	if(value->type == zt_cfg_string){
 		variable = index(value->v.s, '.');
 		if(((variable) && (*variable == '.'))){
-			struct cfg_value_ty* v = NULL;
-			struct cfg_block_ty* b = NULL;
+			struct zt_cfg_value_ty* v = NULL;
+			struct zt_cfg_block_ty* b = NULL;
 			char  *block = XCALLOC(char, strlen(value->v.s) + 1);
 			strncpy(block, value->v.s, (variable - value->v.s));
 			variable++;											/* move past the '.' */
@@ -185,7 +193,7 @@ int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv)
 				if((v = get_variable(b->head, variable))){
 					free(value->v.s);							/* we had to be a string to get here */
 					value->v.r = v;
-					value->type = cfg_ref;
+					value->type = zt_cfg_ref;
 				}
 			}
 			free(block);
@@ -194,41 +202,40 @@ int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv)
 	return 0;
 }
 
-int cfg_priv_set ( cfg, block_name, variable_name, var, type )
-     cfg_ty *cfg;
-     char *block_name;
-     char *variable_name;
-     void *var;
-     cfg_type type;
+int zt_cfg_priv_set (zt_cfg_ty *cfg,
+                     char *block_name,
+                     char *variable_name,
+                     void *var,
+                     zt_cfg_type type)
 {
-	struct bvv_ty bvv;
+	struct cfg_bvv_ty bvv;
 	bvv.block = strdup(block_name);
 	bvv.variable = strdup(variable_name);
 #define BUFMAX 1024
 	bvv.value = XCALLOC(char, BUFMAX);
 	
 	switch(type){
-	case cfg_int:
-		snprintf(bvv.value, BUFMAX, "%ld", *(long *)var);
-		break;
-	case cfg_float:
-		snprintf(bvv.value, BUFMAX, "%f", *(double *)var);
-		break;
-	case cfg_bool:
-		if((*(short int *)var == 1) || (*(short int *)var == 0)){
-			zt_log_printf(zt_log_err, "Invalid value for type cfg_bool in cfg_set!  Must be a string of (true|yes|no|false).");
-			return -1;
-		}
-		/* FALLTHRU */
-	case cfg_string:
-		snprintf(bvv.value, BUFMAX, "%s", *(char **)var);
-		break;
-	default:
-		zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-		return -1;
+        case zt_cfg_int:
+            snprintf(bvv.value, BUFMAX, "%ld", *(long *)var);
+            break;
+        case zt_cfg_float:
+            snprintf(bvv.value, BUFMAX, "%f", *(double *)var);
+            break;
+        case zt_cfg_bool:
+            if((*(short int *)var == 1) || (*(short int *)var == 0)){
+                zt_log_printf(zt_log_err, "Invalid value for type zt_cfg_bool in zt_cfg_set!  Must be a string of (true|yes|no|false).");
+                return -1;
+            }
+            /* FALLTHRU */
+        case zt_cfg_string:
+            snprintf(bvv.value, BUFMAX, "%s", *(char **)var);
+            break;
+        default:
+            zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
+            return -1;
 	}
 
-	insert_bvv(cfg, &bvv);	
+	cfg_insert_bvv(cfg, &bvv);	
 
 	free(bvv.block);
 	free(bvv.variable);
@@ -236,15 +243,14 @@ int cfg_priv_set ( cfg, block_name, variable_name, var, type )
 	return 1;
 }
 
-int cfg_priv_get ( cfg, block_name, variable_name, var, type )
-     cfg_ty *cfg;
-     char *block_name;
-     char *variable_name;
-     void *var;
-     cfg_type type;
+int zt_cfg_priv_get (zt_cfg_ty *cfg,
+                     char *block_name,
+                     char *variable_name,
+                     void *var,
+                     zt_cfg_type type)
 {
-	struct cfg_block_ty* block = NULL;
-	struct cfg_value_ty* value = NULL;
+	struct zt_cfg_block_ty* block = NULL;
+	struct zt_cfg_value_ty* value = NULL;
 	
 	block = get_block(cfg->head, block_name);
 	if(!block)
@@ -255,46 +261,46 @@ int cfg_priv_get ( cfg, block_name, variable_name, var, type )
 		return -1;
 
 	switch(value->type){
-	case cfg_bool:
-		*(short int *)var = value->v.b;
-		break;
-	case cfg_int:
-		*(long *)var = value->v.i;
-		break;
-	case cfg_float:
-		*(double *)var = value->v.f;
-		break;
-	case cfg_string:
-		*(char **)var = value->v.s;
-		break;
-	case cfg_ref:
-	{
-		struct cfg_value_ty* ref = value->v.r;
-		while(ref->type == cfg_ref){
-			ref = ref->v.r;
-		}
-		switch(ref->type){
-		case cfg_bool:
-			*(short int *)var = ref->v.b;
-			break;
-		case cfg_int:
-			*(long *)var = ref->v.i;
-			break;
-		case cfg_float:
-			*(double *)var = ref->v.f;
-			break;
-		case cfg_string:
-			*(char **)var = ref->v.s;
-			break;
-		default:
-			zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-			return -1;
-		}
-		break;
-	}
-	default:
-		zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-		return -1;
+        case zt_cfg_bool:
+            *(short int *)var = value->v.b;
+            break;
+        case zt_cfg_int:
+            *(long *)var = value->v.i;
+            break;
+        case zt_cfg_float:
+            *(double *)var = value->v.f;
+            break;
+        case zt_cfg_string:
+            *(char **)var = value->v.s;
+            break;
+        case zt_cfg_ref:
+            {
+                struct zt_cfg_value_ty* ref = value->v.r;
+                while(ref->type == zt_cfg_ref){
+                    ref = ref->v.r;
+                }
+                switch(ref->type){
+                    case zt_cfg_bool:
+                        *(short int *)var = ref->v.b;
+                        break;
+                    case zt_cfg_int:
+                        *(long *)var = ref->v.i;
+                        break;
+                    case zt_cfg_float:
+                        *(double *)var = ref->v.f;
+                        break;
+                    case zt_cfg_string:
+                        *(char **)var = ref->v.s;
+                        break;
+                    default:
+                        zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
+                        return -1;
+                }
+                break;
+            }
+        default:
+            zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
+            return -1;
 	}
 	/* 
      * if(value->type != type)
@@ -303,13 +309,12 @@ int cfg_priv_get ( cfg, block_name, variable_name, var, type )
 	return value->type;
 }
 
-void cfg_priv_destructor ( cfg )
-    cfg_ty *cfg;
+void zt_cfg_priv_destructor ( zt_cfg_ty *cfg)
 {
-	struct cfg_block_ty* block = cfg->head;	
-	struct cfg_block_ty* blk_next = block;
-	struct cfg_value_ty* value = block->head;
-	struct cfg_value_ty* val_next = block->head;	
+	struct zt_cfg_block_ty* block = cfg->head;	
+	struct zt_cfg_block_ty* blk_next = block;
+	struct zt_cfg_value_ty* value = block->head;
+	struct zt_cfg_value_ty* val_next = block->head;	
 	
 
 	while(block){
@@ -317,7 +322,7 @@ void cfg_priv_destructor ( cfg )
 		value = block->head;
 		while(value){
 			val_next = value->next;
-			if(value->type == cfg_string){
+			if(value->type == zt_cfg_string){
 				XFREE(value->v.s); value->v.s = NULL; 
 			}
 			if(value->name){

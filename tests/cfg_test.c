@@ -20,13 +20,13 @@
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-  cfg_ty *cfg = NULL;
+  zt_cfg_ty *cfg = NULL;
   int i = 0;
   char *s = NULL;
   double f = 0.0, f2 = 0.00, f3 = 0.00;
   short int b = 0;
   
-  cfg = cfg_ini("cfg_test.ini", 0);
+  cfg = zt_cfg_ini("cfg_test.ini", 0);
   
   ZT_UNIT_ASSERT(test, (cfg != NULL));
   if(!cfg) {
@@ -34,10 +34,10 @@ basic_tests(struct zt_unit_test *test, void *data)
 	  exit(1);
   }
 
-  cfg_get(cfg, "main", "bool_var", &b, cfg_bool);
-  cfg_get(cfg, "main", "int_var", &i, cfg_int);
-  cfg_get(cfg, "main", "float_var", &f, cfg_float);
-  cfg_get(cfg, "main", "string_var", &s, cfg_string);
+  zt_cfg_get(cfg, "main", "bool_var", &b, zt_cfg_bool);
+  zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_int);
+  zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
+  zt_cfg_get(cfg, "main", "string_var", &s, zt_cfg_string);
 
   ZT_UNIT_ASSERT(test, (b == 1));
   ZT_UNIT_ASSERT(test, (i == 1));
@@ -46,15 +46,15 @@ basic_tests(struct zt_unit_test *test, void *data)
 
   f = f + 100.00;
   
-  cfg_set(cfg, "main2", "float_var", &f, cfg_float);
-  cfg_get(cfg, "main", "float_var", &f, cfg_float);
-  cfg_get(cfg, "main2", "float_var", &f2, cfg_float);
-  cfg_get(cfg, "main3", "float_var", &f3, cfg_float);
+  zt_cfg_set(cfg, "main2", "float_var", &f, zt_cfg_float);
+  zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
+  zt_cfg_get(cfg, "main2", "float_var", &f2, zt_cfg_float);
+  zt_cfg_get(cfg, "main3", "float_var", &f3, zt_cfg_float);
   ZT_UNIT_ASSERT(test, (f == 199.999));
   ZT_UNIT_ASSERT(test, (f2 == 199.999));
   ZT_UNIT_ASSERT(test, (f3 == 99.999));      
   
-  cfg_close(cfg);
+  zt_cfg_close(cfg);
 }
 
 int

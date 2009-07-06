@@ -18,8 +18,8 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-extern cfg_ty *
-cfg_ini ( char *, int );
+extern zt_cfg_ty *
+zt_cfg_ini ( char *, int );
 
 #ifdef __cplusplus
 }

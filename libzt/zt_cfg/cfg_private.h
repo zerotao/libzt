@@ -11,8 +11,8 @@
  * You should NOT access this directly
  * unless you are extending the component
  */
-#ifndef _CFG_PRIVATE_H_
-#define _CFG_PRIVATE_H_
+#ifndef _ZT_CFG_PRIVATE_H_
+#define _ZT_CFG_PRIVATE_H_
 
 #include <stdlib.h>
 #include <libzt/zt_cfg.h>
@@ -22,68 +22,62 @@ extern "C" {
 #pragma }
 #endif /* __cplusplus */
 
-struct cfg_value_ty {
+struct zt_cfg_value_ty {
 	char* name;
-	cfg_type type;
+	zt_cfg_type type;
 	union {
 		short int   b;
 		long   		i;
 		double 		f;
 		char*  		s;
-		struct cfg_value_ty* r;
+		struct zt_cfg_value_ty* r;
 	} v;
 	int altered;
-	struct cfg_value_ty* next;
+	struct zt_cfg_value_ty* next;
 };
 
-struct cfg_block_ty {
+struct zt_cfg_block_ty {
 	char *name;
-	struct cfg_value_ty* head;
-	struct cfg_block_ty* next;
+	struct zt_cfg_value_ty* head;
+	struct zt_cfg_block_ty* next;
 };
 
-struct cfg_ty {
-  struct cfg_vtbl_ty *vtbl;
+struct zt_cfg_ty {
+  struct zt_cfg_vtbl_ty *vtbl;
   /* rest of opts */
 	char *filename;
 	int numentries;
 	int opts;	
-	struct cfg_block_ty* head;
+	struct zt_cfg_block_ty* head;
 };
   
-typedef struct cfg_vtbl_ty cfg_vtbl_ty;
-struct cfg_vtbl_ty {
+typedef struct zt_cfg_vtbl_ty zt_cfg_vtbl_ty;
+struct zt_cfg_vtbl_ty {
 	size_t size;
 	int opts;
 	/* virtual function pointers */
-	void (* destructor)(cfg_ty *);
-	int  (* get)(cfg_ty *, char *, char *, void *, cfg_type);
-	int  (* set)(cfg_ty *, char *, char *, void *, cfg_type);
+	void (* destructor)(zt_cfg_ty *);
+	int  (* get)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
+	int  (* set)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
 };
 
-struct bvv_ty {
+struct cfg_bvv_ty {
 	char* block;
 	char* variable;
 	char* value;
 	int line;
 };
 
-void discard_whitespace(FILE* file);
-void discard_line(FILE* file);
+int zt_cfg_priv_set ( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
+int zt_cfg_priv_get ( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
+void zt_cfg_priv_destructor ( zt_cfg_ty *cfg );
 
-struct cfg_block_ty* get_block(struct cfg_block_ty* head, char* name);
-struct cfg_block_ty* add_block(struct cfg_ty* cfg, char* name);
-struct cfg_value_ty* get_variable(struct cfg_value_ty* head, char*vname);
-struct cfg_value_ty* add_variable(struct cfg_block_ty* block, char *name);
-cfg_type get_type(char* value, void* nvalue);
-int insert_bvv(struct cfg_ty* cfg, struct bvv_ty* bvv);
+void cfg_discard_whitespace(FILE* file);
+void cfg_discard_line(FILE* file);
+int cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv);
 
-int cfg_priv_set ( cfg_ty *cfg, char *block_name, char *variable_name, void *var, cfg_type type );
-int cfg_priv_get ( cfg_ty *cfg, char *block_name, char *variable_name, void *var, cfg_type type );
-void cfg_priv_destructor ( cfg_ty *cfg );
-
-cfg_ty *cfg_new (cfg_vtbl_ty *);
+zt_cfg_ty *zt_cfg_new (zt_cfg_vtbl_ty *);
 #ifdef __cplusplus
 }
 #endif
-#endif  /* _CFG_PRIVATE_H_ */
+#endif  /* _ZT_CFG_PRIVATE_H_ */

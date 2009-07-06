@@ -15,63 +15,63 @@
 
 BEGIN_C_DECLS
 
-/****t* Cfg/cfg_ty
+/****t* Cfg/zt_cfg_ty
  * NAME
- *   cfg_ty - opaque type associated with a config file/style
+ *   zt_cfg_ty - opaque type associated with a config file/style
  * SOURCE
  */
-typedef struct cfg_ty cfg_ty;
-/*** Cfg/cfg_ty ***/
+typedef struct zt_cfg_ty zt_cfg_ty;
+/*** Cfg/zt_cfg_ty ***/
 
 
-/****t* Cfg/cfg_type
+/****t* Cfg/zt_cfg_type
  * NAME
- *   cfg_type - enumeration of supported variable types
+ *   zt_cfg_type - enumeration of supported variable types
  * SOURCE
  */
-enum cfg_type {
-  cfg_bool = 0,
-  cfg_int,
-  cfg_float,
-  cfg_string,
-  cfg_ref
+enum zt_cfg_type {
+    zt_cfg_bool = 0,
+    zt_cfg_int,
+    zt_cfg_float,
+    zt_cfg_string,
+    zt_cfg_ref
 };
-typedef enum cfg_type cfg_type;
-/*** Cfg/cfg_type ***/
+typedef enum zt_cfg_type zt_cfg_type;
+/*** Cfg/zt_cfg_type ***/
 
 
-/****f* Cfg/cfg_close [1.0]
+/****f* Cfg/zt_cfg_close [1.0]
  * NAME
- *   cfg_close - close the config associated with cfg
+ *   zt_cfg_close - close the config associated with cfg
  * SYNOPSIS
- *   void = cfg_close(cfg)
+ *   void = zt_cfg_close(cfg)
  * INPUTS
- *  o cfg - pointer to a void cfg_ty
+ *  o cfg - pointer to a void zt_cfg_ty
  * RESULT
  *   void
  * SEE ALSO
- *   cfg_get, cfg_set
+ *   zt_cfg_get, zt_cfg_set
  * NOTES
  *   the interface that users of this function get is initially a macro
  *   which expands to a call to the function of the same name after
  *   setting debug information for logging. 
  ****
  */
-void cfg_close ( cfg_ty * );
-#define cfg_close( cfg ) 	\
-	ZT_LOG_DEBUG_INFO(NULL);	\
-	cfg_close( cfg )
+void zt_cfg_close ( zt_cfg_ty * );
+#define zt_cfg_close( cfg )                     \
+	ZT_LOG_DEBUG_INFO(NULL);                    \
+	zt_cfg_close( cfg )
 
-/****f* Cfg/cfg_get
+/****f* Cfg/zt_cfg_get
  * NAME
- *   cfg_get - fetch the value of a config variable
+ *   zt_cfg_get - fetch the value of a config variable
  * SYNOPSIS
- *   error = cfg_get(cfg, space, name, value, type)
+ *   error = zt_cfg_get(cfg, space, name, value, type)
  *
  * DESCRIPTION
  *
  * INPUTS
- *   * cfg    - pointer to a valid cfg_ty
+ *   * cfg    - pointer to a valid zt_cfg_ty
  *   * space  - string representation of a namespace to search for name
  *   * name   - string representation of a variable to get
  *   * value  - address of a variable to fill with the value
@@ -79,26 +79,26 @@ void cfg_close ( cfg_ty * );
  * RESULT
  *   error - return 0 on failure and >0 on success
  * SEE ALSO
- *   cfg_set, cfg_close
+ *   zt_cfg_set, zt_cfg_close
  * NOTES
  *   the interface that users of this function get is initially a macro
  *   which expands to a call to the function of the same name after
  *   setting debug information for logging.
  ****
  */
-int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
-#define cfg_get( cfg, block, name, addr, type )	\
-	ZT_LOG_DEBUG_INFO(NULL);                       \
-	cfg_get(cfg, block, name, addr, type)
+int zt_cfg_get ( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_type type);
+#define zt_cfg_get( cfg, block, name, addr, type )	\
+	ZT_LOG_DEBUG_INFO(NULL);                        \
+	zt_cfg_get(cfg, block, name, addr, type)
 
 
-/****f* Cfg/cfg_set
+/****f* Cfg/zt_cfg_set
  * NAME
- *   cfg_set - set the value of a config variable
+ *   zt_cfg_set - set the value of a config variable
  * SYNOPSIS
- *   error = cfg_set(cfg, space, name, value, type)
+ *   error = zt_cfg_set(cfg, space, name, value, type)
  * INPUTS
- *   o cfg    - pointer to a valid cfg_ty 
+ *   o cfg    - pointer to a valid zt_cfg_ty 
  *   o space  - string representation of a namespace to use for name
  *   o name   - string representation of a variable to get
  *   o value  - address of a variable to to set from
@@ -106,7 +106,7 @@ int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
  * RESULT
  *   error - return 0 on failure and >0 on success
  * SEE ALSO
- *   cfg_get, cfg_close
+ *   zt_cfg_get, zt_cfg_close
  * NOTES
  *   the interface that users of this function get is initially a macro
  *   which expands to a call to the function of the same name after
@@ -114,10 +114,10 @@ int cfg_get ( cfg_ty *cfg, char *block, char *name, void *value, cfg_type type);
  ****
  */
 
-int cfg_set ( cfg_ty *, char *, char *, void *, cfg_type );
-#define cfg_set( cfg, block, name, addr, type )	\
-	ZT_LOG_DEBUG_INFO(NULL);                       \
-	cfg_set(cfg, block, name, addr, type)
+int zt_cfg_set ( zt_cfg_ty *, char *, char *, void *, zt_cfg_type );
+#define zt_cfg_set( cfg, block, name, addr, type )	\
+	ZT_LOG_DEBUG_INFO(NULL);                        \
+	zt_cfg_set(cfg, block, name, addr, type)
 
 END_C_DECLS
 #include <libzt/zt_cfg/cfg_interface.h>
