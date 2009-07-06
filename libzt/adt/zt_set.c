@@ -36,7 +36,7 @@ _destroy(void *key, void *datum, void *param)
 void
 zt_set_destroy(zt_set *set)
 {
-	assert(set);
+	zt_assert(set);
     
 	zt_table_for_each(set->tbl, _destroy, set);
 	zt_table_destroy(set->tbl);
@@ -194,8 +194,8 @@ zt_set_for_each(zt_set *set, zt_set_iterator iterator, void *param)
 {
 	struct _iterator_data	d;
 	
-	assert(set);
-	assert(iterator);
+	zt_assert(set);
+	zt_assert(iterator);
 
 	d.iterator = iterator;
 	d.param = param;

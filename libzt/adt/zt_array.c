@@ -7,10 +7,10 @@
 static void
 arrayrep_init(zt_array array, int len, int size, void *ary)
 {
-	assert(array);
-	assert((ary && len > 0) ||
+	zt_assert(array);
+	zt_assert((ary && len > 0) ||
 	       (len == 0 && ary == NULL));
-	assert(size > 0);
+	zt_assert(size > 0);
 	
 	array->length = len;
 	array->size = size;
@@ -38,7 +38,7 @@ zt_array_new(int len, int size)
 void
 zt_array_free(zt_array *array)
 {
-	assert(array && *array);
+	zt_assert(array && *array);
 	XFREE((*array)->data);
 	XFREE(*array);
 }
@@ -47,7 +47,7 @@ void
 zt_array_set_data(zt_array array, char *data,
 		  int len, int size, int copy)
 {
-	assert(array);
+	zt_assert(array);
 	
 	if(copy) {
 		arrayrep_init(array, len, size,
@@ -83,8 +83,8 @@ zt_array_with_cstr(char *str)
 void
 zt_array_resize(zt_array array, int len)
 {
-	assert(array);
-	assert(len >= 0);
+	zt_assert(array);
+	zt_assert(len >= 0);
 
 	if (array->length == 0) {
 		array->data = XCALLOC(char, len*array->size);
@@ -102,8 +102,8 @@ zt_array_copy(zt_array array, int len)
 {
 	zt_array	  copy;
 
-	assert(array);
-	assert(len >= 0);
+	zt_assert(array);
+	zt_assert(len >= 0);
 	
 	copy = zt_array_new(len, array->size);
 
@@ -118,7 +118,7 @@ zt_array_copy(zt_array array, int len)
 int
 zt_array_length(zt_array array)
 {
-	assert(array);
+	zt_assert(array);
 	return array->length;
 }
 
@@ -126,7 +126,7 @@ int
 zt_array_set_length(zt_array array, int len)
 {
 	size_t	  olen;
-	assert(array);
+	zt_assert(array);
 
 	olen = array->length;
 	
@@ -137,14 +137,14 @@ zt_array_set_length(zt_array array, int len)
 int
 zt_array_size(zt_array array)
 {
-	assert(array);
+	zt_assert(array);
 	return array->size;
 }
 
 char *
 zt_array_data(zt_array array)
 {
-	assert(array);
+	zt_assert(array);
 	return array->data;
 }
 
@@ -153,9 +153,9 @@ zt_array_data(zt_array array)
 void *
 zt_array_elem_copy(zt_array array, int offt, void *elem)
 {
-	assert(array);
-	assert(offt >= 0 && offt < array->length);
-	assert(elem);
+	zt_assert(array);
+	zt_assert(offt >= 0 && offt < array->length);
+	zt_assert(elem);
 
 	memcpy(elem, array->data + offt * array->size, array->size);
 	return elem;
@@ -164,10 +164,10 @@ zt_array_elem_copy(zt_array array, int offt, void *elem)
 void *
 zt_array_get(zt_array array, int offt)
 {
-	assert(array);
-	assert(offt >= 0 && offt < array->length);
+	zt_assert(array);
+	zt_assert(offt >= 0 && offt < array->length);
 	/* 
-     * assert(elem);
+     * zt_assert(elem);
      * 
 	 * memcpy(elem, array->data + offt * array->size, array->size);
 	 * *elem = ;
@@ -178,9 +178,9 @@ zt_array_get(zt_array array, int offt)
 void *
 zt_array_put(zt_array array, int offt, void *elem)
 {
-	assert(array);
-	assert(offt >= 0 && offt < array->length);
-	assert(	elem);
+	zt_assert(array);
+	zt_assert(offt >= 0 && offt < array->length);
+	zt_assert(	elem);
 	
 	memcpy(array->data + offt * array->size, elem, array->size);
 

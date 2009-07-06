@@ -75,8 +75,8 @@ static int parse_block(FILE* file, struct cfg_bvv_ty* bvv)
 	int i = 0;
 	memset(buff, '\0', BUFMAX);
 
-	assert(file);
-	assert(bvv);
+	zt_assert(file);
+	zt_assert(bvv);
 	
 	while(((c = fgetc(file)) != EOF) && (i < BUFMAX)){
 		if(c == ']') break;
@@ -171,7 +171,7 @@ static int parse_file(zt_cfg_ty* cfg, FILE* file)
 	int numents = 0;
 	int line = 1;
 
-	assert(cfg);
+	zt_assert(cfg);
 	memset(&bvv, '\0', sizeof(struct cfg_bvv_ty));
 	sprintf(block, "Global");									/* default blockname */
 	bvv.block = strdup(block);

@@ -58,7 +58,7 @@ vsyslog(int severity, char *format, va_list ap)
 	int	  flen;
 	int	  olen;
 	
-	assert(format);
+	zt_assert(format);
 	
 	len = strlen(format);
 	flen = len * 2;

@@ -41,7 +41,7 @@ _array_get(zt_array array, char *s, size_t offt, size_t len, int flip)
 int
 zt_bstream_is_empty(zt_bstream bs)
 {
-	assert(bs);
+	zt_assert(bs);
 	return zt_array_length(bs->data) == 0;
 }
 
@@ -49,14 +49,14 @@ zt_bstream_is_empty(zt_bstream bs)
 int
 zt_bstream_truncate(zt_bstream bs)
 {
-	assert(bs);
+	zt_assert(bs);
 	return zt_array_set_length(bs->data, 0);
 }
 
 void
 zt_bstream_set_data(zt_bstream bs, char *data, int len, char copy)
 {
-	assert(bs);
+	zt_assert(bs);
 
 	zt_array_set_data(bs->data, data, len, sizeof(char), copy);
 }
@@ -64,7 +64,7 @@ zt_bstream_set_data(zt_bstream bs, char *data, int len, char copy)
 void
 zt_bstream_set_array(zt_bstream bs, zt_array array, size_t offt)
 {
-	assert(bs);
+	zt_assert(bs);
 
 	zt_array_free(&bs->data);
 
@@ -76,7 +76,7 @@ int
 zt_bstream_rewind(zt_bstream bs) 
 {
 	int	oofft;
-	assert(bs);
+	zt_assert(bs);
 
 	oofft = bs->offt;
 	bs->offt = 0;
@@ -100,7 +100,7 @@ zt_bstream_clone(zt_bstream bs)
 {
 	zt_bstream	  clone;
 	
-	assert(bs);
+	zt_assert(bs);
 	clone = XCALLOC(struct zt_bstream, 1);
 	clone->data = zt_array_copy(bs->data, zt_array_length(bs->data));
 	clone->offt = bs->offt;
@@ -111,7 +111,7 @@ zt_bstream_clone(zt_bstream bs)
 void
 zt_bstream_free(zt_bstream *bs) 
 {
-	assert(bs);
+	zt_assert(bs);
 
 	zt_array_free(&(*bs)->data);
 	XFREE(bs);
@@ -121,8 +121,8 @@ zt_bstream_free(zt_bstream *bs)
 size_t
 zt_bstream_read(zt_bstream bs, char *buf, size_t len, char size, char tag)
 {
-	assert(bs);
-	assert(buf);
+	zt_assert(bs);
+	zt_assert(buf);
 
 	bs->offt = _array_get(bs->data, buf, bs->offt, (len * size), bs->flipendian);
 	
@@ -177,8 +177,8 @@ zt_bstream_write(zt_bstream bs, char *data, size_t len, char size, char tag)
 	size_t	tlen = len * size;
 	size_t  alen = 0;
 	
-	assert(bs);
-	assert(data);
+	zt_assert(bs);
+	zt_assert(data);
 
 	alen = zt_array_length(bs->data);
 	

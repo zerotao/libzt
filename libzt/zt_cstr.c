@@ -35,7 +35,7 @@
  */
 #define CONVERT(s, i, j) do {			\
 		int	  len;			\
-		assert(s);			\
+		zt_assert(s);			\
 		len = strlen(s);		\
 		i = IDX(i, len);		\
 		j = IDX(j, len);		\
@@ -44,7 +44,7 @@
 			i = j;			\
 			j = t;			\
 		}				\
-		assert(i >= 0 && j <= len);	\
+		zt_assert(i >= 0 && j <= len);	\
 	} while(0)
 
 /*!
@@ -76,7 +76,7 @@ char *zt_cstr_dup(const char *s, int i, int j, int n)
 	int	  k;
 	char	* new, *p;
 
-	assert(n >= 0);
+	zt_assert(n >= 0);
 	CONVERT(s, i, j);
 
 	p = new = XMALLOC(char, n*(j - i) + 1);
@@ -201,10 +201,10 @@ char *zt_cstr_map(const char *s, int i, int j,
 		while(*from && *to) {
 			map[(unsigned char)*from++] = *to++;
 		}
-		assert(*from == 0 && *to == 0);
+		zt_assert(*from == 0 && *to == 0);
 	} else {
-		assert(from == NULL && to == NULL && s);
-		assert(map['a']);
+		zt_assert(from == NULL && to == NULL && s);
+		zt_assert(map['a']);
 	}
 
 	if (s) {
@@ -229,10 +229,10 @@ int zt_cstr_pos(const char *s, int i)
 {
 	int	  len;
 	
-	assert(s);
+	zt_assert(s);
 	len = strlen(s);
 	i = IDX(i, len);
-	assert(i >= 0 && i <= len);
+	zt_assert(i >= 0 && i <= len);
 	return i + 1;
 }
 
@@ -303,7 +303,7 @@ int zt_cstr_rchr(const char *s, int i, int j, int c)
  */
 int zt_cstr_upto(const char *s, int i, int j, const char *set)
 {
-	assert(set);
+	zt_assert(set);
 	CONVERT(s, i, j);
 	for( ; i < j; i++) {
 		if (strchr(set, s[i])) {
@@ -319,7 +319,7 @@ int zt_cstr_upto(const char *s, int i, int j, const char *set)
  */
 int zt_cstr_rupto(const char *s, int i, int j, const char *set)
 {
-	assert(set);
+	zt_assert(set);
 
 	CONVERT(s, i, j);
 	while (j > i) {
@@ -339,7 +339,7 @@ int zt_cstr_find(const char *s, int i, int j, const char *str)
 	int	  len;
 
 	CONVERT(s, i, j);
-	assert(str);
+	zt_assert(str);
 
 	len = strlen(str);
 
@@ -370,7 +370,7 @@ int zt_cstr_rfind(const char *s, int i, int j, const char *str)
 	int	  len;
 
 	CONVERT(s, i, j);
-	assert(str);
+	zt_assert(str);
 	len = strlen(str);
 
 	if (len == 0) {
@@ -399,13 +399,13 @@ int zt_cstr_any(const char *s, int i, const char *set)
 {
 	int	  len;
 
-	assert(s);
-	assert(set);
+	zt_assert(s);
+	zt_assert(set);
 
 	len = strlen(s);
 	i = IDX(i, len);
 
-	assert(i >= 0 && i <= len);
+	zt_assert(i >= 0 && i <= len);
 	if (i < len && strchr(set, s[i])) {
 		return i + 2;
 	}
@@ -418,7 +418,7 @@ int zt_cstr_any(const char *s, int i, const char *set)
  */
 int zt_cstr_many(const char *s, int i, int j, const char *set)
 {
-	assert(set);
+	zt_assert(set);
 
 	CONVERT(s, i, j);
 
@@ -437,7 +437,7 @@ int zt_cstr_many(const char *s, int i, int j, const char *set)
  */
 int zt_cstr_rmany(const char *s, int i, int j, const char *set)
 {
-	assert(set);
+	zt_assert(set);
 
 	CONVERT(s, i, j);
 	if (j > i && strchr(set, s[j-1])) {
@@ -459,7 +459,7 @@ int zt_cstr_match(const char *s, int i, int j, const char *str)
 	int	  len;
 
 	CONVERT(s, i, j);
-	assert(str);
+	zt_assert(str);
 	len = strlen(str);
 
 	if (len == 0) {
@@ -483,7 +483,7 @@ int zt_cstr_rmatch(const char *s, int i, int j, const char *str)
 	int	  len;
 
 	CONVERT(s, i, j);
-	assert(str);
+	zt_assert(str);
 	len = strlen(str);
 	
 	if (len == 0) {
@@ -512,7 +512,7 @@ zt_put_cstr(int code, va_list *app,
 	int	  i,
 		  j;
 
-	assert(app && flags);
+	zt_assert(app && flags);
 	
 	s = va_arg(*app, char *);
 	i = va_arg(*app, int);
@@ -527,7 +527,7 @@ zt_put_cstr(int code, va_list *app,
 char*
 zt_cstr_chomp (char *str)
 {
-	assert(str);
+	zt_assert(str);
 	{
 		int i = 0;
 		i = strlen(str);
@@ -541,7 +541,7 @@ zt_cstr_chomp (char *str)
 char*
 zt_cstr_strip (char *str)
 {
-	assert(str);
+	zt_assert(str);
 	{
 		/* strip whitespace from the beginning of the string */
 		int len = 0;
@@ -567,8 +567,8 @@ size_t
 zt_cstr_rspn (const char *s,
 	 const char *accept)
 {
-	assert(s);
-	assert(accept);
+	zt_assert(s);
+	zt_assert(accept);
 	{
 		int len = strlen(s);
 		int i = 0;
@@ -586,8 +586,8 @@ size_t
 zt_cstr_rcspn (const char *s,
 	  const char *reject)
 {
-	assert(s);
-	assert(reject);
+	zt_assert(s);
+	zt_assert(reject);
 	{
 		int len = strlen(s);
 		int i = 0;
@@ -613,8 +613,8 @@ zt_cstr_basename(char *npath,
 	int base_len = 0;
 	int path_len = 0;
   
-	assert(npath);
-	assert(path);
+	zt_assert(npath);
+	zt_assert(path);
   
 	memset(npath, '\0', len);
 	path_len = strlen(path);
@@ -646,8 +646,8 @@ zt_cstr_dirname (char *npath, int len, const char *path)
 	int dir_len = 0;
 	int path_len = 0;
 
-	assert(npath);
-	assert(path);
+	zt_assert(npath);
+	zt_assert(path);
     
 	memset(npath, '\0', len);
 

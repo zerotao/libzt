@@ -25,10 +25,10 @@
 #include "zt_except.h"
 #include "zt_cstr.h"
 
-char *assertion_failed = "assertion_failed";
+char *zt_assertion_failed = "assertion_failed";
 
 void
-_assert_fail (char *s, char *file, unsigned int line,
+_zt_assert_fail (char *s, char *file, unsigned int line,
 			  const char *func)
 {
 	char	bname[PATH_MAX];

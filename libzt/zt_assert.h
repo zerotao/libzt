@@ -14,48 +14,48 @@
 #include <libzt/zt.h>
 #include <libzt/zt_except.h>
 
-extern char *assertion_failed;
+extern char *zt_assertion_failed;
 
 BEGIN_C_DECLS
 
-/****if* Assertion/_assert_fail
+/****if* Assertion/_zt_assert_fail
  * NAME
- *   _assert_fail - force an assertion
+ *   _zt_assert_fail - force an assertion
  *
  * NOTES
  *   Don't call this directly use assert instead
  *
  ****/
-extern void _assert_fail (char *condition, char *file, 
-						  unsigned int line, const char *function);
+extern void _zt_assert_fail (char *condition, char *file, 
+                             unsigned int line, const char *function);
 
-/****d* Assertion/assert
+/****d* Assertion/zt_assert
  * NAME
- *   assert -
+ *   zt_assert -
  *
  * DESCRIPTION
  *   If NDEBUG is not defined then assert on failure
  *
  * SYNOPSIS
- *   assert(c)
+ *   zt_assert(c)
  *
  * EXAMPLE
- *   assert("This would pass");
- *   assert(!"But this would fail")
- *   assert(foo == 1);
+ *   zt_assert("This would pass");
+ *   zt_assert(!"But this would fail")
+ *   zt_assert(foo == 1);
  *
  ****/
 #if defined(NDEBUG) || defined(NO_ASSERT)
-# define assert(c)
-# define assert_nf(c)
+# define zt_assert(c)
+# define zt_assert_nf(c)
 #else
-/* # define assert(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0))) */
-# define assert(c) if (!(c)) {									\
-		_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);	\
-		TRY_THROW(assertion_failed);							\
+/* # define zt_assert(c) (((c) ? 1 : (_zt_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0))) */
+# define zt_assert(c) if (!(c)) {									\
+		_zt_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);      \
+		TRY_THROW(zt_assertion_failed);                             \
 	}
 
-# define assert_nf(c) (((c) ? 1 : (_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__), 0)))
+# define zt_assert_nf(c) (((c) ? 1 : (_zt_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__), 0)))
 #endif 
 
 

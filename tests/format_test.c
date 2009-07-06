@@ -11,7 +11,7 @@ cvt_S(int code, va_list *app,
 {
 	char	* str = va_arg(*app, char *);
 	
-	assert(str);
+	zt_assert(str);
 
 	return fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }

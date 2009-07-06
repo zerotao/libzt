@@ -190,8 +190,8 @@ register_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, voi
 	zt_rbt_node					* nodep;
 	struct timeval				  ntime;
 	
-	assert(ess);
-	assert(time);
+	zt_assert(ess);
+	zt_assert(time);
 
 	if(flags & ZT_EVENT_TIMER_ABSOLUTE) {
 		zt_copy_timeval(&ntime, time);
@@ -226,8 +226,8 @@ remove_timer(zt_event_sys sys, struct timeval *time, zt_event_timer_cb cb, void 
 	struct zt_timer_node		* eltp;
 	zt_rbt_node					* nodep;
 	
-	assert(time);
-	assert(ess);
+	zt_assert(time);
+	zt_assert(ess);
 	
 	node.when.tv_sec = time->tv_sec;
 	node.when.tv_usec = time->tv_usec;
@@ -284,7 +284,7 @@ handle_events(zt_event_sys sys,  zt_event_flags flags)
 	fd_set				  write_set;
 	struct timeval 		  zero_timeout = {0, 0};
 	
-	assert(ess);
+	zt_assert(ess);
 
 	run_once = flags & ZT_RUN_ONCE;	
 	if(flags & ZT_NON_BLOCK) {
@@ -414,7 +414,7 @@ static int elt_cmp(zt_rbt_node *n1, zt_rbt_node *n2)
 	struct zt_event_elt	* e1;
 	struct zt_event_elt	* e2;
 	
-	assert(n1 && n2);
+	zt_assert(n1 && n2);
 	
 	e1 = zt_rbt_data(n1, struct zt_event_elt, node);
 	e2 = zt_rbt_data(n2, struct zt_event_elt, node);
@@ -433,7 +433,7 @@ static int gtimer_cmp(zt_rbt_node *n1, zt_rbt_node *n2)
 	struct zt_timer_node	* g1;
 	struct zt_timer_node	* g2;
 	
-	assert(n1 && n2);
+	zt_assert(n1 && n2);
 	
 	g1 = zt_rbt_data(n1, struct zt_timer_node, node);
 	g2 = zt_rbt_data(n2, struct zt_timer_node, node);

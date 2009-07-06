@@ -289,13 +289,13 @@ zt_gc_free_white(gc_t *gc)
          */
 		if(elt == gc->black || elt == gc->white || elt == gc->grey) {
 			/* zt_gc_print_heap(gc); */
-			assert(elt != gc->grey);
-			assert(elt != gc->white);
-			assert(elt != gc->black);
+			zt_assert(elt != gc->grey);
+			zt_assert(elt != gc->white);
+			zt_assert(elt != gc->black);
 		}
 
 		mark = zt_elist_data(elt, zt_gc_collectable_t, list);
-		assert(!is_protected(mark));
+		zt_assert(!is_protected(mark));
 		/* printf("Releasing: %p\n", (void *)elt); */
 
 		
@@ -406,7 +406,7 @@ int
 zt_gc_mark_value(gc_t *gc, void *value)
 {
 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
-	assert(value != NULL);
+	zt_assert(value != NULL);
 	
 	/* 
      * if (is_protected(mark)) {

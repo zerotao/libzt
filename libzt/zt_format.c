@@ -103,9 +103,9 @@ fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 {
 	struct fmt_obuf	  cl;
 
-	assert(buf);
-	assert(size > 0);
-	assert(fmt);
+	zt_assert(buf);
+	zt_assert(size > 0);
+	zt_assert(fmt);
 
 	cl.buf = cl.bp = buf;
 	cl.size = size;
@@ -121,7 +121,7 @@ fmt_strprintf(const char *fmt, ...)
 	char	* str;
 	va_list	  ap;
 
-	assert(fmt);
+	zt_assert(fmt);
 	va_start(ap, fmt);
 
 	str = fmt_vstrprintf(fmt, ap);
@@ -135,7 +135,7 @@ fmt_vstrprintf(const char *fmt, va_list ap)
 {
 	struct fmt_obuf	  cl;
 
-	assert(fmt);
+	zt_assert(fmt);
 	cl.size = 256;
 	cl.buf = cl.bp = XMALLOC(char, cl.size);
 	fmt_vformat(fmt_append, &cl, fmt, ap);
@@ -151,8 +151,8 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 {
 	int	  tlen = 0;
 	
-	assert(put);
-	assert(fmt);
+	zt_assert(put);
+	zt_assert(fmt);
 
 	while (*fmt) {
 		/* both % and ~ are control chars */
@@ -168,7 +168,7 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 			if(fmt_flags) {
 				unsigned char	  c = *fmt;
 				for ( ; c && strchr(fmt_flags, c); c = *++fmt) {
-					assert(flags[c] < 255);
+					zt_assert(flags[c] < 255);
 					flags[c]++;
 				}
 			}
@@ -178,12 +178,12 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 				
 				if (*fmt == '*') {
 					n = va_arg(ap, int);
-					assert(n != INT_MIN);
+					zt_assert(n != INT_MIN);
 					fmt++;
 				} else {
 					for (n = 0; isdigit(*fmt); fmt++) {
 						int	  d = *fmt - '0';
-						assert(n <= (INT_MAX - d)/10);
+						zt_assert(n <= (INT_MAX - d)/10);
 						n = 10 * n + d;
 					}
 				}
@@ -195,12 +195,12 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 				int	  n;
 				if (*fmt == '*') {
 					n = va_arg(ap, int);
-					assert(n != INT_MIN);
+					zt_assert(n != INT_MIN);
 					fmt++;
 				} else {
 					for (n = 0; isdigit(*fmt); fmt++) {
 						int	  d = *fmt - '0';
-						assert(n <= (INT_MAX - d)/10);
+						zt_assert(n <= (INT_MAX - d)/10);
 						n = 10 * n + d;
 					}
 				}
@@ -208,7 +208,7 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 			}
 			
 			c = *fmt++;
-			assert(cvt[c]);
+			zt_assert(cvt[c]);
 			tlen += (*cvt[c])(c, &ap, put, cl, flags, width, precision);
 		}
 		
@@ -245,9 +245,9 @@ fmt_puts(const char *str, int len,
 {
 	int	  tlen = 0;
 	
-	assert(str);
-	assert(len >= 0);
-	assert(flags);
+	zt_assert(str);
+	zt_assert(len >= 0);
+	zt_assert(flags);
 
 	NORMALIZE_WIDTH_AND_FLAGS(width, flags, precision);
 
@@ -275,9 +275,9 @@ fmt_putd(const char *str, int len,
 	int	  tlen = 0;
 	int	  n;
 	
-	assert(str);
-	assert(len >= 0);
-	assert(flags);
+	zt_assert(str);
+	zt_assert(len >= 0);
+	zt_assert(flags);
 
 	NORMALIZE_WIDTH_AND_FLAGS(width, flags, precision);
 
@@ -345,7 +345,7 @@ fmt_register(int code, fmt_ty newcvt)
 {
 	fmt_ty	  old;
 
-	assert(0 < code && code < (int)sizeof_array(cvt));
+	zt_assert(0 < code && code < (int)sizeof_array(cvt));
 	old = cvt[code];
 	
 	cvt[code] = newcvt;
@@ -431,7 +431,7 @@ fmt_cvt_f(int code, va_list *app,
 		precision = 1;
 	}
 
-	assert(precision <= 99);
+	zt_assert(precision <= 99);
 	fmt[4] = code;
 	fmt[3] = precision % 10 + '0';
 	fmt[2] = (precision / 10) % 10 + '0';
@@ -485,7 +485,7 @@ fmt_cvt_s(int code, va_list *app,
 {
 	char	* str = va_arg(*app, char *);
 	
-	assert(str);
+	zt_assert(str);
 
 	return fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }

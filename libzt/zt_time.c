@@ -111,10 +111,10 @@ zt_time_result_to_elapsed(struct time_result *result,
 			  float *sys,
 			  float *total)
 {
-	assert(result);
-	assert(usr);
-	assert(sys);
-	assert(total);
+	zt_assert(result);
+	zt_assert(usr);
+	zt_assert(sys);
+	zt_assert(total);
 
 	*usr = result->usr_time.tv_sec + result->usr_time.tv_usec /   1000000.0;
 	*sys = result->sys_time.tv_sec + result->sys_time.tv_usec /   1000000.0;
@@ -149,7 +149,7 @@ zt_time(int n,
 	int		  i;
 	void		* ret = NULL;
 
-	assert(tv);
+	zt_assert(tv);
 	
 	getrusage(RUSAGE_SELF, &rbefore);
 	
@@ -170,8 +170,8 @@ zt_time_print_result(struct time_result *tr, char *name, int n)
 {
 	float usr, sys, total;
 	
-	assert(tr);
-	assert(name);
+	zt_assert(tr);
+	zt_assert(name);
 	
 	zt_time_result_to_elapsed(tr, &usr, &sys, &total);
 

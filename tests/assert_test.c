@@ -27,8 +27,8 @@ zt_log_ty 	* log;
 	
 	olog = zt_log_logger(log);
 	
-	assert(1==1);			/* will produce a warning: statement with no effect which is too true */
-	ZT_UNIT_ASSERT_RAISES(test, assertion_failed, assert(1==0));
+	zt_assert(1==1);			/* will produce a warning: statement with no effect which is too true */
+	ZT_UNIT_ASSERT_RAISES(test, zt_assertion_failed, zt_assert(1==0));
 
 	zt_log_logger(olog);
 }

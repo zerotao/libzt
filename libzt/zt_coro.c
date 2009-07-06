@@ -290,7 +290,7 @@ zt_coro *
 zt_coro_create(zt_coro_ctx *ctl, void *(*func)(zt_coro_ctx *, void *), zt_coro *co, size_t stack_size) {
 	unsigned char	* stack;
 	
-    assert((stack_size &= ~(sizeof(int) - 1)) >= ZT_CORO_MIN_STACK_SIZE);
+    zt_assert((stack_size &= ~(sizeof(int) - 1)) >= ZT_CORO_MIN_STACK_SIZE);
 
     if (!co) {
         co = (zt_coro *)XCALLOC(unsigned char, sizeof(zt_coro) + stack_size);

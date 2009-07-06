@@ -47,8 +47,8 @@ zt_unit_release(struct zt_unit **unit)
 	zt_elist	* ignore;
 	zt_elist	* tmp;
 
-	assert(unit);
-	assert(*unit);
+	zt_assert(unit);
+	zt_assert(*unit);
 
 	zt_elist_for_each_safe(&(*unit)->suites, tmp, ignore) {
 		struct zt_unit_suite	* tsuite = zt_elist_data(tmp, struct zt_unit_suite, suite);
@@ -69,7 +69,7 @@ zt_unit_register_suite(struct zt_unit 		* unit,
 	int						  len;
 	struct zt_unit_suite	* suite = XCALLOC(struct zt_unit_suite, 1);
 	
-	assert(name != NULL);
+	zt_assert(name != NULL);
 	len = strlen(name);
 	suite->name = XCALLOC(char, len+1);
 	strncpy(suite->name, name, len);
@@ -90,9 +90,9 @@ zt_unit_release_suite(struct zt_unit_suite **suite)
 	zt_elist	* ignore;
 	zt_elist	* tmp;
 	
-	assert(suite);
-	assert(*suite);
-	assert((*suite)->name);
+	zt_assert(suite);
+	zt_assert(*suite);
+	zt_assert((*suite)->name);
 
 	zt_elist_for_each_safe(&(*suite)->tests, tmp, ignore) {
 		struct zt_unit_test	* ttest = zt_elist_data(tmp, struct zt_unit_test, test);
@@ -115,8 +115,8 @@ zt_unit_register_test(struct zt_unit_suite	* suite,
 	struct zt_unit_test	* test = XCALLOC(struct zt_unit_test, 1);
 	int					  len;
 	
-	assert(suite);
-	assert(name);
+	zt_assert(suite);
+	zt_assert(name);
 	
 	len = strlen(name);
 
@@ -133,9 +133,9 @@ zt_unit_register_test(struct zt_unit_suite	* suite,
 void
 zt_unit_release_test(struct zt_unit_test **test)
 {
-	assert (test);
-	assert(*test);
-	assert((*test)->name);
+	zt_assert(test);
+	zt_assert(*test);
+	zt_assert((*test)->name);
 
 	zt_elist_remove(&(*test)->test);
 	
@@ -209,7 +209,7 @@ zt_unit_run_suite(struct zt_unit		* unit,
 static void
 test_passed(struct zt_unit_test *test)
 {
-	assert(test);
+	zt_assert(test);
 	test->success = TRUE;
 }
 
@@ -222,8 +222,8 @@ test_failed(struct zt_unit_test	* test,
 {
 	int	  len;
 #   define MAX_STR_INT	43
-	assert(test);
-	assert(error);
+	zt_assert(test);
+	zt_assert(error);
 
 	test->success = FALSE;
 	
@@ -242,7 +242,7 @@ zt_unit_run_test(struct zt_unit			* unit,
 				 struct zt_unit_test 	* test) 
 {
 	test->success = FALSE;
-	assert(test);
+	zt_assert(test);
 
 	yaml_dict(test->name, 4);
 	

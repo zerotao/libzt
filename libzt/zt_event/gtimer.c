@@ -7,7 +7,7 @@ struct zt_timer_node *
 gtimer_new(struct timeval *when, struct timeval *otime, zt_event_timer_cb *cb, void *data, zt_event_timer_flags flags) 
 {
 	struct zt_timer_node	* new;
-	assert(when);
+	zt_assert(when);
 	
 	new = XCALLOC(struct zt_timer_node, 1);
 	new->flags = flags;
@@ -24,7 +24,7 @@ gtimer_new(struct timeval *when, struct timeval *otime, zt_event_timer_cb *cb, v
 void
 gtimer_free(struct zt_timer_node *node) 
 {
-	assert(node);
+	zt_assert(node);
 	
 	XFREE(node);
 }
