@@ -13,7 +13,7 @@ cvt_S(int code, va_list *app,
 	
 	zt_assert(str);
 
-	return fmt_puts(str, strlen(str), put, cl, flags, width, precision);
+	return zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
 
@@ -23,32 +23,32 @@ basic_tests(struct zt_unit_test *test, void *data)
 	char 	  buf[256];
 	char	* str;
 	
-	fmt_sprintf(buf, 256, "%s: %d\n", "this is a test", 34);
+	zt_fmt_sprintf(buf, 256, "%s: %d\n", "this is a test", 34);
 	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		      "this is a test: 34\n", 1, 0) == 0);
 	
-	fmt_sprintf(buf, 256, "\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
+	zt_fmt_sprintf(buf, 256, "\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
 	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);
 
 	
-	ZT_UNIT_ASSERT(test, fmt_register('S', cvt_S) == 0);
+	ZT_UNIT_ASSERT(test, zt_fmt_register('S', cvt_S) == 0);
 	
-	fmt_sprintf(buf, 256, "%S:\n", "this is a test");
+	zt_fmt_sprintf(buf, 256, "%S:\n", "this is a test");
 	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(buf, 1, 0,
 		     "this is a test:\n", 1, 0) == 0);
 
 
-	str = fmt_strprintf("%s: %d\n", "this is a test", 34);
+	str = zt_fmt_strprintf("%s: %d\n", "this is a test", 34);
 	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(str, 1, 0,
 		     "this is a test: 34\n", 1, 0) == 0);
 	XFREE(str);
 	
-	str = fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
+	str = zt_fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
 	ZT_UNIT_ASSERT(test,
 	     zt_cstr_cmp(str, 1, 0,
 		     "\tthis is a test: 0x22~ % ~ %\n", 1, 0) == 0);

@@ -7,7 +7,7 @@
 #include "zt_format.h"
 #include "zt_assert.h"
 
-struct fmt_obuf {
+struct zt_fmt_obuf {
 	char	* buf;
 	char	* bp;
 	int	  size;
@@ -22,9 +22,9 @@ struct fmt_obuf {
 	} while (0)
 
 
-char *fmt_flags = "+- 0";
-const char *fmt_overflow = "format overflow";
-static fmt_ty cvt[256] = {
+char *zt_fmt_flags = "+- 0";
+const char *zt_fmt_overflow = "format overflow";
+static zt_fmt_ty cvt[256] = {
 	0,     0, 0,     0,     0,     0,     0,     0,/*   0 -   7 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*   8 -  15 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*  16 -  23 */
@@ -37,48 +37,48 @@ static fmt_ty cvt[256] = {
 	0,     0, 0,     0,     0,     0,     0,     0,/*  72 -  79 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*  80 -  87 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*  88 -  95 */
-	0,     0, 0, fmt_cvt_c, fmt_cvt_d, fmt_cvt_f, fmt_cvt_f, fmt_cvt_f,/*  96 - 103 */
-	0,     0, 0,     0,     0,     0,     0, fmt_cvt_o,/* 104 - 111 */
-	fmt_cvt_p, 0, 0, fmt_cvt_s,     0, fmt_cvt_u,     0,     0,/* 112 - 119 */
-	fmt_cvt_x, 0, 0,     0,     0,     0,     0,     0,/* 120 - 127 */
+	0,     0, 0, zt_fmt_cvt_c, zt_fmt_cvt_d, zt_fmt_cvt_f, zt_fmt_cvt_f, zt_fmt_cvt_f,/*  96 - 103 */
+	0,     0, 0,     0,     0,     0,     0, zt_fmt_cvt_o,/* 104 - 111 */
+	zt_fmt_cvt_p, 0, 0, zt_fmt_cvt_s,     0, zt_fmt_cvt_u,     0,     0,/* 112 - 119 */
+	zt_fmt_cvt_x, 0, 0,     0,     0,     0,     0,     0,/* 120 - 127 */
 };
 
 /* exported functions */
 int
-fmt_format(int put(int c, void *cl), void *cl,
+zt_fmt_format(int put(int c, void *cl), void *cl,
 	   const char *fmt, ...)
 {
 	va_list	  ap;
 	int	  tlen = 0;
 
 	va_start(ap, fmt);
-	tlen = fmt_vformat(put, cl, fmt, ap);
+	tlen = zt_fmt_vformat(put, cl, fmt, ap);
 	va_end(ap);
 	
 	return tlen;
 }
 
 int
-fmt_printf(const char *fmt, ...)
+zt_fmt_printf(const char *fmt, ...)
 {
 	int	  tlen = 0;
 	va_list	  ap;
 
 	va_start(ap, fmt);
-	tlen = fmt_vformat(fmt_outc, stdout, fmt, ap);
+	tlen = zt_fmt_vformat(zt_fmt_outc, stdout, fmt, ap);
 	va_end(ap);
 	
 	return tlen;
 }
 
 int
-fmt_fprintf(FILE *stream, const char *fmt, ...)
+zt_fmt_fprintf(FILE *stream, const char *fmt, ...)
 {
 	int	  tlen = 0;
 	va_list	  ap;
 
 	va_start(ap, fmt);
-	tlen = fmt_vformat(fmt_outc, stream, fmt, ap);
+	tlen = zt_fmt_vformat(zt_fmt_outc, stream, fmt, ap);
 	va_end(ap);
 
 	return tlen;
@@ -86,22 +86,22 @@ fmt_fprintf(FILE *stream, const char *fmt, ...)
 
 
 int
-fmt_sprintf(char *buf, int size, const char *fmt, ...)
+zt_fmt_sprintf(char *buf, int size, const char *fmt, ...)
 {
 	int	  tlen = 0;
 	va_list	  ap;
 
 	va_start(ap, fmt);
-	tlen = fmt_vsprintf(buf, size, fmt, ap);
+	tlen = zt_fmt_vsprintf(buf, size, fmt, ap);
 	va_end(ap);
 
 	return tlen;
 }
 
 int
-fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
+zt_fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 {
-	struct fmt_obuf	  cl;
+	struct zt_fmt_obuf	  cl;
 
 	zt_assert(buf);
 	zt_assert(size > 0);
@@ -110,13 +110,13 @@ fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 	cl.buf = cl.bp = buf;
 	cl.size = size;
 
-	fmt_vformat(fmt_insert, &cl, fmt, ap);
-	fmt_insert(0, &cl);
+	zt_fmt_vformat(zt_fmt_insert, &cl, fmt, ap);
+	zt_fmt_insert(0, &cl);
 	return cl.bp - cl.buf - 1;
 }
 
 char *
-fmt_strprintf(const char *fmt, ...)
+zt_fmt_strprintf(const char *fmt, ...)
 {
 	char	* str;
 	va_list	  ap;
@@ -124,29 +124,29 @@ fmt_strprintf(const char *fmt, ...)
 	zt_assert(fmt);
 	va_start(ap, fmt);
 
-	str = fmt_vstrprintf(fmt, ap);
+	str = zt_fmt_vstrprintf(fmt, ap);
 	
 	va_end(ap);
 	return str;
 }
 
 char *
-fmt_vstrprintf(const char *fmt, va_list ap)
+zt_fmt_vstrprintf(const char *fmt, va_list ap)
 {
-	struct fmt_obuf	  cl;
+	struct zt_fmt_obuf	  cl;
 
 	zt_assert(fmt);
 	cl.size = 256;
 	cl.buf = cl.bp = XMALLOC(char, cl.size);
-	fmt_vformat(fmt_append, &cl, fmt, ap);
-	fmt_append(0, &cl);
+	zt_fmt_vformat(zt_fmt_append, &cl, fmt, ap);
+	zt_fmt_append(0, &cl);
 	
 	return XREALLOC(char, cl.buf, cl.bp - cl.buf);
 }
 
 
 int
-fmt_vformat(int put(int c, void *cl), void *cl,
+zt_fmt_vformat(int put(int c, void *cl), void *cl,
 	    const char *fmt, va_list ap)
 {
 	int	  tlen = 0;
@@ -165,9 +165,9 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 				          precision = INT_MIN;
 			memset(flags, '\0', sizeof(flags));
 
-			if(fmt_flags) {
+			if(zt_fmt_flags) {
 				unsigned char	  c = *fmt;
-				for ( ; c && strchr(fmt_flags, c); c = *++fmt) {
+				for ( ; c && strchr(zt_fmt_flags, c); c = *++fmt) {
 					zt_assert(flags[c] < 255);
 					flags[c]++;
 				}
@@ -239,7 +239,7 @@ fmt_vformat(int put(int c, void *cl), void *cl,
 	} while (0)
 
 int
-fmt_puts(const char *str, int len,
+zt_fmt_puts(const char *str, int len,
 	 int put(int c, void *cl), void *cl,
 	 unsigned char flags[256], int width, int precision)
 {
@@ -267,7 +267,7 @@ fmt_puts(const char *str, int len,
 }
 
 int
-fmt_putd(const char *str, int len,
+zt_fmt_putd(const char *str, int len,
 	 int put(int c, void *cl), void *cl,
 	 unsigned char flags[256], int width, int precision) 
 {
@@ -340,10 +340,10 @@ fmt_putd(const char *str, int len,
 }
 
 
-fmt_ty
-fmt_register(int code, fmt_ty newcvt)
+zt_fmt_ty
+zt_fmt_register(int code, zt_fmt_ty newcvt)
 {
-	fmt_ty	  old;
+	zt_fmt_ty	  old;
 
 	zt_assert(0 < code && code < (int)sizeof_array(cvt));
 	old = cvt[code];
@@ -359,14 +359,14 @@ fmt_register(int code, fmt_ty newcvt)
 /* local funcs */
 
 int
-fmt_outc(int c, void *cl)	
+zt_fmt_outc(int c, void *cl)	
 {
 	FILE *f = cl;
 	return putc(c, f);
 }
 
 int
-fmt_cvt_c(int code, va_list *app,
+zt_fmt_cvt_c(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -386,7 +386,7 @@ fmt_cvt_c(int code, va_list *app,
 
 
 int
-fmt_cvt_d(int code, va_list *app,
+zt_fmt_cvt_d(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -410,13 +410,13 @@ fmt_cvt_d(int code, va_list *app,
 	if (val < 0) {
 		*--p = '-';
 	}
-	return fmt_putd(p, (buf + sizeof(buf)) - p, put, cl,
+	return zt_fmt_putd(p, (buf + sizeof(buf)) - p, put, cl,
 			flags, width, precision);
 }
 
 
 int
-fmt_cvt_f(int code, va_list *app,
+zt_fmt_cvt_f(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -438,12 +438,12 @@ fmt_cvt_f(int code, va_list *app,
 
 	sprintf(buf, fmt, va_arg(*app, double));
 	
-	return fmt_putd(buf, strlen(buf), put, cl,
+	return zt_fmt_putd(buf, strlen(buf), put, cl,
 			flags, width, precision);
 }
 
 int
-fmt_cvt_o(int code, va_list *app,
+zt_fmt_cvt_o(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -454,12 +454,12 @@ fmt_cvt_o(int code, va_list *app,
 	do {
 		*--p = (m & 0x7) + '0';
 	} while ((m >>= 3) != 0);
-	return fmt_putd(p, (buf + sizeof(buf)) - p,
+	return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
 			put, cl, flags, width, precision);
 }
 
 int
-fmt_cvt_p(int code, va_list *app,
+zt_fmt_cvt_p(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -473,13 +473,13 @@ fmt_cvt_p(int code, va_list *app,
 		*--p = "0123456789abcdef"[m & 0xf];
 	} while((m >>= 4) != 0);
 
-	return fmt_putd(p, (buf + sizeof(buf)) - p,
+	return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
 			put, cl, flags, width, precision);
 }
 
 
 int
-fmt_cvt_s(int code, va_list *app,
+zt_fmt_cvt_s(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision) 
 {
@@ -487,11 +487,11 @@ fmt_cvt_s(int code, va_list *app,
 	
 	zt_assert(str);
 
-	return fmt_puts(str, strlen(str), put, cl, flags, width, precision);
+	return zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
 int
-fmt_cvt_u(int code, va_list *app,
+zt_fmt_cvt_u(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -503,12 +503,12 @@ fmt_cvt_u(int code, va_list *app,
 		*--p = m % 10 + '0';
 	} while((m /= 10) > 0);
 
-	return fmt_putd(p, (buf + sizeof(buf)) - p,
+	return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
 			put, cl, flags, width, precision);
 }
 
 int
-fmt_cvt_x(int code, va_list *app,
+zt_fmt_cvt_x(int code, va_list *app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -520,17 +520,17 @@ fmt_cvt_x(int code, va_list *app,
 		*--p = "0123456789abcdef"[m & 0xf];
 	} while((m >>= 4) != 0);
 
-	return fmt_putd(p, (buf + sizeof(buf)) - p,
+	return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
 			put, cl, flags, width, precision);
 }
 
 int
-fmt_insert(int c, void *cl)
+zt_fmt_insert(int c, void *cl)
 {
-	struct fmt_obuf	* p = cl;
+	struct zt_fmt_obuf	* p = cl;
 
 	if (p->bp >= p->buf + p->size) {
-		TRY_THROW(fmt_overflow);
+		TRY_THROW(zt_fmt_overflow);
 	}
 
 	*p->bp++ = c;
@@ -539,9 +539,9 @@ fmt_insert(int c, void *cl)
 }
 
 int
-fmt_append(int c, void *cl)
+zt_fmt_append(int c, void *cl)
 {
-	struct fmt_obuf	* p = (struct fmt_obuf *)cl;
+	struct zt_fmt_obuf	* p = (struct zt_fmt_obuf *)cl;
 	
 	if(p->bp >= p->buf + p->size) {
 		XREALLOC(unsigned char, p->buf, 2*p->size);
