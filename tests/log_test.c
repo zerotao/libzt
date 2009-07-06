@@ -27,7 +27,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 							  (LOG_EMU_SYSLOG | LOG_WITH_LEVEL)); 
 	/*    log_ty *lsyslog = log_syslog(LOG_PID, LOG_DAEMON, LOG_RAW); */
 
-	progname("./unit_test", STRIP_DIR); 
+	zt_progname("./unit_test", STRIP_DIR); 
 
 	log_logger(lfile);
 	log_debug_logger(lfile);

@@ -74,7 +74,7 @@ log_syslog(void)
 log_ty *
 log_syslog2(int opt, int facility)
 {
-	char	 *name = progname(0, 0);
+	char	 *name = zt_progname(0, 0);
 	int	  sysopts = 0;
 
 	if(opt & LOG_WITH_PID)

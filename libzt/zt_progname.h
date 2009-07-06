@@ -26,7 +26,7 @@
 
 BEGIN_C_DECLS
 
-extern char *progname(char *, int);
+extern char *zt_progname(char *, int);
 
 END_C_DECLS
 #endif /* _ZT_PROGNAME_H_ */

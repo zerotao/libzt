@@ -21,13 +21,13 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
   char *name = NULL;
-  name = progname(argv[0], 0);
+  name = zt_progname(argv[0], 0);
   ZT_UNIT_ASSERT(test, (!strcmp(name, argv[0])));
 
-  name = progname(NULL, 0);
+  name = zt_progname(NULL, 0);
   ZT_UNIT_ASSERT(test, (!strcmp(name, argv[0])));
 
-  name = progname("foo", 0);
+  name = zt_progname("foo", 0);
   ZT_UNIT_ASSERT(test, (!strcmp(name, "foo")));
 
 }

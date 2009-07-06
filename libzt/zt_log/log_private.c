@@ -95,9 +95,9 @@ log_gen_fmt (log_ty *log, char *fmt, log_level level, unsigned int  opts)
   }
 
   if(opts & LOG_WITH_PROGNAME){
-    len += strlen(progname(NULL, 0)); /* progname */
+    len += strlen(zt_progname(NULL, 0)); /* progname */
     buff = XREALLOC(char, buff, len);
-    strcat(buff, progname(NULL, 0));
+    strcat(buff, zt_progname(NULL, 0));
   }
 
   if(opts & LOG_WITH_PID){
