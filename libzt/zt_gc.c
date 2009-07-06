@@ -7,15 +7,15 @@
  *
  */
 
-static int one_is_white(zt_gc_collectable_t *mark) { return BIT_ISSET(mark->colour, colour); } /* mark->colour == 1 ? 1 : 0; */
-static void one_clear_white(zt_gc_collectable_t *mark) { BIT_UNSET(mark->colour, colour);/* mark->colour = 0; */ }
-static void one_set_white(zt_gc_collectable_t *mark) { BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
+static int one_is_white(zt_gc_collectable_t *mark) { return ZT_BIT_ISSET(mark->colour, colour); } /* mark->colour == 1 ? 1 : 0; */
+static void one_clear_white(zt_gc_collectable_t *mark) { ZT_BIT_UNSET(mark->colour, colour);/* mark->colour = 0; */ }
+static void one_set_white(zt_gc_collectable_t *mark) { ZT_BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
 
-static int zero_is_white(zt_gc_collectable_t *mark) { return BIT_ISUNSET(mark->colour, colour); /* mark->colour == 0 ? 1 : 0; */ }
-static void zero_clear_white(zt_gc_collectable_t *mark) { BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
-static void zero_set_white(zt_gc_collectable_t *mark) { BIT_UNSET(mark->colour, colour); /* mark->colour = 0; */ }
+static int zero_is_white(zt_gc_collectable_t *mark) { return ZT_BIT_ISUNSET(mark->colour, colour); /* mark->colour == 0 ? 1 : 0; */ }
+static void zero_clear_white(zt_gc_collectable_t *mark) { ZT_BIT_SET(mark->colour, colour); /* mark->colour = 1; */ }
+static void zero_set_white(zt_gc_collectable_t *mark) { ZT_BIT_UNSET(mark->colour, colour); /* mark->colour = 0; */ }
 
-static int is_protected(zt_gc_collectable_t *mark) { return BIT_ISSET(mark->colour, protected); }
+static int is_protected(zt_gc_collectable_t *mark) { return ZT_BIT_ISSET(mark->colour, protected); }
 
 void
 zt_gc_protect(gc_t *gc, void *value)
@@ -26,7 +26,7 @@ zt_gc_protect(gc_t *gc, void *value)
 	gc->clear_white(mark);
 	zt_elist_remove(&mark->list);
 	zt_elist_add(gc->grey, &mark->list);
-	BIT_SET(mark->colour, protected);
+	ZT_BIT_SET(mark->colour, protected);
 }
 
 void
@@ -40,7 +40,7 @@ zt_gc_unprotect(gc_t *gc, void *value)
 	 * zt_elist_add_tail(gc->grey, &mark->list);
      */
 	
-	BIT_UNSET(((zt_gc_collectable_t *)value)->colour, protected);
+	ZT_BIT_UNSET(((zt_gc_collectable_t *)value)->colour, protected);
 }
 
 static void switch_white(gc_t *gc)

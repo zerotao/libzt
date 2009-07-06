@@ -132,17 +132,17 @@ BEGIN_C_DECLS
 #define MACRO_EVAL_2(FORMS) _MACRO_EVAL_2A FORMS
 
 /* Bit macros */
-#define BIT_SET(target, bit) \
+#define ZT_BIT_SET(target, bit) \
 	((target) |= (bit))
 
-#define BIT_UNSET(target, bit) \
+#define ZT_BIT_UNSET(target, bit) \
 	((target) &= ~(bit))
 
-#define BIT_ISSET(target, bit) \
+#define ZT_BIT_ISSET(target, bit) \
 	(((target) & (bit)) ? TRUE : FALSE)
 
-#define BIT_ISUNSET(target, bit) \
-	(BIT_ISSET(target, bit) ? FALSE : TRUE)
+#define ZT_BIT_ISUNSET(target, bit) \
+	(ZT_BIT_ISSET(target, bit) ? FALSE : TRUE)
 
 END_C_DECLS
 #endif /*_ZT_MACROS_H_*/
