@@ -9,11 +9,11 @@ basic_tests(struct zt_unit_test *test, void *data)
         unsigned int    c = 0;
 
         
-        c = uint_add(a, b);
+        c = zt_uint_add(a, b);
 
         /* mixed sign addition */
-        ZT_UNIT_ASSERT(test, int_add(-128, 0) == -128);
-        ZT_UNIT_ASSERT(test, int_add(127, -128) == -1);
+        ZT_UNIT_ASSERT(test, zt_int_add(-128, 0) == -128);
+        ZT_UNIT_ASSERT(test, zt_int_add(127, -128) == -1);
         /* printf("%d\n", c); */
 }
 
