@@ -18,7 +18,7 @@ static void zero_set_white(zt_gc_collectable_t *mark) { ZT_BIT_UNSET(mark->colou
 static int is_protected(zt_gc_collectable_t *mark) { return ZT_BIT_ISSET(mark->colour, protected); }
 
 void
-zt_gc_protect(gc_t *gc, void *value)
+zt_gc_protect(zt_gc_t *gc, void *value)
 {
 	zt_gc_collectable_t	* mark;
 	mark = (zt_gc_collectable_t	*)value;
@@ -30,7 +30,7 @@ zt_gc_protect(gc_t *gc, void *value)
 }
 
 void
-zt_gc_unprotect(gc_t *gc, void *value)
+zt_gc_unprotect(zt_gc_t *gc, void *value)
 {
 	zt_gc_collectable_t	* mark;
 	mark = (zt_gc_collectable_t	*)value;
@@ -43,7 +43,7 @@ zt_gc_unprotect(gc_t *gc, void *value)
 	ZT_BIT_UNSET(((zt_gc_collectable_t *)value)->colour, protected);
 }
 
-static void switch_white(gc_t *gc)
+static void switch_white(zt_gc_t *gc)
 {
 	if (gc->is_white == one_is_white) {
 		gc->is_white = zero_is_white;
@@ -58,7 +58,7 @@ static void switch_white(gc_t *gc)
 
 
 static void
-resize_rootset(gc_t *gc, int new_size)
+resize_rootset(zt_gc_t *gc, int new_size)
 {
 	if (gc->rootset == NULL){
 		gc->rootset = XCALLOC(zt_elist *, new_size);
@@ -106,7 +106,7 @@ char	* FreeWhileDisabled = "Attempt to free the GC while garbage collection was 
 
 
 void
-zt_gc_enable(gc_t *gc) 
+zt_gc_enable(zt_gc_t *gc) 
 {
 	gc->enabled++;
 	if (gc->enabled > 0) {
@@ -119,17 +119,17 @@ zt_gc_enable(gc_t *gc)
 }
 
 void
-zt_gc_disable(gc_t *gc)
+zt_gc_disable(zt_gc_t *gc)
 {
 	gc->enabled--;
 }
 
 
 void
-zt_gc_init(gc_t *gc,
+zt_gc_init(zt_gc_t *gc,
 		   void *private_data,
-		   void (*mark_fn)(struct gc *, void *, void *),
-		   void (*release_fn)(struct gc *, void *, void **),
+		   void (*mark_fn)(struct zt_gc *, void *, void *),
+		   void (*release_fn)(struct zt_gc *, void *, void **),
 		   int marks_per_scan,
 		   int allocs_before_scan)
 {
@@ -163,7 +163,7 @@ zt_gc_init(gc_t *gc,
 }
 
 void
-zt_gc_destroy(gc_t *gc)
+zt_gc_destroy(zt_gc_t *gc)
 {
 	zt_elist	* elt;
 	zt_elist	* dont_use;
@@ -213,7 +213,7 @@ zt_gc_destroy(gc_t *gc)
  * from the root set.
  */
 void
-zt_gc_register_root(gc_t *gc, void *v)
+zt_gc_register_root(zt_gc_t *gc, void *v)
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	zt_elist_reset(&mark->list);
@@ -233,14 +233,14 @@ zt_gc_register_root(gc_t *gc, void *v)
 }
 
 void
-zt_gc_prepare_value(gc_t *gc, void *v) 
+zt_gc_prepare_value(zt_gc_t *gc, void *v) 
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	zt_elist_reset(&mark->list);
 }
 
 void
-zt_gc_unregister_value(gc_t *gc, void *v)
+zt_gc_unregister_value(zt_gc_t *gc, void *v)
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 	zt_elist_remove(&mark->list);
@@ -248,7 +248,7 @@ zt_gc_unregister_value(gc_t *gc, void *v)
 }
 
 void
-zt_gc_register_value(gc_t *gc, void *v) 
+zt_gc_register_value(zt_gc_t *gc, void *v) 
 {
 	zt_gc_collectable_t		* mark = (zt_gc_collectable_t *) v;
 
@@ -270,7 +270,7 @@ zt_gc_register_value(gc_t *gc, void *v)
 }
 
 void
-zt_gc_free_white(gc_t *gc)
+zt_gc_free_white(zt_gc_t *gc)
 {
 	zt_elist			* elt = NULL;
 	zt_elist			* dont_use = NULL;
@@ -308,7 +308,7 @@ zt_gc_free_white(gc_t *gc)
 }
 
 void
-zt_gc_switch(gc_t *gc) 
+zt_gc_switch(zt_gc_t *gc) 
 {
 	zt_elist	* tmp_white;
 	/* in a traditional GC we would scan and reset the values here we
@@ -328,7 +328,7 @@ zt_gc_switch(gc_t *gc)
 }
 
 void
-zt_gc_scan(gc_t *gc, int full_scan)
+zt_gc_scan(zt_gc_t *gc, int full_scan)
 {
 	int	  current_marks = 0;
 
@@ -403,7 +403,7 @@ zt_gc_scan(gc_t *gc, int full_scan)
 }
 
 int
-zt_gc_mark_value(gc_t *gc, void *value)
+zt_gc_mark_value(zt_gc_t *gc, void *value)
 {
 	zt_gc_collectable_t	* mark = (zt_gc_collectable_t *)value;
 	zt_assert(value != NULL);
@@ -427,7 +427,7 @@ zt_gc_mark_value(gc_t *gc, void *value)
 }
 
 void
-zt_gc_print_heap(gc_t *gc)
+zt_gc_print_heap(zt_gc_t *gc)
 {
 	printf("Heap Dump\n============\n");
 	printf("l1: %p l2: %p l3: %p\nblack: %p grey: %p white: %p\nscan: %p\n",
@@ -441,7 +441,7 @@ zt_gc_print_heap(gc_t *gc)
 }
 
 
-void zt_gc_for_each(gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data)
+void zt_gc_for_each(zt_gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data)
 {
 	zt_elist			* elt = NULL;
 	zt_elist			* dont_use = NULL;

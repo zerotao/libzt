@@ -15,7 +15,7 @@ enum {
 	protected = 2,
 };
 
-typedef struct gc {
+typedef struct zt_gc {
 	int			  enabled;
 	
 	int			  current_allocs;
@@ -44,35 +44,35 @@ typedef struct gc {
 
 	void		* private_data;
 	
-	void		(*mark_fn)(struct gc *, void *, void *);
-	void		(*release_fn)(struct gc *, void *, void **);
+	void		(*mark_fn)(struct zt_gc *, void *, void *);
+	void		(*release_fn)(struct zt_gc *, void *, void **);
 	
-} gc_t;
+} zt_gc_t;
 
-void zt_gc_init(gc_t *gc,
+void zt_gc_init(zt_gc_t *gc,
 				void *private_data,
-				void (*mark_fn)(struct gc *, void *, void *), 
-				void (*release_fn)(struct gc *, void *, void **),
+				void (*mark_fn)(struct zt_gc *, void *, void *), 
+				void (*release_fn)(struct zt_gc *, void *, void **),
 				int marks_per_scan, 
 				int allocs_to_scan);
 
-void zt_gc_destroy(gc_t *gc);
+void zt_gc_destroy(zt_gc_t *gc);
 
-void zt_gc_enable(gc_t *gc);
-void zt_gc_disable(gc_t *gc);
+void zt_gc_enable(zt_gc_t *gc);
+void zt_gc_disable(zt_gc_t *gc);
 
-void zt_gc_prepare_value(gc_t *gc, void *value);
-void zt_gc_register_value(gc_t *gc, void *value);
-void zt_gc_unregister_value(gc_t *gc, void *value);
-void zt_gc_register_root(gc_t *gc, void *value);
+void zt_gc_prepare_value(zt_gc_t *gc, void *value);
+void zt_gc_register_value(zt_gc_t *gc, void *value);
+void zt_gc_unregister_value(zt_gc_t *gc, void *value);
+void zt_gc_register_root(zt_gc_t *gc, void *value);
 
-void zt_gc_protect(gc_t *gc, void *value);
-void zt_gc_unprotect(gc_t *gc, void *value);
+void zt_gc_protect(zt_gc_t *gc, void *value);
+void zt_gc_unprotect(zt_gc_t *gc, void *value);
 
-void zt_gc_print_heap(gc_t *gc);
-int zt_gc_mark_value(gc_t *gc, void *value);
-void zt_gc_scan(gc_t *gc, int full_scan);
-void zt_gc_for_each(gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data);
+void zt_gc_print_heap(zt_gc_t *gc);
+int zt_gc_mark_value(zt_gc_t *gc, void *value);
+void zt_gc_scan(zt_gc_t *gc, int full_scan);
+void zt_gc_for_each(zt_gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data);
 /* void zt_gc_mark(gc *gc); */
 
 END_C_DECLS

@@ -20,7 +20,7 @@ static int ints_marked = 0;
 static int atoms_marked = 0;
 static int atoms_freed = 0;
 
-static void mark_atom(gc_t *gc, void *pdata, void *v)
+static void mark_atom(zt_gc_t *gc, void *pdata, void *v)
 {
 	atom	*a = (atom *)v;
 	
@@ -40,7 +40,7 @@ static void mark_atom(gc_t *gc, void *pdata, void *v)
 }
 
 static void
-release_atom(gc_t *gc, void *pdata, void **v)
+release_atom(zt_gc_t *gc, void *pdata, void **v)
 {
 	atom **a = (atom **)v;
 	/* printf("release %p\n", *v); */
@@ -53,7 +53,7 @@ release_atom(gc_t *gc, void *pdata, void **v)
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-	gc_t		  gc;
+	zt_gc_t		  gc;
 	atom		* root;
 	int			  i;
 	atom		* protected;
