@@ -35,31 +35,31 @@ static INLINE int isoptchar(int x);
 
 struct
 {
-	opt_types type;
+	zt_opt_types type;
 	char *desc;
-} opts_usage_t[] = { { opt_bool, " [yes|no|true|false]" },
-					 { opt_flag, NULL },
-					 { opt_int, " [integer]" },
-					 { opt_string, " [string]" },
-					 { opt_func, NULL },
-					 { opt_ofunc, NULL },
-					 { opt_rfunc, NULL },
-					 { opt_help, NULL }, };
+} zt_opts_usage_t[] = { { zt_opt_bool, " [yes|no|true|false]" },
+					 { zt_opt_flag, NULL },
+					 { zt_opt_int, " [integer]" },
+					 { zt_opt_string, " [string]" },
+					 { zt_opt_func, NULL },
+					 { zt_opt_ofunc, NULL },
+					 { zt_opt_rfunc, NULL },
+					 { zt_opt_help, NULL }, };
 
 static void
-print_default(opt_types type, void *value) 
+print_default(zt_opt_types type, void *value) 
 {
 	switch (type) {
-		case opt_bool:
+		case zt_opt_bool:
 			fprintf(stderr, " (default %s)", *(int *)value ? "true" : "false");
 			break;
-		case opt_flag:
+		case zt_opt_flag:
 			fprintf(stderr, " (default %s)", *(int *)value ? "enabled" : "disabled");
 			break;
-		case opt_int:			
+		case zt_opt_int:			
 			fprintf(stderr, " (default %d)", *(int *)value);
 			break;
-		case opt_string:
+		case zt_opt_string:
 			{
 				char * c = *(char **)value;
 				if (c != NULL) {
@@ -67,16 +67,16 @@ print_default(opt_types type, void *value)
 				}
 			}
 			break;
-		case opt_func:
-		case opt_ofunc:
-		case opt_rfunc:
-		case opt_help:
+		case zt_opt_func:
+		case zt_opt_ofunc:
+		case zt_opt_rfunc:
+		case zt_opt_help:
 			break;
 	}
 }
 
 void
-opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opts, int show_defaults){
+zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int max_opts, int show_defaults){
 	int 	  i = 0;
 	
 	fprintf(stderr, "Usage: %s %s"NL, basename(argv[0]), option_string);
@@ -107,11 +107,11 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 			if(opts[i].usage)
 				fprintf(stderr, BLANK ": %s"NL, INDENT(1), opts[i].usage);
 			else
-				if(opts_usage_t[opts[i].type].desc) {
+				if(zt_opts_usage_t[opts[i].type].desc) {
 					if(isoptchar(opts[i].opt))
-						fprintf(stderr, BLANK ": eg. -%c %s"NL, INDENT(1), opts[i].opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+						fprintf(stderr, BLANK ": eg. -%c %s"NL, INDENT(1), opts[i].opt, zt_opts_usage_t[opts[i].type].desc ? zt_opts_usage_t[opts[i].type].desc : "");
 					else
-						fprintf(stderr, BLANK ": eg. --%s %s"NL, INDENT(1), opts[i].long_opt, opts_usage_t[opts[i].type].desc ? opts_usage_t[opts[i].type].desc : "");
+						fprintf(stderr, BLANK ": eg. --%s %s"NL, INDENT(1), opts[i].long_opt, zt_opts_usage_t[opts[i].type].desc ? zt_opts_usage_t[opts[i].type].desc : "");
 				} else {
 					fprintf(stderr, NL);
 				}
@@ -120,7 +120,7 @@ opts_usage(char *argv[], struct opt_args *opts, char *option_string, int max_opt
 }
 
 int
-opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
+zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
 	int i = 0;
 #define OPT_MAX 255
@@ -163,16 +163,16 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 #endif
 				
 		switch (opts[i].type){
-			case opt_help:
+			case zt_opt_help:
 				/* FALLTHRU */
-			case opt_flag:
+			case zt_opt_flag:
 				/* FALLTHRU */
-			case opt_func:
+			case zt_opt_func:
 				break;
 				
-			case opt_bool:
+			case zt_opt_bool:
 				/* FALLTHRU */
-			case opt_ofunc:
+			case zt_opt_ofunc:
 				if(isoptchar(opts[i].opt)) {
 					optstring[opt_index++] = ':';			/* '::' means argument optional */
 				}
@@ -182,11 +182,11 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 #endif
 				break;
 				
-			case opt_int:
+			case zt_opt_int:
 				/* FALLTHRU */
-			case opt_string:
+			case zt_opt_string:
 				/* FALLTHRU */
-			case opt_rfunc:
+			case zt_opt_rfunc:
 				if(isoptchar(opts[i].opt)) {
 					optstring[opt_index++] = ':';			/* argument required */
 				}
@@ -215,7 +215,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 			break;
 		else if ( c == '?' ){ /* unknown option */
 			if(auto_usage) {
-				opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+				zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 			}
 			return EXIT_FAILURE;
 		}
@@ -225,7 +225,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 			}
 			/* else */
 			switch (opts[i].type) {
-				case opt_bool: /* set an int */
+				case zt_opt_bool: /* set an int */
 					if(optarg){
 						int offset = 0;
 						if(optarg[0] == '=')
@@ -242,7 +242,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 							printf("Invalid value \"%s\" for %s (expecting [t|f|yes|no|true|false]).\n",
 							       *argv[optind-1], *argv[optind-2] );
 							if(auto_usage) {
-								opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+								zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 							}
 							return EXIT_FAILURE;
 						}
@@ -250,7 +250,7 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 						*(int *)opts[i].val = !*(int *)opts[i].val;
 					}										
 					break;
-				case opt_int:
+				case zt_opt_int:
 					*(int *)opts[i].val = strtol(optarg, NULL, 0);
 					/* can only fail if passed a string
 					 * that does not start with a number
@@ -259,56 +259,56 @@ opts_process( int *argc, char **argv[], struct opt_args *opts, char *option_stri
 						printf("Invalid value \"%s\" for %s (expecting an integer).\n",
 						       *argv[optind-1], *argv[optind-2] );
 						if(auto_usage) {
-							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+							zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 						}
 					break;
-				case opt_string:
+				case zt_opt_string:
 					*(char **)opts[i].val = xstrdup(optarg); /* Should never fail!!! */
 					if(opts[i].val == NULL){
 						printf("Invalid value \"%s\" for %s (expecting a string).\n",
 						       *argv[optind-1], *argv[optind-2] );
 						if(auto_usage) {
-							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+							zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 					}
 					break;
-				case opt_func:
-					if( (((opt_function)opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
+				case zt_opt_func:
+					if( (((zt_opt_function)opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
-							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+							zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 					}
 					break;	
-				case opt_ofunc:
+				case zt_opt_ofunc:
 					if( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
-							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+							zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 					}
 					break;									
-				case opt_rfunc:										
+				case zt_opt_rfunc:										
 					if( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE){
 						if(auto_usage) {
-							opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+							zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 						}
 						return EXIT_FAILURE;
 					}
 					break;
-				case opt_flag:
+				case zt_opt_flag:
 					if(*(int *)opts[i].val > 0){
 						*(int *)opts[i].val = 0;
 					}else{
 						*(int *)opts[i].val = 1; 
 					}
 					break;
-				case opt_help:
+				case zt_opt_help:
 					if(auto_usage) {
-						opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+						zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
 					}
 					return -1;
 					break;
