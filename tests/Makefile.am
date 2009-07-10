@@ -38,7 +38,6 @@ unit_test_SOURCES = 	\
 	uuid_test.c
 
 #	msg_queue_test.c
-#	bytearray_test.c
 
 EXTRA_DIST = 		\
 	cfg_test.ini
