@@ -31,7 +31,7 @@ def stat_suite(suite):
             ss.assertions += asserts
             if asserts == 0:
                 ss.empty_tests.append(name)
-
+            
             ss.tests += 1
             if values['result'] == 'success':
                 ss.successes += 1
@@ -87,7 +87,8 @@ Global Stats:
   successes                   : %d
   assertions                  : %d
   failures                    : %d
-""" % (suites, tests, successes, assertions, failures),
+  empty_tests                 : %s
+""" % (suites, tests, successes, assertions, failures, ", ".join(empty_tests)),
     if empty_tests:
         print "  empty_tests:"
         print "\n".join(["     - %s" % x for x in empty_tests])
