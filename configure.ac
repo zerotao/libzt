@@ -63,7 +63,8 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 
 AC_TRY_COMPILE(,[long long i;],
-		AC_DEFINE(HAVE_LONG_LONG, 1, [Define if C compiler supports long long type]))
+		AC_DEFINE(HAVE_LONG_LONG, 1, [Define if C compiler supports long long type])
+        CFLAGS="$CFLAGS -DHAVE_LONG_LONG")
 
 AC_TRY_COMPILE(,[long double d;],
 		AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define if C compiler supports long double type]))
