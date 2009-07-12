@@ -1,5 +1,5 @@
 SUBDIRS = 		\
-	adt		\
+	adt			\
 	zt_cfg 		\
 	zt_log 		\
 	zt_event	\
@@ -7,14 +7,16 @@ SUBDIRS = 		\
 	.
 
 
-lib_LTLIBRARIES = libzt.la libzt_unit.la
+lib_LTLIBRARIES = libzt.la libzt_unit.la libzt_gc.la libzt_coro.la
 
-libzt_la_LIBADD = 	\
-	../replace/libreplace.la 	\
-	adt/libzt_adt.la		\
-	zt_log/libzt_log.la		\
-	zt_cfg/libzt_cfg.la		\
-	zt_event/libzt_event.la		\
+libzt_la_LIBADD = 					\
+		../replace/libreplace.la 	\
+		adt/libzt_adt.la			\
+		zt_log/libzt_log.la			\
+		zt_cfg/libzt_cfg.la			\
+		zt_event/libzt_event.la
+
+libzt_coro_la_LIBADD = \
 	ucontext/libzt_ucontext.la
 
 #CURRENT[:REVISION[:AGE]]
@@ -24,14 +26,23 @@ libzt_la_LIBADD = 	\
 #if interface add AGE++
 #if interface remove AGE = 0
 # check eev
-libzt_la_LDFLAGS = -version-info 1:0:0 \
-		-export-dynamic
+libzt_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
+libzt_coro_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
+libzt_gc_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
+libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
 libzt_unit_la_SOURCES = 	\
-	zt_unit.c
+		zt_unit.c
+
+libzt_gc_la_SOURCES = 	\
+		zt_gc.c
+
+libzt_coro_la_SOURCES = \
+		zt_coro.c		\
+		zt_cothread.c
 
 libzt_la_SOURCES = 		\
 		zt_assert.c 	\
@@ -45,10 +56,8 @@ libzt_la_SOURCES = 		\
 		zt_opts.c 		\
 		zt_progname.c 	\
 		zt_cstr.c 		\
-		zt_coro.c		\
 		zt_time.c		\
 		zt_event.c		\
-		zt_cothread.c	\
 		zt_gc.c			\
 		zt_sha1.c		\
 		zt_uuid.c		\

@@ -330,11 +330,9 @@ libzt/zt_event/Makefile
 libzt/adt/Makefile
 libzt/ucontext/Makefile
 tools/Makefile
-tools/project.spec
 tools/libzt.pc
 examples/Makefile
 tests/Makefile
-project.list
 )
 
 echo
