@@ -12,16 +12,17 @@
 #include "zt_except.h"
 #include "zt_log.h"
 #include "zt_cstr.h"
+#include "zt_exceptions.h"
 
 struct except_Handler {
-	struct except_Handler	 *next;
-	except_handler		  h;
+	struct except_Handler   * next;
+	except_handler		      h;
 };
 
 struct except_Handlers {
-	void			 *e;
-	struct except_Handler	 *handlers;
-	struct except_Handlers	 *next;
+	void			        * e;
+	struct except_Handler	* handlers;
+	struct except_Handlers	* next;
 };
 
 /* FIXME: these need to become thread safe */
@@ -120,8 +121,8 @@ void _except_remove_handler(void *e, except_handler h){
 
 void _except_call_handlers(struct except_Frame *estack)
 {
-	struct except_Handlers *hstack = &_except_Handlers_Stack;
-	struct except_Handler *handler;
+	struct except_Handlers  * hstack = &_except_Handlers_Stack;
+	struct except_Handler   * handler;
 
 	if(!estack) {
 	}
@@ -135,12 +136,11 @@ void _except_call_handlers(struct except_Frame *estack)
 		int last = 0;
 		handler = hstack->handlers;
 		while((handler != NULL) && (!last)){
-			ret = handler->h(estack->exception,
-					 estack->type,
-					 estack->etext,
-					 estack->efile,
-					 estack->efunc,
-					 estack->eline);
+			ret = handler->h(*(void **)estack->exception,
+                             estack->etext,
+                             estack->efile,
+                             estack->efunc,
+                             estack->eline);
 			switch(ret){
 				case 1:
 					handler = handler->next;
@@ -165,45 +165,63 @@ void _except_call_handlers(struct except_Frame *estack)
 		}
 	}else{
 		if(_except_default_handler) {
-			_except_default_handler(estack->exception,
-					estack->type,
-					estack->etext,
-					estack->efile,
-					estack->efunc,
-					estack->eline);
+			_except_default_handler(*(void **)estack->exception,
+                                    estack->etext,
+                                    estack->efile,
+                                    estack->efunc,
+                                    estack->eline);
 		} else {
-			_except_unhandled_exception(estack->etext,
-						    estack->efile,
-						    estack->eline,
-						    estack->efunc,
-                                                    1);
+			_except_unhandled_exception(*(void **)estack->exception,
+                                        estack->etext,
+                                        estack->efile,
+                                        estack->eline,
+                                        estack->efunc,
+                                        1);
 		}
 	}
 }
 
 void except_unhandled_exception(struct except_Frame *stack, int flags)
 {
-        _except_unhandled_exception(stack->etext,
-                                    stack->efile,
-                                    stack->eline,
-                                    stack->efunc,
-                                    flags);
+    _except_unhandled_exception(*(void **)stack->exception,
+                                stack->etext,
+                                stack->efile,
+                                stack->eline,
+                                stack->efunc,
+                                flags);
 }
 
-void _except_unhandled_exception(char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
+void _except_unhandled_exception(void *exc, char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
 {
 	char	  bname[PATH_MAX];
 	zt_cstr_basename(bname, PATH_MAX, efile, NULL);
-	
-	zt_log_printf(zt_log_crit, "Uncaught/Unhandled Exception: '%s' @ %s[%d]:%s",
-		   etext, bname, eline, efunc);
-        if(flags) {
-                abort();
-        }
+
+    zt_log_printf(zt_log_crit, "Unhandled Exception: %s: %s[%d:%s]",
+                  etext, bname, eline, efunc);
+    
+    if(flags) {
+        abort();
+    }
 }
 
-int domain_default_except_handler(void *exc, void *type, char *etext, char *file, char *func, int line) 
+int domain_default_except_handler(void *exc, char *etext, char *file, char *func, int line) 
 {
-	_except_unhandled_exception(*(char **)exc, file, line, func, 1);
+
+    if(EXCEPTION_IN(zt_exception) && exc) {
+        char    * error;
+        int       len = strlen((char *)exc) + strlen(etext) + 2 + 1;
+        
+        error = XCALLOC(char, len);
+        snprintf(error, len, "%s(%s)", (char *)exc, etext);
+        _except_unhandled_exception(NULL, error, file, line, func, 0);
+        XFREE(error);
+        abort();
+        
+    } else {
+        _except_unhandled_exception(NULL, etext, file, line, func, 1);
+    }
+    
+
+
 	return 0;
 }

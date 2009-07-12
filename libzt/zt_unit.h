@@ -3,7 +3,7 @@
 
 #include <libzt/zt.h>
 #include <libzt/zt_macros.h>
-#include <libzt/zt_except.h>
+#include <libzt/zt_exceptions.h>
 #include <libzt/adt/zt_list.h>
 
 BEGIN_C_DECLS
@@ -54,29 +54,13 @@ struct zt_unit_test {
 
 #define ZT_UNIT_ASSERT_EQUAL(test, expr1, expr2)						\
 	ZT_UNIT_ASSERT(test, (expr1 == expr2))
-	/* 
-     * if ((expr1) != (expr2)) {											\
-	 * 	zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
-	 * 	TRY_THROW(zt_unit_exception);									\
-	 * } else {                                                            \
-	 * 	zt_unit_test_add_assertion(test);								\
-     * }
-     */
 
 #define ZT_UNIT_ASSERT_NOT_EQUAL(test, expr1, expr2)					\
 	ZT_UNIT_ASSERT(test, (expr1 != expr2))
-	/* 
-     * if ((expr1) == (expr2)) {											\
-	 * 	zt_unit_exception = "Assertion Failed: " STR(expr1) " != " STR(expr2); \
-	 * 	TRY_THROW(zt_unit_exception);									\
-	 * } else {                                                            \
-	 * 	zt_unit_test_add_assertion(test);								\
-     * }
-     */
 
 
 	
-#define ZT_UNIT_ASSERT_RAISES(test,excpt, expr)							\
+#define ZT_UNIT_ASSERT_RAISES(test,excpt,expr)							\
 	{																	\
 		int	  success = 0;												\
 		TRY({															\

@@ -1,6 +1,8 @@
-#include "zt_gc.h"
 #include "zt_macros.h"
 #include "zt_assert.h"
+
+#define ZT_EXCEPT_GC_DEFINE
+#include "zt_gc.h"
 
 /*
  * Implements a form of Baker's treadmill with 'write protection'
@@ -101,8 +103,10 @@ dump_elist(char *name, zt_elist *p)
 	printf("]\n");	
 }
 
-char	* UnbalancedGCEnabling = "The gc was enabled when it was not disabled";
-char	* FreeWhileDisabled = "Attempt to free the GC while garbage collection was disabled";
+/* 
+ * char	* UnbalancedGCEnabling = "The gc was enabled when it was not disabled";
+ * char	* FreeWhileDisabled = "Attempt to free the GC while garbage collection was disabled";
+ */
 
 
 void
@@ -110,7 +114,7 @@ zt_gc_enable(zt_gc_t *gc)
 {
 	gc->enabled++;
 	if (gc->enabled > 0) {
-		TRY_THROW(UnbalancedGCEnabling);
+		TRY_THROW(zt_exception.gc.unbalanced_enable);
 	}
 	
 	if (gc->enabled == 0 && gc->current_allocs >= gc->allocs_before_scan) {

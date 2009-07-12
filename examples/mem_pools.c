@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 		DO_TRY {
 			elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
 		} ELSE_TRY {
-			CATCH(zt_mem.pool.group,{});
+			CATCH(zt_exception.memory.pool.group,{});
 		} END_TRY;
 
 		zt_mem_pool_group_display(0, group, 0);

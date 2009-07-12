@@ -1,13 +1,14 @@
 #ifndef __zt_int_h__
 #define __zt_int_h__
 
+#include <limits.h>
+#include <stdint.h>
+
 #include <libzt/zt.h>
-#include <libzt/zt_except.h>
+#include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
 
-#include <limits.h>
-#include <stdint.h>
 
 #define SHORT_MAX SHRT_MAX
 #define SHORT_MIN SHRT_MIN
@@ -30,16 +31,6 @@ BEGIN_C_DECLS
 # define ULONG_MIN 0
 #endif
 
-EXCEPT_DESC(zt_arithmetic, "Arithmetic",
-            EXCEPTION(divide_by_zero, "Divide By Zero")
-            EXCEPT_GROUP(overflow, "Arithmetic overflow",
-                         EXCEPTION(integer, "Arithmetic Integer overflow")));
-
-/* 
- * extern char    * zt_int_arithmetic_overflow;
- * extern char    * zt_arithmetic.divide_by_zero;
- */
-
 #define ZT_INT_IS_SIGNED(u) ((u) < 0)
 #define ZT_INT_SAME_SIGN(u,v) (!(((u) ^ (v)) < 0))
 
@@ -48,7 +39,7 @@ EXCEPT_DESC(zt_arithmetic, "Arithmetic",
                                                ltype rhs)               \
     {                                                               	\
         if(CONC(sutype,_MAX) - lhs < rhs) {                             \
-            THROW(zt_arithmetic.overflow.integer);                         \
+            THROW(zt_exception.math.overflow);                          \
         }                                                               \
         return lhs + rhs;                                           	\
     }
@@ -67,13 +58,13 @@ ZT_INT_UNSIGNED_ADD(unsigned long, ulong, ULONG)
 			{                                                       \
 				/* 2 negatives */                                   \
 				if(lhs < CONC(sutype,_MIN) - rhs) {                 \
-					THROW(zt_arithmetic.overflow.integer);             \
+					THROW(zt_exception.math.overflow);              \
 				}                                                   \
 			} else {                                                \
                 /* 2 positives */                                   \
 				if(CONC(sutype,_MAX) - lhs < rhs)                   \
 				{                                                   \
-					THROW(zt_arithmetic.overflow.integer);             \
+					THROW(zt_exception.math.overflow);              \
 				}                                                   \
 			}                                                       \
 		}                                                           \
@@ -93,7 +84,7 @@ ZT_INT_SIGNED_ADD(signed long, long, LONG)
                                           ltype rhs)				\
 	{                                                               \
 		if(lhs < rhs) {                                             \
-			THROW(zt_arithmetic.overflow.integer);                      \
+			THROW(zt_exception.math.overflow);                      \
 		}                                                           \
 		return lhs - rhs;                                           \
 	}
@@ -104,7 +95,7 @@ ZT_INT_UNSIGNED_SUB(unsigned int, uint, UINT)
 ZT_INT_UNSIGNED_SUB(unsigned long, ulong, ULONG)
 
 #define ZT_INT_SIGNED_SUB(ltype, sltype, sutype)                    \
-	INLINE static ltype CONC3(zt_,sltype,_sub)(ltype lhs,            \
+	INLINE static ltype CONC3(zt_,sltype,_sub)(ltype lhs,           \
                                           ltype rhs) 				\
 	{                                                               \
 		if(!ZT_INT_SAME_SIGN(lhs, rhs))                             \
@@ -113,14 +104,14 @@ ZT_INT_UNSIGNED_SUB(unsigned long, ulong, ULONG)
 			{                                                       \
 				if(lhs > CONC(sutype,_MAX) + rhs)                   \
 				{                                                   \
-					THROW(zt_arithmetic.overflow.integer);              \
+					THROW(zt_exception.math.overflow);              \
 				}                                                   \
 			}                                                       \
 			else                                                    \
 			{                                                       \
 				if(lhs < CONC(sutype,_MIN + rhs))                   \
 				{                                                   \
-					THROW(zt_arithmetic.overflow.integer);              \
+					THROW(zt_exception.math.overflow);              \
 				}                                                   \
 			}                                                       \
 		}                                                           \
@@ -142,7 +133,7 @@ ZT_INT_SIGNED_SUB(signed long, long, LONG)
 	{                                                               \
 		cvtype _tmp = (cvtype)lhs * (cvtype)rhs;                    \
 		if(((_tmp) >> (sizeof(ltype) * 8)) > 0) {                   \
-			THROW(zt_arithmetic.overflow.integer);                  \
+			THROW(zt_exception.math.overflow);                      \
 		}                                                           \
 		return _tmp;                                                \
 	}
@@ -164,11 +155,11 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
  *                 {                                                                   \
  *                     if(((_tmp & 0xffffffff80000000LL) != 0) &&                      \
  *                        ((_tmp & 0xffffffff80000000LL) != 0xffffffff80000000LL)) {   \
- *                         THROW(zt_arithmetic.overflow.integer)                       \
+ *                         THROW(zt_exception.math.overflow)                       \
  *                         }                                                           \
  * 				} else {                                                            \
  * 					if((_tmp & 0xffffffff00000000ULL)) {                            \
- * 						THROW(zt_arithmetic.overflow.integer);                      \
+ * 						THROW(zt_exception.math.overflow);                      \
  * 					}                                                               \
  * 				}                                                                   \
  * 				break;
@@ -182,11 +173,11 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
  * 				   ZT_INT_IS_SIGNED(lhs)) {                             \
  * 					if(((_tmp & 0xffff8000) != 0) &&                    \
  * 					   ((_tmp & 0xffff8000) != 0xffff8000)) {           \
- * 						THROW(zt_arithmetic.overflow.integer);          \
+ * 						THROW(zt_exception.math.overflow);              \
  * 					}                                                   \
  * 				} else {                                                \
  * 					if ((_tmp & 0xffff0000)) {                          \
- * 						THROW(zt_arithmetic.overflow.integer);          \
+ * 						THROW(zt_exception.math.overflow);              \
  * 					}                                                   \
  * 				}                                                       \
  * 				break;                                                  \
@@ -196,11 +187,11 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
  * 				{                                                       \
  * 					if(((_tmp & 0xff80) != 0) &&                        \
  * 					   ((_tmp & 0xff80) != 0xff80)) {                   \
- * 						THROW(zt_arithmetic.overflow.integer);          \
+ * 						THROW(zt_exception.math.overflow);              \
  * 					}                                                   \
  * 				} else {                                                \
  * 					if(_tmp & 0xff00) {                                 \
- * 						THROW(zt_arithmetic.overflow.integer);          \
+ * 						THROW(zt_exception.math.overflow);              \
  * 					}                                                   \
  * 				}                                                       \
  * 				break;                                                  \
@@ -211,29 +202,29 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
  * 					{                                                   \
  * 						if(CONC(sutype,_MAX)/lhs < rhs)                 \
  * 						{                                               \
- * 							THROW(zt_arithmetic.overflow.integer);      \
+ * 							THROW(zt_exception.math.overflow);          \
  * 						}                                               \
  * 					}                                                   \
  * 					else                                                \
  * 					{                                                   \
  * 						if((lhs == CONC(sutype,_MIN)) ||                \
  * 						   (rhs == CONC(sutype,_MIN))) {                \
- * 							THROW(zt_arithmetic.overflow.integer);      \
+ * 							THROW(zt_exception.math.overflow);          \
  * 						}                                               \
  * 						if(CONC(sutype,_MAX/-lhs < -rhs))               \
  * 						{                                               \
- * 							THROW(zt_arithmetic.overflow.integer);      \
+ * 							THROW(zt_exception.math.overflow);          \
  * 						}                                               \
  * 					}                                                   \
  * 				} else {                                                \
- * 					/\* mixed signs *\/                                   \
+ * 					/\* mixed signs *\/                                 \
  * 					if(lhs < 0) {                                       \
  * 						if(lhs < CONC(sutype,_MIN)/rhs) {               \
- * 							THROW(zt_arithmetic.overflow.integer);      \
+ * 							THROW(zt_exception.math.overflow);          \
  * 						}                                               \
  * 					} else {                                            \
  * 						if(rhs < CONC(sutype,_MIN)/lhs) {               \
- * 							THROW(zt_arithmetic.overflow.integer);      \
+ * 							THROW(zt_exception.math.overflow);          \
  * 						}                                               \
  * 					}                                                   \
  * 				}                                                       \
@@ -255,7 +246,7 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
 		_tmp = (cvtype)lhs * (cvtype)rhs;                               \
         if ((_tmp < CONC(sutype, _MIN)) ||                              \
             (_tmp > CONC(sutype, _MAX))) {                              \
-            THROW(zt_arithmetic.overflow.integer);                      \
+            THROW(zt_exception.math.overflow);                          \
         }                                                               \
 		return (lhs * rhs);                                             \
 	}
@@ -277,7 +268,7 @@ ZT_INT_SIGNED_MUL(signed long, long, LONG, signed long long)
                                           ltype rhs)			\
     {                                                           \
         if(rhs == 0) {                                          \
-            THROW(zt_arithmetic.divide_by_zero);                \
+            THROW(zt_exception.math.divide_by_zero);            \
         }                                                       \
         return lhs / rhs;                                       \
     }
@@ -297,11 +288,11 @@ ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
     {                                                           \
         cvtype	  _tmp;                                         \
         if(rhs == 0) {                                          \
-            THROW(zt_arithmetic.divide_by_zero);                \
+            THROW(zt_exception.math.divide_by_zero);            \
         }                                                       \
         if(ZT_INT_IS_SIGNED(lhs) && ZT_INT_IS_SIGNED(rhs)) {    \
             if(lhs == CONC(sutype,_MIN) && rhs == -1) {         \
-                THROW(zt_arithmetic.overflow);                  \
+                THROW(zt_exception.math.overflow);              \
             }                                                   \
         }                                                       \
         if(ZT_INT_SAME_SIGN(lhs, rhs)) {                        \
@@ -309,7 +300,7 @@ ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
         }                                                       \
         _tmp = (cvtype)lhs/(cvtype)rhs;                         \
         if(_tmp < CONC(sutype,_MIN)) {                          \
-            THROW(zt_arithmetic.overflow.integer);              \
+            THROW(zt_exception.math.overflow);                  \
         }                                                       \
         return _tmp;                                            \
     }

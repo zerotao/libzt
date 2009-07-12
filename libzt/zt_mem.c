@@ -5,8 +5,6 @@
 
 #include "zt.h"
 #include "adt/zt_list.h"
-
-#define EXCEPT_DEFINE 1
 #include "zt_mem.h"
 
 /*
@@ -559,9 +557,8 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 		}
 	}
 
-	TRY_THROW(zt_mem.pool.group.does_not_exist);
-	/* return XCALLOCS(size + sizeof(zt_mem_elt), 1); */
-	return NULL;				/* never reached */
+	TRY_THROW(zt_exception.memory.pool.group.does_not_exist);
+	return NULL;				/* never reached if exceptions are enabled */
 }
 
 int

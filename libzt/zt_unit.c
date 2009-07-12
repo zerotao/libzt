@@ -2,7 +2,6 @@
 
 #include "zt_unit.h"
 #include "zt_assert.h"
-#include "zt_except.h"
 #include "zt_log.h"
 #include "adt/zt_list.h"
 #include "zt_opts.h"
@@ -233,7 +232,7 @@ test_failed(struct zt_unit_test	* test,
 	len += MAX_STR_INT + 3 + 3;
 	
 	test->error = XCALLOC(char, len + 1);
-	snprintf(test->error, len, "%s @ %s[%s:%d]", error, efile, efunc, eline);
+	snprintf(test->error, len, "%s: %s[%s:%d]", error, efile, efunc, eline);
 }
 
 int
@@ -259,7 +258,7 @@ zt_unit_run_test(struct zt_unit			* unit,
 		},{
 			CATCH(zt_unit_exception,
 				  {
-					  test_failed(test, zt_unit_exception, _except_Stack->efile, _except_Stack->efunc, _except_Stack->eline);
+                      test_failed(test, _except_Stack->etext, _except_Stack->efile, _except_Stack->efunc, _except_Stack->eline);
 					  zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
 				  });
 		});

@@ -22,8 +22,8 @@ struct zt_fmt_obuf {
 	} while (0)
 
 
-char *zt_fmt_flags = "+- 0";
-const char *zt_fmt_overflow = "format overflow";
+char    * zt_fmt_flags = "+- 0";
+
 static zt_fmt_ty cvt[256] = {
 	0,     0, 0,     0,     0,     0,     0,     0,/*   0 -   7 */
 	0,     0, 0,     0,     0,     0,     0,     0,/*   8 -  15 */
@@ -530,7 +530,7 @@ zt_fmt_insert(int c, void *cl)
 	struct zt_fmt_obuf	* p = cl;
 
 	if (p->bp >= p->buf + p->size) {
-		TRY_THROW(zt_fmt_overflow);
+		TRY_THROW(zt_exception.format.overflow);
 	}
 
 	*p->bp++ = c;

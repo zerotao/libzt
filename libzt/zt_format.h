@@ -13,7 +13,7 @@
 #include <stdarg.h>
 
 #include <libzt/zt.h>
-#include <libzt/zt_except.h>
+#include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_fmt_ty)(int code, va_list *app,
@@ -22,10 +22,6 @@ typedef int (*zt_fmt_ty)(int code, va_list *app,
                          int precision);
 
 extern char *zt_fmt_flags;
-
-/* FIXME: consolidate all of the exceptions where it makes since */
-extern const char *zt_fmt_overflow;
-
 
 extern int zt_fmt_format(int put(int c, void *cl), void *cl, const char *fmt, ...);
 extern int zt_fmt_vformat(int put(int c, void *cl), void *cl, const char *fmt, va_list ap);

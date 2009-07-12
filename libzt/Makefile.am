@@ -34,50 +34,51 @@ libzt_unit_la_SOURCES = 	\
 	zt_unit.c
 
 libzt_la_SOURCES = 		\
-	zt_assert.c 		\
-	zt_cfg.c 		\
-	zt_daemon.c		\
-	zt_except.c 		\
-	zt_format.c		\
-	zt_log.c 		\
-	zt_malloc.c 		\
-	zt_mem.c		\
-	zt_opts.c 		\
-	zt_progname.c 		\
-	zt_cstr.c 		\
-	zt_coro.c		\
-	zt_time.c		\
-	zt_event.c		\
-	zt_cothread.c		\
-	zt_gc.c			\
-	zt_int.c		\
-	zt_sha1.c		\
-	zt_uuid.c
+		zt_assert.c 	\
+		zt_cfg.c 		\
+		zt_daemon.c		\
+		zt_except.c 	\
+		zt_format.c		\
+		zt_log.c 		\
+		zt_malloc.c 	\
+		zt_mem.c		\
+		zt_opts.c 		\
+		zt_progname.c 	\
+		zt_cstr.c 		\
+		zt_coro.c		\
+		zt_time.c		\
+		zt_event.c		\
+		zt_cothread.c	\
+		zt_gc.c			\
+		zt_sha1.c		\
+		zt_uuid.c		\
+		zt_exceptions.c
 
 pkgincludedir = ${includedir}/libzt
-pkginclude_HEADERS = \
-	zt.h			\
-	zt_unit.h		\
-	zt_assert.h		\
-	zt_cfg.h		\
-	zt_common.h		\
-	zt_daemon.h		\
-	zt_except.h		\
-	zt_format.h		\
-	zt_log.h		\
-	zt_mem.h		\
-	zt_opts.h		\
-	zt_progname.h	\
-	zt_cstr.h		\
-	zt_time.h		\
-	zt_coro.h		\
-    zt_macros.h		\
-	zt_event.h		\
-	zt_cothread.h	\
-	zt_gc.h			\
-	zt_int.h		\
-	zt_sha1.h		\
-	zt_uuid.h
+pkginclude_HEADERS = 	\
+		zt.h			\
+		zt_unit.h		\
+		zt_assert.h		\
+		zt_cfg.h		\
+		zt_common.h		\
+		zt_daemon.h		\
+		zt_except.h		\
+		zt_format.h		\
+		zt_log.h		\
+		zt_mem.h		\
+		zt_opts.h		\
+		zt_progname.h	\
+		zt_cstr.h		\
+		zt_time.h		\
+		zt_coro.h		\
+	    zt_macros.h		\
+		zt_event.h		\
+		zt_cothread.h	\
+		zt_gc.h			\
+		zt_int.h		\
+		zt_sha1.h		\
+		zt_uuid.h		\
+		zt_exceptions.h
 
 
 # The following is required in the Makefile.am for common.h

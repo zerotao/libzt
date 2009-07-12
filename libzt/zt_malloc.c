@@ -13,16 +13,14 @@
 
 #include "zt.h"
 #include "zt_log.h"
-#include "zt_except.h"
-
-char	* memoryError;
+#include "zt_exceptions.h"
 
 void_p
 xcalloc_p (size_t num, size_t size)
 {
 	void_p mem = NULL;	
 	if(!(mem = (void_p *)calloc((num), (size)))){
-		TRY_THROW(memoryError);
+		TRY_THROW(zt_exception.memory.no_mem);
 	}
 	return mem;
 }
@@ -32,7 +30,7 @@ xmalloc_p (size_t num)
 {
 	void_p mem = NULL;	
 	if(!(mem = (void_p *)malloc(num))){
-		TRY_THROW(memoryError);
+		TRY_THROW(zt_exception.memory.no_mem);
 	}
 	return mem;		
 }
@@ -42,7 +40,7 @@ xrealloc_p (void_p p, size_t num)
 {
 	void_p mem = NULL;	
 	if(!(mem = (void_p *)realloc(p, num))){
-		TRY_THROW(memoryError);
+		TRY_THROW(zt_exception.memory.no_mem);
 	}
 	return mem;
 }
@@ -51,7 +49,7 @@ void
 xfree_p (void_p stale)
 {
 	if(!stale) {
-		TRY_THROW(memoryError);
+		TRY_THROW(zt_exception.memory.no_mem);
 	}
 	
 	free(stale);
@@ -64,7 +62,7 @@ xstrdup (const char *string)
 	if( string ){
 		if(!(new_string = strdup(string))){
 			/* zt_log_printf( zt_log_emerg, "Could not xstrdup string."); */
-			TRY_THROW(memoryError);
+			TRY_THROW(zt_exception.memory.no_mem);
 		}
 	}
 	return ( new_string );

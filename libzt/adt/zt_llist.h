@@ -8,7 +8,6 @@
 
 #include <libzt/zt.h>
 #include <libzt/zt_assert.h>
-#include <libzt/zt_except.h>
 BEGIN_C_DECLS
 
 typedef struct zt_pair {

@@ -20,23 +20,20 @@
 #include <stdio.h>
 
 #include "zt.h"
-#include "zt_assert.h"
 #include "zt_log.h"
-#include "zt_except.h"
 #include "zt_cstr.h"
-
-char *zt_assertion_failed = "assertion_failed";
+#include "zt_assert.h"
 
 void
 _zt_assert_fail (char *s, char *file, unsigned int line,
-			  const char *func)
+                 const char *func)
 {
 	char	bname[PATH_MAX];
 
 	zt_cstr_basename(bname, PATH_MAX, file, NULL);
 	
 	if(func)
-		zt_log_printf(zt_log_err, "Assertion \"%s\" failed at: %s[%d:%s]", s, bname, line, func);
+		zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d:%s]", s, bname, line, func);
 	else
-		zt_log_printf(zt_log_err, "Assertion \"%s\" failed at: %s[%d]", s, bname, line);
+		zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d]", s, bname, line);
 }

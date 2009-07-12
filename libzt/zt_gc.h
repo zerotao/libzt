@@ -3,8 +3,11 @@
 
 #include <libzt/zt.h>
 #include <libzt/adt/zt_list.h>
+#include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
+
+
 typedef struct zt_gc_collectable {
  	zt_elist	  list;
  	int	  		  colour;

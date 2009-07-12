@@ -11,10 +11,7 @@
 #ifndef _ZT_ASSERT_H_
 #define _ZT_ASSERT_H_
 
-#include <libzt/zt.h>
-#include <libzt/zt_except.h>
-
-extern char *zt_assertion_failed;
+#include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
 
@@ -49,12 +46,10 @@ extern void _zt_assert_fail (char *condition, char *file,
 # define zt_assert(c)
 # define zt_assert_nf(c)
 #else
-/* # define zt_assert(c) (((c) ? 1 : (_zt_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__, 1), 0))) */
 # define zt_assert(c) if (!(c)) {									\
 		_zt_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);      \
-		TRY_THROW(zt_assertion_failed);                             \
+		TRY_THROW(zt_exception.assertion.failed);                   \
 	}
-
 # define zt_assert_nf(c) (((c) ? 1 : (_zt_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__), 0)))
 #endif 
 

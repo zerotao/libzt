@@ -11,9 +11,13 @@
  */
 
 #include <stdio.h>
+
+/* because we test the EXCEPT_DESC below */
 #define EXCEPT_DEFINE
-#include <libzt/zt_except.h>
+#include <libzt/zt.h>
+#include <libzt/zt_exceptions.h>
 #include <libzt/zt_unit.h>
+
 
 char	* Pass = "Pass";
 char	* Fail = "Fail";
@@ -22,13 +26,15 @@ int test_count = 0;
 
 static char *f1(int i)
 {
+    char    * fe = "f1";
+    
 	TRY({
 			if(i == 0)
-				THROW(f1);
+				THROW(fe);
 			TRY_RETURN Pass;
 		},
 		{
-			CATCH(f1, TRY_RETURN Pass;);
+			CATCH(fe, TRY_RETURN Pass;);
 		});
 	return Fail;
 }
@@ -121,11 +127,11 @@ basic_tests(struct zt_unit_test *test, void *data)
 	{
 		struct {
 			struct {
-				int i_child;
-				char *child;
-				int i_child2;
+				char    * i_child;
+				char    * child;
+				char    * i_child2;
 			}subdomain;
-			char *domain_child;
+			char    * domain_child;
 		}domain;
     
 		
@@ -147,11 +153,11 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 	{
 		static int	  tmp = 0;
-		INSTALL_DEFAULT_HANDLER(domain_default_except_handler);
-		
+		INSTALL_DEFAULT_HANDLER(domain_default_except_handler);        
+
 		EXCEPT_DESC(domain2, "domain2",
-		  EXCEPT_GROUP(subdomain, "subdomain",
-		    EXCEPTION(child, "child")));
+                    EXCEPT_GROUP(subdomain, "subdomain",
+                                 EXCEPTION(child, "child")));
 
 		TRY({  
 			    TRY({
@@ -166,7 +172,23 @@ basic_tests(struct zt_unit_test *test, void *data)
 		    },{
 				CATCH(domain2, { ZT_UNIT_ASSERT(test, tmp != 0); });
 		    });
-		
+
+        /* 
+         * ((((void *)(&domain2) >= (void *)(&domain2.subdomain)) &&
+         *   ((void *)(&domain2.subdomain) <= (void *)((int)&domain2 + sizeof(domain2)))) ? 1 : 0) == 1;
+         */
+        
+        /* 
+         * ZT_UNIT_ASSERT(test, EXCEPTION_IN(domain2, &domain2.subdomain) == 1);
+         * ZT_UNIT_ASSERT(test, EXCEPTION_IN(domain2, &domain2.subdomain.child) == 1);
+         * ZT_UNIT_ASSERT(test, EXCEPTION_IN(domain2, &domain2) == 1);
+         * ZT_UNIT_ASSERT(test, EXCEPTION_IN(domain2, &tmp) == 0);
+         */
+/* 
+ * #include <zt_assert.h>
+ *         TRY_THROW(zt_assertion.failed);
+ */
+        
 	}
 
 	
@@ -256,9 +278,19 @@ basic_tests(struct zt_unit_test *test, void *data)
 		    });
 		ZT_UNIT_ASSERT(test, domain == Pass);
 	}
-	
-			
-/* This will fail with the new unit test framework fix it!!!
+
+    {
+        TRY({
+                THROW(zt_exception.memory.no_mem);
+            },{
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception));
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory));
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory.no_mem));
+                CATCH(zt_exception,);
+            });
+    }
+    
+/* This will fail with the new unit test framework because it installs its own handler (fix it)!!!
  * 	{
  * 		test_count = 0;
  * 		
@@ -337,5 +369,6 @@ register_except_suite(struct zt_unit *unit)
 
 	suite = zt_unit_register_suite(unit, "except tests", NULL, NULL, NULL);
 	zt_unit_register_test(suite, "basic", basic_tests);
+    
 	return 0;
 }
