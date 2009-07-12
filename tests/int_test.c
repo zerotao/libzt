@@ -2,17 +2,8 @@
 #include <libzt/zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+test_case_signed_add(struct zt_unit_test *test, void *data)
 {
-        unsigned int    a = 22;
-        unsigned int    b = 44;
-        unsigned int    c = 0;
-
-        
-        c = zt_uint_add(a, b);
-
-        /* check addition overflow */
-        
         /* CHAR pos common */
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_char_add(CHAR_MAX, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_char_add(1, CHAR_MAX));
@@ -72,11 +63,12 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_long_add(-1L, LONG_MAX) == LONG_MAX - 1L);
         /* LONG middle */
         ZT_UNIT_ASSERT(test, zt_long_add(LONG_MAX/2, 1) == LONG_MAX/2 + 1);
-        ZT_UNIT_ASSERT(test, zt_long_add(1, LONG_MAX/2) == LONG_MAX/2 + 1);
+        ZT_UNIT_ASSERT(test, zt_long_add(1, LONG_MAX/2) == LONG_MAX/2 + 1);    
+}
 
-
-        /* unsigned addition overflow */
-        
+static void
+test_case_unsigned_add(struct zt_unit_test *test, void *data)
+{
         /* UCHAR pos common */
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uchar_add(UCHAR_MAX, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uchar_add(1, UCHAR_MAX));
@@ -139,8 +131,12 @@ basic_tests(struct zt_unit_test *test, void *data)
         /* ULONG middle */
         ZT_UNIT_ASSERT(test, zt_ulong_add(ULONG_MAX/2, 1) == ULONG_MAX/2 + 1);
         ZT_UNIT_ASSERT(test, zt_ulong_add(1, ULONG_MAX/2) == ULONG_MAX/2 + 1);
-        
 
+}
+
+static void
+test_case_signed_sub(struct zt_unit_test *test, void *data)
+{
         /* subtraction overflow */
 
         ZT_UNIT_ASSERT(test, zt_char_sub(CHAR_MAX, 1) == CHAR_MAX - 1);
@@ -182,7 +178,12 @@ basic_tests(struct zt_unit_test *test, void *data)
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_sub(LONG_MIN, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_sub(1, LONG_MIN));
-        
+
+}
+
+static void
+test_case_unsigned_sub(struct zt_unit_test *test, void *data)
+{
         /* unsigned subtraction */
         ZT_UNIT_ASSERT(test, zt_uchar_sub(UCHAR_MAX, 1) == UCHAR_MAX - 1);
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uchar_sub(1, UCHAR_MAX));
@@ -226,8 +227,11 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_sub(ULONG_MIN, 1));
         ZT_UNIT_ASSERT(test, zt_ulong_sub(1, ULONG_MIN) == 1 - ULONG_MIN);
 
+}
 
-        /* multiplication */
+static void
+test_case_signed_mul(struct zt_unit_test *test, void *data)
+{
         /* char */
         ZT_UNIT_ASSERT(test, zt_char_mul(1, CHAR_MAX) == CHAR_MAX);
         ZT_UNIT_ASSERT(test, zt_char_mul(CHAR_MAX, 1) == CHAR_MAX);
@@ -304,6 +308,11 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_short_mul(2, SHORT_MAX));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_short_mul(SHORT_MAX, 2));
 
+}
+
+static void
+test_case_unsigned_mul(struct zt_unit_test *test, void *data)
+{
         /* unsigned multiplication */
         /* char */
         ZT_UNIT_ASSERT(test, zt_uchar_mul(1, UCHAR_MAX) == UCHAR_MAX);
@@ -369,6 +378,12 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_mul(2, ULONG_MAX/2 + 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_mul(ULONG_MAX/2 + 1, 2));
 
+}
+
+
+static void
+test_case_signed_div(struct zt_unit_test *test, void *data)
+{
         /* division */
         /* char */
         ZT_UNIT_ASSERT(test, zt_char_div(1, CHAR_MAX) == 0);
@@ -442,6 +457,11 @@ basic_tests(struct zt_unit_test *test, void *data)
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_div(LONG_MIN, -1));
 
+}
+
+static void
+test_case_unsigned_div(struct zt_unit_test *test, void *data)
+{
         /* unsigned division */
         /* char */
         ZT_UNIT_ASSERT(test, zt_uchar_div(1, CHAR_MAX) == 0);
@@ -478,7 +498,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.divide_by_zero, zt_ulong_div(LONG_MAX, 0));
 
         ZT_UNIT_ASSERT(test, zt_ulong_div(LONG_MAX, 2) == LONG_MAX / 2);
-        
+
 }
 
 int
@@ -487,6 +507,13 @@ register_int_suite(struct zt_unit *unit)
 	struct zt_unit_suite	* suite;
 
 	suite = zt_unit_register_suite(unit, "int tests", NULL, NULL, NULL);
-	zt_unit_register_test(suite, "basic", basic_tests);
+    zt_unit_register_test(suite, "signed addition", test_case_signed_add);
+    zt_unit_register_test(suite, "unsigned addition", test_case_unsigned_add);
+    zt_unit_register_test(suite, "signed subtraction", test_case_signed_sub);
+    zt_unit_register_test(suite, "unsigned subtraction", test_case_unsigned_sub);
+    zt_unit_register_test(suite, "signed multiplication", test_case_signed_mul);
+    zt_unit_register_test(suite, "unsigned multiplication", test_case_unsigned_mul);
+    zt_unit_register_test(suite, "signed division", test_case_signed_div);
+    zt_unit_register_test(suite, "unsigned division", test_case_unsigned_div);
 	return 0;
 }
