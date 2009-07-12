@@ -66,7 +66,7 @@ static zt_log_vtbl_ty vtbl = {
 };
 
 zt_log_ty *
-log_syslog(void)
+zt_log_syslog(void)
 {
 	return zt_log_syslog2(ZT_LOG_WITH_PID, LOG_USER);
 }
