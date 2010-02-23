@@ -46,8 +46,6 @@ extern int register_tree_suite(struct zt_unit *unit);
 extern int register_sha1_suite(struct zt_unit *unit);
 extern int register_uuid_suite(struct zt_unit *unit);
 
-extern int register_coro_suite(struct zt_unit *unit);
-extern int register_cothread_suite(struct zt_unit *unit);
 
 
 int
@@ -88,8 +86,6 @@ main(int argc, char *argv[])
 	register_sha1_suite(unit);
 	register_uuid_suite(unit);
     
-	register_coro_suite(unit);
-	register_cothread_suite(unit);
 	
 	/* 
      * register_adt_suite(unit);

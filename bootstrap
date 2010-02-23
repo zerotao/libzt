@@ -59,7 +59,7 @@ error () {
 }
 
 # find the apps and set if necessary
-progvar LIBTOOLIZE glibtoolize libtoolize
+progvar LIBTOOLIZE libtoolize
 progvar ACLOCAL aclocal
 progvar AUTOHEADER autoheader
 progvar AUTOCONF autoconf

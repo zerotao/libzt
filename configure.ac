@@ -328,7 +328,6 @@ libzt/zt_log/Makefile
 libzt/zt_cfg/Makefile
 libzt/zt_event/Makefile
 libzt/adt/Makefile
-libzt/ucontext/Makefile
 tools/Makefile
 tools/libzt.pc
 examples/Makefile

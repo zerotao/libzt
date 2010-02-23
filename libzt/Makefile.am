@@ -3,11 +3,10 @@ SUBDIRS = 		\
 	zt_cfg 		\
 	zt_log 		\
 	zt_event	\
-	ucontext	\
 	.
 
 
-lib_LTLIBRARIES = libzt.la libzt_unit.la libzt_gc.la libzt_coro.la
+lib_LTLIBRARIES = libzt.la libzt_unit.la libzt_gc.la
 
 libzt_la_LIBADD = 					\
 		../replace/libreplace.la 	\
@@ -15,9 +14,6 @@ libzt_la_LIBADD = 					\
 		zt_log/libzt_log.la			\
 		zt_cfg/libzt_cfg.la			\
 		zt_event/libzt_event.la
-
-libzt_coro_la_LIBADD = \
-	ucontext/libzt_ucontext.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -27,7 +23,6 @@ libzt_coro_la_LIBADD = \
 #if interface remove AGE = 0
 # check eev
 libzt_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
-libzt_coro_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 libzt_gc_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
 libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 
@@ -39,10 +34,6 @@ libzt_unit_la_SOURCES = 	\
 
 libzt_gc_la_SOURCES = 	\
 		zt_gc.c
-
-libzt_coro_la_SOURCES = \
-		zt_coro.c		\
-		zt_cothread.c
 
 libzt_la_SOURCES = 		\
 		zt_assert.c 	\
@@ -79,10 +70,8 @@ pkginclude_HEADERS = 	\
 		zt_progname.h	\
 		zt_cstr.h		\
 		zt_time.h		\
-		zt_coro.h		\
 	    zt_macros.h		\
 		zt_event.h		\
-		zt_cothread.h	\
 		zt_gc.h			\
 		zt_int.h		\
 		zt_sha1.h		\

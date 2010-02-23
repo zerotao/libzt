@@ -4,7 +4,6 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_
 unit_test_LDADD = \
 	$(top_builddir)/libzt/.libs/libzt.a 	 \
 	$(top_builddir)/libzt/.libs/libzt_unit.a \
-	$(top_builddir)/libzt/.libs/libzt_coro.a \
 	$(top_builddir)/libzt/.libs/libzt_gc.a
 
 noinst_PROGRAMS = 	\
@@ -33,8 +32,6 @@ unit_test_SOURCES = 	\
 	stack_test.c		\
 	time_test.c			\
 	tree_test.c			\
-	coro_test.c			\
-	cothread_test.c		\
 	sha1_test.c			\
 	uuid_test.c
 

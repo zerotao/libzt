@@ -7,8 +7,7 @@ EXAMPLE_APPS = 		\
 		events		\
 		mem_pools	\
 		mem_timing	\
-		types		\
-		coro_io
+		types
 
 all: $(EXAMPLE_APPS)
 
@@ -26,10 +25,6 @@ mem_timing_SOURCES = \
 
 types_SOURCES = \
 	types.c
-
-coro_io_LDADD =  $(top_builddir)/libzt/libzt_coro.la $(LDADD)
-coro_io_SOURCES = \
-	coro_io.c
 
 
 include $(top_srcdir)/Makefile.extra
