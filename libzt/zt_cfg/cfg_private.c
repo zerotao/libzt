@@ -140,15 +140,14 @@ get_type(char* value, void* nvalue)
 	if((!strcasecmp(pvalue, "yes")) ||
 	   (!strcasecmp(pvalue, "true")))
 	{
-		*(short int*)nvalue = 1;
+		*(int*)nvalue = 1;
 		return zt_cfg_bool;		
 	}else if((!strcasecmp(pvalue, "no")) ||
 			 (!strcasecmp(pvalue, "false")))
 	{
-		*(short int*)nvalue = 0;		
+		*(int*)nvalue = 0;		
 		return zt_cfg_bool;
 	}
-
 	if(value[0] == '\'' || value[0] == '\"')
 	{
 		int	  len = strlen(&value[1]);
@@ -222,7 +221,7 @@ int zt_cfg_priv_set (zt_cfg_ty *cfg,
             snprintf(bvv.value, BUFMAX, "%f", *(double *)var);
             break;
         case zt_cfg_bool:
-            if((*(short int *)var == 1) || (*(short int *)var == 0)){
+            if((*(int *)var == 1) || (*(int *)var == 0)){
                 zt_log_printf(zt_log_err, "Invalid value for type zt_cfg_bool in zt_cfg_set!  Must be a string of (true|yes|no|false).");
                 return -1;
             }
@@ -262,7 +261,7 @@ int zt_cfg_priv_get (zt_cfg_ty *cfg,
 
 	switch(value->type){
         case zt_cfg_bool:
-            *(short int *)var = value->v.b;
+            *(int *)var = value->v.b;
             break;
         case zt_cfg_int:
             *(long *)var = value->v.i;
@@ -281,7 +280,7 @@ int zt_cfg_priv_get (zt_cfg_ty *cfg,
                 }
                 switch(ref->type){
                     case zt_cfg_bool:
-                        *(short int *)var = ref->v.b;
+                        *(int *)var = ref->v.b;
                         break;
                     case zt_cfg_int:
                         *(long *)var = ref->v.i;

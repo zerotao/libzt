@@ -24,7 +24,7 @@ basic_tests(struct zt_unit_test *test, void *data)
   int i = 0;
   char *s = NULL;
   double f = 0.0, f2 = 0.00, f3 = 0.00;
-  short int b = 0;
+  int b = 0;
   
   cfg = zt_cfg_ini("cfg_test.ini", 0);
   

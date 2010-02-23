@@ -26,7 +26,7 @@ struct zt_cfg_value_ty {
 	char* name;
 	zt_cfg_type type;
 	union {
-		short int   b;
+		int			b;
 		long   		i;
 		double 		f;
 		char*  		s;
