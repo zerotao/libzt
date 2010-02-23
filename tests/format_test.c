@@ -5,11 +5,11 @@
 #include <libzt/zt_unit.h>
 
 static int
-cvt_S(int code, va_list *app,
+cvt_S(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision) 
 {
-	char	* str = va_arg(*app, char *);
+	char	* str = va_arg(app, char *);
 	
 	zt_assert(str);
 

@@ -50,6 +50,7 @@ test_case_signed_add(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_int_add(INT_MAX/2, 1) == INT_MAX/2 + 1);
         ZT_UNIT_ASSERT(test, zt_int_add(1, INT_MAX/2) == INT_MAX/2 + 1);
 
+# ifndef __x86_64__
         /* LONG pos common */
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_add(LONG_MAX, 1L));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_add(1L, LONG_MAX));
@@ -63,7 +64,8 @@ test_case_signed_add(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_long_add(-1L, LONG_MAX) == LONG_MAX - 1L);
         /* LONG middle */
         ZT_UNIT_ASSERT(test, zt_long_add(LONG_MAX/2, 1) == LONG_MAX/2 + 1);
-        ZT_UNIT_ASSERT(test, zt_long_add(1, LONG_MAX/2) == LONG_MAX/2 + 1);    
+        ZT_UNIT_ASSERT(test, zt_long_add(1, LONG_MAX/2) == LONG_MAX/2 + 1);
+# endif
 }
 
 static void
@@ -117,6 +119,7 @@ test_case_unsigned_add(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_uint_add(1, UINT_MAX/2) == UINT_MAX/2 + 1);
 
 
+# ifndef __x86_64__        
         /* ULONG pos common */
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_add(ULONG_MAX, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_add(1, ULONG_MAX));
@@ -131,7 +134,7 @@ test_case_unsigned_add(struct zt_unit_test *test, void *data)
         /* ULONG middle */
         ZT_UNIT_ASSERT(test, zt_ulong_add(ULONG_MAX/2, 1) == ULONG_MAX/2 + 1);
         ZT_UNIT_ASSERT(test, zt_ulong_add(1, ULONG_MAX/2) == ULONG_MAX/2 + 1);
-
+# endif
 }
 
 static void
@@ -169,6 +172,7 @@ test_case_signed_sub(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_int_sub(INT_MIN, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_int_sub(1, INT_MIN));
 
+# ifndef __x86_64__        
         ZT_UNIT_ASSERT(test, zt_long_sub(LONG_MAX, 1) == LONG_MAX - 1);
         ZT_UNIT_ASSERT(test, zt_long_sub(1, LONG_MAX) == 1 - LONG_MAX);
         ZT_UNIT_ASSERT(test, zt_long_sub(LONG_MIN, -1) == LONG_MIN - -1);
@@ -178,7 +182,7 @@ test_case_signed_sub(struct zt_unit_test *test, void *data)
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_sub(LONG_MIN, 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_sub(1, LONG_MIN));
-
+# endif
 }
 
 static void
@@ -217,6 +221,7 @@ test_case_unsigned_sub(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uint_sub(UINT_MIN, 1));
         ZT_UNIT_ASSERT(test, zt_uint_sub(1, UINT_MIN) == 1 - UINT_MIN);
 
+# ifndef __x86_64__        
         ZT_UNIT_ASSERT(test, zt_ulong_sub(ULONG_MAX, 1) == ULONG_MAX - 1);
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_sub(1, ULONG_MAX));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_sub(ULONG_MIN, 1));
@@ -226,6 +231,7 @@ test_case_unsigned_sub(struct zt_unit_test *test, void *data)
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_sub(ULONG_MIN, 1));
         ZT_UNIT_ASSERT(test, zt_ulong_sub(1, ULONG_MIN) == 1 - ULONG_MIN);
+# endif
 
 }
 
@@ -362,6 +368,7 @@ test_case_unsigned_mul(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uint_mul(2, UINT_MAX/2 + 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uint_mul(UINT_MAX/2 + 1, 2));
 
+# ifndef __x86_64__        
         /* long */
         ZT_UNIT_ASSERT(test, zt_ulong_mul(1, ULONG_MAX) == ULONG_MAX);
         ZT_UNIT_ASSERT(test, zt_ulong_mul(ULONG_MAX, 1) == ULONG_MAX);
@@ -377,7 +384,7 @@ test_case_unsigned_mul(struct zt_unit_test *test, void *data)
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_mul(2, ULONG_MAX/2 + 1));
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_mul(ULONG_MAX/2 + 1, 2));
-
+# endif
 }
 
 
@@ -438,7 +445,8 @@ test_case_signed_div(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_int_div(2, INT_MIN) == 2 / INT_MIN);
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_int_div(INT_MIN, -1));        
-        
+
+# ifndef __x86_64__        
         /* long */
         ZT_UNIT_ASSERT(test, zt_long_div(1, LONG_MAX) == 0);
         ZT_UNIT_ASSERT(test, zt_long_div(LONG_MAX, 1) == LONG_MAX);
@@ -456,7 +464,7 @@ test_case_signed_div(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, zt_long_div(2, LONG_MIN) == 2 / LONG_MIN);
 
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_long_div(LONG_MIN, -1));
-
+# endif
 }
 
 static void
@@ -489,7 +497,8 @@ test_case_unsigned_div(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.divide_by_zero, zt_uint_div(INT_MAX, 0));
 
         ZT_UNIT_ASSERT(test, zt_uint_div(INT_MAX, 2) == INT_MAX / 2);
-        
+
+# ifndef __x86_64__        
         /* long */
         ZT_UNIT_ASSERT(test, zt_ulong_div(1, LONG_MAX) == 0);
         ZT_UNIT_ASSERT(test, zt_ulong_div(LONG_MAX, 1) == LONG_MAX);
@@ -498,7 +507,7 @@ test_case_unsigned_div(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.divide_by_zero, zt_ulong_div(LONG_MAX, 0));
 
         ZT_UNIT_ASSERT(test, zt_ulong_div(LONG_MAX, 2) == LONG_MAX / 2);
-
+# endif
 }
 
 int

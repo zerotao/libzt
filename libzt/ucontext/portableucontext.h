@@ -31,8 +31,10 @@ This software was developed as part of a project at MIT.
 # define HAS_UCONTEXT 1
 #endif
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && (defined(__i386__) || defined(__ppc__))
 # define APPLE_MISSING_UCONTEXT 1
+#else
+# define HAS_UCONTEXT 1
 #endif
 
 #if defined(__FreeBSD__) ||  defined(APPLE_MISSING_UCONTEXT)
@@ -56,7 +58,7 @@ typedef unsigned long ulong;
 #	define mcontext_t libthread_mcontext_t
 #	define ucontext libthread_ucontext
 #	define ucontext_t libthread_ucontext_t
-#	if defined(__i386__)
+#	if defined(__i386__) || defined(__x86_64__) || defined(__x86__)
 #     define INCLUDE_386
 #	else
 #     define INCLUDE_PPC

@@ -147,7 +147,7 @@ zt_fmt_vstrprintf(const char *fmt, va_list ap)
 
 int
 zt_fmt_vformat(int put(int c, void *cl), void *cl,
-	    const char *fmt, va_list ap)
+               const char *fmt, va_list ap)
 {
 	int	  tlen = 0;
 	
@@ -209,7 +209,7 @@ zt_fmt_vformat(int put(int c, void *cl), void *cl,
 			
 			c = *fmt++;
 			zt_assert(cvt[c]);
-			tlen += (*cvt[c])(c, &ap, put, cl, flags, width, precision);
+			tlen += (*cvt[c])(c, ap, put, cl, flags, width, precision);
 		}
 		
 	}
@@ -366,7 +366,7 @@ zt_fmt_outc(int c, void *cl)
 }
 
 int
-zt_fmt_cvt_c(int code, va_list *app,
+zt_fmt_cvt_c(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -377,7 +377,7 @@ zt_fmt_cvt_c(int code, va_list *app,
 	if(!flags['-']) {
 		pad(width - 1, ' ', tlen);
 	}
-	tlen += put((unsigned char)va_arg(*app, int), cl);
+	tlen += put((unsigned char)va_arg(app, int), cl);
 	if(flags['-']) {
 		pad(width - 1, ' ', tlen);
 	}
@@ -386,11 +386,11 @@ zt_fmt_cvt_c(int code, va_list *app,
 
 
 int
-zt_fmt_cvt_d(int code, va_list *app,
+zt_fmt_cvt_d(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
-	int		  val = va_arg(*app, int);
+	int		  val = va_arg(app, int);
 	unsigned int	  m;
 	char		  buf[43];
 	char		* p = buf + sizeof(buf);
@@ -416,7 +416,7 @@ zt_fmt_cvt_d(int code, va_list *app,
 
 
 int
-zt_fmt_cvt_f(int code, va_list *app,
+zt_fmt_cvt_f(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -436,18 +436,18 @@ zt_fmt_cvt_f(int code, va_list *app,
 	fmt[3] = precision % 10 + '0';
 	fmt[2] = (precision / 10) % 10 + '0';
 
-	sprintf(buf, fmt, va_arg(*app, double));
+	sprintf(buf, fmt, va_arg(app, double));
 	
 	return zt_fmt_putd(buf, strlen(buf), put, cl,
 			flags, width, precision);
 }
 
 int
-zt_fmt_cvt_o(int code, va_list *app,
+zt_fmt_cvt_o(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
-	unsigned int	  m = va_arg(*app, unsigned int);
+	unsigned int	  m = va_arg(app, unsigned int);
 	char		  buf[43];
 	char		* p = buf + sizeof(buf);
 
@@ -459,11 +459,11 @@ zt_fmt_cvt_o(int code, va_list *app,
 }
 
 int
-zt_fmt_cvt_p(int code, va_list *app,
+zt_fmt_cvt_p(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
-	unsigned long	  m = (unsigned long)va_arg(*app, void *);
+	unsigned long	  m = (unsigned long)va_arg(app, void *);
 	char		  buf[43];
 	char		* p = buf + sizeof(buf);
 
@@ -479,23 +479,23 @@ zt_fmt_cvt_p(int code, va_list *app,
 
 
 int
-zt_fmt_cvt_s(int code, va_list *app,
-      int put(int c, void *cl), void *cl,
-      unsigned char flags[], int width, int precision) 
+zt_fmt_cvt_s(int code, va_list app,
+             int put(int c, void *cl), void *cl,
+             unsigned char flags[], int width, int precision) 
 {
-	char	* str = va_arg(*app, char *);
+	char	* str = va_arg(app, char *);
 	
-	zt_assert(str);
+	zt_assert(str != NULL);
 
 	return zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
 int
-zt_fmt_cvt_u(int code, va_list *app,
+zt_fmt_cvt_u(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
-	unsigned int	  m = va_arg(*app, unsigned int);
+	unsigned int	  m = va_arg(app, unsigned int);
 	char		  buf[43];
 	char		* p = buf + sizeof(buf);
 
@@ -508,11 +508,11 @@ zt_fmt_cvt_u(int code, va_list *app,
 }
 
 int
-zt_fmt_cvt_x(int code, va_list *app,
+zt_fmt_cvt_x(int code, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
-	unsigned int	  m = va_arg(*app, unsigned int);
+	unsigned int	  m = va_arg(app, unsigned int);
 	char		  buf[43];
 	char		* p = buf + sizeof(buf);
 
@@ -544,7 +544,7 @@ zt_fmt_append(int c, void *cl)
 	struct zt_fmt_obuf	* p = (struct zt_fmt_obuf *)cl;
 	
 	if(p->bp >= p->buf + p->size) {
-		XREALLOC(unsigned char, p->buf, 2*p->size);
+		p->buf = XREALLOC(char, p->buf, p->size * 2);
 		p->bp = p->buf + p->size;
 		p->size *= 2;
 	}

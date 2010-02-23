@@ -8,15 +8,17 @@
 
 BEGIN_C_DECLS
 
-#define USE_UCONTEXT
+#undef USE_UCONTEXT
 
-#if defined(USE_UCONTEXT)
-#include <libzt/ucontext/portableucontext.h>
-# define zt_context_t	ucontext_t
-#else
+/* 
+ * #if defined(USE_UCONTEXT)
+ * #include <libzt/ucontext/portableucontext.h>
+ * # define zt_context_t	ucontext_t
+ * #else
+ */
 #include <setjmp.h>
 # define zt_context_t	jmp_buf
-#endif
+/* #endif */
 
 typedef struct zt_coro_ctx zt_coro_ctx;
 

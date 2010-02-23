@@ -213,9 +213,9 @@ extern void _except_remove_handler(void*, except_handler);
 /************ THROW */
 
 #define EXCEPTION_IN(DOMAIN)                                            \
-    (((_except_Stack->exception == (void*)(&DOMAIN)) ||                 \
+    (((_except_Stack->exception == (void *)(&DOMAIN)) ||                 \
       ((_except_Stack->exception >= (void *)(&DOMAIN)) &&               \
-       (_except_Stack->exception <= (void *)((int)&DOMAIN + sizeof(DOMAIN))))) ? 1 : 0)
+       (_except_Stack->exception <= (void *)((intptr_t)&DOMAIN + sizeof(DOMAIN))))) ? 1 : 0)
         
 /****d* Exceptions/CATCH
  *  NAME
@@ -229,7 +229,7 @@ extern void _except_remove_handler(void*, except_handler);
         void *e2 = (void *)(&EXCEPTION);                                \
         if((e2 == (void *)&except_CatchAll) ||                          \
            (e2 == e) ||                                                 \
-           (e >= e2 && e <= (void *)((int)(&EXCEPTION) + sizeof(EXCEPTION)))){ \
+           (e >= e2 && e <= (void *)((void *)(&EXCEPTION) + sizeof(EXCEPTION)))){ \
             _except_Stack->caught = 1;                                  \
             { DATA };                                                   \
         }                                                               \

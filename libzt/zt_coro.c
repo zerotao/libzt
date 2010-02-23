@@ -13,7 +13,7 @@
 	if (co != &ctl->main) {												\
 		ptrdiff_t left = _stack_left(co);								\
 		if((left <= 0) || (left > (co->size))) {						\
-			printf("Stack Overflow (by %d bytes of %ld) for coroutine @ %p\n", left, co->size, (void *)co); \
+			printf("Stack Overflow (by %d bytes of %ld) for coroutine @ %p\n", (int)left, co->size, (void *)co); \
 			exit(1);                            						\
 		}																\
 	}
@@ -39,7 +39,7 @@ static ptrdiff_t _stack_left(zt_coro *co)
 	intptr_t		  p1 = (intptr_t)(&dummy);
 	intptr_t		  p2 = (intptr_t)_current_stack_pointer();
 	register int	  stack_up = p2 > p1;
-	register intptr_t start = (int)&co->ctx + (int)sizeof(co->ctx); /* ((intptr_t)co->ctx.uc_stack.ss_sp);	 */
+	register intptr_t start = (intptr_t)&co->ctx + (intptr_t)sizeof(co->ctx); /* ((intptr_t)co->ctx.uc_stack.ss_sp);	 */
 	register intptr_t end = start + co->size;
 	
 	if (stack_up) {
@@ -273,7 +273,7 @@ static int _set_context(zt_coro_ctx *ctl, zt_coro *co, void *fn, unsigned char *
     while ((x % 8) != 0) x++; /* align on an even boundary */
     co->ctx[SUN_STACK_END_INDEX] = (JBTYPE)x;
 	
-  #elif defined(__APPLE__) && defined(i386)
+  #elif defined(__APPLE__) && (defined(i386) || defined(__x86_64__))
 	co->ctx[7] = (intptr_t)stack + size; /* esp */
 	co->ctx[10] = (intptr_t)fn;			  /* eip */
   #else

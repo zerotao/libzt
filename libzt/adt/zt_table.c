@@ -296,7 +296,7 @@ zt_table_hash_int(const void *key, void *cdata)
 int
 zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
 {
-	if((int)lhs == (int)rhs) {
+	if((void *)lhs == (void *)rhs) {
 		return 1;
 	}
 	return 0;

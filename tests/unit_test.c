@@ -69,8 +69,6 @@ main(int argc, char *argv[])
 	register_table_suite(unit);
 	register_bstream_suite(unit);
 	register_cfg_suite(unit);
-	register_coro_suite(unit);
-	register_cothread_suite(unit);
 	register_cstr_suite(unit);
 	register_event_suite(unit);
 	register_except_suite(unit);
@@ -89,6 +87,9 @@ main(int argc, char *argv[])
 	register_tree_suite(unit);
 	register_sha1_suite(unit);
 	register_uuid_suite(unit);
+    
+	register_coro_suite(unit);
+	register_cothread_suite(unit);
 	
 	/* 
      * register_adt_suite(unit);

@@ -143,7 +143,9 @@ ZT_INT_UNSIGNED_MUL(unsigned short, ushort, USHORT, unsigned int)
 
 #ifdef HAVE_LONG_LONG
 ZT_INT_UNSIGNED_MUL(unsigned int, uint, UINT, unsigned long long)
+# ifndef __x86_64__
 ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
+# endif
 #endif
 
 /* 
@@ -257,7 +259,9 @@ ZT_INT_SIGNED_MUL(signed short, short, SHORT, signed int)
 
 #ifdef HAVE_LONG_LONG
 ZT_INT_SIGNED_MUL(signed int, int, INT, signed long long)
+# ifndef __x86_64__
 ZT_INT_SIGNED_MUL(signed long, long, LONG, signed long long)
+# endif
 #endif
 
 /**************************************************************/
@@ -279,7 +283,9 @@ ZT_INT_UNSIGNED_DIV(unsigned short, ushort, USHORT, unsigned int)
 
 #ifdef HAVE_LONG_LONG
 ZT_INT_UNSIGNED_DIV(unsigned int, uint, UINT, unsigned long long)
+# ifndef __x86_64__
 ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
+# endif
 #endif
 
 #define ZT_INT_SIGNED_DIV(ltype, sltype, sutype, cvtype)        \
@@ -310,7 +316,9 @@ ZT_INT_SIGNED_DIV(signed short, short, SHORT, signed int)
 
 #ifdef HAVE_LONG_LONG
 ZT_INT_SIGNED_DIV(signed int, int, INT, signed long long)
+# ifndef __x86_64__
 ZT_INT_SIGNED_DIV(signed long, long, LONG, signed long long)
+# endif
 #endif
 
 END_C_DECLS

@@ -16,7 +16,7 @@
 #include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
-typedef int (*zt_fmt_ty)(int code, va_list *app,
+typedef int (*zt_fmt_ty)(int code, va_list app,
                          int put(int c, void *cl), void *cl,
                          unsigned char flags[256], int width,
                          int precision);
@@ -44,28 +44,28 @@ extern int zt_fmt_puts(const char *str, int len,
                        int put(int c, void *cl), void *cl,
                        unsigned char flags[256], int width, int precision);
 
-extern int zt_fmt_cvt_c(int code, va_list *app,
+extern int zt_fmt_cvt_c(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_d(int code, va_list *app,
+extern int zt_fmt_cvt_d(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_f(int code, va_list *app,
+extern int zt_fmt_cvt_f(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_o(int code, va_list *app,
+extern int zt_fmt_cvt_o(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_p(int code, va_list *app,
+extern int zt_fmt_cvt_p(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_s(int code, va_list *app,
+extern int zt_fmt_cvt_s(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_u(int code, va_list *app,
+extern int zt_fmt_cvt_u(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
-extern int zt_fmt_cvt_x(int code, va_list *app,
+extern int zt_fmt_cvt_x(int code, va_list app,
                         int put(int c, void *cl), void *cl,
                         unsigned char flags[], int width, int precision);
 
