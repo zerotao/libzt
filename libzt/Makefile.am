@@ -2,7 +2,6 @@ SUBDIRS = 		\
 	adt			\
 	zt_cfg 		\
 	zt_log 		\
-	zt_event	\
 	.
 
 
@@ -12,8 +11,7 @@ libzt_la_LIBADD = 					\
 		../replace/libreplace.la 	\
 		adt/libzt_adt.la			\
 		zt_log/libzt_log.la			\
-		zt_cfg/libzt_cfg.la			\
-		zt_event/libzt_event.la
+		zt_cfg/libzt_cfg.la	
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -48,7 +46,6 @@ libzt_la_SOURCES = 		\
 		zt_progname.c 	\
 		zt_cstr.c 		\
 		zt_time.c		\
-		zt_event.c		\
 		zt_gc.c			\
 		zt_sha1.c		\
 		zt_uuid.c		\
@@ -71,7 +68,6 @@ pkginclude_HEADERS = 	\
 		zt_cstr.h		\
 		zt_time.h		\
 	    zt_macros.h		\
-		zt_event.h		\
 		zt_gc.h			\
 		zt_int.h		\
 		zt_sha1.h		\

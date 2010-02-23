@@ -17,7 +17,6 @@ unit_test_SOURCES = 	\
 	bstream_test.c		\
 	cfg_test.c			\
 	cstr_test.c			\
-	event_test.c		\
 	except_test.c		\
 	format_test.c		\
 	gc_test.c			\
