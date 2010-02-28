@@ -10,7 +10,7 @@
 
 
 /*
- * Description: 
+ * Description:
  */
 
 
@@ -28,13 +28,13 @@ static char _progname[PATH_MAX];
 char *
 zt_progname(char *name, int opts)
 {
-	if(name){
-		memset(_progname, '\0', PATH_MAX);
-		if(opts == STRIP_DIR){
-			zt_cstr_basename(_progname, PATH_MAX, name, NULL);
-		} else {
-			memcpy(_progname, name, MIN(PATH_MAX, strlen(name)));
-		}
-	}
-	return _progname;
+    if (name) {
+        memset(_progname, '\0', PATH_MAX);
+        if (opts == STRIP_DIR) {
+            zt_cstr_basename(_progname, PATH_MAX, name, NULL);
+        } else {
+            memcpy(_progname, name, MIN(PATH_MAX, strlen(name)));
+        }
+    }
+    return(_progname);
 }

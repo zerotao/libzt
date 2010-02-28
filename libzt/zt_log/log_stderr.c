@@ -9,7 +9,7 @@
  */
 
 /*
- * Description: 
+ * Description:
  */
 
 #include <stdio.h>
@@ -17,15 +17,16 @@
 #include "../zt.h"
 #include "log_private.h"
 
-static void destructor (zt_log_ty *log)
+static void destructor(zt_log_ty *log)
 {
-	XFREE(log);
-	return;
+    XFREE(log);
+    return;
 }
 
-static void print (zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
+static void print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 {
     char *nfmt = zt_log_gen_fmt( log, fmt, level, log->opts);
+
     vfprintf(stderr, nfmt, ap);
     XFREE(nfmt);
 }
@@ -40,6 +41,6 @@ static zt_log_vtbl_ty vtbl = {
 zt_log_ty *
 zt_log_stderr(unsigned int opts)
 {
-    return zt_log_new(&vtbl, opts);
+    return(zt_log_new(&vtbl, opts));
 }
 

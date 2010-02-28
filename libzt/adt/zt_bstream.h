@@ -9,9 +9,9 @@
 BEGIN_C_DECLS
 typedef struct zt_bstream *zt_bstream;
 struct zt_bstream {
-	int		  flipendian;
-	size_t		  offt;
-	zt_array	  data;
+    int      flipendian;
+    size_t   offt;
+    zt_array data;
 };
 
 

@@ -19,7 +19,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 extern zt_cfg_ty *
-zt_cfg_ini ( char *, int );
+zt_cfg_ini( char *, int );
 
 #ifdef __cplusplus
 }

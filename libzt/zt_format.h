@@ -1,12 +1,15 @@
-/****h* libZT/Format
- * DESCRIPTION
+/*!
+ * Filename: zt_format.c
+ * Description: portable printf replacement
  *
- * COPYRIGHT
- *   Copyright (C) 2005, Jason L. Shiffer <jshiffer@zerotao.org>.
- *   All Rights Reserved.
- *   See file COPYING for details.
+ * Author: Jason L. Shiffer <jshiffer@zerotao.org>
+ * Copyright:
+ *        Copyright (C) 2000-2010, Jason L. Shiffer.
+ *        See file COPYING for details
  *
- ****/
+ * Notes:
+ *
+ */
 #ifndef _ZT_FORMAT_H_
 #define _ZT_FORMAT_H_
 
@@ -16,7 +19,7 @@
 #include <libzt/zt_exceptions.h>
 
 BEGIN_C_DECLS
-typedef int(*zt_fmt_put_f)(int c, void *cl);
+typedef int (*zt_fmt_put_f)(int c, void *cl);
 typedef int (*zt_fmt_ty)(int code, va_list app,
                          zt_fmt_put_f put, void *cl,
                          unsigned char flags[256], int width,

@@ -11,7 +11,7 @@ BEGIN_C_DECLS
 
 typedef struct zt_uuid zt_uuid_t;
 struct zt_uuid {
-	uint8_t		bytes[UUID_ALEN];
+    uint8_t bytes[UUID_ALEN];
 };
 
 extern zt_uuid_t NAMESPACE_DNS;
@@ -19,12 +19,13 @@ extern zt_uuid_t NAMESPACE_URL;
 extern zt_uuid_t NAMESPACE_OID;
 extern zt_uuid_t NAMESPACE_X500;
 
-typedef enum {
-	UUID_NS_DNS,
-	UUID_NS_URL,
-	UUID_NS_OID,
-	UUID_NS_X500
-} zt_uuid_ns;
+typedef enum zt_uuid_ns zt_uuid_ns;
+enum zt_uuid_ns {
+    UUID_NS_DNS,
+    UUID_NS_URL,
+    UUID_NS_OID,
+    UUID_NS_X500
+};
 
 
 #define UUID_VER_TIME           1
@@ -38,4 +39,4 @@ int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids);
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2);
 
 END_C_DECLS
-#endif	/* _ZT_UUID_H_ */
+#endif    /* _ZT_UUID_H_ */

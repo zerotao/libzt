@@ -1,13 +1,15 @@
-/****h* libZT/Assertion
- * DESCRIPTION
+/*!
+ * Filename: zt_assert.c
+ * Description: assertion tools
  *
- * COPYRIGHT
- *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.org>.
- *   All Rights Reserved.
- *   See file COPYING for detail.s
+ * Author: Jason L. Shiffer <jshiffer@zerotao.org>
+ * Copyright:
+ *        Copyright (C) 2000-2010, Jason L. Shiffer.
+ *        See file COPYING for details
  *
- ****/
-
+ * Notes:
+ *
+ */
 #ifndef _ZT_ASSERT_H_
 #define _ZT_ASSERT_H_
 
@@ -15,43 +17,32 @@
 
 BEGIN_C_DECLS
 
-/****if* Assertion/_zt_assert_fail
- * NAME
- *   _zt_assert_fail - force an assertion
- *
- * NOTES
- *   Don't call this directly use assert instead
- *
- ****/
-extern void _zt_assert_fail (char *condition, char *file, 
-                             unsigned int line, const char *function);
+/*!
+ * Name: _zt_assert_fail
+ * Description: for an assertion
+ * Notes: Don't call this directly, use assert instead
+ */
+extern void _zt_assert_fail(char *condition, char *file,
+                            unsigned int line, const char *function);
 
-/****d* Assertion/zt_assert
- * NAME
- *   zt_assert -
- *
- * DESCRIPTION
- *   If NDEBUG is not defined then assert on failure
- *
- * SYNOPSIS
- *   zt_assert(c)
- *
- * EXAMPLE
- *   zt_assert("This would pass");
- *   zt_assert(!"But this would fail")
- *   zt_assert(foo == 1);
- *
- ****/
+/*!
+ * Name: zt_assert
+ * Description: if NDEBUG is not defined then assert on failure
+ * Example:
+ *      zt_assert("This would pass");
+ *      zt_assert(!"But this would fail")
+ *      zt_assert(foo == 1);
+ */
 #if defined(NDEBUG) || defined(NO_ASSERT)
 # define zt_assert(c)
 # define zt_assert_nf(c)
 #else
-# define zt_assert(c) if (!(c)) {									\
-		_zt_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);      \
-		TRY_THROW(zt_exception.assertion.failed);                   \
-	}
+# define zt_assert(c) if (!(c)) {    \
+        _zt_assert_fail(#c, __FILE__, __LINE__, __FUNCTION__);      \
+        TRY_THROW(zt_exception.assertion.failed);                   \
+}
 # define zt_assert_nf(c) (((c) ? 1 : (_zt_assert_fail(#c, __FILE__, __LINE__,  __FUNCTION__), 0)))
-#endif 
+#endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
 
 
 END_C_DECLS

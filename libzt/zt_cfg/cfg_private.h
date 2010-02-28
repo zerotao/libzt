@@ -23,60 +23,60 @@ extern "C" {
 #endif /* __cplusplus */
 
 struct zt_cfg_value_ty {
-	char* name;
-	zt_cfg_type type;
-	union {
-		int			b;
-		long   		i;
-		double 		f;
-		char*  		s;
-		struct zt_cfg_value_ty* r;
-	} v;
-	int altered;
-	struct zt_cfg_value_ty* next;
+    char      * name;
+    zt_cfg_type type;
+    union {
+        int                          b;
+        long                         i;
+        double                       f;
+        char                       * s;
+        struct zt_cfg_value_ty     * r;
+    } v;
+    int                       altered;
+    struct zt_cfg_value_ty  * next;
 };
 
 struct zt_cfg_block_ty {
-	char *name;
-	struct zt_cfg_value_ty* head;
-	struct zt_cfg_block_ty* next;
+    char                      * name;
+    struct zt_cfg_value_ty    * head;
+    struct zt_cfg_block_ty    * next;
 };
 
 struct zt_cfg_ty {
-  struct zt_cfg_vtbl_ty *vtbl;
-  /* rest of opts */
-	char *filename;
-	int numentries;
-	int opts;	
-	struct zt_cfg_block_ty* head;
+    struct zt_cfg_vtbl_ty     * vtbl;
+    /* rest of opts */        
+    char                      * filename;
+    int                         numentries;
+    int                         opts;
+    struct zt_cfg_block_ty    * head;
 };
-  
+
 typedef struct zt_cfg_vtbl_ty zt_cfg_vtbl_ty;
 struct zt_cfg_vtbl_ty {
-	size_t size;
-	int opts;
-	/* virtual function pointers */
-	void (* destructor)(zt_cfg_ty *);
-	int  (* get)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
-	int  (* set)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
+    size_t size;
+    int    opts;
+    /* virtual function pointers */
+    void (* destructor)(zt_cfg_ty *);
+    int  (* get)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
+    int  (* set)(zt_cfg_ty *, char *, char *, void *, zt_cfg_type);
 };
 
 struct cfg_bvv_ty {
-	char* block;
-	char* variable;
-	char* value;
-	int line;
+    char* block;
+    char* variable;
+    char* value;
+    int   line;
 };
 
-int zt_cfg_priv_set ( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
-int zt_cfg_priv_get ( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
-void zt_cfg_priv_destructor ( zt_cfg_ty *cfg );
+int zt_cfg_priv_set( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
+int zt_cfg_priv_get( zt_cfg_ty *cfg, char *block_name, char *variable_name, void *var, zt_cfg_type type );
+void zt_cfg_priv_destructor( zt_cfg_ty *cfg );
 
 void cfg_discard_whitespace(FILE* file);
 void cfg_discard_line(FILE* file);
 int cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv);
 
-zt_cfg_ty *zt_cfg_new (zt_cfg_vtbl_ty *);
+zt_cfg_ty *zt_cfg_new(zt_cfg_vtbl_ty *);
 #ifdef __cplusplus
 }
 #endif

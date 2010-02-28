@@ -21,10 +21,11 @@ typedef zt_stack zt_stack_elt;
 static INLINE zt_stack *
 zt_stack_pop(zt_stack *stack)
 {
-	zt_stack	* elt;
-	elt = zt_elist_get_next(stack);
-	zt_elist_remove(elt);
-	return elt;
+    zt_stack * elt;
+
+    elt = zt_elist_get_next(stack);
+    zt_elist_remove(elt);
+    return(elt);
 }
 
 

@@ -9,7 +9,7 @@
  */
 
 /*
- * Description: 
+ * Description:
  */
 
 #include <string.h>
@@ -20,49 +20,49 @@
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-  zt_cfg_ty *cfg = NULL;
-  int i = 0;
-  char *s = NULL;
-  double f = 0.0, f2 = 0.00, f3 = 0.00;
-  int b = 0;
-  
-  cfg = zt_cfg_ini("cfg_test.ini", 0);
-  
-  ZT_UNIT_ASSERT(test, (cfg != NULL));
-  if(!cfg) {
-	  printf("Could not open file cfg_test.ini\n");
-	  exit(1);
-  }
+    zt_cfg_ty *cfg = NULL;
+    int        i = 0;
+    char      *s = NULL;
+    double     f = 0.0, f2 = 0.00, f3 = 0.00;
+    int        b = 0;
 
-  zt_cfg_get(cfg, "main", "bool_var", &b, zt_cfg_bool);
-  zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_int);
-  zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
-  zt_cfg_get(cfg, "main", "string_var", &s, zt_cfg_string);
+    cfg = zt_cfg_ini("cfg_test.ini", 0);
 
-  ZT_UNIT_ASSERT(test, (b == 1));
-  ZT_UNIT_ASSERT(test, (i == 1));
-  ZT_UNIT_ASSERT(test, (f == 99.999));
-  ZT_UNIT_ASSERT(test, (!strcmp(s, "This is a string")));
+    ZT_UNIT_ASSERT(test, (cfg != NULL));
+    if (!cfg) {
+        printf("Could not open file cfg_test.ini\n");
+        exit(1);
+    }
 
-  f = f + 100.00;
-  
-  zt_cfg_set(cfg, "main2", "float_var", &f, zt_cfg_float);
-  zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
-  zt_cfg_get(cfg, "main2", "float_var", &f2, zt_cfg_float);
-  zt_cfg_get(cfg, "main3", "float_var", &f3, zt_cfg_float);
-  ZT_UNIT_ASSERT(test, (f == 199.999));
-  ZT_UNIT_ASSERT(test, (f2 == 199.999));
-  ZT_UNIT_ASSERT(test, (f3 == 99.999));      
-  
-  zt_cfg_close(cfg);
+    zt_cfg_get(cfg, "main", "bool_var", &b, zt_cfg_bool);
+    zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_int);
+    zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
+    zt_cfg_get(cfg, "main", "string_var", &s, zt_cfg_string);
+
+    ZT_UNIT_ASSERT(test, (b == 1));
+    ZT_UNIT_ASSERT(test, (i == 1));
+    ZT_UNIT_ASSERT(test, (f == 99.999));
+    ZT_UNIT_ASSERT(test, (!strcmp(s, "This is a string")));
+
+    f = f + 100.00;
+
+    zt_cfg_set(cfg, "main2", "float_var", &f, zt_cfg_float);
+    zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
+    zt_cfg_get(cfg, "main2", "float_var", &f2, zt_cfg_float);
+    zt_cfg_get(cfg, "main3", "float_var", &f3, zt_cfg_float);
+    ZT_UNIT_ASSERT(test, (f == 199.999));
+    ZT_UNIT_ASSERT(test, (f2 == 199.999));
+    ZT_UNIT_ASSERT(test, (f3 == 99.999));
+
+    zt_cfg_close(cfg);
 }
 
 int
 register_cfg_suite(struct zt_unit *unit)
 {
-	struct zt_unit_suite	* suite;
+    struct zt_unit_suite * suite;
 
-	suite = zt_unit_register_suite(unit, "cfg tests", NULL, NULL, NULL);
-	zt_unit_register_test(suite, "basic", basic_tests);
-	return 0;
+    suite = zt_unit_register_suite(unit, "cfg tests", NULL, NULL, NULL);
+    zt_unit_register_test(suite, "basic", basic_tests);
+    return(0);
 }

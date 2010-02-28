@@ -1,14 +1,15 @@
-/****h* libZT/OptionParsing
- * DESCRIPTION
- *   Command line option parsing routines
+/*!
+ * Filename: zt_opts.h
+ * Description: Command line option parsing
  *
- * COPYRIGHT
- *   Copyright (C) 2000-2005, Jason L. Shiffer <jshiffer@zerotao.org>.
- *   All Rights Reserved.
- *   See file COPYING for details.
- * 
- ****/
-
+ * Author: Jason L. Shiffer <jshiffer@zerotao.org>
+ * Copyright:
+ *      Copyright (C) 2000-2010, Jason L. Shiffer.
+ *      See file COPYING for details
+ *
+ * Notes:
+ *
+ */
 #ifndef _ZT_OPTS_H_
 #define _ZT_OPTS_H_
 
@@ -22,33 +23,30 @@ BEGIN_C_DECLS
 typedef int (*zt_opt_function)(char *, void *);
 
 enum zt_opt_types {
-		zt_opt_bool=0,
-		zt_opt_flag,
-		zt_opt_int,
-		zt_opt_string,
-		zt_opt_func,
-		zt_opt_ofunc,
-		zt_opt_rfunc,
-		zt_opt_help
+    zt_opt_bool = 0,
+    zt_opt_flag,
+    zt_opt_int,
+    zt_opt_string,
+    zt_opt_func,
+    zt_opt_ofunc,
+    zt_opt_rfunc,
+    zt_opt_help
 };
 typedef enum zt_opt_types zt_opt_types;
 
 typedef struct zt_opt_args zt_opt_args;
-struct zt_opt_args 
-{
-	int  	  opt;
-	char 	* long_opt;
-	char 	* description;
-	zt_opt_types type;
-	
-	void	* val;
-	int 	(*fn)(char *, void *);
-	
-	char 	* usage;
+struct zt_opt_args {
+    int          opt;
+    char       * long_opt;
+    char       * description;
+    zt_opt_types type;
+    void       * val;
+    int          (*fn)(char *, void *);
+    char       * usage;
 };
 
-extern int zt_opts_process ( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * data);
-extern void zt_opts_usage (char *argv[], struct zt_opt_args *opts, char *option_string, int max_opts, int show_defaults);
+extern int  zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * data);
+extern void zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int max_opts, int show_defaults);
 
 END_C_DECLS
 #endif /*_ZT_OPTS_H_*/
