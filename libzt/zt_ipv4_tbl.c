@@ -19,50 +19,26 @@ static uint32_t netmask_tbl[] = {
     0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF
 };
 
-#if 0
-typedef struct zt_ipv4_node zt_ipv4_node;
-typedef struct zt_ipv4_tbl zt_ipv4_tbl;
-typedef struct zt_ipv4_addr zt_ipv4_addr;
-
-struct zt_ipv4_addr {
-    uint8_t         bitlen;
-    uint32_t        addr;
-    uint32_t        mask;
-    uint32_t        broadcast;
-};
-
-struct zt_ipv4_node {
-    zt_ipv4_node   *next;
-    zt_ipv4_addr   *addr;
-};
-
-struct zt_ipv4_tbl {
-    zt_mem_pool_group *pools;
-    zt_ipv4_node  **tbl[32];
-    uint8_t         in[32];
-    uint32_t        sz;
-    zt_ipv4_node   *any;
-};
-#endif
-
 zt_ipv4_tbl    *
 zt_ipv4_tbl_init(size_t size)
 {
     zt_ipv4_tbl    *tbl;
     size_t          rsize = size ? size : 128;
+    static zt_mem_pool_desc pools[4];
 
-    static zt_mem_pool_desc pools[] = {
-        /*
-         * allocate all the buckets for each prefix in the tbl 
-         */
-        {"zt_ipv4_node_hash", 32, sizeof(zt_ipv4_node *), NULL, NULL, 0}
-        ,
-        {"zt_ipv4_node", 1, sizeof(zt_ipv4_node), NULL, NULL, 0}
-        ,
-        {"zt_ipv4_addr", 1, sizeof(zt_ipv4_addr), NULL, NULL, 0}
-        ,
-        {NULL, 0, 0, NULL, NULL, 0}
-    };
+    memset(pools, 0, sizeof(pools));
+
+    pools[0].name = "zt_ipv4_node_hash";
+    pools[0].elts = 1;
+    pools[0].size = sizeof(zt_ipv4_node *) * rsize;
+
+    pools[1].name = "zt_ipv4_node";
+    pools[1].elts = 1;
+    pools[1].size = sizeof(zt_ipv4_node);
+
+    pools[2].name = "zt_ipv4_addr";
+    pools[2].elts = 1;
+    pools[2].size = sizeof(zt_ipv4_addr);
 
     if (!(tbl = calloc(sizeof(zt_ipv4_tbl), 1)))
         return NULL;
@@ -147,6 +123,55 @@ zt_ipv4_node_str_init(const char *netstr)
     return node;
 }
 
+int
+zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
+{
+    zt_ipv4_node   *node_slot;
+    zt_mem_pool    *pool;
+    uint32_t        key;
+    uint8_t         blen;
+    int             is_in;
+
+    if (!tbl || !node)
+        return -1;
+
+    if (node->addr->bitlen == 0) {
+        /*
+         * this is a 0.0.0.0/0 network, set the any to this node 
+         */
+        tbl->any = node;
+        return 0;
+    }
+
+    if (!(pool = zt_mem_pool_get("zt_ipv4_node_hash")))
+        return -1;
+
+    is_in = 0;
+    blen = node->addr->bitlen - 1;
+
+    if (tbl->tbl[blen] == NULL) {
+        zt_ipv4_node  **hash_entry;
+
+        if (!(hash_entry = zt_mem_pool_alloc(pool)))
+            return -1;
+
+        tbl->tbl[blen] = hash_entry;
+    }
+
+    key = node->addr->addr & (tbl->sz - 1);
+    node_slot = tbl->tbl[blen][key];
+
+    if (node_slot != NULL)
+        node->next = node_slot;
+
+    tbl->tbl[blen][key] = node;
+
+    return 0;
+}
+
+
+
+
 zt_ipv4_node   *
 zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
 {
@@ -155,7 +180,16 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
     if (!tbl || !netstr)
         return NULL;
 
+    if (tbl->any)
+        /*
+         * we had a 0.0.0.0/0, we don't need to insert anything more 
+         */
+        return tbl->any;
+
     if (!(ipv4_node = zt_ipv4_node_str_init(netstr)))
+        return NULL;
+
+    if (zt_ipv4_tbl_add_node(tbl, ipv4_node))
         return NULL;
 
     return ipv4_node;
