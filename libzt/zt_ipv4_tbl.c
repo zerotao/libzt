@@ -221,6 +221,7 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
     return ipv4_node;
 }
 
+#ifdef TEST_IPV4_TBL
 int
 main(int argc, char **argv)
 {
@@ -252,3 +253,4 @@ main(int argc, char **argv)
 
     return 0;
 }
+#endif
