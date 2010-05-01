@@ -131,6 +131,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     uint32_t        key;
     uint8_t         blen;
     int             is_in;
+    int             i;
 
     if (!tbl || !node)
         return -1;
@@ -166,11 +167,36 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
 
     tbl->tbl[blen][key] = node;
 
+    /* set our in array to this bitlen if it doesn't exist 
+     * we use this to iterate through the prefixes. 
+     *
+     * For example if the bitlen is /32 and we add one node 
+     *  tbl->in[0] would be 32.
+     *
+     * When we search for an address within our table the 
+     * only work we have to do is checking bitlengths found
+     * within this in array 
+     */ 
+
+    for (i = 0; i < 32; i++)
+    {
+	if (tbl->in[i] == 0)
+	    break;
+
+	if (tbl->in[i] == node->addr->bitlen)
+	{
+	    is_in = 1;
+	    break;
+	}
+    }
+    
+    /* the bitlen doesn't exist, so add it to the last 
+       open slot */
+    if (is_in == 0)
+	tbl->in[i] = node->addr->bitlen;
+
     return 0;
 }
-
-
-
 
 zt_ipv4_node   *
 zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
