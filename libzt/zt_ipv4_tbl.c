@@ -138,7 +138,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         if (!(hash_entry = zt_mem_pool_alloc(pool)))
             return -1;
 
-	memset(hash_entry, 0, sizeof(zt_ipv4_node *) * tbl->sz);
+        memset(hash_entry, 0, sizeof(zt_ipv4_node *) * tbl->sz);
 
         tbl->tbl[blen] = hash_entry;
     }
@@ -283,14 +283,14 @@ zt_ipv4_ip2int(const char *str)
     return ntohl(inet_addr(str));
 }
 
-const char *
+const char     *
 zt_ipv4_int2ip(uint32_t addr)
 {
-    uint32_t a;
+    uint32_t        a;
 
     a = ntohl(addr);
 
-    return inet_ntoa(*(struct in_addr *)&a);
+    return inet_ntoa(*(struct in_addr *) &a);
 }
 
 int
@@ -322,11 +322,9 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
         }
 
         memcpy(save, str, cp - str_cp);
-    }
-    else
-    {
-	bitlen = 32;
-	memcpy(save, str, MAXLINE);
+    } else {
+        bitlen = 32;
+        memcpy(save, str, MAXLINE);
     }
 
     if (bitlen > 32)
