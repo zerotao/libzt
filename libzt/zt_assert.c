@@ -9,7 +9,7 @@
  */
 
 /*
- * Description: 
+ * Description:
  */
 
 #ifdef HAVE_CONFIG_H
@@ -25,15 +25,16 @@
 #include "zt_assert.h"
 
 void
-_zt_assert_fail (char *s, char *file, unsigned int line,
-                 const char *func)
+_zt_assert_fail(char *s, char *file, unsigned int line,
+                const char *func)
 {
-	char	bname[PATH_MAX];
+    char bname[PATH_MAX];
 
-	zt_cstr_basename(bname, PATH_MAX, file, NULL);
-	
-	if(func)
-		zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d:%s]", s, bname, line, func);
-	else
-		zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d]", s, bname, line);
+    zt_cstr_basename(bname, PATH_MAX, file, NULL);
+
+    if (func) {
+        zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d:%s]", s, bname, line, func);
+    } else{
+        zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d]", s, bname, line);
+    }
 }

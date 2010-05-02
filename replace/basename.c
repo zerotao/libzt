@@ -1,9 +1,9 @@
 /* basename.c        Replacement version of basename
  * Copyright (C) 2000, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
- * 
+ *
  * $Id: basename.c,v 1.1 2002/11/10 23:36:59 jshiffer Exp $
- * 
+ *
  * $Log: basename.c,v $
  * Revision 1.1  2002/11/10 23:36:59  jshiffer
  * Initial revision
@@ -23,7 +23,7 @@
  * Revision 1.1.1.1  2001/02/12 03:54:30  jshiffer
  * Base Import libzt
  *
- * 
+ *
  * History:  -jshiffer 12/20/00 11:49am: Created.
  */
 
@@ -45,9 +45,10 @@
 #endif
 
 char*
-basename ( char *path )
-{		
-		char *basename = strrchr (path, '/');
-		return basename ? ++basename : path;
+basename( char *path )
+{
+    char *basename = strrchr(path, '/');
+
+    return(basename ? ++basename : path);
 }
 

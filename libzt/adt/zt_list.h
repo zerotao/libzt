@@ -12,9 +12,10 @@ BEGIN_C_DECLS
  *  elists are based on an article I read about linux kernel linked lists.
  *
  */
-typedef struct zt_elist {
+typedef struct zt_elist zt_elist;
+struct zt_elist {
     struct zt_elist *prev, *next;
-}zt_elist;
+};
 
 /* convienience typedef */
 typedef zt_elist zt_elist_elt;
@@ -23,10 +24,10 @@ typedef zt_elist zt_elist_elt;
 
 #define zt_elist(N) zt_elist N = zt_elist_init(N)
 
-#define zt_elist_reset(P) do{           \
+#define zt_elist_reset(P) do {           \
         (P)->prev = (P);                \
         (P)->next = (P);                \
-    }while(0)
+} while (0)
 
 #define zt_elist_get_next(P) ((P)->next)
 
@@ -46,42 +47,42 @@ typedef zt_elist zt_elist_elt;
 static INLINE int
 zt_elist_empty(zt_elist *head)
 {
-        return head->next == head;
+    return(head->next == head);
 }
 
 
 static INLINE void
 zt_elist_remove2(zt_elist * prev, zt_elist * next)
 {
-        next->prev = prev;
-        prev->next = next;
+    next->prev = prev;
+    prev->next = next;
 }
 
 static INLINE void
 zt_elist_remove(zt_elist *entry)
 {
-        zt_elist_remove2(entry->prev, entry->next);
+    zt_elist_remove2(entry->prev, entry->next);
 }
 
 static INLINE void
 zt_elist_add2(zt_elist * new, zt_elist * prev, zt_elist * next)
 {
-        next->prev = new;
-        new->next = next;
-        new->prev = prev;
-        prev->next = new;
+    next->prev = new;
+    new->next = next;
+    new->prev = prev;
+    prev->next = new;
 }
 
 static INLINE void
 zt_elist_add(zt_elist *head, zt_elist *new)
 {
-        zt_elist_add2(new, head, head->next);
+    zt_elist_add2(new, head, head->next);
 }
 
 static INLINE void
 zt_elist_add_tail(zt_elist *head, zt_elist *new)
 {
-        zt_elist_add2(new, head->prev, head);
+    zt_elist_add2(new, head->prev, head);
 }
 
 static INLINE void

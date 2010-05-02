@@ -1,19 +1,21 @@
-/****h* libZT/Main
- * DESCRIPTION
+/*
+ * Filename: zt.h
+ * Description: main header for libzt
  *
- * COPYRIGHT
- *   Copyright (C) 2000-2006, Jason L. Shiffer <jshiffer@zerotao.com>.
- *   All Rights Reserved.
- *   See file COPYING for details.
+ * Author: Jason L. Shiffer <jshiffer@zerotao.org>
+ * Copyright: Copyright (C) 2000-2010, Jason L. Shiffer
+ * Created: 02-28-2000
  *
- ****/
+ * Notes:
+ *
+ */
 
 #ifndef _ZT_H_
 #define _ZT_H_
 
 #ifdef __cplusplus
-# define BEGIN_C_DECLS	  extern "C" {
-# define END_C_DECLS	  }
+# define BEGIN_C_DECLS      extern "C" {
+# define END_C_DECLS      }
 #else
 # define BEGIN_C_DECLS
 # define END_C_DECLS
@@ -21,34 +23,34 @@
 
 #ifdef __GNUC__
 #  ifndef const
-#    define const	__const
+#    define const __const
 #  endif
 #  ifndef signed
-#    define signed	__signed
+#    define signed __signed
 #  endif
 #  ifndef volatile
-#    define volatile	__volatile
+#    define volatile __volatile
 #  endif
-#else
+#else /* ifdef __GNUC__ */
 #  if defined(__STDC__) || defined(__STDC_HOSTED__)
 #    undef  signed
 #    define signed
 #    undef  volatile
 #    define volatile
 #  endif
-#endif
+#endif /* ifdef __GNUC__ */
 
 #if defined(__STDC__) || defined(__STDC_HOSTED__)
-# define STR(x)		#x
-# define CONC(x, y)	x##y
-# define CONC3(x,y,z)   x##y##z
-  typedef void* void_p;
+# define STR(x)    #x
+# define CONC(x, y)    x##y
+# define CONC3(x, y, z)   x##y##z
+typedef void* void_p;
 #else
-# define STR(x)		"x"
-# define CONC(x, y)	x/**/y
-# define CONC3(x, y)	x/**/y/**/z
-  typedef char* void_p;
-#endif
+# define STR(x)    "x"
+# define CONC(x, y)    x/**/y
+# define CONC3(x, y)    x/**/y/**/z
+typedef char* void_p;
+#endif /* if defined(__STDC__) || defined(__STDC_HOSTED__) */
 
 #ifndef EXIT_SUCCESS
 #  define EXIT_SUCCESS  0
@@ -61,11 +63,12 @@
 # else
 #  define _(x) ()
 # endif
-#endif
+#endif /* ifndef _ */
 
-/* Convienience definitions */
+/************ Convienience Definitions  ************/
+
 #ifndef NULL
-# define NULL ((void *) 0)
+# define NULL ((void *)0)
 #endif
 
 #ifndef FALSE
@@ -102,11 +105,11 @@
 # define UNUSED    __attribute__((unused))
 # define FORMAT(x) __attribute__((format x))
 #else
-# define NORETURN  
-# define CONST     
+# define NORETURN
+# define CONST
 # define UNUSED
 # define FORMAT(x)
-#endif
+#endif /* if (__GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)) && (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0) */
 
 #if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3 && defined(__GNUC_STDC_INLINE__) && !defined(C99_INLINE)) || \
     (__APPLE_CC__ > 5400 && !defined(C99_INLINE) && __STDC_VERSION__ >= 199901L)
@@ -124,12 +127,12 @@
 #if defined (_WIN32)
 # if defined libzt_EXPORTS
 #  define ZT_EXTERN __declspec(dllexport)
-# else	/* SHARED_LIB */
+# else    /* SHARED_LIB */
 #  define ZT_EXTERN __declspec(dllimport)
 # endif
 #else  /* _WIN32 */
 # define ZT_EXTERN
-#endif	/* _WIN32 */
+#endif    /* _WIN32 */
 
 #ifndef __GNUC__
 # define __FUNCTION__        ""

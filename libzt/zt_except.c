@@ -15,142 +15,144 @@
 #include "zt_exceptions.h"
 
 struct except_Handler {
-	struct except_Handler   * next;
-	except_handler		      h;
+    struct except_Handler * next;
+    except_handler          h;
 };
 
 struct except_Handlers {
-	void			        * e;
-	struct except_Handler	* handlers;
-	struct except_Handlers	* next;
+    void                   * e;
+    struct except_Handler  * handlers;
+    struct except_Handlers * next;
 };
 
 /* FIXME: these need to become thread safe */
-struct except_Frame *_except_Stack = NULL;
+struct except_Frame   *_except_Stack = NULL;
 struct except_Handlers _except_Handlers_Stack = { NULL, NULL, NULL };
 
-char	* except_CatchAll = "except_CatchAll";
+char                 * except_CatchAll = "except_CatchAll";
 
-except_handler _except_default_handler = NULL;
+except_handler         _except_default_handler = NULL;
 
 except_handler
 _except_install_default_handler(except_handler h)
 {
-	except_handler	p = _except_default_handler;
-	
-	_except_default_handler = h;
-	
-	return p;
+    except_handler p = _except_default_handler;
+
+    _except_default_handler = h;
+
+    return(p);
 }
 
-void _except_install_handler(void *e, except_handler h){
-	struct except_Handlers *stack = &_except_Handlers_Stack;
-	struct except_Handler *tmph = NULL;
-	/* make space for a new handler */
-	struct except_Handler *newh = calloc(1, sizeof(struct except_Handler));
-	if(!newh){
-		zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
-		exit(255);
-	}
-	newh->next = NULL;
-	newh->h = h;
-  
-	if((stack->e == NULL)){
-		stack->e = e;
-		stack->handlers = newh;
-		return;
-	}
+void _except_install_handler(void *e, except_handler h)
+{
+    struct except_Handlers *stack = &_except_Handlers_Stack;
+    struct except_Handler  *tmph = NULL;
+    /* make space for a new handler */
+    struct except_Handler  *newh = calloc(1, sizeof(struct except_Handler));
 
-	while((stack->next != NULL) && (stack->e != e)){
-		stack = stack->next;
-	}
-  
-	if((stack->next == NULL) && (stack->e != e)){
-		stack->next = calloc(1, sizeof(struct except_Handlers));
-		if(!stack->next){
-			zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
-			exit(255);
-		}
-		stack->next->e = e;
-		stack->next->handlers = newh;
-		return;
-	}
+    if (!newh) {
+        zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
+        exit(255);
+    }
+    newh->next = NULL;
+    newh->h = h;
+
+    if ((stack->e == NULL)) {
+        stack->e = e;
+        stack->handlers = newh;
+        return;
+    }
+
+    while ((stack->next != NULL) && (stack->e != e)) {
+        stack = stack->next;
+    }
+
+    if ((stack->next == NULL) && (stack->e != e)) {
+        stack->next = calloc(1, sizeof(struct except_Handlers));
+        if (!stack->next) {
+            zt_log_printf(zt_log_crit, "Could not calloc space for new handler");
+            exit(255);
+        }
+        stack->next->e = e;
+        stack->next->handlers = newh;
+        return;
+    }
     /* stack = stack->next; */
-	if(stack->handlers == NULL){
-		stack->handlers = newh;
-		return;
-	}
-	tmph = stack->handlers;
-	while(tmph->next != NULL){
-		tmph = tmph->next;
-	}
-	tmph->next = newh;
-	return;
-}
+    if (stack->handlers == NULL) {
+        stack->handlers = newh;
+        return;
+    }
+    tmph = stack->handlers;
+    while (tmph->next != NULL) {
+        tmph = tmph->next;
+    }
+    tmph->next = newh;
+    return;
+} /* _except_install_handler */
 
-void _except_remove_handler(void *e, except_handler h){
-	struct except_Handlers *stack = &_except_Handlers_Stack;
-	while((stack->e != e) && stack->next != NULL)
-	{
-		stack = stack->next;
-	}  
-	if(stack->e == e){
-		struct except_Handler *handler = stack->handlers;
-		struct except_Handler *prev = NULL;
+void _except_remove_handler(void *e, except_handler h)
+{
+    struct except_Handlers *stack = &_except_Handlers_Stack;
 
-		while((handler->next != NULL) && (handler->h != h)){
-			prev = handler;
-			handler = handler->next;
-		}
-		if(prev == NULL){	/* First one */
-			stack->handlers = handler->next;
-			free(handler);
-		}else if(handler->h == h){
-			prev->next = handler->next;
-			free(handler);
-		}else{
-			zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
-		} 
-		if(stack->handlers == NULL){
-			stack->e = NULL;
-		}
-	}else{
-		zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
-	}
+    while ((stack->e != e) && stack->next != NULL) {
+        stack = stack->next;
+    }
+    if (stack->e == e) {
+        struct except_Handler *handler = stack->handlers;
+        struct except_Handler *prev = NULL;
+
+        while ((handler->next != NULL) && (handler->h != h)) {
+            prev = handler;
+            handler = handler->next;
+        }
+        if (prev == NULL) {   /* First one */
+            stack->handlers = handler->next;
+            free(handler);
+        }else if (handler->h == h) {
+            prev->next = handler->next;
+            free(handler);
+        }else{
+            zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
+        }
+        if (stack->handlers == NULL) {
+            stack->e = NULL;
+        }
+    }else{
+        zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
+    }
 }
 
 void _except_call_handlers(struct except_Frame *estack)
 {
-	struct except_Handlers  * hstack = &_except_Handlers_Stack;
-	struct except_Handler   * handler;
+    struct except_Handlers * hstack = &_except_Handlers_Stack;
+    struct except_Handler  * handler;
 
-	if(!estack) {
-	}
-	
-	while((hstack->e != estack->exception) && hstack->next != NULL)
-	{
-		hstack = hstack->next;
-	}  
-	if(hstack->e == estack->exception){
-		int ret;
-		int last = 0;
-		handler = hstack->handlers;
-		while((handler != NULL) && (!last)){
-			ret = handler->h(*(void **)estack->exception,
+    if (!estack) {
+    }
+
+    while ((hstack->e != estack->exception) && hstack->next != NULL) {
+        hstack = hstack->next;
+    }
+    if (hstack->e == estack->exception) {
+        int ret;
+        int last = 0;
+        handler = hstack->handlers;
+        while ((handler != NULL) && (!last)) {
+            ret = handler->h(*(void **)estack->exception,
                              estack->etext,
                              estack->efile,
                              estack->efunc,
                              estack->eline);
-			switch(ret){
-				case 1:
-					handler = handler->next;
-					break;
-				case 0:
-					last = 1;
-					continue;
-					break;
-				default:
-					zt_log_printf(zt_log_crit,
+            switch (ret) {
+                case 1:
+                    handler = handler->next;
+                    break;
+                case 0:
+                    last = 1;
+                    continue;
+                    break;
+                default:
+                    zt_log_printf(zt_log_crit,
                                   "Exception handler for '%s' has "
                                   "requested an exit for exception "
                                   "'%s' @ %s[%d]:%s",
@@ -159,27 +161,27 @@ void _except_call_handlers(struct except_Frame *estack)
                                   estack->efile,
                                   estack->eline,
                                   estack->efunc);
-					exit(ret);
-					break;
-			}
-		}
-	}else{
-		if(_except_default_handler) {
-			_except_default_handler(*(void **)estack->exception,
+                    exit(ret);
+                    break;
+            } /* switch */
+        }
+    }else{
+        if (_except_default_handler) {
+            _except_default_handler(*(void **)estack->exception,
                                     estack->etext,
                                     estack->efile,
                                     estack->efunc,
                                     estack->eline);
-		} else {
-			_except_unhandled_exception(*(void **)estack->exception,
+        } else {
+            _except_unhandled_exception(*(void **)estack->exception,
                                         estack->etext,
                                         estack->efile,
                                         estack->eline,
                                         estack->efunc,
                                         1);
-		}
-	}
-}
+        }
+    }
+} /* _except_call_handlers */
 
 void except_unhandled_exception(struct except_Frame *stack, int flags)
 {
@@ -193,35 +195,36 @@ void except_unhandled_exception(struct except_Frame *stack, int flags)
 
 void _except_unhandled_exception(void *exc, char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
 {
-	char	  bname[PATH_MAX];
-	zt_cstr_basename(bname, PATH_MAX, efile, NULL);
+    char bname[PATH_MAX];
+
+    zt_cstr_basename(bname, PATH_MAX, efile, NULL);
 
     zt_log_printf(zt_log_crit, "Unhandled Exception: %s: %s[%d:%s]",
                   etext, bname, eline, efunc);
-    
-    if(flags) {
+
+    if (flags) {
         abort();
     }
 }
 
-int domain_default_except_handler(void *exc, char *etext, char *file, char *func, int line) 
+int domain_default_except_handler(void *exc, char *etext, char *file, char *func, int line)
 {
 
-    if(EXCEPTION_IN(zt_exception) && exc) {
-        char    * error;
-        int       len = strlen((char *)exc) + strlen(etext) + 2 + 1;
-        
+    if (EXCEPTION_IN(zt_exception) && exc) {
+        char * error;
+        int    len = strlen((char *)exc) + strlen(etext) + 2 + 1;
+
         error = XCALLOC(char, len);
         snprintf(error, len, "%s(%s)", (char *)exc, etext);
         _except_unhandled_exception(NULL, error, file, line, func, 0);
         XFREE(error);
         abort();
-        
+
     } else {
         _except_unhandled_exception(NULL, etext, file, line, func, 1);
     }
-    
 
 
-	return 0;
+
+    return(0);
 }

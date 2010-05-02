@@ -5,8 +5,8 @@
 
 #include <libzt/adt/zt_llist.h>
 
-zt_pair *zt_cons(void *obj, zt_cons *cons) 
+zt_pair *zt_cons(void *obj, zt_cons *cons)
 {
 
-	
+
 }

@@ -7,57 +7,48 @@
 
 BEGIN_C_DECLS
 
-
-typedef struct zt_gc_collectable {
- 	zt_elist	  list;
- 	int	  		  colour;
-} zt_gc_collectable_t;
-
-enum {
-	colour = 1,
-	protected = 2,
+typedef struct zt_gc_collectable zt_gc_collectable_t;
+struct zt_gc_collectable {
+    zt_elist list;
+    int      colour;
 };
 
-typedef struct zt_gc {
-	int			  enabled;
-	
-	int			  current_allocs;
-	
-	int			  marks_per_scan;
-	int			  allocs_before_scan;
+enum {
+    colour = 1,
+    protected = 2,
+};
 
-	int			  rootset_size;
-	int			  rootset_next;
-	
-	int 		(*is_white)(zt_gc_collectable_t *mark);
-	void 		(*clear_white)(zt_gc_collectable_t *mark);
-	void 		(*set_white)(zt_gc_collectable_t *mark);
+typedef struct zt_gc zt_gc_t;
+struct zt_gc {
+    int        enabled;
+    int        current_allocs;
+    int        marks_per_scan;
+    int        allocs_before_scan;
+    int        rootset_size;
+    int        rootset_next;
+    int        (*is_white)(zt_gc_collectable_t *mark);
+    void       (*clear_white)(zt_gc_collectable_t *mark);
+    void       (*set_white)(zt_gc_collectable_t *mark);
+    zt_elist **rootset;
+    zt_elist   list_1;
+    zt_elist   list_2;
+    zt_elist   list_3;
+    zt_elist * black; /* scanned */
+    zt_elist * grey;  /* seen but not scanned */
+    zt_elist * white; /* not seen */
+    zt_elist * scan; /* current offset into the grey list */
+    void     * private_data;
+    void       (*mark_fn)(struct zt_gc *, void *, void *);
+    void       (*release_fn)(struct zt_gc *, void *, void **);
 
-	zt_elist	  **rootset;
+};
 
-	zt_elist	  list_1;
-	zt_elist	  list_2;
-	zt_elist	  list_3;
-	
-	zt_elist	* black;		/* scanned */
-	zt_elist	* grey;			/* seen but not scanned */
-	zt_elist	* white;		/* not seen */
-
-	zt_elist	* scan;		    /* current offset into the grey list */
-
-	void		* private_data;
-	
-	void		(*mark_fn)(struct zt_gc *, void *, void *);
-	void		(*release_fn)(struct zt_gc *, void *, void **);
-	
-} zt_gc_t;
-
-void zt_gc_init(zt_gc_t *gc,
-				void *private_data,
-				void (*mark_fn)(struct zt_gc *, void *, void *), 
-				void (*release_fn)(struct zt_gc *, void *, void **),
-				int marks_per_scan, 
-				int allocs_to_scan);
+void zt_gc_init(zt_gc_t * gc,
+                void *private_data,
+                void (*mark_fn)(struct zt_gc *, void *, void *),
+                void (*release_fn)(struct zt_gc *, void *, void **),
+                int marks_per_scan,
+                int allocs_to_scan);
 
 void zt_gc_destroy(zt_gc_t *gc);
 

@@ -21,11 +21,11 @@ typedef zt_queue zt_queue_elt;
 static INLINE zt_queue *
 zt_queue_dequeue(zt_queue *queue)
 {
-	zt_queue	* elt;
-	
-	elt = zt_elist_get_prev(queue);
-	zt_elist_remove(elt);
-	return elt;
+    zt_queue * elt;
+
+    elt = zt_elist_get_prev(queue);
+    zt_elist_remove(elt);
+    return(elt);
 }
 
 

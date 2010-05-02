@@ -7,7 +7,7 @@
  */
 
 /*
- * Description: 
+ * Description:
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,59 +20,59 @@ static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 typedef struct list_elt list_elt;
 struct list_elt {
-	zt_elist	  list;
-	int	  	  value;
+    zt_elist list;
+    int      value;
 };
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)	
+basic_tests(struct zt_unit_test *test, void *data)
 {
-	list_elt	* al;
-	list_elt	* al2;
-	
-	zt_elist	* tmp;
-	zt_elist	* tmp2;
-	
-	int		  i;
-	
-	zt_elist(list1);
-	zt_elist(list2);
-	
-	ZT_UNIT_ASSERT(test, list1.prev == &list1);
-	ZT_UNIT_ASSERT(test, list1.next == &list1);
-	
-	for(i=0; i < sizeof_array(values); i++){
-		
-		al = XCALLOC(list_elt, 1);
-		al->value = values[i];
-		
-		zt_elist_add(&list1, &al->list);
+    list_elt * al;
+    list_elt * al2;
 
-		al = XCALLOC(list_elt, 1);
-		al->value = VALUES_MAX - values[i];
-		
-		zt_elist_add(&list2, &al->list);
-	}
+    zt_elist * tmp;
+    zt_elist * tmp2;
 
-	tmp2 = &list2;	
-	zt_elist_for_each(&list1, tmp) {
-		tmp2 = zt_elist_get_next(tmp2);
-		
-		al = zt_elist_data(tmp, list_elt, list);
-		al2 = zt_elist_data(tmp2, list_elt, list);
+    int        i;
 
-		ZT_UNIT_ASSERT(test, al->value + al2->value == 9);
-	}
-	
+    zt_elist(list1);
+    zt_elist(list2);
+
+    ZT_UNIT_ASSERT(test, list1.prev == &list1);
+    ZT_UNIT_ASSERT(test, list1.next == &list1);
+
+    for (i = 0; i < sizeof_array(values); i++) {
+
+        al = XCALLOC(list_elt, 1);
+        al->value = values[i];
+
+        zt_elist_add(&list1, &al->list);
+
+        al = XCALLOC(list_elt, 1);
+        al->value = VALUES_MAX - values[i];
+
+        zt_elist_add(&list2, &al->list);
+    }
+
+    tmp2 = &list2;
+    zt_elist_for_each(&list1, tmp) {
+        tmp2 = zt_elist_get_next(tmp2);
+
+        al = zt_elist_data(tmp, list_elt, list);
+        al2 = zt_elist_data(tmp2, list_elt, list);
+
+        ZT_UNIT_ASSERT(test, al->value + al2->value == 9);
+    }
+
 }
 
 int
 register_list_suite(struct zt_unit *unit)
 {
-	struct zt_unit_suite	* suite;
+    struct zt_unit_suite * suite;
 
-	suite = zt_unit_register_suite(unit, "list tests", NULL, NULL, NULL);
-	zt_unit_register_test(suite, "basic", basic_tests);
-	return 0;
+    suite = zt_unit_register_suite(unit, "list tests", NULL, NULL, NULL);
+    zt_unit_register_test(suite, "basic", basic_tests);
+    return(0);
 }

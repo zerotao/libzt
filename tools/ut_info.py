@@ -112,7 +112,14 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # run the command
-    stdin, stdout = os.popen4(args)
+    try:
+        import subprocess as sp
+        p = sp.Popen(args, shell=True,
+                     stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.STDOUT,
+                     close_fds=True)
+        (stdin, stdout) = (p.stdin, p.stdout)
+    except:
+        stdin, stdout = os.popen4(args)
 
     input = StringIO()
     for line in stdout:
