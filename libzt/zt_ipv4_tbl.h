@@ -34,6 +34,13 @@ struct zt_ipv4_tbl {
 zt_ipv4_tbl    *zt_ipv4_tbl_init(size_t size);
 
 /**
+ * Frees up all memory for a zt_ipv4_tbl hash
+ * @param tbl the zt_ipv4_tbl hash
+ * @return void
+ */
+void            zt_ipv4_tbl_destroy(zt_ipv4_tbl *tbl);
+
+/**
  * blah
  * @param netstr the network string
  * @return zt_ipv4_addr *

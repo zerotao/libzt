@@ -19,6 +19,20 @@ static uint32_t netmask_tbl[] = {
     0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF
 };
 
+void
+zt_ipv4_tbl_destroy(zt_ipv4_tbl *tbl)
+{
+    if (!tbl) {
+	return;
+    }
+
+    if (tbl->pools) {
+	zt_mem_pool_group_destroy(tbl->pools);
+    }
+
+    free(tbl);
+}
+
 zt_ipv4_tbl    *
 zt_ipv4_tbl_init(size_t size)
 {
