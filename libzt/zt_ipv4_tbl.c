@@ -125,8 +125,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     int             is_in;
     int             i;
 
-    if (!tbl || !node)
+    if (!tbl || !node) {
         return -1;
+    }
 
     if (node->addr->bitlen == 0) {
         /*
@@ -243,8 +244,8 @@ ipv4_tbl_addr_cmp(zt_ipv4_addr * haystack, zt_ipv4_addr * needle)
 zt_ipv4_node   *
 zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
 {
-    int             bit_iter,
-                    i = 0;
+    int             bit_iter;
+    int             i = 0;
     zt_ipv4_node   *match = NULL;
 
     if (tbl->any) {
@@ -322,10 +323,10 @@ zt_ipv4_int2ip(uint32_t addr)
 int
 zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
 {
-    char           *save,
-                   *str_cp;
-    int             bitlen = 32;
+    char           *save;
+    char           *str_cp;
     char           *cp;
+    int             bitlen = 32;
 
     if (!str || !outaddr || !outbitlen) {
         return -1;
