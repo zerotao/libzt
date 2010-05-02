@@ -50,7 +50,6 @@ zt_ipv4_tbl_init(size_t size)
     return tbl;
 }
 
-#define MAXLINE 16
 
 zt_ipv4_addr   *
 zt_ipv4_addr_frm_str(const char *netstr)
@@ -58,8 +57,7 @@ zt_ipv4_addr_frm_str(const char *netstr)
     zt_ipv4_addr   *addr = NULL;
     zt_mem_pool    *pool = NULL;
     int             bitlen = 32;
-    char           *cp = NULL;
-    char           *save = NULL;
+    uint32_t        ipaddr;
 
     if (!netstr)
         return NULL;
@@ -67,32 +65,16 @@ zt_ipv4_addr_frm_str(const char *netstr)
     if (!(pool = zt_mem_pool_get("zt_ipv4_addr")))
         return NULL;
 
-    if (!(save = calloc(MAXLINE, 1)))
+    if (zt_ipv4_str2net(netstr, &ipaddr, &bitlen))
         return NULL;
 
-    if (!(addr = zt_mem_pool_alloc(pool))) {
-        free(save);
+    if (!(addr = zt_mem_pool_alloc(pool)))
         return NULL;
-    }
 
-    if ((cp = strchr(netstr, '/'))) {
-        bitlen = atoi(cp + 1);
-        memcpy(save, netstr, cp - netstr);
-        save[cp - netstr] = '\0';
-    }
-
-    if (save[0] == '\0') {
-        free(save);
-        return NULL;
-    }
-
-    if (bitlen > 32)
-        bitlen = 32;
-
-    addr->addr = ntohl(inet_addr(save));
+    addr->addr = ipaddr;
     addr->mask = netmask_tbl[bitlen];
     addr->bitlen = bitlen;
-    addr->addr = addr->mask;
+    addr->addr = addr->addr & addr->mask;
     addr->broadcast = addr->addr | (0xFFFFFFFF & ~addr->mask);
 
     return addr;
@@ -156,6 +138,8 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         if (!(hash_entry = zt_mem_pool_alloc(pool)))
             return -1;
 
+	memset(hash_entry, 0, sizeof(zt_ipv4_node *) * tbl->sz);
+
         tbl->tbl[blen] = hash_entry;
     }
 
@@ -167,33 +151,34 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
 
     tbl->tbl[blen][key] = node;
 
-    /* set our in array to this bitlen if it doesn't exist 
+    /*
+     * set our in array to this bitlen if it doesn't exist 
      * we use this to iterate through the prefixes. 
-     *
+     * 
      * For example if the bitlen is /32 and we add one node 
-     *  tbl->in[0] would be 32.
-     *
+     * tbl->in[0] would be 32.
+     * 
      * When we search for an address within our table the 
      * only work we have to do is checking bitlengths found
      * within this in array 
-     */ 
+     */
 
-    for (i = 0; i < 32; i++)
-    {
-	if (tbl->in[i] == 0)
-	    break;
+    for (i = 0; i <= 32; i++) {
+        if (tbl->in[i] == 0)
+            break;
 
-	if (tbl->in[i] == node->addr->bitlen)
-	{
-	    is_in = 1;
-	    break;
-	}
+        if (tbl->in[i] == node->addr->bitlen) {
+            is_in = 1;
+            break;
+        }
     }
-    
-    /* the bitlen doesn't exist, so add it to the last 
-       open slot */
+
+    /*
+     * the bitlen doesn't exist, so add it to the last 
+     * open slot 
+     */
     if (is_in == 0)
-	tbl->in[i] = node->addr->bitlen;
+        tbl->in[i] = node->addr->bitlen;
 
     return 0;
 }
@@ -219,6 +204,141 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
         return NULL;
 
     return ipv4_node;
+}
+
+int
+ipv4_tbl_addr_cmp(zt_ipv4_addr * haystack, zt_ipv4_addr * needle)
+{
+    if (!haystack || !needle)
+        return 0;
+
+    if (needle->addr >= haystack->addr &&
+        needle->broadcast <= haystack->broadcast)
+        return 1;
+
+    return 0;
+}
+
+zt_ipv4_node   *
+zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
+{
+    int             bit_iter,
+                    i = 0;
+    zt_ipv4_node   *match = NULL;
+
+    if (tbl->any)
+        return tbl->any;
+
+    while (1) {
+        uint32_t        addr_masked;
+        uint32_t        key;
+
+        bit_iter = tbl->in[i++];
+
+        if (!bit_iter)
+            break;
+
+        addr_masked = node->addr->addr & netmask_tbl[bit_iter];
+        key = addr_masked & (tbl->sz - 1);
+
+        match = tbl->tbl[bit_iter - 1][key];
+
+        while (match) {
+            if (ipv4_tbl_addr_cmp(match->addr, node->addr))
+                return match;
+
+            match = match->next;
+        }
+    }
+
+    return NULL;
+}
+
+zt_ipv4_node   *
+zt_ipv4_tbl_search_from_str(zt_ipv4_tbl * tbl, const char *netstr)
+{
+    zt_ipv4_node   *ipv4_node = NULL;
+    zt_ipv4_node   *matched = NULL;
+
+    if (!tbl || !netstr)
+        return NULL;
+
+    if (!(ipv4_node = zt_ipv4_node_str_init(netstr)))
+        return NULL;
+
+    matched = zt_ipv4_tbl_search_node(tbl, ipv4_node);
+
+    zt_mem_pool_release((void **) &ipv4_node);
+
+    return matched;
+}
+
+/*
+ * Helper functions 
+ */
+#define MAXLINE 16
+uint32_t
+zt_ipv4_ip2int(const char *str)
+{
+    return ntohl(inet_addr(str));
+}
+
+const char *
+zt_ipv4_int2ip(uint32_t addr)
+{
+    uint32_t a;
+
+    a = ntohl(addr);
+
+    return inet_ntoa(*(struct in_addr *)&a);
+}
+
+int
+zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
+{
+    char           *save,
+                   *str_cp;
+    int             bitlen = 32;
+    char           *cp;
+
+    if (!str || !outaddr || !outbitlen)
+        return -1;
+
+    if (!(str_cp = strdup(str)))
+        return -1;
+
+    if (!(save = calloc(MAXLINE, 1))) {
+        free(str_cp);
+        return -1;
+    }
+
+    if ((cp = strchr(str_cp, '/')) != NULL) {
+        bitlen = atoi(cp + 1);
+
+        if ((cp - str_cp) > MAXLINE - 1) {
+            free(save);
+            free(str_cp);
+            return -1;
+        }
+
+        memcpy(save, str, cp - str_cp);
+    }
+    else
+    {
+	bitlen = 32;
+	memcpy(save, str, MAXLINE);
+    }
+
+    if (bitlen > 32)
+        bitlen = 32;
+
+    *outaddr = ntohl(inet_addr(save));
+    *outbitlen = bitlen;
+
+    free(save);
+    free(str_cp);
+
+    return 0;
 }
 
 #ifdef TEST_IPV4_TBL
