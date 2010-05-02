@@ -40,11 +40,13 @@ zt_ipv4_tbl_init(size_t size)
     pools[2].elts = 1;
     pools[2].size = sizeof(zt_ipv4_addr);
 
-    if (!(tbl = calloc(sizeof(zt_ipv4_tbl), 1)))
+    if (!(tbl = calloc(sizeof(zt_ipv4_tbl), 1))) {
         return NULL;
+    }
 
-    if (!(tbl->pools = zt_mem_pool_group_init(pools, 3)))
+    if (!(tbl->pools = zt_mem_pool_group_init(pools, 3))) {
         return NULL;
+    }
 
     tbl->sz = rsize;
     return tbl;
@@ -59,17 +61,21 @@ zt_ipv4_addr_frm_str(const char *netstr)
     int             bitlen = 32;
     uint32_t        ipaddr;
 
-    if (!netstr)
+    if (!netstr) {
         return NULL;
+    }
 
-    if (!(pool = zt_mem_pool_get("zt_ipv4_addr")))
+    if (!(pool = zt_mem_pool_get("zt_ipv4_addr"))) {
         return NULL;
+    }
 
-    if (zt_ipv4_str2net(netstr, &ipaddr, &bitlen))
+    if (zt_ipv4_str2net(netstr, &ipaddr, &bitlen)) {
         return NULL;
+    }
 
-    if (!(addr = zt_mem_pool_alloc(pool)))
+    if (!(addr = zt_mem_pool_alloc(pool))) {
         return NULL;
+    }
 
     addr->addr = ipaddr;
     addr->mask = netmask_tbl[bitlen];
@@ -87,17 +93,21 @@ zt_ipv4_node_str_init(const char *netstr)
     zt_ipv4_addr   *addr;
     zt_mem_pool    *pool;
 
-    if (!netstr)
+    if (!netstr) {
         return NULL;
+    }
 
-    if (!(pool = zt_mem_pool_get("zt_ipv4_node")))
+    if (!(pool = zt_mem_pool_get("zt_ipv4_node"))) {
         return NULL;
+    }
 
-    if (!(node = zt_mem_pool_alloc(pool)))
+    if (!(node = zt_mem_pool_alloc(pool))) {
         return NULL;
+    }
 
-    if (!(addr = zt_ipv4_addr_frm_str(netstr)))
+    if (!(addr = zt_ipv4_addr_frm_str(netstr))) {
         return NULL;
+    }
 
     node->addr = addr;
     node->next = NULL;
@@ -126,8 +136,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         return 0;
     }
 
-    if (!(pool = zt_mem_pool_get("zt_ipv4_node_hash")))
+    if (!(pool = zt_mem_pool_get("zt_ipv4_node_hash"))) {
         return -1;
+    }
 
     is_in = 0;
     blen = node->addr->bitlen - 1;
@@ -135,8 +146,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     if (tbl->tbl[blen] == NULL) {
         zt_ipv4_node  **hash_entry;
 
-        if (!(hash_entry = zt_mem_pool_alloc(pool)))
+        if (!(hash_entry = zt_mem_pool_alloc(pool))) {
             return -1;
+	}
 
         memset(hash_entry, 0, sizeof(zt_ipv4_node *) * tbl->sz);
 
@@ -146,8 +158,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     key = node->addr->addr & (tbl->sz - 1);
     node_slot = tbl->tbl[blen][key];
 
-    if (node_slot != NULL)
+    if (node_slot != NULL) {
         node->next = node_slot;
+    }
 
     tbl->tbl[blen][key] = node;
 
@@ -164,8 +177,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
      */
 
     for (i = 0; i <= 32; i++) {
-        if (tbl->in[i] == 0)
+        if (tbl->in[i] == 0) {
             break;
+	}
 
         if (tbl->in[i] == node->addr->bitlen) {
             is_in = 1;
@@ -177,8 +191,9 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
      * the bitlen doesn't exist, so add it to the last 
      * open slot 
      */
-    if (is_in == 0)
+    if (is_in == 0) {
         tbl->in[i] = node->addr->bitlen;
+    }
 
     return 0;
 }
@@ -188,20 +203,24 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
 {
     zt_ipv4_node   *ipv4_node = NULL;
 
-    if (!tbl || !netstr)
+    if (!tbl || !netstr) {
         return NULL;
+    }
 
-    if (tbl->any)
+    if (tbl->any) {
         /*
          * we had a 0.0.0.0/0, we don't need to insert anything more 
          */
         return tbl->any;
+    }
 
-    if (!(ipv4_node = zt_ipv4_node_str_init(netstr)))
+    if (!(ipv4_node = zt_ipv4_node_str_init(netstr))) {
         return NULL;
+    }
 
-    if (zt_ipv4_tbl_add_node(tbl, ipv4_node))
+    if (zt_ipv4_tbl_add_node(tbl, ipv4_node)) {
         return NULL;
+    }
 
     return ipv4_node;
 }
@@ -209,12 +228,14 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
 int
 ipv4_tbl_addr_cmp(zt_ipv4_addr * haystack, zt_ipv4_addr * needle)
 {
-    if (!haystack || !needle)
+    if (!haystack || !needle) {
         return 0;
+    }
 
     if (needle->addr >= haystack->addr &&
-        needle->broadcast <= haystack->broadcast)
+        needle->broadcast <= haystack->broadcast) {
         return 1;
+    }
 
     return 0;
 }
@@ -226,8 +247,9 @@ zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
                     i = 0;
     zt_ipv4_node   *match = NULL;
 
-    if (tbl->any)
+    if (tbl->any) {
         return tbl->any;
+    }
 
     while (1) {
         uint32_t        addr_masked;
@@ -235,8 +257,9 @@ zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
 
         bit_iter = tbl->in[i++];
 
-        if (!bit_iter)
+        if (!bit_iter) {
             break;
+	}
 
         addr_masked = node->addr->addr & netmask_tbl[bit_iter];
         key = addr_masked & (tbl->sz - 1);
@@ -244,8 +267,9 @@ zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         match = tbl->tbl[bit_iter - 1][key];
 
         while (match) {
-            if (ipv4_tbl_addr_cmp(match->addr, node->addr))
+            if (ipv4_tbl_addr_cmp(match->addr, node->addr)) {
                 return match;
+	    }
 
             match = match->next;
         }
@@ -260,11 +284,13 @@ zt_ipv4_tbl_search_from_str(zt_ipv4_tbl * tbl, const char *netstr)
     zt_ipv4_node   *ipv4_node = NULL;
     zt_ipv4_node   *matched = NULL;
 
-    if (!tbl || !netstr)
+    if (!tbl || !netstr) {
         return NULL;
+    }
 
-    if (!(ipv4_node = zt_ipv4_node_str_init(netstr)))
+    if (!(ipv4_node = zt_ipv4_node_str_init(netstr))) {
         return NULL;
+    }
 
     matched = zt_ipv4_tbl_search_node(tbl, ipv4_node);
 
@@ -301,11 +327,13 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
     int             bitlen = 32;
     char           *cp;
 
-    if (!str || !outaddr || !outbitlen)
+    if (!str || !outaddr || !outbitlen) {
         return -1;
+    }
 
-    if (!(str_cp = strdup(str)))
+    if (!(str_cp = strdup(str))) {
         return -1;
+    }
 
     if (!(save = calloc(MAXLINE, 1))) {
         free(str_cp);
@@ -327,8 +355,9 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
         memcpy(save, str, MAXLINE);
     }
 
-    if (bitlen > 32)
+    if (bitlen > 32) {
         bitlen = 32;
+    }
 
     *outaddr = ntohl(inet_addr(save));
     *outbitlen = bitlen;
@@ -338,37 +367,3 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
 
     return 0;
 }
-
-#ifdef TEST_IPV4_TBL
-int
-main(int argc, char **argv)
-{
-    int             count = 0;
-    const char     *tnet;
-    const char     *test_nets[] = {
-        "192.168.0.0/24",
-        "192.168.1.0/24",
-        "172.16.0.0/16",
-        "192.168.2.2/31",
-        NULL
-    };
-
-    zt_ipv4_tbl    *nettbl;
-
-    if (!(nettbl = zt_ipv4_tbl_init(1024)))
-        return -1;
-
-    while ((tnet = test_nets[count++])) {
-        zt_ipv4_node   *node;
-
-        if (!(node = zt_ipv4_tbl_add_frm_str(nettbl, tnet))) {
-            fprintf(stderr, "couldn't add stuff to tbl\n");
-            return -1;
-        }
-    }
-
-    zt_mem_pool_group_display(0, nettbl->pools, DISPLAY_POOL_ALL);
-
-    return 0;
-}
-#endif
