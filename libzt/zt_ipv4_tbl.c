@@ -191,7 +191,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
      * within this in array
      */
 
-    for (i = 0; i <= 32; i++) {
+    for (i = 0; i < 32; i++) {
         if (tbl->in[i] == 0) {
             break;
         }
