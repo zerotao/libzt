@@ -96,12 +96,19 @@ zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, fl
     *total = *usr + *sys;
 }
 
+static struct time_result   _calibration_time = {{0,0}, {0,0}};
+
+void
+zt_time_calibrate(void) {
+    zt_time(0, &_calibration_time, NULL, NULL);
+}
 
 /*!
  * Name: zt_time
  * Description:
  *   returns a struct time_result specifing how long the function test took when called
- *   with data.
+ *   with data. If n is 0 then test does not need to be set (ie test the zt_time overhead).
+ *   returns the last result of calling test (or NULL if n = 0).
  */
 void *
 zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
@@ -115,14 +122,18 @@ zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
 
     getrusage(RUSAGE_SELF, &rbefore);
 
-    for (i = 0; i < n; i++) {
-        ret = test(data);
+    if(test && n) {
+        for (i = 0; i <= n; i++) {
+            ret = test(data);
+        }
     }
 
     getrusage(RUSAGE_SELF, &rafter);
 
     zt_diff_time(&tv->usr_time, &rbefore.ru_utime, &rafter.ru_utime);
     zt_diff_time(&tv->sys_time, &rbefore.ru_stime, &rafter.ru_stime);
+    zt_sub_time(&tv->usr_time, &tv->usr_time, &_calibration_time.usr_time);
+    zt_sub_time(&tv->sys_time, &tv->sys_time, &_calibration_time.sys_time);
 
     return(ret);
 }
