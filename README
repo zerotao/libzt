@@ -1,7 +1,121 @@
-== libzt ==
+libzt
+=====
 
 LibZT is a collection of tools or utilities that I have built or pickedup over the years.  It is primarily
 forcused on systems development but does include usefull utilities for unix(command line) application development
 as well.
+
+Components
+==========
+
+Primary
+-------
+
+<table>
+  <tr>
+    <th>Header</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>zt.h</td>  <td>Generic interface and utilities</td>
+  </tr>
+  <tr>
+    <td>zt_assert.h</td> <td>Generic</td>
+  </tr>
+  <tr>
+    <td>zt_cfg.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_common.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_cstr.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_daemon.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_except.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_exceptions.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_format.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_gc.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_int.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_ipv4_tbl.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_log.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_macros.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_mem.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_opts.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_progname.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_sha1.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_time.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_unit.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>zt_uuid.h</td> <td>Generic Doc</td>
+  </tr>
+</table>
+
+Abstract Data Types
+-------------------
+<table>
+  <tr>
+    <th>Header</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>adt/zt_array.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_bstream.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_hash.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_list.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_llist.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_queue.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_set.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_stack.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_table.h</td> <td>Generic Doc</td>
+  </tr>
+  <tr>
+    <td>adt/zt_tree.h</td> <td>Generic Doc</td>
+  </tr>
+</table>
 
 
