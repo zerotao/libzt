@@ -40,3 +40,13 @@ EXTRA_DIST = \
 
 test:
 	$(MAKE) -C tests test
+
+coverage::
+	mkdir -p coverage
+	lcov --compat-libtool --directory $(top_builddir)/libzt --zerocounters
+	-$(MAKE) test
+	lcov --compat-libtool --directory $(top_builddir)/libzt --capture --output-file $(top_builddir)/coverage/unit_tests_tmp.info
+	lcov --compat-libtool --extract $(top_builddir)/coverage/unit_tests_tmp.info "*/libzt*" -o $(top_builddir)/coverage/unit_tests.info
+	genhtml -o coverage --num-spaces 2 $(top_builddir)/coverage/unit_tests.info
+
+

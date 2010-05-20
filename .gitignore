@@ -1,3 +1,7 @@
+*.gcda
+*.gcno
+coverage
+log.err
 Makefile
 Makefile.in
 aclocal.m4

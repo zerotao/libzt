@@ -61,11 +61,11 @@ main(int argc, char *argv[])
     zt_unit_register_test(suite1, "unit test 2", test_fn_2);
 
     /* register actual tests */
+    register_cfg_suite(unit);
     register_assert_suite(unit);
     register_array_suite(unit);
     register_table_suite(unit);
     register_bstream_suite(unit);
-    register_cfg_suite(unit);
     register_cstr_suite(unit);
     register_except_suite(unit);
     register_format_suite(unit);

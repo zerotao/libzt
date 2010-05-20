@@ -105,6 +105,7 @@ AC_WITH_OPTFLAGS
 AC_WITH_DEBUG
 AC_WITH_DIST_RELEASE
 AC_WITH_PROFILING
+AC_WITH_COVERAGE
 
 AC_OUTPUT_COMMANDS([
   if test -n "$CONFIG_FILES" && test -n "$CONFIG_HEADERS"; then
@@ -339,15 +340,15 @@ echo \
 "------------------------------------------------------------------------
 Configuration:
 
-  Source code location:       ${srcdir}
-  Compiler:	              ${CC}
-  Compiler flags:             ${CFLAGS} ${WARN_CFLAGS}
-  linker flags:               ${LDFLAGS}
+  Source code location:   ${srcdir}
+  Compiler:               ${CC}
+  Compiler flags:         ${CFLAGS} ${WARN_CFLAGS}
+  Linker flags:           ${LDFLAGS}
 
   -- System --
 
-  Host System Type:           ${host}
-  Install path:		      ${prefix}
+  Host System Type:       ${host}
+  Install path:	          ${prefix}
 
   See config.h for further configuration information.
 ------------------------------------------------------------------------"

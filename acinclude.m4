@@ -64,11 +64,11 @@ AC_DEFUN([AC_WITH_DEBUG],
 		;;
 	     yes)
 	        AC_MSG_RESULT(-DDEBUG)
-		CFLAGS="$CFLAGS -g -DDEBUG"
+		    CFLAGS="$CFLAGS -g -DDEBUG"
 		;;
 	     *)
 	        AC_MSG_RESULT(-DDEBUG$with_debug)
-		CFLAGS="$CFLAGS -g -DDEBUG$with_debug"
+		    CFLAGS="$CFLAGS -g -DDEBUG$with_debug"
 	        ;;
 	esac
   ],
@@ -86,15 +86,15 @@ AC_DEFUN([AC_WITH_PROFILING],
   [
 	case "$with_profiling" in
 	     no)
-		AC_MSG_RESULT(no)
+            AC_MSG_RESULT(no)
 		;;
 	     yes)
 	        AC_MSG_RESULT(yes)
-		CFLAGS="$CFLAGS -pg"
+		    CFLAGS="$CFLAGS -pg"
 		;;
 	     *)
 	        AC_MSG_RESULT(yes)
-		CFLAGS="$CFLAGS -pg $with_profiling"
+		    CFLAGS="$CFLAGS -pg $with_profiling"
 	        ;;
 	esac
   ],
@@ -110,15 +110,15 @@ AC_DEFUN([AC_WITH_DIST_RELEASE],
   [
 	case "$with_release" in
 	     no)
-		AC_MSG_RESULT(no)
-		RELEASE_VERSION=
+		    AC_MSG_RESULT(no)
+		    RELEASE_VERSION=
 		;;
 	     yes)
-		AC_MSG_RESULT(yes release=0)
-		RELEASE_VERSION=0
+		    AC_MSG_RESULT(yes release=0)
+		    RELEASE_VERSION=0
 		;;
 	     *)
-		AC_MSG_RESULT($with_release)
+		    AC_MSG_RESULT($with_release)
 		;;
 	esac
   ],
@@ -139,14 +139,12 @@ AC_MSG_RESULT($x)])
 dnl AX_EGREP(expr, file, action-if-found, action-if-not-found)
 dnl egrep for expr in file
 AC_DEFUN([AX_EGREP], [dnl
-changequote(, )dnl
-  if egrep "$1" $2 >/dev/null 2>&1; then
-changequote([, ])dnl
-  ifelse([$3], , :, [$3])
-ifelse([$4], , , [else
-  $4
-])dnl
-fi
+    changequote(, )dnl
+    if egrep "$1" $2 >/dev/null 2>&1; then
+        changequote([, ])dnl
+        ifelse([$3], , :, [$3])
+        ifelse([$4], , , [else $4 ])dnl
+    fi
 ])
 
 dnl AX_MACRO_STR(macro, file)
@@ -175,11 +173,11 @@ AC_DEFUN([AX_RESTORE], [eval $1=[\"\$]{$1_AX_[$ax_stack]}[\"]])
 dnl AX_PUSH
 dnl save the contents of CFLAGS etc.
 AC_DEFUN([AX_PUSH], [dnl
-ax_stack=`expr 0$ax_stack + 1`
-AX_SAVE(CFLAGS)
-AX_SAVE(CPPFLAGS)
-AX_SAVE(LDFLAGS)
-AX_SAVE(LIBS)
+    ax_stack=`expr 0$ax_stack + 1`
+    AX_SAVE(CFLAGS)
+    AX_SAVE(CPPFLAGS)
+    AX_SAVE(LDFLAGS)
+    AX_SAVE(LIBS)
 ])
 
 dnl AX_POP
@@ -191,3 +189,30 @@ AX_RESTORE(LDFLAGS)
 AX_RESTORE(LIBS)
 ax_stack=`expr 0$ax_stack - 1`
 ])
+
+
+AC_DEFUN([AC_WITH_COVERAGE],
+[ AC_MSG_CHECKING(whether to enable coverage support)
+  AC_ARG_WITH(coverage,
+  [  --with-coverage           Enable coverage.
+  --without-coverage	  Disable coverage(default). ],
+  [
+	case "$with_coverage" in
+	     no)
+		    AC_MSG_RESULT(no)
+		    ;;
+	     yes)
+	        AC_MSG_RESULT(yes)
+	        AC_DEFINE(LIBZT_COVERAGE_TESTING, [], [Define if doing coverage testing])
+		    CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
+		    ;;
+         *)
+            AC_MSG_RESULT(yes)
+            CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage $with_coverage"
+            ;;
+	esac
+  ],
+  [ AC_MSG_RESULT(no)
+  ])
+])
+

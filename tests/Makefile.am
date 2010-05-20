@@ -32,10 +32,8 @@ unit_test_SOURCES = 	\
 	time_test.c			\
 	tree_test.c			\
 	sha1_test.c			\
-	uuid_test.c     \
-  ipv4_tbl_test.c 
-
-#	msg_queue_test.c
+	uuid_test.c     	\
+    ipv4_tbl_test.c 
 
 EXTRA_DIST = 		\
 	cfg_test.ini

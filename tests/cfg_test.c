@@ -21,7 +21,7 @@ static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
     zt_cfg_ty *cfg = NULL;
-    int        i = 0;
+    long       i = 0;
     char      *s = NULL;
     double     f = 0.0, f2 = 0.00, f3 = 0.00;
     int        b = 0;
@@ -34,8 +34,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         exit(1);
     }
 
-    zt_cfg_get(cfg, "main", "bool_var", &b, zt_cfg_bool);
     zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_int);
+    zt_cfg_get(cfg, "main", "bool_var", &b, zt_cfg_bool);
     zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
     zt_cfg_get(cfg, "main", "string_var", &s, zt_cfg_string);
 
