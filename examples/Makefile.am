@@ -22,6 +22,7 @@ mem_timing_SOURCES = \
 types_SOURCES = \
 	types.c
 
+noinst_HEADERS = test.h
 
 include $(top_srcdir)/Makefile.extra
 
