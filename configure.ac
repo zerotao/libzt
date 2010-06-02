@@ -2,7 +2,7 @@ dnl configure.in source file; run autoconf to create configure script
 
 AC_REVISION($Revision: 1.5 $)dnl this revision of this configure.in
 AC_PREREQ(2.13)
-AC_INIT(libzt, 1.0.4, jshiffer@zerotao.org)
+AC_INIT(libzt, 1.0.0, jshiffer@zerotao.org)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR(libzt/Makefile.am)
 AC_CONFIG_AUX_DIR(aux_files)
