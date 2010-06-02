@@ -27,10 +27,12 @@ EXTRA_DIST = \
 	aux_files/config.guess \
 	aux_files/ltmain.sh \
 	Makefile.extra \
-	tools/build-rpm \
 	tools/libzt.pc \
 	tools/libzt.pc.in \
-	libzt.list
+	tools/authors.xml \
+	tools/uncrustify.cfg \
+	tools/ut_info.py \
+	tools/zt_mkc
 
 # pkg:
 # 	(mkdir @PACKAGE@_fakeinstall; \

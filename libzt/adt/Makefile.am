@@ -18,6 +18,7 @@ pkgincludedir = ${includedir}/libzt/adt
 pkginclude_HEADERS =	\
 	zt_array.h			\
 	zt_list.h			\
+	zt_llist.h			\
 	zt_stack.h			\
 	zt_queue.h			\
 	zt_hash.h			\
