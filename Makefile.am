@@ -29,8 +29,7 @@ EXTRA_DIST = \
 	Makefile.extra \
 	tools/build-rpm \
 	tools/libzt.pc \
-	tools/libzt.pc.in \
-	libzt.list
+	tools/libzt.pc.in
 
 # pkg:
 # 	(mkdir @PACKAGE@_fakeinstall; \
