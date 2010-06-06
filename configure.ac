@@ -2,14 +2,14 @@ dnl configure.in source file; run autoconf to create configure script
 
 AC_REVISION($Revision: 1.5 $)dnl this revision of this configure.in
 AC_PREREQ(2.13)
-AC_INIT(libzt, 1.0.4, jshiffer@zerotao.org)
+AC_INIT(libzt)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR(libzt/Makefile.am)
 AC_CONFIG_AUX_DIR(aux_files)
 
 AC_CANONICAL_SYSTEM
 
-AM_INIT_AUTOMAKE(libzt, 1.0.4)
+AM_INIT_AUTOMAKE(libzt, 1.0.0, jshiffer@zerotao.org)
 
 
 dnl AM_MAINTAINER_MODE
@@ -105,6 +105,7 @@ AC_WITH_OPTFLAGS
 AC_WITH_DEBUG
 AC_WITH_DIST_RELEASE
 AC_WITH_PROFILING
+AC_WITH_COVERAGE
 
 AC_OUTPUT_COMMANDS([
   if test -n "$CONFIG_FILES" && test -n "$CONFIG_HEADERS"; then
@@ -339,15 +340,15 @@ echo \
 "------------------------------------------------------------------------
 Configuration:
 
-  Source code location:       ${srcdir}
-  Compiler:	              ${CC}
-  Compiler flags:             ${CFLAGS} ${WARN_CFLAGS}
-  linker flags:               ${LDFLAGS}
+  Source code location:   ${srcdir}
+  Compiler:               ${CC}
+  Compiler flags:         ${CFLAGS} ${WARN_CFLAGS}
+  Linker flags:           ${LDFLAGS}
 
   -- System --
 
-  Host System Type:           ${host}
-  Install path:		      ${prefix}
+  Host System Type:       ${host}
+  Install path:	          ${prefix}
 
   See config.h for further configuration information.
 ------------------------------------------------------------------------"

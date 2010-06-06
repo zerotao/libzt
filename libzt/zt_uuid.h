@@ -8,10 +8,22 @@ BEGIN_C_DECLS
 
 #define UUID_STR_LEN 36
 #define UUID_ALEN 16
+#define UUID_VERSION_OFFT 6
+#define UUID_CLOCK_SEQ_OFFT 8
 
 typedef struct zt_uuid zt_uuid_t;
 struct zt_uuid {
-    uint8_t bytes[UUID_ALEN];
+    union {
+        uint8_t bytes[UUID_ALEN];
+        struct {
+            uint32_t      time_low;                   /* 0-3 */
+            uint16_t      time_mid;                   /* 4-5 */
+            uint16_t      time_hi_and_version;        /* 6-7 */
+            uint8_t       clock_seq_hi_and_reserved;  /* 8 */
+            uint8_t       clock_seq_low;              /* 9 */
+            uint8_t       node[6];                    /* 10-15 */
+        } field;
+    } data;
 };
 
 extern zt_uuid_t NAMESPACE_DNS;
@@ -34,6 +46,7 @@ enum zt_uuid_ns {
 #define UUID_VER_PSEUDORANDOM   4
 #define UUID_VER_NAMESPACE_SHA1 5
 
+int zt_uuid4(zt_uuid_t *uuid);
 int zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t *uuid);
 int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids);
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2);

@@ -245,8 +245,9 @@ zt_unit_run_test(struct zt_unit    * unit,
                  struct zt_unit_suite     * suite,
                  struct zt_unit_test     * test)
 {
-    test->success = FALSE;
     zt_assert(test);
+
+    test->success = FALSE;
 
     yaml_dict(test->name, 4);
 

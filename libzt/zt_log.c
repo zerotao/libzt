@@ -64,6 +64,10 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 {
     zt_log_level olevel;
 
+    if (!log) {
+        log = zt_log_logger(NULL);
+    }
+
     olevel = log->level;
     log->level = level;
     return(olevel);
@@ -72,6 +76,9 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 zt_log_level
 zt_log_get_level(zt_log_ty *log)
 {
+    if (!log) {
+        log = zt_log_logger(NULL);
+    }
     return(log->level);
 }
 
@@ -80,6 +87,9 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
 {
     unsigned int oopts;
 
+    if (!log) {
+        log = zt_log_logger(NULL);
+    }
     oopts = log->opts;
     log->opts = opts;
     return(oopts);
@@ -88,6 +98,9 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
 unsigned int
 zt_log_get_opts(zt_log_ty *log)
 {
+    if (!log) {
+        log = zt_log_logger(NULL);
+    }
     return(log->opts);
 }
 
@@ -213,6 +226,10 @@ _zt_log_vdebug(char *fmt, va_list ap)
 void
 zt_log_close(zt_log_ty *log)
 {
+    if (!log) {
+        log = zt_log_logger(NULL);
+    }
+
     if (log->vtbl->destructor) {
         log->vtbl->destructor(log);
     }
