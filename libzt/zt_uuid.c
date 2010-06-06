@@ -12,6 +12,25 @@ zt_uuid_t NAMESPACE_X500 = { {{ 0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1, 
 
 static int rand_initialized = 0;
 
+#ifndef HAVE_SRANDOMDEV
+#include <fcntl.h>
+void
+srandomdev(void) {
+    int fd;
+    uint32_t rand_data;
+
+    fd = open("/dev/urandom", O_RDONLY);
+
+    if (fd < 0 || read(fd, &rand_data,
+                   sizeof(uint32_t)) != sizeof(uint32_t)) {
+        /* this is a shitty situation.... */
+        rand_data = time(NULL);
+    }
+
+    srandom(rand_data);
+}
+#endif
+
 int
 zt_uuid4(zt_uuid_t * uuid) {
     long      v;
