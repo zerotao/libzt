@@ -11,10 +11,10 @@ struct zt_ez_mempool_chunk {
 };
 
 struct zt_ez_mempool {
-    zt_ez_mempool_chunk  *chunks;
-    zt_ez_mempool        *subpools;
-    zt_ez_mempool        *next;
-    zt_ez_mempool        *parent;
+    zt_ez_mempool_chunk *chunks;
+    zt_ez_mempool       *subpools;
+    zt_ez_mempool       *next;
+    zt_ez_mempool       *parent;
 };
 
 /**
