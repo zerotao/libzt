@@ -20,7 +20,7 @@ libzt_la_LIBADD = 					\
 #if interface add AGE++
 #if interface remove AGE = 0
 # check eev
-libzt_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
+libzt_la_LDFLAGS = -version-info 2:0:0  -export-dynamic
 libzt_gc_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
 libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 

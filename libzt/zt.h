@@ -85,12 +85,12 @@ typedef char* void_p;
 
 /* Unix Path */
 #ifndef PATH_SEPERATOR
-# define PATH_SEPERATOR '/'
+# define PATH_SEPERATOR "/"
 #endif
 
 /* Unix Shell */
 #ifndef ENV_SEPERATOR
-# define ENV_SEPERATOR ':'
+# define ENV_SEPERATOR ":"
 #endif
 
 #ifndef HEX_DIGITS

@@ -40,17 +40,15 @@ extern int zt_cstr_upto(const char *s, int i, int j, const char *set);
 extern int zt_cstr_rupto(const char *s, int i, int j, const char *set);
 extern int zt_cstr_find(const char *s, int i, int j, const char *str);
 extern int zt_cstr_rfind(const char *s, int i, int j, const char *str);
-extern int zt_cstr_any(const char *s, int i, const char *set);
-extern int zt_cstr_many(const char *s, int i, int j, const char *set);
-extern int zt_cstr_rmany(const char *s, int i, int j, const char *set);
-extern int zt_put_cstr(int code, va_list * app,
+extern int zt_cstr_any(const char *s, int i, int j, const char *set);
+extern int zt_cstr_rany(const char *s, int i, int j, const char *set);
+extern int zt_cstr_puts(int code, va_list * app,
                        int put(int c, void *cl), void *cl,
                        unsigned char flags[], int width, int precision);
 
 
 extern char *zt_cstr_chomp(char *s);
 extern char *zt_cstr_strip(char *s);
-
 
 /* extensions of std C */
 extern size_t zt_cstr_rspn( const char *s, const char *accept );
@@ -64,7 +62,7 @@ extern char* zt_cstr_path_append( const char *, const char * );
 
 extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
 extern size_t zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
-
+extern int zt_cstr_copy(const char * from, int i, int j, char * to, int len);
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/
