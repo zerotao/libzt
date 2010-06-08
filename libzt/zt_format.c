@@ -21,7 +21,7 @@ struct zt_fmt_obuf {
     } while (0)
 
 
-char * zt_fmt_flags = "+- 0";
+char * zt_fmt_flags = "+- 0#";
 
 
 static int cvt_c(int code, va_list app,
@@ -528,6 +528,19 @@ cvt_s(int code, va_list app,
     char * str = va_arg(app, char *);
 
     zt_assert(str != NULL);
+
+    if(flags['#']) {
+        if(width != INT_MIN) {
+            int   i = width;
+            if(i < 0) {
+                i = -i;
+            }
+            if(i < strlen(str)) {
+                str = str + i;
+            }
+            width = INT_MIN;
+        }
+    }
 
     return(zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision));
 }
