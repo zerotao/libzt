@@ -38,6 +38,7 @@ void zt_cfg_close( zt_cfg_ty * );
 #define zt_cfg_close( cfg )                     \
     ZT_LOG_DEBUG_INFO(NULL);                    \
     zt_cfg_close( cfg )
+
 /*!
  * Name: zt_cfg_get
  * Description: fetch the value of a configuration variable
@@ -45,8 +46,16 @@ void zt_cfg_close( zt_cfg_ty * );
  */
 int zt_cfg_get( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_type type);
 #define zt_cfg_get( cfg, block, name, addr, type )    \
-    ZT_LOG_DEBUG_INFO(NULL);                        \
-    zt_cfg_get(cfg, block, name, addr, type)
+    ZT_LOG_DEBUG_INFO(NULL), zt_cfg_get(cfg, block, name, addr, type)
+
+#define zt_cfg_get_int( cfg, block, name, addr ) \
+    zt_cfg_get( cfg, block, name, addr, zt_cfg_int )
+#define zt_cfg_get_bool( cfg, block, name, addr ) \
+    zt_cfg_get( cfg, block, name, addr, zt_cfg_bool )
+#define zt_cfg_get_float( cfg, block, name, addr ) \
+    zt_cfg_get( cfg, block, name, addr, zt_cfg_float )
+#define zt_cfg_get_string( cfg, block, name, addr ) \
+    zt_cfg_get( cfg, block, name, addr, zt_cfg_string )
 
 /*!
  * Name: zt_cfg_set
@@ -55,8 +64,16 @@ int zt_cfg_get( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_typ
  */
 int zt_cfg_set( zt_cfg_ty *, char *, char *, void *, zt_cfg_type );
 #define zt_cfg_set( cfg, block, name, addr, type )    \
-    ZT_LOG_DEBUG_INFO(NULL);                        \
-    zt_cfg_set(cfg, block, name, addr, type)
+    ZT_LOG_DEBUG_INFO(NULL), zt_cfg_set(cfg, block, name, addr, type)
+
+#define zt_cfg_set_int( cfg, block, name, addr ) \
+    zt_cfg_set( cfg, block, name, addr, zt_cfg_int)
+#define zt_cfg_set_bool( cfg, block, name, addr ) \
+    zt_cfg_set( cfg, block, name, addr, zt_cfg_bool)
+#define zt_cfg_set_float( cfg, block, name, addr ) \
+    zt_cfg_set( cfg, block, name, addr, zt_cfg_float)
+#define zt_cfg_set_string( cfg, block, name, addr ) \
+    zt_cfg_set( cfg, block, name, addr, zt_cfg_string)
 
 END_C_DECLS
 #include <libzt/zt_cfg/cfg_interface.h>

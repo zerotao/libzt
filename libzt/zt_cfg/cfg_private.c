@@ -243,11 +243,13 @@ zt_cfg_priv_set(zt_cfg_ty *cfg, char *block_name,
 }
 
 int
-zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name, 
+zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
                 char *variable_name, void *var, zt_cfg_type type)
 {
     struct zt_cfg_block_ty* block = NULL;
     struct zt_cfg_value_ty* value = NULL;
+    struct zt_cfg_value_ty* ref = NULL;
+
 
     block = get_block(cfg->head, block_name);
     if (!block) {
@@ -255,7 +257,17 @@ zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
     }
 
     value = get_variable(block->head, variable_name);
+
     if (!value) {
+        return(-1);
+    }
+
+
+    while (value->type == zt_cfg_ref) {
+        value = value->v.r;
+    }
+
+    if (value->type != type) {
         return(-1);
     }
 
@@ -272,39 +284,11 @@ zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
         case zt_cfg_string:
             *(char **)var = value->v.s;
             break;
-        case zt_cfg_ref:
-        {
-            struct zt_cfg_value_ty* ref = value->v.r;
-            while (ref->type == zt_cfg_ref) {
-                ref = ref->v.r;
-            }
-            switch (ref->type) {
-                case zt_cfg_bool:
-                    *(int *)var = ref->v.b;
-                    break;
-                case zt_cfg_int:
-                    *(long *)var = ref->v.i;
-                    break;
-                case zt_cfg_float:
-                    *(double *)var = ref->v.f;
-                    break;
-                case zt_cfg_string:
-                    *(char **)var = ref->v.s;
-                    break;
-                default:
-                    zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-                    return( -1) ;
-            }
-            break;
-        }
         default:
             zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
             return( -1) ;
-    } /* switch */
-      /*
-       * if(value->type != type)
-       *     return 1;
-       */
+    }
+
     return(value->type);
 } /* zt_cfg_priv_get */
 
