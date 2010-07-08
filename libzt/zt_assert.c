@@ -30,7 +30,7 @@ _zt_assert_fail(char *s, char *file, unsigned int line,
 {
     char bname[PATH_MAX];
 
-    zt_cstr_basename(bname, PATH_MAX, file, NULL);
+    (void)zt_cstr_basename(bname, PATH_MAX, file, NULL);
 
     if (func) {
         zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d:%s]", s, bname, line, func);
