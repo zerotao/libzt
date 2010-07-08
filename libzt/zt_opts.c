@@ -82,7 +82,7 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
 {
     int i = 0;
 
-    fprintf(stderr, "Usage: %s %s" NL, basename(argv[0]), option_string);
+    fprintf(stderr, "usage: %s %s" NL, basename(argv[0]), option_string);
 
     if (max_opts > 0) {
         fprintf(stderr, NL "Options:" NL);
@@ -136,10 +136,9 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
 int
 zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
-#define OPT_MAX 255
-#define OPT_MAX_DOUBLE 512
+#define OPT_MAX 512
     int  i = 0;
-    char optstring[OPT_MAX_DOUBLE];
+    char optstring[OPT_MAX];
     int  opt_index = 0;
     int  max_opts = 0;
     int  nopt_chars = -2;
@@ -152,7 +151,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
     if (!opts) {
         return(-1);
     }
-    memset(optstring, '\0', OPT_MAX_DOUBLE);
+    memset(optstring, '\0', OPT_MAX);
 
     for (i = 0; (opts[i].description != NULL); i++) {
         if (opts[i].opt <= 0) {
@@ -162,9 +161,12 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
 #ifdef HAVE_GETOPT_LONG
     longopts = XCALLOC(struct option, i + 1);
+    optstring[0] = '+';
+    opt_index++;
 #endif
 
-    for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX_DOUBLE; i++) {
+
+    for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX; i++) {
 
         if (isoptchar(opts[i].opt)) {
             optstring[opt_index++] = opts[i].opt;
