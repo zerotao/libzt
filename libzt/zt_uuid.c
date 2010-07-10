@@ -14,6 +14,7 @@ static int rand_initialized = 0;
 
 #ifndef HAVE_SRANDOMDEV
 #include <fcntl.h>
+#include <time.h>
 void
 srandomdev(void) {
     int fd;
@@ -91,28 +92,78 @@ zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid){
 
 
 
-int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids)
+int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags)
 {
-    char   uuids_hex[32 + 1];
+    char   uuids_hex[UUID_SHORT_STR_LEN];
     char * result = NULL;
     int    i;
 
     zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
 
-    result = XCALLOC(char, UUID_STR_LEN + 1);
-
-    i = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
-                 uuids_hex,
-                 &uuids_hex[8],
-                 &uuids_hex[12],
-                 &uuids_hex[16],
-                 &uuids_hex[20]);
+    if (flags == zt_uuid_std_fmt) {
+        result = XCALLOC(char, UUID_STR_LEN + 1);
+        i = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
+                    uuids_hex,
+                    &uuids_hex[8],
+                    &uuids_hex[12],
+                    &uuids_hex[16],
+                    &uuids_hex[20]);
+    } else if(flags == zt_uuid_short_fmt) {
+        result = XCALLOC(char, UUID_SHORT_STR_LEN + 1);
+        i = snprintf(result, UUID_STR_LEN + 1, "%8.8s%4.4s%4.4s%4.4s%12.12s",
+                    uuids_hex,
+                    &uuids_hex[8],
+                    &uuids_hex[12],
+                    &uuids_hex[16],
+                    &uuids_hex[20]);
+    } else {
+        zt_log_printf(zt_log_err, "unknown uuid format");
+        return -1;
+    }
     if (i == -1) {
         free(result);
         result = NULL;
     }
     *uuids = result;
     return(i);
+}
+
+int zt_uuid_fromstr(char *uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
+    char          uuid_hex[UUID_SHORT_STR_LEN];
+
+    zt_assert(uuidstr);
+    zt_assert(uuid);
+
+
+    if(flags == zt_uuid_std_fmt) {
+        if(strlen(uuidstr) != UUID_STR_LEN) {
+            return -1;
+        }
+        sscanf(uuidstr, "%8s-%4s-%4s-%4s-%12s",
+            uuid_hex,
+            &uuid_hex[8],
+            &uuid_hex[12],
+            &uuid_hex[16],
+            &uuid_hex[20]);
+    } else if(flags == zt_uuid_short_fmt) {
+        if(strlen(uuidstr) != UUID_SHORT_STR_LEN) {
+            return -1;
+        }
+        /* sscanf(uuidstr, "%8s%4s%4s%4s%12s",  */
+            /* uuid_hex, */
+            /* &uuid_hex[8], */
+            /* &uuid_hex[12], */
+            /* &uuid_hex[16], */
+            /* &uuid_hex[20]); */
+        memcpy(uuid_hex, uuidstr, UUID_SHORT_STR_LEN);
+    } else {
+        zt_log_printf(zt_log_err, "unknown uuid format");
+        return -1;
+    }
+
+    zt_hex_to_binary(uuid_hex, 32, uuid->data.bytes, 16);
+
+    return 0;
 }
 
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2)

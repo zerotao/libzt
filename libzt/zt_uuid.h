@@ -7,9 +7,16 @@
 BEGIN_C_DECLS
 
 #define UUID_STR_LEN 36
+#define UUID_SHORT_STR_LEN 32
 #define UUID_ALEN 16
 #define UUID_VERSION_OFFT 6
 #define UUID_CLOCK_SEQ_OFFT 8
+
+typedef enum zt_uuid_flags_t zt_uuid_flags_t;
+enum zt_uuid_flags_t {
+    zt_uuid_std_fmt = 0,
+    zt_uuid_short_fmt,
+};
 
 typedef struct zt_uuid zt_uuid_t;
 struct zt_uuid {
@@ -48,7 +55,8 @@ enum zt_uuid_ns {
 
 int zt_uuid4(zt_uuid_t *uuid);
 int zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t *uuid);
-int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids);
+int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags);
+int zt_uuid_fromstr(char *value, zt_uuid_t *uuid, zt_uuid_flags_t flags);
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2);
 
 END_C_DECLS
