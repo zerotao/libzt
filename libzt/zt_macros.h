@@ -77,7 +77,7 @@ BEGIN_C_DECLS
  * Description: get the offset into a structure by name
  */
 #ifndef offsetof
-#define offsetof(type, member)      \
+#define offsetof(type, member) \
     ((size_t)(&((type *)0)->member))
 #endif    /* offset_of*/
 
@@ -86,7 +86,7 @@ BEGIN_C_DECLS
  * Description: get the head of a structure containing member X
  */
 #ifndef containerof
-#define containerof(ptr, type, member)    \
+#define containerof(ptr, type, member) \
     ((type *)((char *)(ptr) - offsetof(type, member)))
 #endif    /* container_of */
 
@@ -120,9 +120,9 @@ BEGIN_C_DECLS
  * Description: indent to column tgt*step starting at start
  * Example: printf(BLANK "-a, --alpha" NL, INDENT_TO(15, 5, 0))
  */
-#define INDENT_TO(tgt, step, start)     \
-    INDENT_PAD((((tgt) - (start)) / (step)),    \
-               (step),    \
+#define INDENT_TO(tgt, step, start)          \
+    INDENT_PAD((((tgt) - (start)) / (step)), \
+               (step),                       \
                (((tgt) - (start)) % (step)))
 
 /*!

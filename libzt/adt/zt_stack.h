@@ -25,7 +25,7 @@ zt_stack_pop(zt_stack *stack)
 
     elt = zt_elist_get_next(stack);
     zt_elist_remove(elt);
-    return(elt);
+    return (elt);
 }
 
 

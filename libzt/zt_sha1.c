@@ -115,11 +115,11 @@ zt_sha1_update(zt_sha1_ctx *ctx, uint8_t *data, size_t len)
     if ((j + len) > 63) {
         memcpy(&ctx->buffer[j], data, (i = 64 - j));
         _sha1_transform(ctx->state, ctx->buffer);
-        for ( ; i + 63 < len; i += 64) {
+        for (; i + 63 < len; i += 64) {
             _sha1_transform(ctx->state, &data[i]);
         }
         j = 0;
-    }else { i = 0; }
+    } else { i = 0; }
     memcpy(&ctx->buffer[j], &data[i], len - i);
 }
 
@@ -168,12 +168,12 @@ char*
 zt_sha1_tostr(uint8_t digest[20], char sha1[41])
 {
     zt_binary_to_hex(digest, 20, sha1, 41);
-    return(sha1);
+    return (sha1);
 }
 
 uint8_t *
 zt_str_tosha1(char sha1[41], uint8_t digest[20])
 {
     zt_hex_to_binary(sha1, 40, digest, 20);
-    return(digest);
+    return (digest);
 }

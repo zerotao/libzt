@@ -61,14 +61,14 @@ zt_log_file(char *file, int fopts, int lopts)
 
     if (fopts == ZT_LOG_FILE_APPEND) {
         this->file = fopen(file, "a");
-    }else{
+    } else {
         this->file = fopen(file, "w");
     }
     if (!this->file) {
         fprintf(stderr, "Could not open file %s: %s\n", file, strerror(errno));
-        return(NULL);
+        return (NULL);
     }
 
-    return(result);
+    return (result);
 }
 

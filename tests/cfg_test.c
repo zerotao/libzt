@@ -78,7 +78,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "string_var", &i, zt_cfg_int) == -1));
 
     zt_cfg_close(cfg);
-}
+} /* basic_tests */
 
 int
 register_cfg_suite(struct zt_unit *unit)
@@ -87,5 +87,5 @@ register_cfg_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "cfg tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return (0);
 }

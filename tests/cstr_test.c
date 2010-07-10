@@ -22,9 +22,9 @@ basic_tests(struct zt_unit_test *test, void *data)
     char   test_string1[] = "  Ok \n";
     char * chomp_test = strdup(test_string1);
     char * strip_test = strdup(test_string1);
-    char * ALPHA =  "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    char * AHPLA =  "ZYXWVUTSRQPONMLKJIHGFEDCBA";
-    char * alpha =  "abcdefghijklmnopqrstuvwxyz";
+    char * ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char * AHPLA = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
+    char * alpha = "abcdefghijklmnopqrstuvwxyz";
     char * path = "/home/jshiffer/config.foo";
     char * interface = "Interface";
     char * spain = "The rain in Spain";
@@ -69,7 +69,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 
 #else /* _WIN32 */
-    /* reverse the mapping */
+      /* reverse the mapping */
 
 #endif /* _WIN32 */
 
@@ -161,8 +161,6 @@ basic_tests(struct zt_unit_test *test, void *data)
     XFREE(free_me);
 
     ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == -1);
-
-
 } /* basic_tests */
 
 int
@@ -172,5 +170,5 @@ register_cstr_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "string utils tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return (0);
 }

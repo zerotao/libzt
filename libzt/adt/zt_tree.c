@@ -56,37 +56,37 @@ zt_rbt_set_blackred(zt_rbt_node *black, zt_rbt_node *red)
     zt_rbt_colour(red) = zt_rbt_red;
 }
 
-#define zt_rbt_rotate_left(head, elm, tmp) do {    \
-    (tmp) = zt_rbt_right(elm);    \
-    if ((zt_rbt_right(elm) = zt_rbt_left(tmp))) {    \
-        zt_rbt_parent(zt_rbt_left(tmp)) = (elm);    \
-    }    \
-    if ((zt_rbt_parent(tmp) = zt_rbt_parent(elm))) {    \
-        if ((elm) == zt_rbt_left(zt_rbt_parent(elm))) { \
-            zt_rbt_left(zt_rbt_parent(elm)) = (tmp); }  \
-        else{                                           \
-            zt_rbt_right(zt_rbt_parent(elm)) = (tmp); } \
-    } else{               \
-        *(head) = (tmp); }                         \
-    zt_rbt_left(tmp) = (elm);    \
-    zt_rbt_parent(elm) = (tmp);    \
-} while (0)
+#define zt_rbt_rotate_left(head, elm, tmp) do {                       \
+        (tmp) = zt_rbt_right(elm);                                    \
+        if ((zt_rbt_right(elm) = zt_rbt_left(tmp))) {                 \
+                 zt_rbt_parent(zt_rbt_left(tmp)) = (elm);             \
+             }                                                        \
+             if ((zt_rbt_parent(tmp) = zt_rbt_parent(elm))) {         \
+                      if ((elm) == zt_rbt_left(zt_rbt_parent(elm))) { \
+                          zt_rbt_left(zt_rbt_parent(elm)) = (tmp); }  \
+                      else {                                          \
+                          zt_rbt_right(zt_rbt_parent(elm)) = (tmp); } \
+                  } else {                                            \
+                      *(head) = (tmp); }                              \
+                  zt_rbt_left(tmp) = (elm);                           \
+                  zt_rbt_parent(elm) = (tmp);                         \
+                  } while (0)
 
-#define zt_rbt_rotate_right(head, elm, tmp) do {    \
-    (tmp) = zt_rbt_left(elm);    \
-    if ((zt_rbt_left(elm) = zt_rbt_right(tmp))) {    \
-        zt_rbt_parent(zt_rbt_right(tmp)) = (elm);    \
-    }    \
-    if ((zt_rbt_parent(tmp) = zt_rbt_parent(elm))) {    \
-        if ((elm) == zt_rbt_left(zt_rbt_parent(elm))) { \
-            zt_rbt_left(zt_rbt_parent(elm)) = (tmp); }  \
-        else{                 \
-            zt_rbt_right(zt_rbt_parent(elm)) = (tmp); } \
-    } else{               \
-        *(head) = (tmp); }                         \
-    zt_rbt_right(tmp) = (elm);    \
-    zt_rbt_parent(elm) = (tmp);    \
-} while (0)
+#define zt_rbt_rotate_right(head, elm, tmp) do {                  \
+    (tmp) = zt_rbt_left(elm);                                     \
+    if ((zt_rbt_left(elm) = zt_rbt_right(tmp))) {                 \
+             zt_rbt_parent(zt_rbt_right(tmp)) = (elm);            \
+         }                                                        \
+         if ((zt_rbt_parent(tmp) = zt_rbt_parent(elm))) {         \
+                  if ((elm) == zt_rbt_left(zt_rbt_parent(elm))) { \
+                      zt_rbt_left(zt_rbt_parent(elm)) = (tmp); }  \
+                  else {                                          \
+                      zt_rbt_right(zt_rbt_parent(elm)) = (tmp); } \
+              } else {                                            \
+                  *(head) = (tmp); }                              \
+              zt_rbt_right(tmp) = (elm);                          \
+              zt_rbt_parent(elm) = (tmp);                         \
+              } while (0)
 
 
 static void
@@ -98,7 +98,6 @@ zt_rbt_insert_colour(zt_rbt **head, zt_rbt_node *elt)
 
     while ((parent = zt_rbt_parent(elt)) &&
            zt_rbt_colour(parent) == zt_rbt_red) {
-
         gparent = zt_rbt_parent(parent);
         if (parent == zt_rbt_left(gparent)) {
             tmp = zt_rbt_right(gparent);
@@ -307,7 +306,7 @@ colour:
     if (colour == zt_rbt_black) {
         zt_rbt_remove_colour(head, parent, child);
     }
-    return(old);
+    return (old);
 } /* zt_rbt_remove */
 
 /* Inserts a node into the RB tree */
@@ -329,7 +328,6 @@ zt_rbt_insert(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_
         } else {
             return (tmp);
         }
-
     }
     zt_rbt_set(elm, parent);
     if (parent != NULL) {
@@ -343,7 +341,7 @@ zt_rbt_insert(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_
     }
 
     zt_rbt_insert_colour(head, elm);
-    return(NULL);
+    return (NULL);
 }
 
 /* Finds the node with the same key as elm */
@@ -360,7 +358,7 @@ zt_rbt_find(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_no
             tmp = zt_rbt_left(tmp);
         } else if (comp > 0) {
             tmp = zt_rbt_right(tmp);
-        } else{
+        } else {
             return (tmp);
         }
     }
@@ -371,7 +369,7 @@ zt_rbt_node *
 zt_rbt_next(zt_rbt_node *elm)
 {
     if (!elm) {
-        return(NULL);
+        return (NULL);
     }
 
     if (zt_rbt_right(elm)) {
@@ -391,7 +389,7 @@ zt_rbt_next(zt_rbt_node *elm)
             elm = zt_rbt_parent(elm);
         }
     }
-    return(elm);
+    return (elm);
 }
 
 zt_rbt_node *
@@ -404,9 +402,9 @@ zt_rbt_minmax(zt_rbt **head, int val)
         parent = tmp;
         if (val < 0) {
             tmp = zt_rbt_left(tmp);
-        } else{
+        } else {
             tmp = zt_rbt_right(tmp);
         }
     }
-    return(parent);
+    return (parent);
 }

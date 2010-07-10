@@ -30,5 +30,5 @@ main(int argc, char *argv[])
     printf("ll64 0x%llX\n", ll64);
 
 
-    return(0);
+    return (0);
 }

@@ -41,6 +41,6 @@ static zt_log_vtbl_ty vtbl = {
 zt_log_ty *
 zt_log_stderr(unsigned int opts)
 {
-    return(zt_log_new(&vtbl, opts));
+    return (zt_log_new(&vtbl, opts));
 }
 

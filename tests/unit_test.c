@@ -92,5 +92,5 @@ main(int argc, char *argv[])
      * register_msg_queue_suite(unit);
      */
 
-    return(zt_unit_main(unit, argc, argv));
-}
+    return (zt_unit_main(unit, argc, argv));
+} /* main */

@@ -25,7 +25,7 @@ zt_queue_dequeue(zt_queue *queue)
 
     elt = zt_elist_get_prev(queue);
     zt_elist_remove(elt);
-    return(elt);
+    return (elt);
 }
 
 

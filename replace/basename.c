@@ -49,6 +49,6 @@ basename( char *path )
 {
     char *basename = strrchr(path, '/');
 
-    return(basename ? ++basename : path);
+    return (basename ? ++basename : path);
 }
 

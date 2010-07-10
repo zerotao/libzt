@@ -50,7 +50,7 @@ main(int argc, char *argv[])
         printf("%s\n", zt_mem_heap_get_name(heap));
     } else {
         printf("failed to alloc a heap\n");
-        return(-1);
+        return (-1);
     }
 
     group = zt_mem_pool_group_init(pool_group, sizeof_array(pool_group) - 1);
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
     printf("pool lookup: ");
     if (tpool == zt_mem_pool_get("testpool")) {
         printf("success\n");
-    }else {
+    } else {
         printf("failed\n");
     }
 
@@ -116,6 +116,6 @@ main(int argc, char *argv[])
     zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
 
     zt_mem_heap_destroy(&heap);
-    return(0);
+    return (0);
 } /* main */
 

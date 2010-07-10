@@ -41,14 +41,14 @@
 #endif /* ifdef __GNUC__ */
 
 #if defined(__STDC__) || defined(__STDC_HOSTED__)
-# define STR(x)    #x
-# define CONC(x, y)    x##y
-# define CONC3(x, y, z)   x##y##z
+# define STR(x)    # x
+# define CONC(x, y)    x ## y
+# define CONC3(x, y, z)   x ## y ## z
 typedef void* void_p;
 #else
 # define STR(x)    "x"
-# define CONC(x, y)    x/**/y
-# define CONC3(x, y)    x/**/y/**/z
+# define CONC(x, y)    x /**/ y
+# define CONC3(x, y)    x /**/ y /**/ z
 typedef char* void_p;
 #endif /* if defined(__STDC__) || defined(__STDC_HOSTED__) */
 
@@ -120,7 +120,7 @@ typedef char* void_p;
 # define INLINE     inline
 # define HAS_ININE  1
 #else
-# define INLINE     /* no inline */
+# define INLINE                                            /* no inline */
 #endif
 
 
@@ -146,7 +146,7 @@ typedef char* void_p;
 
 /* Taken Directly from sqlite3
  *
- * The ALWAYS and NEVER macros surround boolean expressions which 
+ * The ALWAYS and NEVER macros surround boolean expressions which
  * are intended to always be true or false, respectively.  Such
  * expressions could be omitted from the code completely.  But they
  * are included in a few cases in order to enhance the resilience
@@ -164,12 +164,12 @@ typedef char* void_p;
 # define ALWAYS(X)      (1)
 # define NEVER(X)       (0)
 #elif !defined(NDEBUG)
-# define ALWAYS(X)      ((X)?1:(assert(0),0))
-# define NEVER(X)       ((X)?(assert(0),1):0)
-#else
+# define ALWAYS(X)      ((X) ? 1 : (assert(0), 0))
+# define NEVER(X)       ((X) ? (assert(0), 1) : 0)
+#else /* if defined(LIBZT_COVERAGE_TESTING) */
 # define ALWAYS(X)      (X)
 # define NEVER(X)       (X)
-#endif
+#endif /* if defined(LIBZT_COVERAGE_TESTING) */
 
 #include <libzt/zt_macros.h>
 #include <libzt/zt_common.h>

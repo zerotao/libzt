@@ -13,7 +13,7 @@ cvt_S(int code, va_list app,
 
     zt_assert(str);
 
-    return(zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision));
+    return (zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision));
 }
 
 
@@ -65,7 +65,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     str = zt_fmt_strprintf("%#30.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, "T", 0, -1) == 0);
     XFREE(str);
-}
+} /* basic_tests */
 
 int
 register_format_suite(struct zt_unit *unit)
@@ -74,6 +74,6 @@ register_format_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "format", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return (0);
 }
 

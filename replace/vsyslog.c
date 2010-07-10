@@ -44,7 +44,7 @@ percent_m(char    *obuf, int len, char *ibuf)
             cp++;
         }
     }
-    return(obuf);
+    return (obuf);
 }
 
 void

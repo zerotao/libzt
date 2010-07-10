@@ -26,29 +26,29 @@ struct zt_cfg_value_ty {
     char      * name;
     zt_cfg_type type;
     union {
-        int                          b;
-        long                         i;
-        double                       f;
-        char                       * s;
-        struct zt_cfg_value_ty     * r;
+        int                      b;
+        long                     i;
+        double                   f;
+        char                   * s;
+        struct zt_cfg_value_ty * r;
     } v;
-    int                       altered;
-    struct zt_cfg_value_ty  * next;
+    int                      altered;
+    struct zt_cfg_value_ty * next;
 };
 
 struct zt_cfg_block_ty {
-    char                      * name;
-    struct zt_cfg_value_ty    * head;
-    struct zt_cfg_block_ty    * next;
+    char                   * name;
+    struct zt_cfg_value_ty * head;
+    struct zt_cfg_block_ty * next;
 };
 
 struct zt_cfg_ty {
-    struct zt_cfg_vtbl_ty     * vtbl;
-    /* rest of opts */        
-    char                      * filename;
-    int                         numentries;
-    int                         opts;
-    struct zt_cfg_block_ty    * head;
+    struct zt_cfg_vtbl_ty * vtbl;
+    /* rest of opts */
+    char                   * filename;
+    int                      numentries;
+    int                      opts;
+    struct zt_cfg_block_ty * head;
 };
 
 typedef struct zt_cfg_vtbl_ty zt_cfg_vtbl_ty;

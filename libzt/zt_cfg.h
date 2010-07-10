@@ -35,8 +35,8 @@ typedef enum zt_cfg_type zt_cfg_type;
  * Description: close a config descriptor
  */
 void zt_cfg_close( zt_cfg_ty * );
-#define zt_cfg_close( cfg )                     \
-    ZT_LOG_DEBUG_INFO(NULL);                    \
+#define zt_cfg_close( cfg )  \
+    ZT_LOG_DEBUG_INFO(NULL); \
     zt_cfg_close( cfg )
 
 /*!
@@ -45,7 +45,7 @@ void zt_cfg_close( zt_cfg_ty * );
  * Result: returns 0 on failure and >0 on success
  */
 int zt_cfg_get( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_type type);
-#define zt_cfg_get( cfg, block, name, addr, type )    \
+#define zt_cfg_get( cfg, block, name, addr, type ) \
     ZT_LOG_DEBUG_INFO(NULL), zt_cfg_get(cfg, block, name, addr, type)
 
 #define zt_cfg_get_int( cfg, block, name, addr ) \
@@ -63,7 +63,7 @@ int zt_cfg_get( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_typ
  * Result: returns 0 on failure and >0 on success
  */
 int zt_cfg_set( zt_cfg_ty *, char *, char *, void *, zt_cfg_type );
-#define zt_cfg_set( cfg, block, name, addr, type )    \
+#define zt_cfg_set( cfg, block, name, addr, type ) \
     ZT_LOG_DEBUG_INFO(NULL), zt_cfg_set(cfg, block, name, addr, type)
 
 #define zt_cfg_set_int( cfg, block, name, addr ) \

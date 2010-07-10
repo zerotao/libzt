@@ -28,7 +28,7 @@ zt_add_time(struct timeval *at, struct timeval *t1, struct timeval *t2)
         at->tv_usec -= 1000000;
     }
 
-    return(at);
+    return (at);
 }
 
 
@@ -43,7 +43,7 @@ zt_sub_time(struct timeval *st, struct timeval *t1, struct timeval *t2)
         st->tv_usec += 1000000;
     }
 
-    return(st);
+    return (st);
 }
 
 
@@ -57,7 +57,7 @@ zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2)
         dt->tv_usec += 1000000.0;
         dt->tv_sec -= 1.0;
     }
-    return(dt);
+    return (dt);
 }
 
 /*    <0, 0, >0
@@ -70,9 +70,9 @@ zt_cmp_time(struct timeval *t1,
     long t = t1->tv_sec - t2->tv_sec;
 
     if (t) {
-        return(t);
+        return (t);
     }
-    return(t1->tv_usec - t2->tv_usec);
+    return (t1->tv_usec - t2->tv_usec);
 }
 
 
@@ -91,15 +91,16 @@ zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, fl
     zt_assert(sys);
     zt_assert(total);
 
-    *usr = result->usr_time.tv_sec + result->usr_time.tv_usec /   1000000.0;
-    *sys = result->sys_time.tv_sec + result->sys_time.tv_usec /   1000000.0;
+    *usr = result->usr_time.tv_sec + result->usr_time.tv_usec / 1000000.0;
+    *sys = result->sys_time.tv_sec + result->sys_time.tv_usec / 1000000.0;
     *total = *usr + *sys;
 }
 
-static struct time_result   _calibration_time = {{0,0}, {0,0}};
+static struct time_result _calibration_time = { { 0, 0 }, { 0, 0 } };
 
 void
-zt_time_calibrate(void) {
+zt_time_calibrate(void)
+{
     zt_time(0, &_calibration_time, NULL, NULL);
 }
 
@@ -122,7 +123,7 @@ zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
 
     getrusage(RUSAGE_SELF, &rbefore);
 
-    if(test && n) {
+    if (test && n) {
         for (i = 0; i <= n; i++) {
             ret = test(data);
         }
@@ -135,7 +136,7 @@ zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
     zt_sub_time(&tv->usr_time, &tv->usr_time, &_calibration_time.usr_time);
     zt_sub_time(&tv->sys_time, &tv->sys_time, &_calibration_time.sys_time);
 
-    return(ret);
+    return (ret);
 }
 
 void
@@ -155,6 +156,5 @@ zt_time_print_result(struct time_result *tr, char *name, int n)
     } else {
         zt_log_printf(zt_log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total", n, name, usr, sys, total);
     }
-
 }
 

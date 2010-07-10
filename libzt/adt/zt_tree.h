@@ -66,14 +66,14 @@ zt_rbt_node *zt_rbt_minmax(zt_rbt **head, int val);
 #define zt_rbt_min(x) zt_rbt_minmax((x), ZT_RBT_NEGINF)
 #define zt_rbt_max(x) zt_rbt_minmax((x), ZT_RBT_INF)
 
-#define zt_rbt_for_each(head, x)    \
-    for ((x) = zt_rbt_min(head);    \
-         (x) != NULL;    \
+#define zt_rbt_for_each(head, x) \
+    for ((x) = zt_rbt_min(head); \
+         (x) != NULL;            \
          (x) = zt_rbt_next((x)))
 
-#define zt_rbt_for_each_safe(head, x, n)    \
-    for ((x) = zt_rbt_min(head), (n) = zt_rbt_next((x));     \
-         (x) != NULL;    \
+#define zt_rbt_for_each_safe(head, x, n)                 \
+    for ((x) = zt_rbt_min(head), (n) = zt_rbt_next((x)); \
+         (x) != NULL;                                    \
          (x) = (n), (n) = (n) ? zt_rbt_next((n)) : NULL)
 
 

@@ -23,12 +23,12 @@ struct zt_uuid {
     union {
         uint8_t bytes[UUID_ALEN];
         struct {
-            uint32_t      time_low;                   /* 0-3 */
-            uint16_t      time_mid;                   /* 4-5 */
-            uint16_t      time_hi_and_version;        /* 6-7 */
-            uint8_t       clock_seq_hi_and_reserved;  /* 8 */
-            uint8_t       clock_seq_low;              /* 9 */
-            uint8_t       node[6];                    /* 10-15 */
+            uint32_t time_low;                             /* 0-3 */
+            uint16_t time_mid;                             /* 4-5 */
+            uint16_t time_hi_and_version;                  /* 6-7 */
+            uint8_t  clock_seq_hi_and_reserved;            /* 8 */
+            uint8_t  clock_seq_low;                        /* 9 */
+            uint8_t  node[6];                              /* 10-15 */
         } field;
     } data;
 };

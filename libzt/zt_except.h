@@ -6,7 +6,7 @@
  * Copyright:
  *        Copyright (C) 2002-2010, Jason L. Shiffer.
  *        See file COPYING for details
- * 
+ *
  * Notes:
  *
  */
@@ -21,6 +21,7 @@
 
 
 BEGIN_C_DECLS
+/* *INDENT-OFF* disable uncrustify reformatting*/
 
 /* declare exception */
 #define _EXCEPT_DECL(NAME, STR)         \
@@ -246,5 +247,6 @@ return
     }while(0)
 
 END_C_DECLS
+/* *INDENT-ON* re-enable uncrustify reformatting*/
 #endif /* _ZT_EXCEPT_H_ */
 

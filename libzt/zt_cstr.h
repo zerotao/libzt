@@ -43,8 +43,8 @@ extern int zt_cstr_rfind(const char *s, int i, int j, const char *str);
 extern int zt_cstr_any(const char *s, int i, int j, const char *set);
 extern int zt_cstr_rany(const char *s, int i, int j, const char *set);
 extern int zt_cstr_puts(int code, va_list * app,
-                       int put(int c, void *cl), void *cl,
-                       unsigned char flags[], int width, int precision);
+                        int put(int c, void *cl), void *cl,
+                        unsigned char flags[], int width, int precision);
 
 
 extern char *zt_cstr_chomp(char *s);

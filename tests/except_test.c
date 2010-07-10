@@ -35,29 +35,29 @@ static char *f1(int i)
             TRY_RETURN Pass;
         },
         {
-            CATCH(fe, TRY_RETURN Pass;);
+            CATCH(fe, TRY_RETURN Pass; );
         });
-    return(Fail);
+    return (Fail);
 }
 
 int foo(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count++;
-    return(0);
+    return (0);
 }
 int bar(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count++;
-    return(1);
+    return (1);
 }
 int newbar(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count = 0xDEADBEEF;
-    return(0);
+    return (0);
 }
 int fooexit(void *e, void* t, char *et, char *f, char *ff, int l)
 {
-    return(-1);
+    return (-1);
 }
 
 static void
@@ -68,7 +68,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         DO_TRY
               THROW(do_try);
         ELSE_TRY
-              CATCH(do_try, do_try = Pass;);
+              CATCH(do_try, do_try = Pass; );
         END_TRY
 
         ZT_UNIT_ASSERT(test, do_try == Pass);
@@ -79,7 +79,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         THROW(do_try);
         END_TRY
         ELSE_TRY
-        CATCH(do_try, do_try = Pass;);
+        CATCH(do_try, do_try = Pass; );
         END_TRY
         ZT_UNIT_ASSERT(test, do_try == Pass);
     }
@@ -89,7 +89,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         TRY({
                 TRY(THROW(do_try), {});
             }, {
-                CATCH(do_try, do_try = Pass;);
+                CATCH(do_try, do_try = Pass; );
             });
         ZT_UNIT_ASSERT(test, do_try == Pass);
     }
@@ -115,7 +115,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                 foo = f1(0);
                 THROW(foo);
             }, {
-                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass););
+                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass); );
             });
 
 
@@ -123,9 +123,8 @@ basic_tests(struct zt_unit_test *test, void *data)
                 foo = f1(1);
                 THROW(foo);
             }, {
-                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass););
+                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass); );
             });
-
     }
 
     /*Test Domains*/
@@ -193,7 +192,6 @@ basic_tests(struct zt_unit_test *test, void *data)
          * #include <zt_assert.h>
          *         TRY_THROW(zt_assertion.failed);
          */
-
     }
 
 
@@ -206,15 +204,15 @@ basic_tests(struct zt_unit_test *test, void *data)
             {
                 THROW(rethrow);
             } ELSE_TRY {
-                CATCH(rethrow, rethrow = Fail;);
+                CATCH(rethrow, rethrow = Fail; );
                 RETHROW();
             }
             END_TRY;
         }
         ELSE_TRY
         {
-            CATCH(printf, rethrow = Fail;);
-            CATCH(rethrow, rethrow = Pass;);
+            CATCH(printf, rethrow = Fail; );
+            CATCH(rethrow, rethrow = Pass; );
         }
         END_TRY;
         ZT_UNIT_ASSERT(test, rethrow == Pass);
@@ -245,7 +243,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                                unwind = Pass;
                            });
         } ELSE_TRY {
-            CATCH(unwind, unwind = Fail;);
+            CATCH(unwind, unwind = Fail; );
         } END_TRY;
         ZT_UNIT_ASSERT(test, unwind == Pass);
     }
@@ -255,124 +253,124 @@ basic_tests(struct zt_unit_test *test, void *data)
         char *catch = Fail;
 
         TRY ({
-             TRY({
-                 THROW(catch );
-                 }, {
-                 CATCH(catch , catch = Pass;);
-                 });
-             }, {
-             CATCH(catch , catch = Fail;);
-             });
-        ZT_UNIT_ASSERT (test, catch == Pass);
-    }
+                 TRY({
+                         THROW(catch );
+                               }, {
+                                   CATCH(catch , catch = Pass; );
+                               });
+                     }, {
+                         CATCH(catch , catch = Fail; );
+                     });
+                 ZT_UNIT_ASSERT (test, catch == Pass);
+                                 }
 
 /*Test CATCH in wind*/
-    {
-        char *domain = Pass;
+                                 {
+                                     char *domain = Pass;
 
-        TRY({ CATCH(domain, domain = Fail;); }, { });
-        ZT_UNIT_ASSERT(test, domain == Pass);
-    }
+                                     TRY({ CATCH(domain, domain = Fail; ); }, { });
+                                     ZT_UNIT_ASSERT(test, domain == Pass);
+                                 }
 
-    {
-        char    * domain = Fail;
-        TRY({
-            THROW(domain);
-            }, {
-            CATCH(except_CatchAll, domain = Pass;);
-            });
-        ZT_UNIT_ASSERT(test, domain == Pass);
-    }
+                                 {
+                                     char    * domain = Fail;
+                                     TRY({
+                                             THROW(domain);
+                                         }, {
+                                             CATCH(except_CatchAll, domain = Pass; );
+                                         });
+                                     ZT_UNIT_ASSERT(test, domain == Pass);
+                                 }
 
-    {
-        TRY({
-            THROW(zt_exception.memory.no_mem);
-            }, {
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception));
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory));
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory.no_mem));
-            CATCH(zt_exception, );
-            });
-    }
+                                 {
+                                     TRY({
+                                             THROW(zt_exception.memory.no_mem);
+                                         }, {
+                                             ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception));
+                                             ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory));
+                                             ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory.no_mem));
+                                             CATCH(zt_exception, );
+                                         });
+                                 }
 
-    /* This will fail with the new unit test framework because it installs its own handler (fix it)!!!
-     *     {
-     *     test_count = 0;
-     *
-     *
-     * /\*     printf("Handlers: \n"); *\/
-     *
-     *     /\* call bar twice
-     *      * Here I am using the function as the exception
-     *      *\/
-     *     INSTALL_EXCEPT_HANDLER(bar, bar);
-     *     INSTALL_EXCEPT_HANDLER(bar, bar);
-     *     test_count = 0;
-     *
-     *     TRY({
-     *         THROW(bar);
-     *         },{});
-     *
-     *     ZT_UNIT_ASSERT(test, test_count == 2);
-     *
-     *     REMOVE_EXCEPT_HANDLER(bar, bar);
-     *     REMOVE_EXCEPT_HANDLER(bar, bar);
-     *
-     *     INSTALL_EXCEPT_HANDLER(bar, newbar);
-     *     TRY({
-     *         THROW(bar);
-     *         },{});
-     *     REMOVE_EXCEPT_HANDLER(bar, newbar);
-     *     ZT_UNIT_ASSERT(test, test_count == 0xDEADBEEF);
-     *     test_count = 0;
-     *
-     *     /\* install foo 4 times however foo exits with 0 so only call once
-     *      * Same as above with the exception being a function
-     *      *\/
-     *     INSTALL_EXCEPT_HANDLER(foo, foo);
-     *     INSTALL_EXCEPT_HANDLER(foo, foo);
-     *     INSTALL_EXCEPT_HANDLER(foo, foo);
-     *     INSTALL_EXCEPT_HANDLER(foo, foo);
-     *
-     *     TRY({
-     *         THROW(foo);
-     *         },{});
-     *     ZT_UNIT_ASSERT(test, test_count == 1);
-     *     test_count = 0;
-     *
-     *     fflush(stdout);
-     *
-     *     REMOVE_EXCEPT_HANDLER(foo, foo);
-     *     REMOVE_EXCEPT_HANDLER(foo, foo);
-     *     REMOVE_EXCEPT_HANDLER(foo, foo);
-     *     REMOVE_EXCEPT_HANDLER(foo, foo);
-     *     /\* REMOVE_EXCEPT_HANDLER(foo, foo); *\/
-     *
-     *     test_count = 0;
-     *     INSTALL_DEFAULT_HANDLER(foo);
-     *     TRY_THROW(bar);
-     *
-     *     ZT_UNIT_ASSERT(test, test_count > 0);
-     *
-     *     /\* FIXME: figure out how to test this ccorrectly *\/
-     * /\*     fprintf(stderr, "This should exit: "); *\/
-     * /\*     INSTALL_EXCEPT_HANDLER(fooexit, fooexit); *\/
-     * /\*     TRY({  *\/
-     * /\*         THROW(fooexit); *\/
-     * /\*         },{}); *\/
-     * /\*     fprintf(stderr, "Fail\n"); *\/
-     *
-     *      }
-     */
-}
+                                                           /* This will fail with the new unit test framework because it installs its own handler (fix it)!!!
+                                                            *     {
+                                                            *     test_count = 0;
+                                                            *
+                                                            *
+                                                            * /\*     printf("Handlers: \n"); *\/
+                                                            *
+                                                            *     /\* call bar twice
+                                                            *      * Here I am using the function as the exception
+                                                            *      *\/
+                                                            *     INSTALL_EXCEPT_HANDLER(bar, bar);
+                                                            *     INSTALL_EXCEPT_HANDLER(bar, bar);
+                                                            *     test_count = 0;
+                                                            *
+                                                            *     TRY({
+                                                            *         THROW(bar);
+                                                            *         },{});
+                                                            *
+                                                            *     ZT_UNIT_ASSERT(test, test_count == 2);
+                                                            *
+                                                            *     REMOVE_EXCEPT_HANDLER(bar, bar);
+                                                            *     REMOVE_EXCEPT_HANDLER(bar, bar);
+                                                            *
+                                                            *     INSTALL_EXCEPT_HANDLER(bar, newbar);
+                                                            *     TRY({
+                                                            *         THROW(bar);
+                                                            *         },{});
+                                                            *     REMOVE_EXCEPT_HANDLER(bar, newbar);
+                                                            *     ZT_UNIT_ASSERT(test, test_count == 0xDEADBEEF);
+                                                            *     test_count = 0;
+                                                            *
+                                                            *     /\* install foo 4 times however foo exits with 0 so only call once
+                                                            *      * Same as above with the exception being a function
+                                                            *      *\/
+                                                            *     INSTALL_EXCEPT_HANDLER(foo, foo);
+                                                            *     INSTALL_EXCEPT_HANDLER(foo, foo);
+                                                            *     INSTALL_EXCEPT_HANDLER(foo, foo);
+                                                            *     INSTALL_EXCEPT_HANDLER(foo, foo);
+                                                            *
+                                                            *     TRY({
+                                                            *         THROW(foo);
+                                                            *         },{});
+                                                            *     ZT_UNIT_ASSERT(test, test_count == 1);
+                                                            *     test_count = 0;
+                                                            *
+                                                            *     fflush(stdout);
+                                                            *
+                                                            *     REMOVE_EXCEPT_HANDLER(foo, foo);
+                                                            *     REMOVE_EXCEPT_HANDLER(foo, foo);
+                                                            *     REMOVE_EXCEPT_HANDLER(foo, foo);
+                                                            *     REMOVE_EXCEPT_HANDLER(foo, foo);
+                                                            *     /\* REMOVE_EXCEPT_HANDLER(foo, foo); *\/
+                                                            *
+                                                            *     test_count = 0;
+                                                            *     INSTALL_DEFAULT_HANDLER(foo);
+                                                            *     TRY_THROW(bar);
+                                                            *
+                                                            *     ZT_UNIT_ASSERT(test, test_count > 0);
+                                                            *
+                                                            *     /\* FIXME: figure out how to test this ccorrectly *\/
+                                                            * /\*     fprintf(stderr, "This should exit: "); *\/
+                                                            * /\*     INSTALL_EXCEPT_HANDLER(fooexit, fooexit); *\/
+                                                            * /\*     TRY({  *\/
+                                                            * /\*         THROW(fooexit); *\/
+                                                            * /\*         },{}); *\/
+                                                            * /\*     fprintf(stderr, "Fail\n"); *\/
+                                                            *
+                                                            *      }
+                                                            */
+                                 }
 
 
-int
-register_except_suite(struct zt_unit *unit){
-    struct zt_unit_suite    * suite;
+                                 int
+                                 register_except_suite(struct zt_unit *unit) {
+                                     struct zt_unit_suite    * suite;
 
-    suite = zt_unit_register_suite(unit, "except tests", NULL, NULL, NULL);
-    zt_unit_register_test(suite, "basic", basic_tests);
+                                     suite = zt_unit_register_suite(unit, "except tests", NULL, NULL, NULL);
+                                     zt_unit_register_test(suite, "basic", basic_tests);
 
-    return( 0) ;
-}
+                                     return (0);
+                                 }
