@@ -69,7 +69,7 @@ static zt_log_vtbl_ty vtbl = {
 zt_log_ty *
 zt_log_syslog(void)
 {
-    return (zt_log_syslog2(ZT_LOG_WITH_PID, LOG_USER));
+    return zt_log_syslog2(ZT_LOG_WITH_PID, LOG_USER);
 }
 
 zt_log_ty *
@@ -83,6 +83,6 @@ zt_log_syslog2(int opt, int facility)
     }
 
     openlog(name ? name : "Set name with progname call", sysopts, facility);
-    return (zt_log_new(&vtbl, 0));
+    return zt_log_new(&vtbl, 0);
 }
 

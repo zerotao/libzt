@@ -61,7 +61,7 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
     result->opts = opts;
     result->level = zt_log_max;
 
-    return (result);
+    return result;
 }
 
 char*
@@ -140,5 +140,5 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         XFREE(nbuff);
     }
     strcat(buff, "\n");
-    return (buff);
+    return buff;
 } /* zt_log_gen_fmt */

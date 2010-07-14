@@ -99,7 +99,7 @@ int zt_fmt_format(zt_fmt_put_f put, void *cl,
     tlen = zt_fmt_vformat(put, cl, fmt, ap);
     va_end(ap);
 
-    return (tlen);
+    return tlen;
 }
 
 int zt_fmt_printf(const char *fmt, ...)
@@ -111,7 +111,7 @@ int zt_fmt_printf(const char *fmt, ...)
     tlen = zt_fmt_vformat(zt_fmt_outc, stdout, fmt, ap);
     va_end(ap);
 
-    return (tlen);
+    return tlen;
 }
 
 int zt_fmt_fprintf(FILE *stream, const char *fmt, ...)
@@ -123,7 +123,7 @@ int zt_fmt_fprintf(FILE *stream, const char *fmt, ...)
     tlen = zt_fmt_vformat(zt_fmt_outc, stream, fmt, ap);
     va_end(ap);
 
-    return (tlen);
+    return tlen;
 }
 
 
@@ -136,7 +136,7 @@ int zt_fmt_sprintf(char *buf, int size, const char *fmt, ...)
     tlen = zt_fmt_vsprintf(buf, size, fmt, ap);
     va_end(ap);
 
-    return (tlen);
+    return tlen;
 }
 
 int zt_fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
@@ -152,7 +152,7 @@ int zt_fmt_vsprintf(char *buf, int size, const char *fmt, va_list ap)
 
     zt_fmt_vformat(zt_fmt_insert, &cl, fmt, ap);
     zt_fmt_insert(0, &cl);
-    return (cl.bp - cl.buf - 1);
+    return cl.bp - cl.buf - 1;
 }
 
 char * zt_fmt_strprintf(const char *fmt, ...)
@@ -166,7 +166,7 @@ char * zt_fmt_strprintf(const char *fmt, ...)
     str = zt_fmt_vstrprintf(fmt, ap);
 
     va_end(ap);
-    return (str);
+    return str;
 }
 
 char * zt_fmt_vstrprintf(const char *fmt, va_list ap)
@@ -179,7 +179,7 @@ char * zt_fmt_vstrprintf(const char *fmt, va_list ap)
     zt_fmt_vformat(zt_fmt_append, &cl, fmt, ap);
     zt_fmt_append(0, &cl);
 
-    return (XREALLOC(char, cl.buf, cl.bp - cl.buf));
+    return XREALLOC(char, cl.buf, cl.bp - cl.buf);
 }
 
 
@@ -249,7 +249,7 @@ int zt_fmt_vformat(zt_fmt_put_f put, void *cl,
             tlen += (*cvt[c])(c, ap, put, cl, flags, width, precision);
         }
     }
-    return (tlen);
+    return tlen;
 } /* zt_fmt_vformat */
 
 #define NORMALIZE_WIDTH(width, flags) \
@@ -300,7 +300,7 @@ zt_fmt_puts(const char *str, int len,
 
     EMIT_STR(str, len, cl, tlen);
 
-    return (tlen);
+    return tlen;
 }
 
 int
@@ -373,7 +373,7 @@ zt_fmt_putd(const char *str, int len,
         pad(width - n, ' ', tlen);
     }
 
-    return (tlen);
+    return tlen;
 } /* zt_fmt_putd */
 
 
@@ -386,7 +386,7 @@ zt_fmt_register(int code, zt_fmt_ty newcvt)
     old = cvt[code];
 
     cvt[code] = newcvt;
-    return (old);
+    return old;
 }
 
 
@@ -397,7 +397,7 @@ zt_fmt_outc(int c, void *cl)
 {
     FILE *f = cl;
 
-    return (putc(c, f));
+    return putc(c, f);
 }
 
 static int
@@ -417,7 +417,7 @@ cvt_c(int code, va_list app,
     if (flags['-']) {
         pad(width - 1, ' ', tlen);
     }
-    return (tlen);
+    return tlen;
 }
 
 
@@ -447,8 +447,8 @@ cvt_d(int code, va_list app,
     if (val < 0) {
         *--p = '-';
     }
-    return (zt_fmt_putd(p, (buf + sizeof(buf)) - p, put, cl,
-                        flags, width, precision));
+    return zt_fmt_putd(p, (buf + sizeof(buf)) - p, put, cl,
+                       flags, width, precision);
 }
 
 
@@ -476,8 +476,8 @@ cvt_f(int code, va_list app,
 
     sprintf(buf, fmt, va_arg(app, double));
 
-    return (zt_fmt_putd(buf, strlen(buf), put, cl,
-                        flags, width, precision));
+    return zt_fmt_putd(buf, strlen(buf), put, cl,
+                       flags, width, precision);
 }
 
 static int
@@ -493,8 +493,8 @@ cvt_o(int code, va_list app,
     do {
         *--p = (m & 0x7) + '0';
     } while ((m >>= 3) != 0);
-    return (zt_fmt_putd(p, (buf + sizeof(buf)) - p,
-                        put, cl, flags, width, precision));
+    return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
+                       put, cl, flags, width, precision);
 }
 
 static int
@@ -513,8 +513,8 @@ cvt_p(int code, va_list app,
         *--p = "0123456789abcdef"[m & 0xf];
     } while ((m >>= 4) != 0);
 
-    return (zt_fmt_putd(p, (buf + sizeof(buf)) - p,
-                        put, cl, flags, width, precision));
+    return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
+                       put, cl, flags, width, precision);
 }
 
 
@@ -541,7 +541,7 @@ cvt_s(int code, va_list app,
         }
     }
 
-    return (zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision));
+    return zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
 static int
@@ -558,8 +558,8 @@ cvt_u(int code, va_list app,
         *--p = m % 10 + '0';
     } while ((m /= 10) > 0);
 
-    return (zt_fmt_putd(p, (buf + sizeof(buf)) - p,
-                        put, cl, flags, width, precision));
+    return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
+                       put, cl, flags, width, precision);
 }
 
 static int
@@ -576,8 +576,8 @@ cvt_x(int code, va_list app,
         *--p = "0123456789abcdef"[m & 0xf];
     } while ((m >>= 4) != 0);
 
-    return (zt_fmt_putd(p, (buf + sizeof(buf)) - p,
-                        put, cl, flags, width, precision));
+    return zt_fmt_putd(p, (buf + sizeof(buf)) - p,
+                       put, cl, flags, width, precision);
 }
 
 static int
@@ -591,7 +591,7 @@ zt_fmt_insert(int c, void *cl)
 
     *p->bp++ = c;
 
-    return (c);
+    return c;
 }
 
 static int
@@ -606,6 +606,6 @@ zt_fmt_append(int c, void *cl)
     }
 
     *p->bp++ = c;
-    return (c);
+    return c;
 }
 

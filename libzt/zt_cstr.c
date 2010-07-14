@@ -57,7 +57,7 @@
 char *
 zt_cstr_sub(const char *s, int i, int j)
 {
-    char    * new;
+    char * new;
     char * p;
 
     CONVERT(s, i, j);
@@ -70,7 +70,7 @@ zt_cstr_sub(const char *s, int i, int j)
         *p++ = s[i++];
     }
     *p = '\0';
-    return (new);
+    return new;
 }
 
 /*!
@@ -79,9 +79,9 @@ zt_cstr_sub(const char *s, int i, int j)
 char *
 zt_cstr_dup(const char *s, int i, int j, int n)
 {
-    int k;
+    int    k;
 
-    char        * new;
+    char * new;
     char * p;
 
     zt_assert(n >= 0);
@@ -99,7 +99,7 @@ zt_cstr_dup(const char *s, int i, int j, int n)
 
     *p = '\0';
 
-    return (new);
+    return new;
 }
 
 /*!
@@ -109,7 +109,7 @@ char *
 zt_cstr_cat(const char *s1, int i1, int j1,
             const char *s2, int i2, int j2)
 {
-    char    * new;
+    char * new;
     char * p;
 
     CONVERT(s1, i1, j1);
@@ -126,7 +126,7 @@ zt_cstr_cat(const char *s1, int i1, int j1,
     }
 
     *p = '\0';
-    return (new);
+    return new;
 }
 
 /*!
@@ -170,7 +170,7 @@ zt_cstr_catv(const char *s, ...)
     }
 
     *p = '\0';
-    return (new);
+    return new;
 }
 
 /*!
@@ -179,7 +179,7 @@ zt_cstr_catv(const char *s, ...)
 char *
 zt_cstr_reverse(const char *s, int i, int j)
 {
-    char    * new;
+    char * new;
     char * p;
 
     CONVERT(s, i, j);
@@ -191,7 +191,7 @@ zt_cstr_reverse(const char *s, int i, int j)
     }
 
     *p = '\0';
-    return (new);
+    return new;
 }
 
 /*!
@@ -236,7 +236,7 @@ zt_cstr_map(const char *s, int i, int j,
     }
 
     if (s) {
-        char    * new;
+        char * new;
         char * p;
 
         CONVERT(s, i, j);
@@ -245,10 +245,10 @@ zt_cstr_map(const char *s, int i, int j,
             *p++ = map[(unsigned char)s[i++]];
         }
         *p = '\0';
-        return (new);
+        return new;
     }
 
-    return (NULL);
+    return NULL;
 } /* zt_cstr_map */
 
 /*!
@@ -265,7 +265,7 @@ zt_cstr_pos(const char *s, int i)
     i = IDX(i, len);
 
     zt_assert(i >= 0 && i <= len);
-    return (i);
+    return i;
 }
 
 /*!
@@ -275,7 +275,7 @@ int
 zt_cstr_len(const char *s, int i, int j)
 {
     CONVERT(s, i, j);
-    return (IDXLEN(i, j));
+    return IDXLEN(i, j);
 }
 
 /*!
@@ -294,13 +294,13 @@ zt_cstr_cmp(const char *s1, int i1, int j1,
 
     if (j1 - i1 < j2 - i2) {
         int cond = strncmp(s1, s2, IDXLEN(i1, j1));
-        return (cond == 0 ? -1 : cond);
+        return cond == 0 ? -1 : cond;
     } else if (j1 - i1 > j2 - i2) {
         int cond = strncmp(s1, s2, IDXLEN(i2, j2));
-        return (cond == 0 ? +1 : cond);
+        return cond == 0 ? +1 : cond;
     }
 
-    return (strncmp(s1, s2, j1 - i1));
+    return strncmp(s1, s2, j1 - i1);
 }
 
 /*!
@@ -315,11 +315,11 @@ zt_cstr_chr(const char *s, int i, int j, int c)
     CONVERT(s, i, j);
     for (; i <= j; i++) {
         if (s[i] == c) {
-            return (i);
+            return i;
         }
     }
 
-    return (0);
+    return 0;
 }
 /*!
  * locates the last occurrence of c in the string referenced by s[i:j]
@@ -332,11 +332,11 @@ zt_cstr_rchr(const char *s, int i, int j, int c)
     CONVERT(s, i, j);
     for (; j >= i; j--) {
         if (s[j] == c) {
-            return (j);
+            return j;
         }
     }
 
-    return (0);
+    return 0;
 }
 
 /*!
@@ -352,11 +352,11 @@ zt_cstr_upto(const char *s, int i, int j, const char *set)
 
     for (; i <= j; i++) {
         if (strchr(set, s[i])) {
-            return (i);
+            return i;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /*!
@@ -371,11 +371,11 @@ zt_cstr_rupto(const char *s, int i, int j, const char *set)
     CONVERT(s, i, j);
     for (; j >= i; j--) {
         if (strchr(set, s[j])) {
-            return (j);
+            return j;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /*!
@@ -393,22 +393,22 @@ zt_cstr_find(const char *s, int i, int j, const char *str)
     len = strlen(str);
 
     if (len == 0) {
-        return (-1);
+        return -1;
     } else if (len == 1) {
         for (; i <= j; i++) {
             if (s[i] == *str) {
-                return (i);
+                return i;
             }
         }
     }
 
     for (; i + len <= (j + 1); i++) {
         if (strncmp(&s[i], str, len) == 0) {
-            return (i);
+            return i;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /*!
@@ -426,22 +426,22 @@ zt_cstr_rfind(const char *s, int i, int j, const char *str)
     len = strlen(str);
 
     if (len == 0) {
-        return (-1);
+        return -1;
     } else if (len == 1) {
         for (; j >= i; j--) {
             if (s[j] == *str) {
-                return (j);
+                return j;
             }
         }
     }
 
     for (offt = j - len + 1; offt >= i; offt--) {
         if (strncmp(&s[offt], str, len) == 0) {
-            return (offt);
+            return offt;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /*!
@@ -462,11 +462,11 @@ zt_cstr_any(const char *s, int i, int j, const char *set)
 
     for (orig = i; i <= j; i++) {
         if (s[i] != '\0' && strchr(set, s[i])) {
-            return (i - orig);
+            return i - orig;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /*!
@@ -487,11 +487,11 @@ zt_cstr_rany(const char *s, int i, int j, const char *set)
 
     for (orig = i; j >= i; j--) {
         if (s[j] != '\0' && strchr(set, s[j])) {
-            return (j - orig);
+            return j - orig;
         }
     }
 
-    return (-1);
+    return -1;
 }
 
 /* strip the \n from the end of a string */
@@ -506,7 +506,7 @@ zt_cstr_chomp(char *str)
             str[i - 1] = '\0';
         }
     }
-    return (str);
+    return str;
 }
 
 /* Strip white space characters from the front and back of the string */
@@ -534,7 +534,7 @@ zt_cstr_strip(char *str)
             str[len] = '\0';
         }
     }
-    return (str);
+    return str;
 }
 
 size_t
@@ -547,10 +547,10 @@ zt_cstr_rspn(const char *s, const char *accept)
     zt_assert(accept);
     for (i = len - 1; i > 0; i--) { /* -1 to skip \0 */
         if (strspn(&s[i], accept) == 0) {
-            return ((len - i) - 1);                        /* -1 for the first non matching char */
+            return (len - i) - 1;                          /* -1 for the first non matching char */
         }
     }
-    return (len);
+    return len;
 }
 
 size_t
@@ -564,10 +564,10 @@ zt_cstr_rcspn(const char *s, const char *reject)
 
     for (i = len - 1; i > 0; i--) { /* -1 to skip \0 */
         if (strcspn(&s[i], reject) == 0) {
-            return (i);                                    /* -1 for the first non matching char */
+            return i;                                      /* -1 for the first non matching char */
         }
     }
-    return (len);
+    return len;
 }
 
 char*
@@ -597,7 +597,7 @@ zt_cstr_basename(char *npath, int len, const char *path, const char *suffix)
     }
 
     zt_cstr_copy(path, start, end, npath, len);
-    return (npath);
+    return npath;
 }
 
 
@@ -618,7 +618,7 @@ zt_cstr_dirname(char *npath, int len, const char *path)
     }
 
     zt_cstr_copy(path, 0, end, npath, len);
-    return (npath);
+    return npath;
 }
 
 
@@ -646,7 +646,7 @@ zt_cstr_path_append(const char *path1, const char *path2)
     rpath = zt_cstr_catv(path1, 0, y,
                          PATH_SEPERATOR, 0, -1,
                          path2, x, -1, NULL);
-    return (rpath);
+    return rpath;
 }
 
 /*!
@@ -666,7 +666,7 @@ zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen)
             dptr[1] = HEX_DIGITS[(c & 0xF)];
         }
     }
-    return (n * 2);
+    return n * 2;
 }
 
 static int8_t
@@ -681,9 +681,9 @@ hex_to_char(char hex)
     } else if (c >= 'a' && c <= 'f') {
         c = c - 87;  /* 97 - 10 */
     } else {
-        return (-1);
+        return -1;
     }
-    return (c);
+    return c;
 }
 
 /*
@@ -720,7 +720,7 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
 
         if ((c2 = hex_to_char(*hex++)) == -1) {
             zt_log_printf(zt_log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
-            return (-1);
+            return -1;
         } else {
             n++;
         }
@@ -732,7 +732,7 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
         }
         y++;
     }
-    return (y);
+    return y;
 }
 
 int
@@ -746,5 +746,5 @@ zt_cstr_copy(const char * from, int i, int j, char * to, int len)
 
     min = MIN(flen, len);
     memcpy(to, &from[i], min);
-    return (min);
+    return min;
 }

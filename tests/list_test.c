@@ -72,5 +72,5 @@ register_list_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "list tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }

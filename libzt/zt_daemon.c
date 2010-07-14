@@ -91,5 +91,5 @@ zt_daemonize( char *root, mode_t mask, int options)
     }
 
     /* At this point we are in the second child properly forked and closed off */
-    return (0);
+    return 0;
 } /* zt_daemonize */

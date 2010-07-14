@@ -36,5 +36,5 @@ zt_progname(char *name, int opts)
             memcpy(_progname, name, MIN(PATH_MAX, strlen(name)));
         }
     }
-    return (_progname);
+    return _progname;
 }

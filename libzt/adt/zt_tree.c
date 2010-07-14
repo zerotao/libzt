@@ -306,7 +306,7 @@ colour:
     if (colour == zt_rbt_black) {
         zt_rbt_remove_colour(head, parent, child);
     }
-    return (old);
+    return old;
 } /* zt_rbt_remove */
 
 /* Inserts a node into the RB tree */
@@ -326,7 +326,7 @@ zt_rbt_insert(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_
         } else if (comp > 0) {
             tmp = zt_rbt_right(tmp);
         } else {
-            return (tmp);
+            return tmp;
         }
     }
     zt_rbt_set(elm, parent);
@@ -341,7 +341,7 @@ zt_rbt_insert(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_
     }
 
     zt_rbt_insert_colour(head, elm);
-    return (NULL);
+    return NULL;
 }
 
 /* Finds the node with the same key as elm */
@@ -359,17 +359,17 @@ zt_rbt_find(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_no
         } else if (comp > 0) {
             tmp = zt_rbt_right(tmp);
         } else {
-            return (tmp);
+            return tmp;
         }
     }
-    return (NULL);
+    return NULL;
 }
 
 zt_rbt_node *
 zt_rbt_next(zt_rbt_node *elm)
 {
     if (!elm) {
-        return (NULL);
+        return NULL;
     }
 
     if (zt_rbt_right(elm)) {
@@ -389,7 +389,7 @@ zt_rbt_next(zt_rbt_node *elm)
             elm = zt_rbt_parent(elm);
         }
     }
-    return (elm);
+    return elm;
 }
 
 zt_rbt_node *
@@ -406,5 +406,5 @@ zt_rbt_minmax(zt_rbt **head, int val)
             tmp = zt_rbt_right(tmp);
         }
     }
-    return (parent);
+    return parent;
 }

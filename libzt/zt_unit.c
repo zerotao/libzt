@@ -38,7 +38,7 @@ zt_unit_init(void)
     zt_elist_reset(&unit->suites);
     unit->failures = 0;
     unit->successes = 0;
-    return (unit);
+    return unit;
 }
 
 void
@@ -82,7 +82,7 @@ zt_unit_register_suite(struct zt_unit     * unit,
 
     zt_elist_reset(&suite->tests);
     zt_elist_add_tail(&unit->suites, &suite->suite);
-    return (suite);
+    return suite;
 }
 
 void
@@ -129,7 +129,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
     test->assertions = 0;
 
     zt_elist_add_tail(&suite->tests, &test->test);
-    return (test);
+    return test;
 }
 
 void
@@ -164,7 +164,7 @@ zt_unit_run(struct zt_unit    * unit)
             result = -1;
         }
     }
-    return (result);
+    return result;
 }
 
 
@@ -204,7 +204,7 @@ zt_unit_run_suite(struct zt_unit    * unit,
             }
         }
     }
-    return (0);
+    return 0;
 }
 
 
@@ -274,7 +274,7 @@ zt_unit_run_test(struct zt_unit    * unit,
     yaml_value("assertions", 6, "%ld", test->assertions);
     yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 
-    return (test->success);
+    return test->success;
 }
 
 #include <string.h>
@@ -288,7 +288,7 @@ char **str_split(char *str, char * delim, int *elts)
     size_t memsize;
 
     if (str == NULL || delim == NULL) {
-        return (NULL);
+        return NULL;
     }
 
     argc = 1;
@@ -324,7 +324,7 @@ char **str_split(char *str, char * delim, int *elts)
         }
     }
 
-    return (argv);
+    return argv;
 } /* str_split */
 
 void str_split_free(char ***argv)
@@ -396,7 +396,7 @@ zt_unit_run_by_name(struct zt_unit    * unit,
 
 done:
     str_split_free(&targetv);
-    return (result);
+    return result;
 } /* zt_unit_run_by_name */
 
 void
@@ -455,7 +455,7 @@ zt_unit_main(struct zt_unit    * unit,
             }
         } else {
             if ((result = zt_unit_run(unit)) < 0) {
-                return (result);
+                return result;
             }
         }
     }
@@ -465,6 +465,6 @@ zt_unit_main(struct zt_unit    * unit,
             result = -1;
         }
     }
-    return (result);
+    return result;
 } /* zt_unit_main */
 

@@ -9,6 +9,14 @@
 /*
  * Description:
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include <libzt/zt.h>
 #include <libzt/zt_unit.h>
 #include <libzt/zt_sha1.h>
@@ -60,5 +68,5 @@ register_sha1_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "sha1 tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }

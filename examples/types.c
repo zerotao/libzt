@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include <libzt/zt.h>
 #include "test.h"
 
@@ -30,5 +38,5 @@ main(int argc, char *argv[])
     printf("ll64 0x%llX\n", ll64);
 
 
-    return (0);
+    return 0;
 }

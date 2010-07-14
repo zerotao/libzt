@@ -49,7 +49,7 @@ zt_cfg_ini(char *file, int opts )
         cfg = NULL;
     }
 
-    return (cfg);
+    return cfg;
 }
 
 int parse_cfg(zt_cfg_ty* cfg)
@@ -58,11 +58,11 @@ int parse_cfg(zt_cfg_ty* cfg)
     FILE * file;
 
     if ((file = fopen(cfg->filename, "r")) == NULL) {
-        return (-1);
+        return -1;
     }
     ret = parse_file(cfg, file);
     fclose(file);
-    return (ret);
+    return ret;
 }
 
 
@@ -87,15 +87,15 @@ static int parse_block(FILE* file, struct cfg_bvv_ty* bvv)
 
     if (i >= BUFMAX) {
         /* errno = EOVERFLOW; */
-        return (-1);
+        return -1;
     }
 
     /* Otherwize we have a block name in buff */
     bvv->block = strdup(buff);
     if (bvv->block == NULL) {
-        return (-1);
+        return -1;
     }
-    return (0);
+    return 0;
 }
 
 static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
@@ -112,12 +112,12 @@ static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
 
     memset(buff, '\0', BUFMAX);
     if (fgets(buff, BUFMAX, file) == NULL) {
-        return (0);
+        return 0;
     }
     val = strstr(buff, "=");
     if (!val) {
         /* errno = EPROTO; */
-        return (0);
+        return 0;
     }
     len = strlen(buff) - 1;
     if (buff[len] == '\n') {
@@ -127,7 +127,7 @@ static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
         ungetc(c, file);
         if (c != EOF) {
             /* errno = EPROTO; */    /* Nope no EOF so some sort of protocol error */
-            return (0);
+            return 0;
         }
     }
 
@@ -157,11 +157,11 @@ static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
 
     if (val >= buff + len) {
         /* errno = EPROTO; */
-        return (0);
+        return 0;
     }
     bvv->variable = strdup(var);
     bvv->value = strdup(val);
-    return (1);
+    return 1;
 } /* parse_line */
 
 static int parse_file(zt_cfg_ty* cfg, FILE* file)
@@ -206,7 +206,7 @@ static int parse_file(zt_cfg_ty* cfg, FILE* file)
                 ungetc(c, file);
                 if (!(parse_line(file, &bvv))) {
                     zt_log_printf(zt_log_err, "Syntax error in config file at line: %d\n", line);
-                    return (-1);
+                    return -1;
                 }
                 cfg_insert_bvv(cfg, &bvv);
                 free(bvv.variable);
@@ -218,5 +218,5 @@ static int parse_file(zt_cfg_ty* cfg, FILE* file)
     }
     free(bvv.block);
     cfg->numentries = numents;
-    return (0);
+    return 0;
 } /* parse_file */

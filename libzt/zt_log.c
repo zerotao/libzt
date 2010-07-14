@@ -11,7 +11,11 @@
  *
  */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
+#endif
+
+#ifdef HAVE_STRING_H
+# include <string.h>
 #endif
 
 #include "zt_log.h"
@@ -35,7 +39,7 @@ zt_log_logger(zt_log_ty *log)
         log_log_ptr = log;
     }
 
-    return (log_log_ptr);
+    return log_log_ptr;
 }
 
 zt_log_ty *
@@ -56,7 +60,7 @@ zt_log_debug_logger(zt_log_ty *log)
         log_debug_ptr = log;
     }
 
-    return (log_debug_ptr);
+    return log_debug_ptr;
 }
 
 zt_log_level
@@ -70,7 +74,7 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 
     olevel = log->level;
     log->level = level;
-    return (olevel);
+    return olevel;
 }
 
 zt_log_level
@@ -79,7 +83,7 @@ zt_log_get_level(zt_log_ty *log)
     if (!log) {
         log = zt_log_logger(NULL);
     }
-    return (log->level);
+    return log->level;
 }
 
 unsigned int
@@ -92,7 +96,7 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
     }
     oopts = log->opts;
     log->opts = opts;
-    return (oopts);
+    return oopts;
 }
 
 unsigned int
@@ -101,7 +105,7 @@ zt_log_get_opts(zt_log_ty *log)
     if (!log) {
         log = zt_log_logger(NULL);
     }
-    return (log->opts);
+    return log->opts;
 }
 
 void

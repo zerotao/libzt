@@ -31,11 +31,11 @@ int int_compare( zt_rbt_node *x, zt_rbt_node  *x2)
     struct int_set * n2 = zt_rbt_data(x2, struct int_set, node);
 
     if (n1->i < n2->i) {
-        return (-1);
+        return -1;
     } else if (n1->i == n2->i) {
-        return (0);
+        return 0;
     } else {
-        return (1);
+        return 1;
     }
 }
 
@@ -135,5 +135,5 @@ register_tree_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "tree tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }

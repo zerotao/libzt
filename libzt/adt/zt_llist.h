@@ -214,4 +214,4 @@ zt_llist_sort(zt_llist lst, int (*cmp)())
 
 
 END_C_DECLS
-#endif _ZT_LLIST_H_
+#endif /* _ZT_LLIST_H_ */

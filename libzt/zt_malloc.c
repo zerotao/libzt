@@ -23,7 +23,7 @@ xcalloc_p(size_t num, size_t size)
     if (!(mem = (void_p *)calloc((num), (size)))) {
         TRY_THROW(zt_exception.memory.no_mem);
     }
-    return (mem);
+    return mem;
 }
 
 void_p
@@ -34,7 +34,7 @@ xmalloc_p(size_t num)
     if (!(mem = (void_p *)malloc(num))) {
         TRY_THROW(zt_exception.memory.no_mem);
     }
-    return (mem);
+    return mem;
 }
 
 void_p
@@ -45,7 +45,7 @@ xrealloc_p(void_p p, size_t num)
     if (!(mem = (void_p *)realloc(p, num))) {
         TRY_THROW(zt_exception.memory.no_mem);
     }
-    return (mem);
+    return mem;
 }
 
 void
@@ -69,6 +69,6 @@ xstrdup(const char *string)
             TRY_THROW(zt_exception.memory.no_mem);
         }
     }
-    return (new_string);
+    return new_string;
 }
 

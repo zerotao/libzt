@@ -9,6 +9,14 @@
 /*
  * Description:
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include <math.h>
 
 #include <libzt/zt.h>
@@ -150,5 +158,5 @@ register_uuid_suite(struct zt_unit *unit)
     zt_unit_register_test(suite, "uuid4", uuid4_tests);
     zt_unit_register_test(suite, "uuid5", uuid5_tests);
     zt_unit_register_test(suite, "uuid_generic", uuid_generic_tests);
-    return (0);
+    return 0;
 }

@@ -137,12 +137,12 @@ int
 zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
 #define OPT_MAX 512
-    int   i = 0;
-    char  optstring[OPT_MAX];
-    int   opt_index = 0;
-    int   max_opts = 0;
-    int   nopt_chars = -2;
-    int   result = 0;
+    int  i = 0;
+    char optstring[OPT_MAX];
+    int  opt_index = 0;
+    int  max_opts = 0;
+    int  nopt_chars = -2;
+    int  result = 0;
 
 #ifdef HAVE_GETOPT_LONG
     struct option *longopts = NULL;
@@ -150,7 +150,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
     /* opterr = 0; */ /* turn off the default error message */
     if (!opts) {
-        return (-1);
+        return -1;
     }
     memset(optstring, '\0', OPT_MAX);
 
@@ -354,7 +354,7 @@ RETURN:
 #ifdef HAVE_GETOPT_LONG
     XFREE(longopts);
 #endif
-    return (result);
+    return result;
 } /* zt_opts_process */
 
 /*
@@ -362,5 +362,5 @@ RETURN:
  */
 static INLINE int isoptchar(int x)
 {
-    return ((x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9'));
+    return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
 }

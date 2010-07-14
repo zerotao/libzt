@@ -4,6 +4,14 @@
  * See file COPYING for details.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 /* SHA-1 origional by Steve Reid <steve@edmweb.com> */
 #include "zt_sha1.h"
 #include "zt_cstr.h"
@@ -168,12 +176,12 @@ char*
 zt_sha1_tostr(uint8_t digest[20], char sha1[41])
 {
     zt_binary_to_hex(digest, 20, sha1, 41);
-    return (sha1);
+    return sha1;
 }
 
 uint8_t *
 zt_str_tosha1(char sha1[41], uint8_t digest[20])
 {
     zt_hex_to_binary(sha1, 40, digest, 20);
-    return (digest);
+    return digest;
 }

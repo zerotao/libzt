@@ -522,5 +522,5 @@ register_int_suite(struct zt_unit *unit)
     zt_unit_register_test(suite, "unsigned multiplication", test_case_unsigned_mul);
     zt_unit_register_test(suite, "signed division", test_case_signed_div);
     zt_unit_register_test(suite, "unsigned division", test_case_unsigned_div);
-    return (0);
+    return 0;
 }

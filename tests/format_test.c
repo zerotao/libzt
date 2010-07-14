@@ -13,7 +13,7 @@ cvt_S(int code, va_list app,
 
     zt_assert(str);
 
-    return (zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision));
+    return zt_fmt_puts(str, strlen(str), put, cl, flags, width, precision);
 }
 
 
@@ -74,6 +74,6 @@ register_format_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "format", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }
 

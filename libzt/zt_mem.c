@@ -95,12 +95,12 @@ zt_mem_heap_init(char *name, size_t size)
     zt_mem_heap * heap;
 
     if ((heap = GLOBAL_zmt.alloc(sizeof(zt_mem_heap) + size)) == NULL) {
-        return (NULL);
+        return NULL;
     }
 
     heap->name = zt_mem_strdup(name ? name : "*unknown*");
     heap->size = size;
-    return (heap);
+    return heap;
 }
 
 void
@@ -121,16 +121,16 @@ zt_mem_heap_destroy(zt_mem_heap **heap)
 void *
 zt_mem_heap_get_data(zt_mem_heap *heap)
 {
-    return ((void *)heap->heap);
+    return (void *)heap->heap;
 }
 
 char *
 zt_mem_heap_get_name(zt_mem_heap *heap)
 {
     if (heap) {
-        return (heap->name);
+        return heap->name;
     }
-    return (0);
+    return 0;
 }
 
 static int
@@ -167,7 +167,7 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
         *npages = 1;
     }
 
-    return (0);
+    return 0;
 }
 
 zt_mem_pool*
@@ -200,7 +200,7 @@ zt_mem_pool_init(char *name, long elts,
     }
 
     if ((pool = GLOBAL_zmt.alloc(sizeof(zt_mem_pool))) == 0) {
-        return (NULL);
+        return NULL;
     }
 
     zt_elist_reset(&pool->pool_list);
@@ -239,7 +239,7 @@ zt_mem_pool_init(char *name, long elts,
     }
 
     zt_elist_add_tail(&pools, &pool->pool_list);
-    return (pool);
+    return pool;
 } /* zt_mem_pool_init */
 
 void *
@@ -249,7 +249,7 @@ zt_mem_pool_alloc(zt_mem_pool *pool)
     zt_mem_elt * elt;
 
     if (pool == 0) {
-        return (0);
+        return 0;
     }
 
     /* if the free elt list is empty get a new page */
@@ -273,7 +273,7 @@ zt_mem_pool_alloc(zt_mem_pool *pool)
         --pool->nfree_pages;
     }
 
-    return ((void *)&elt->data);
+    return (void *)&elt->data;
 }
 
 void
@@ -331,7 +331,7 @@ zt_mem_pool_release_free_pages(zt_mem_pool *pool)
         }
     }
 
-    return (0);
+    return 0;
 }
 
 
@@ -347,7 +347,7 @@ zt_mem_pool_destroy(zt_mem_pool **pool)
 
         /* sanity checking */
         if (page->num_free_elts < (*pool)->elts_per_page) {
-            return (-1);
+            return -1;
         } else {
             zt_mem_page_destroy(page);
         }
@@ -361,14 +361,14 @@ zt_mem_pool_destroy(zt_mem_pool **pool)
     GLOBAL_zmt.dealloc((*pool));
     *pool = NULL;
 
-    return (0);
+    return 0;
 }
 
 int
 zt_mem_pool_get_stats(zt_mem_pool *pool, zt_mem_pool_stats *stats)
 {
     if (!pool || !stats) {
-        return (ZT_FAIL);
+        return ZT_FAIL;
     }
 
     stats->requested_elts = pool->rcache;
@@ -383,7 +383,7 @@ zt_mem_pool_get_stats(zt_mem_pool *pool, zt_mem_pool_stats *stats)
     stats->page_frees = pool->page_frees;
     stats->flags = pool->flags;
 
-    return (ZT_PASS);
+    return ZT_PASS;
 }
 
 void
@@ -496,7 +496,7 @@ zt_mem_pool_get(char *name)
     zt_elist * tmp;
 
     if (!name) {
-        return (0);
+        return 0;
     }
 
     nlen = strlen(name);
@@ -509,11 +509,11 @@ zt_mem_pool_get(char *name)
         olen = strlen(pool->name);
 
         if (olen == nlen && (strncmp(name, pool->name, nlen) == 0)) {
-            return (pool);
+            return pool;
         }
     }
 
-    return (0);
+    return 0;
 }
 
 zt_mem_pool_group *
@@ -523,11 +523,11 @@ zt_mem_pool_group_init(zt_mem_pool_desc *group, int len)
     int                 i;
 
     if ((ngroup = XCALLOC(zt_mem_pool_group, 1)) == NULL) {
-        return (0);
+        return 0;
     }
 
     if ((ngroup->pools = XCALLOC(zt_mem_pool *, len)) == NULL) {
-        return (0);
+        return 0;
     }
     zt_elist_reset(&ngroup->group_list);
     ngroup->npools = len;
@@ -543,11 +543,11 @@ zt_mem_pool_group_init(zt_mem_pool_desc *group, int len)
             while (--i) {
                 zt_mem_pool_destroy(&ngroup->pools[i]);
             }
-            return (0);
+            return 0;
         }
     }
 
-    return (ngroup);
+    return ngroup;
 }
 
 void *
@@ -560,12 +560,12 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 
     for (i = 0; i < len; i++) {
         if (size <= group->pools[i]->elt_size) {
-            return (zt_mem_pool_alloc(group->pools[i]));
+            return zt_mem_pool_alloc(group->pools[i]);
         }
     }
 
     TRY_THROW(zt_exception.memory.pool.group.does_not_exist);
-    return (NULL);                                         /* never reached if exceptions are enabled */
+    return NULL;                                           /* never reached if exceptions are enabled */
 }
 
 int
@@ -583,7 +583,7 @@ zt_mem_pool_group_destroy(zt_mem_pool_group * group)
         }
     }
 
-    return (ret);
+    return ret;
 }
 
 zt_mem_set *
@@ -592,7 +592,7 @@ zt_mem_set_init(char *name)
     zt_mem_set * set;
 
     if ((set = GLOBAL_zmt.alloc(sizeof(zt_mem_set))) == 0) {
-        return (NULL);
+        return NULL;
     }
 
     zt_elist_reset(&set->set_list);
@@ -600,7 +600,7 @@ zt_mem_set_init(char *name)
 
     set->name = zt_mem_strdup(name ? name : "*unknown*");
 
-    return (set);
+    return set;
 }
 
 int
@@ -612,7 +612,7 @@ zt_mem_set_add(zt_mem_set *set, void *d)
      * assign d to the data element
      * return true
      */
-    return (-1);
+    return -1;
 }
 
 int
@@ -622,7 +622,7 @@ zt_mem_set_release(zt_mem_set *set)
      * release the elt and release the wrapper
      */
 
-    return (0);
+    return 0;
 }
 
 
@@ -638,7 +638,7 @@ zt_mem_strdup(char *str)
         memcpy(tmp, str, len);
         tmp[len] = '\0';
     }
-    return (tmp);
+    return tmp;
 }
 
 static int
@@ -650,7 +650,7 @@ zt_mem_page_destroy(zt_mem_page *page)
 
     if (page->num_free_elts < page->parent_pool->elts_per_page) {
         printf("error: %s called when elements are still in use!\n", __FUNCTION__);
-        return (1);
+        return 1;
     }
 
     page->parent_pool->npages--;
@@ -670,7 +670,7 @@ zt_mem_page_destroy(zt_mem_page *page)
         zt_elist_remove(&page->page_list);
     }
     GLOBAL_zmt.dealloc(page);
-    return (0);
+    return 0;
 }
 
 static zt_mem_page *
@@ -687,7 +687,7 @@ zt_mem_page_alloc(zt_mem_pool *pool)
     /* sizeof(zt_mem_page) + (pool->elts_per_page * size)) */
 
     if ((page = GLOBAL_zmt.alloc(pool->page_size)) == 0) {
-        return (0);
+        return 0;
     }
 
     page->num_free_elts = 0;
@@ -713,7 +713,7 @@ zt_mem_page_alloc(zt_mem_pool *pool)
     }
     pool->npages++;
     pool->nfree_pages++;
-    return (page);
+    return page;
 }
 
 static void
@@ -749,7 +749,7 @@ static int
 zt_default_release_test(int req_elts, int free_elts, int used_elts, int flags, void *cb_data)
 {
     if (flags & POOL_NEVER_FREE) {
-        return (0);
+        return 0;
     }
-    return (1);
+    return 1;
 }

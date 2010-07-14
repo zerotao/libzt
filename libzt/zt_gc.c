@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include "zt_macros.h"
 #include "zt_assert.h"
 
@@ -11,7 +19,7 @@
 
 static int one_is_white(zt_gc_collectable_t *mark)
 {
-    return (ZT_BIT_ISSET(mark->colour, colour));           /* mark->colour == 1 ? 1 : 0; */
+    return ZT_BIT_ISSET(mark->colour, colour);             /* mark->colour == 1 ? 1 : 0; */
 }
 static void one_clear_white(zt_gc_collectable_t *mark)
 {
@@ -24,7 +32,7 @@ static void one_set_white(zt_gc_collectable_t *mark)
 
 static int zero_is_white(zt_gc_collectable_t *mark)
 {
-    return (ZT_BIT_ISUNSET(mark->colour, colour));         /* mark->colour == 0 ? 1 : 0; */
+    return ZT_BIT_ISUNSET(mark->colour, colour);           /* mark->colour == 0 ? 1 : 0; */
 }
 static void zero_clear_white(zt_gc_collectable_t *mark)
 {
@@ -37,7 +45,7 @@ static void zero_set_white(zt_gc_collectable_t *mark)
 
 static int is_protected(zt_gc_collectable_t *mark)
 {
-    return (ZT_BIT_ISSET(mark->colour, protected));
+    return ZT_BIT_ISSET(mark->colour, protected);
 }
 
 void
@@ -444,9 +452,9 @@ zt_gc_mark_value(zt_gc_t *gc, void *value)
         gc->clear_white(mark);
         zt_elist_remove(&mark->list);
         zt_elist_add_tail(gc->grey, &mark->list);
-        return (TRUE);
+        return TRUE;
     }
-    return (FALSE);
+    return FALSE;
 }
 
 void

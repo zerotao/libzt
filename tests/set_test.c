@@ -24,7 +24,7 @@ static int union_test(void *data, void *param)
 
     values0_19_fill[result] = result;
 
-    return (0);
+    return 0;
 }
 
 static int intersection_test(void *data, void *param)
@@ -38,7 +38,7 @@ static int intersection_test(void *data, void *param)
 
     values0_19_fill[result] = result;
 
-    return (0);
+    return 0;
 }
 
 static int difference_test(void *data, void *param)
@@ -52,7 +52,7 @@ static int difference_test(void *data, void *param)
 
     values0_19_fill[result] = result;
 
-    return (0);
+    return 0;
 }
 
 static void
@@ -110,5 +110,5 @@ register_set_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "set tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }

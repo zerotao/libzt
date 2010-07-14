@@ -28,7 +28,7 @@ zt_add_time(struct timeval *at, struct timeval *t1, struct timeval *t2)
         at->tv_usec -= 1000000;
     }
 
-    return (at);
+    return at;
 }
 
 
@@ -43,7 +43,7 @@ zt_sub_time(struct timeval *st, struct timeval *t1, struct timeval *t2)
         st->tv_usec += 1000000;
     }
 
-    return (st);
+    return st;
 }
 
 
@@ -57,7 +57,7 @@ zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2)
         dt->tv_usec += 1000000.0;
         dt->tv_sec -= 1.0;
     }
-    return (dt);
+    return dt;
 }
 
 /*    <0, 0, >0
@@ -70,9 +70,9 @@ zt_cmp_time(struct timeval *t1,
     long t = t1->tv_sec - t2->tv_sec;
 
     if (t) {
-        return (t);
+        return t;
     }
-    return (t1->tv_usec - t2->tv_usec);
+    return t1->tv_usec - t2->tv_usec;
 }
 
 
@@ -136,7 +136,7 @@ zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
     zt_sub_time(&tv->usr_time, &tv->usr_time, &_calibration_time.usr_time);
     zt_sub_time(&tv->sys_time, &tv->sys_time, &_calibration_time.sys_time);
 
-    return (ret);
+    return ret;
 }
 
 void

@@ -1,3 +1,12 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
+
 #include "zt_assert.h"
 #include "zt_log.h"
 #include "zt_sha1.h"
@@ -54,7 +63,7 @@ zt_uuid4(zt_uuid_t * uuid)
     /* clear the clock bits */
     uuid->data.bytes[UUID_CLOCK_SEQ_OFFT] = (uuid->data.bytes[UUID_CLOCK_SEQ_OFFT] & 0x3F) | 0x80;
 
-    return (0);
+    return 0;
 }
 
 int
@@ -79,7 +88,7 @@ zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid)
             break;
         default:
             zt_log_printf(zt_log_err, "unknown namespace %d", type);
-            return (-1);
+            return -1;
     }
     zt_sha1_update(&ctx, (uint8_t *)value, vlen);
     zt_sha1_finalize(&ctx, digest);
@@ -90,7 +99,7 @@ zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid)
     /* clear the clock bits */
     uuid->data.bytes[UUID_CLOCK_SEQ_OFFT] = (uuid->data.bytes[UUID_CLOCK_SEQ_OFFT] & 0x3F) | 0x80;
 
-    return (0);
+    return 0;
 }
 
 
@@ -121,14 +130,14 @@ int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags)
                      &uuids_hex[20]);
     } else {
         zt_log_printf(zt_log_err, "unknown uuid format");
-        return (-1);
+        return -1;
     }
     if (i == -1) {
         free(result);
         result = NULL;
     }
     *uuids = result;
-    return (i);
+    return i;
 }
 
 int zt_uuid_fromstr(char *uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags)
@@ -141,7 +150,7 @@ int zt_uuid_fromstr(char *uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags)
 
     if (flags == zt_uuid_std_fmt) {
         if (strlen(uuidstr) != UUID_STR_LEN) {
-            return (-1);
+            return -1;
         }
         sscanf(uuidstr, "%8s-%4s-%4s-%4s-%12s",
                uuid_hex,
@@ -151,26 +160,66 @@ int zt_uuid_fromstr(char *uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags)
                &uuid_hex[20]);
     } else if (flags == zt_uuid_short_fmt) {
         if (strlen(uuidstr) != UUID_SHORT_STR_LEN) {
-            return (-1);
+            return -1;
         }
-        /* sscanf(uuidstr, "%8s%4s%4s%4s%12s",  */
-        /* uuid_hex, */
-        /* &uuid_hex[8], */
-        /* &uuid_hex[12], */
-        /* &uuid_hex[16], */
-        /* &uuid_hex[20]); */
         memcpy(uuid_hex, uuidstr, UUID_SHORT_STR_LEN);
     } else {
         zt_log_printf(zt_log_err, "unknown uuid format");
-        return (-1);
+        return -1;
     }
 
     zt_hex_to_binary(uuid_hex, 32, uuid->data.bytes, 16);
 
-    return (0);
+    return 0;
 }
 
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2)
 {
-    return (memcmp(uuid->data.bytes, uuid2->data.bytes, 16));
+    return memcmp(uuid->data.bytes, uuid2->data.bytes, 16);
 }
+
+#define VALID_CHARS "abcdefABCDEF0123456789"
+
+int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags)
+{
+    size_t len;
+    int    ty;
+    int    i;
+
+    len = strlen(uuid);
+
+    ty = ZT_BIT_ISSET(flags, zt_uuid_std_fmt) ? zt_uuid_std_fmt : zt_uuid_short_fmt;
+
+    if (ty == zt_uuid_std_fmt && len != UUID_STR_LEN) {
+        return -1;
+    }
+
+    if (ty == zt_uuid_short_fmt && len != UUID_SHORT_STR_LEN) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (ty == zt_uuid_std_fmt) {
+            switch (i) {
+                case 9:
+                case 13:
+                case 17:
+                    if (uuid[i] != '-') {
+                        return -1;
+                    }
+                    break;
+                default:
+                    if (strchr(VALID_CHARS, uuid[i]) == NULL) {
+                        return -1;
+                    }
+                    break;
+            }
+        } else {
+            if (strchr(VALID_CHARS, uuid[i]) == NULL) {
+                return -1;
+            }
+        }
+    }
+
+    return 0;
+} /* zt_uuid_isvalid */

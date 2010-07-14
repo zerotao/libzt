@@ -54,7 +54,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     for ( i = 9; i >= 0; i--) {
         char * b2 = NULL;
-        sprintf(buf, "%s%d", STR_TEST_PRE, i);
+        sprintf(buf, "%s%zd", STR_TEST_PRE, i);
         b2 = XSTRDUP(buf);
         zt_table_set(table_str, b2, (void *)numbers[i]);
     }
@@ -72,7 +72,7 @@ static int
 str_free(void *key, void *datum, void *param)
 {
     XFREE(key);
-    return (0);
+    return 0;
 }
 
 static int
@@ -85,7 +85,7 @@ str_iterator(void *key, void *datum, void *param)
     ZT_UNIT_ASSERT(test, (k + d == 9));
 
     count++;    /* GLOBAL */
-    return (0);
+    return 0;
 }
 
 static int
@@ -98,7 +98,7 @@ int_iterator(void *key, void *datum, void *param)
     ZT_UNIT_ASSERT(test, (k + d == 9));
 
     count++;    /* GLOBAL */
-    return (0);
+    return 0;
 }
 
 int
@@ -108,5 +108,5 @@ register_table_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "table tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return (0);
+    return 0;
 }

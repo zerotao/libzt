@@ -6,6 +6,13 @@
  *
  * $Id:
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
 
 #include <stdio.h>
 
@@ -40,7 +47,7 @@ _except_install_default_handler(except_handler h)
 
     _except_default_handler = h;
 
-    return (p);
+    return p;
 }
 
 void _except_install_handler(void *e, except_handler h)
@@ -224,5 +231,5 @@ int domain_default_except_handler(void *exc, char *etext, char *file, char *func
 
 
 
-    return (0);
+    return 0;
 }

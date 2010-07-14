@@ -106,7 +106,7 @@ test_table_init(struct zt_unit_test *test, void *data)
                              network_tests[i].bitlen);
     }
 
-    return (table);
+    return table;
 }
 
 static void
@@ -182,5 +182,5 @@ register_ipv4_tbl_suite(struct zt_unit *unit)
     zt_unit_register_test(suite, "positive match tests", positive_tests);
     zt_unit_register_test(suite, "negative match tests", negative_tests);
 
-    return (0);
+    return 0;
 }

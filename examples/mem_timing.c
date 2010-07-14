@@ -48,7 +48,7 @@ test_malloc(void *data)
         free(td->parr[i]);
     }
 
-    return (0);
+    return 0;
 }
 
 void *
@@ -66,7 +66,7 @@ test_pool(void *data)
         zt_mem_pool_release(&(td->parr[i]));
     }
 
-    return (0);
+    return 0;
 }
 
 #define NPTEST 10000
@@ -107,5 +107,5 @@ main(int argc, char *argv[])
     zt_mem_pool_destroy(&td_small.pool);
     zt_mem_pool_destroy(&td_large.pool);
     free(parr);
-    return (0);
+    return 0;
 }

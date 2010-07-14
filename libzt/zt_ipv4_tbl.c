@@ -55,15 +55,15 @@ zt_ipv4_tbl_init(size_t size)
     pools[2].size = sizeof(zt_ipv4_addr);
 
     if (!(tbl = calloc(sizeof(zt_ipv4_tbl), 1))) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(tbl->pools = zt_mem_pool_group_init(pools, 3))) {
-        return (NULL);
+        return NULL;
     }
 
     tbl->sz = rsize;
-    return (tbl);
+    return tbl;
 }
 
 
@@ -76,19 +76,19 @@ zt_ipv4_addr_frm_str(const char *netstr)
     uint32_t      ipaddr;
 
     if (!netstr) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(pool = zt_mem_pool_get("zt_ipv4_addr"))) {
-        return (NULL);
+        return NULL;
     }
 
     if (zt_ipv4_str2net(netstr, &ipaddr, &bitlen)) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(addr = zt_mem_pool_alloc(pool))) {
-        return (NULL);
+        return NULL;
     }
 
     addr->addr = ipaddr;
@@ -97,7 +97,7 @@ zt_ipv4_addr_frm_str(const char *netstr)
     addr->addr = addr->addr & addr->mask;
     addr->broadcast = addr->addr | (0xFFFFFFFF & ~addr->mask);
 
-    return (addr);
+    return addr;
 }
 
 zt_ipv4_node   *
@@ -108,25 +108,25 @@ zt_ipv4_node_str_init(const char *netstr)
     zt_mem_pool  *pool;
 
     if (!netstr) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(pool = zt_mem_pool_get("zt_ipv4_node"))) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(node = zt_mem_pool_alloc(pool))) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(addr = zt_ipv4_addr_frm_str(netstr))) {
-        return (NULL);
+        return NULL;
     }
 
     node->addr = addr;
     node->next = NULL;
 
-    return (node);
+    return node;
 }
 
 int
@@ -140,7 +140,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     int           i;
 
     if (!tbl || !node) {
-        return (-1);
+        return -1;
     }
 
     if (node->addr->bitlen == 0) {
@@ -148,11 +148,11 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
          * this is a 0.0.0.0/0 network, set the any to this node
          */
         tbl->any = node;
-        return (0);
+        return 0;
     }
 
     if (!(pool = zt_mem_pool_get("zt_ipv4_node_hash"))) {
-        return (-1);
+        return -1;
     }
 
     is_in = 0;
@@ -162,7 +162,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         zt_ipv4_node **hash_entry;
 
         if (!(hash_entry = zt_mem_pool_alloc(pool))) {
-            return (-1);
+            return -1;
         }
 
         memset(hash_entry, 0, sizeof(zt_ipv4_node *) * tbl->sz);
@@ -210,7 +210,7 @@ zt_ipv4_tbl_add_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
         tbl->in[i] = node->addr->bitlen;
     }
 
-    return (0);
+    return 0;
 } /* zt_ipv4_tbl_add_node */
 
 zt_ipv4_node   *
@@ -219,40 +219,40 @@ zt_ipv4_tbl_add_frm_str(zt_ipv4_tbl * tbl, const char *netstr)
     zt_ipv4_node *ipv4_node = NULL;
 
     if (!tbl || !netstr) {
-        return (NULL);
+        return NULL;
     }
 
     if (tbl->any) {
         /*
          * we had a 0.0.0.0/0, we don't need to insert anything more
          */
-        return (tbl->any);
+        return tbl->any;
     }
 
     if (!(ipv4_node = zt_ipv4_node_str_init(netstr))) {
-        return (NULL);
+        return NULL;
     }
 
     if (zt_ipv4_tbl_add_node(tbl, ipv4_node)) {
-        return (NULL);
+        return NULL;
     }
 
-    return (ipv4_node);
+    return ipv4_node;
 }
 
 int
 ipv4_tbl_addr_cmp(zt_ipv4_addr * haystack, zt_ipv4_addr * needle)
 {
     if (!haystack || !needle) {
-        return (0);
+        return 0;
     }
 
     if (needle->addr >= haystack->addr &&
         needle->broadcast <= haystack->broadcast) {
-        return (1);
+        return 1;
     }
 
-    return (0);
+    return 0;
 }
 
 zt_ipv4_node   *
@@ -263,7 +263,7 @@ zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
     zt_ipv4_node *match = NULL;
 
     if (tbl->any) {
-        return (tbl->any);
+        return tbl->any;
     }
 
     while (1) {
@@ -283,14 +283,14 @@ zt_ipv4_tbl_search_node(zt_ipv4_tbl * tbl, zt_ipv4_node * node)
 
         while (match) {
             if (ipv4_tbl_addr_cmp(match->addr, node->addr)) {
-                return (match);
+                return match;
             }
 
             match = match->next;
         }
     }
 
-    return (NULL);
+    return NULL;
 }
 
 zt_ipv4_node   *
@@ -300,18 +300,18 @@ zt_ipv4_tbl_search_from_str(zt_ipv4_tbl * tbl, const char *netstr)
     zt_ipv4_node *matched = NULL;
 
     if (!tbl || !netstr) {
-        return (NULL);
+        return NULL;
     }
 
     if (!(ipv4_node = zt_ipv4_node_str_init(netstr))) {
-        return (NULL);
+        return NULL;
     }
 
     matched = zt_ipv4_tbl_search_node(tbl, ipv4_node);
 
     zt_mem_pool_release((void **)&ipv4_node);
 
-    return (matched);
+    return matched;
 }
 
 /*
@@ -321,7 +321,7 @@ zt_ipv4_tbl_search_from_str(zt_ipv4_tbl * tbl, const char *netstr)
 uint32_t
 zt_ipv4_ip2int(const char *str)
 {
-    return (ntohl(inet_addr(str)));
+    return ntohl(inet_addr(str));
 }
 
 const char     *
@@ -331,7 +331,7 @@ zt_ipv4_int2ip(uint32_t addr)
 
     a = ntohl(addr);
 
-    return (inet_ntoa(*(struct in_addr *)&a));
+    return inet_ntoa(*(struct in_addr *)&a);
 }
 
 int
@@ -343,16 +343,16 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
     int   bitlen = 32;
 
     if (!str || !outaddr || !outbitlen) {
-        return (-1);
+        return -1;
     }
 
     if (!(str_cp = strdup(str))) {
-        return (-1);
+        return -1;
     }
 
     if (!(save = calloc(MAXLINE, 1))) {
         free(str_cp);
-        return (-1);
+        return -1;
     }
 
     if ((cp = strchr(str_cp, '/')) != NULL) {
@@ -361,7 +361,7 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
         if ((cp - str_cp) > MAXLINE - 1) {
             free(save);
             free(str_cp);
-            return (-1);
+            return -1;
         }
 
         memcpy(save, str, cp - str_cp);
@@ -380,5 +380,5 @@ zt_ipv4_str2net(const char *str, uint32_t * outaddr, int *outbitlen)
     free(save);
     free(str_cp);
 
-    return (0);
+    return 0;
 } /* zt_ipv4_str2net */

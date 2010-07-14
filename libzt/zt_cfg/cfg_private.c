@@ -37,7 +37,7 @@ zt_cfg_new(zt_cfg_vtbl_ty *vptr)
 
     result = calloc(1, vptr->size);
     result->vtbl = vptr;
-    return (result);
+    return result;
 }
 
 void cfg_discard_line(FILE* file)
@@ -72,7 +72,7 @@ get_block(struct zt_cfg_block_ty* head, char* name)
         }
         head = head->next;
     }
-    return (head);
+    return head;
 }
 
 struct zt_cfg_block_ty*
@@ -91,7 +91,7 @@ add_block(struct zt_cfg_ty* cfg, char* name)
         new->next = cfg->head;
         cfg->head = new;
     }
-    return (new);
+    return new;
 }
 
 struct zt_cfg_value_ty*
@@ -103,7 +103,7 @@ get_variable(struct zt_cfg_value_ty* head, char*vname)
         }
         head = head->next;
     }
-    return (head);
+    return head;
 }
 
 struct zt_cfg_value_ty*
@@ -122,7 +122,7 @@ add_variable(struct zt_cfg_block_ty* block, char *name)
         new->next = block->head;
         block->head = new;
     }
-    return (new);
+    return new;
 }
 
 zt_cfg_type
@@ -134,23 +134,23 @@ get_type(char* value, void* nvalue)
     /* check for int/long */
     *(long *)nvalue = strtol(pvalue, &endptr, 0);
     if (((*pvalue != '\0') && (*endptr == '\0'))) {
-        return (zt_cfg_int);
+        return zt_cfg_int;
     }
 
     pvalue = value;
     *(double *)nvalue = strtod(pvalue, &endptr);
     if (((*pvalue != '\0') && (*endptr == '\0'))) {
-        return (zt_cfg_float);
+        return zt_cfg_float;
     }
     pvalue = value;
     if ((!strcasecmp(pvalue, "yes")) ||
         (!strcasecmp(pvalue, "true"))) {
         *(int*)nvalue = 1;
-        return (zt_cfg_bool);
+        return zt_cfg_bool;
     } else if ((!strcasecmp(pvalue, "no")) ||
                (!strcasecmp(pvalue, "false"))) {
         *(int*)nvalue = 0;
-        return (zt_cfg_bool);
+        return zt_cfg_bool;
     }
     if (value[0] == '\'' || value[0] == '\"') {
         int len = strlen(&value[1]);
@@ -163,7 +163,7 @@ get_type(char* value, void* nvalue)
         *(char **)nvalue = strdup(value);
     }
 
-    return (zt_cfg_string);
+    return zt_cfg_string;
 }
 
 int
@@ -201,7 +201,7 @@ cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv)
             free(block);
         }
     }
-    return (0);
+    return 0;
 }
 
 #define BUFMAX 1024
@@ -225,7 +225,7 @@ zt_cfg_priv_set(zt_cfg_ty *cfg, char *block_name,
         case zt_cfg_bool:
             if ((*(int *)var == 1) || (*(int *)var == 0)) {
                 zt_log_printf(zt_log_err, "Invalid value for type zt_cfg_bool in zt_cfg_set!  Must be a string of (true|yes|no|false).");
-                return (-1);
+                return -1;
             }
         /* FALLTHRU */
         case zt_cfg_string:
@@ -233,7 +233,7 @@ zt_cfg_priv_set(zt_cfg_ty *cfg, char *block_name,
             break;
         default:
             zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-            return (-1);
+            return -1;
     }
 
     cfg_insert_bvv(cfg, &bvv);
@@ -241,7 +241,7 @@ zt_cfg_priv_set(zt_cfg_ty *cfg, char *block_name,
     free(bvv.block);
     free(bvv.variable);
     free(bvv.value);
-    return (1);
+    return 1;
 }
 
 int
@@ -250,18 +250,16 @@ zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
 {
     struct zt_cfg_block_ty* block = NULL;
     struct zt_cfg_value_ty* value = NULL;
-    struct zt_cfg_value_ty* ref = NULL;
-
 
     block = get_block(cfg->head, block_name);
     if (!block) {
-        return (-1);
+        return -1;
     }
 
     value = get_variable(block->head, variable_name);
 
     if (!value) {
-        return (-1);
+        return -1;
     }
 
 
@@ -270,7 +268,7 @@ zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
     }
 
     if (value->type != type) {
-        return (-1);
+        return -1;
     }
 
     switch (value->type) {
@@ -288,10 +286,10 @@ zt_cfg_priv_get(zt_cfg_ty *cfg, char *block_name,
             break;
         default:
             zt_log_printf(zt_log_err, "Unknown type in cfg variable list");
-            return (-1);
+            return -1;
     }
 
-    return (value->type);
+    return value->type;
 } /* zt_cfg_priv_get */
 
 void

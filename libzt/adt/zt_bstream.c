@@ -15,7 +15,7 @@ _array_put(zt_array array, char *s, size_t offt, size_t len, int flip)
         }
     }
 
-    return (offt);
+    return offt;
 }
 
 size_t
@@ -36,14 +36,14 @@ _array_get(zt_array array, char *s, size_t offt, size_t len, int flip)
         }
     }
 
-    return (offt);
+    return offt;
 }
 
 int
 zt_bstream_is_empty(zt_bstream bs)
 {
     zt_assert(bs);
-    return (zt_array_length(bs->data) == 0);
+    return zt_array_length(bs->data) == 0;
 }
 
 
@@ -51,7 +51,7 @@ int
 zt_bstream_truncate(zt_bstream bs)
 {
     zt_assert(bs);
-    return (zt_array_set_length(bs->data, 0));
+    return zt_array_set_length(bs->data, 0);
 }
 
 void
@@ -83,7 +83,7 @@ zt_bstream_rewind(zt_bstream bs)
     oofft = bs->offt;
     bs->offt = 0;
 
-    return (oofft);
+    return oofft;
 }
 
 zt_bstream
@@ -94,7 +94,7 @@ zt_bstream_new(void)
     bs = XCALLOC(struct zt_bstream, 1);
     bs->data = zt_array_new(0, sizeof(char));
 
-    return (bs);
+    return bs;
 }
 
 zt_bstream
@@ -107,7 +107,7 @@ zt_bstream_clone(zt_bstream bs)
     clone->data = zt_array_copy(bs->data, zt_array_length(bs->data));
     clone->offt = bs->offt;
 
-    return (clone);
+    return clone;
 }
 
 void
@@ -128,7 +128,7 @@ zt_bstream_read(zt_bstream bs, char *buf, size_t len, char size, char tag)
 
     bs->offt = _array_get(bs->data, buf, bs->offt, (len * size), bs->flipendian);
 
-    return (0);
+    return 0;
 }
 
 void
@@ -190,7 +190,7 @@ zt_bstream_write(zt_bstream bs, char *data, size_t len, char size, char tag)
 
     bs->offt = _array_put(bs->data, data, bs->offt, tlen, bs->flipendian);
 
-    return (0);
+    return 0;
 }
 
 void

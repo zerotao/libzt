@@ -27,6 +27,7 @@ struct zt_log_file_ty {
 static void destructor(zt_log_ty *log)
 {
     zt_log_file_ty *this = (zt_log_file_ty *)log;
+
     fclose(this->file);
     XFREE(this);
 }
@@ -34,9 +35,10 @@ static void destructor(zt_log_ty *log)
 static void
 print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 {
-    char *nfmt = NULL;
+    char           *nfmt = NULL;
 
     zt_log_file_ty *this = (zt_log_file_ty *)log;
+
     nfmt = zt_log_gen_fmt(log, fmt, level, log->opts);
     vfprintf(this->file, nfmt, ap);
     fflush(this->file);
@@ -54,7 +56,7 @@ zt_log_ty *
 zt_log_file(char *file, int fopts, int lopts)
 {
     zt_log_file_ty *this;
-    zt_log_ty *result;
+    zt_log_ty      *result;
 
     result = zt_log_new(&vtbl, lopts);
     this = (zt_log_file_ty *)result;
@@ -66,9 +68,9 @@ zt_log_file(char *file, int fopts, int lopts)
     }
     if (!this->file) {
         fprintf(stderr, "Could not open file %s: %s\n", file, strerror(errno));
-        return (NULL);
+        return NULL;
     }
 
-    return (result);
+    return result;
 }
 

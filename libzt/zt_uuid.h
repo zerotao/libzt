@@ -58,6 +58,7 @@ int zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t *uuid);
 int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags);
 int zt_uuid_fromstr(char *value, zt_uuid_t *uuid, zt_uuid_flags_t flags);
 int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2);
+int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags);
 
 END_C_DECLS
 #endif    /* _ZT_UUID_H_ */
