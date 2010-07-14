@@ -137,16 +137,17 @@ int
 zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
 #define OPT_MAX 512
-    int  i = 0;
-    char optstring[OPT_MAX];
-    int  opt_index = 0;
-    int  max_opts = 0;
-    int  nopt_chars = -2;
-
+    int   i = 0;
+    char  optstring[OPT_MAX];
+    int   opt_index = 0;
+    int   max_opts = 0;
+    int   nopt_chars = -2;
+    int   result = 0;
 
 #ifdef HAVE_GETOPT_LONG
     struct option *longopts = NULL;
 #endif
+
     /* opterr = 0; */ /* turn off the default error message */
     if (!opts) {
         return (-1);
@@ -165,7 +166,6 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
     opt_index++;
 #endif
 
-
     for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX; i++) {
         if (isoptchar(opts[i].opt)) {
             optstring[opt_index++] = opts[i].opt;
@@ -173,7 +173,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
 #ifdef HAVE_GETOPT_LONG
         longopts[i].name = opts[i].long_opt;
-        longopts[i].has_arg = 0;
+        longopts[i].has_arg = no_argument;
         /* FIXME: I need to do something here to handle longopts without short opts */
         longopts[i].flag = NULL;
         longopts[i].val = opts[i].opt;
@@ -195,7 +195,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                 }
 
 #ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = 2;
+                longopts[i].has_arg = optional_argument;
 #endif
                 break;
 
@@ -209,7 +209,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                 }
 
 #ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = 1;
+                longopts[i].has_arg = required_argument;
 #endif
                 break;
         } /* switch */
@@ -234,7 +234,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
             if (auto_usage) {
                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
             }
-            return (EXIT_FAILURE);
+            result = EXIT_FAILURE;
+            goto RETURN;
         }
         for (i = 0; i < max_opts; i++) {
             if (c != opts[i].opt) {
@@ -262,7 +263,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                             if (auto_usage) {
                                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                             }
-                            return (EXIT_FAILURE);
+                            result = EXIT_FAILURE;
+                            goto RETURN;
                         }
                     } else {
                         *(int *)opts[i].val = !*(int *)opts[i].val;
@@ -279,7 +281,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return (EXIT_FAILURE);
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_string:
@@ -290,7 +293,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return (EXIT_FAILURE);
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_func:
@@ -298,7 +302,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return (EXIT_FAILURE);
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_ofunc:
@@ -306,7 +311,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return (EXIT_FAILURE);
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_rfunc:
@@ -314,7 +320,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return (EXIT_FAILURE);
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_flag:
@@ -328,20 +335,26 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     if (auto_usage) {
                         zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                     }
-                    return (-1);
+                    result = -1;
+                    goto RETURN;
                     break;
                 default:
                     printf("Unknown arg type %d\n", opts[i].opt);
-                    return (EXIT_FAILURE);
+                    result = EXIT_FAILURE;
+                    goto RETURN;
             } /* switch */
         }
     }
+    *argc -= optind;
+    *argv += optind;
+
+    optind = 1;
+
+RETURN:
 #ifdef HAVE_GETOPT_LONG
     XFREE(longopts);
 #endif
-    *argc -= optind;
-    *argv += optind;
-    return (0);
+    return (result);
 } /* zt_opts_process */
 
 /*
