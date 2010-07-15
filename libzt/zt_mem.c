@@ -163,7 +163,7 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
         }
     } else {
         *epp = elts;
-        *page_size = (elts * size) + sizeof(zt_mem_page);
+        *page_size = (elts * (sizeof(zt_mem_elt) + size)) + sizeof(zt_mem_page);
         *npages = 1;
     }
 
