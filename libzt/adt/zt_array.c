@@ -64,11 +64,7 @@ zt_array_with(char *data, int len, int size, int copy)
 {
     zt_array array;
 
-    array = XMALLOC(struct zt_array, 1);
-
-    if (array->data) {
-        XFREE(array->data);
-    }
+    array = XCALLOC(struct zt_array, 1);
 
     zt_array_set_data(array, data, len, size, copy);
 
