@@ -44,6 +44,7 @@ extern int register_time_suite(struct zt_unit *unit);
 extern int register_tree_suite(struct zt_unit *unit);
 extern int register_sha1_suite(struct zt_unit *unit);
 extern int register_uuid_suite(struct zt_unit *unit);
+extern int register_ipv4_tbl_suite(struct zt_unit *unit);
 
 
 
