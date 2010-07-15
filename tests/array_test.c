@@ -27,14 +27,26 @@ basic_tests(struct zt_unit_test *test, void *data)
         zt_array_put(array, i, &values[i]);
     }
 
-
     for (i = 0; i < n; i++) {
         pv = zt_array_get(array, i);
         ZT_UNIT_ASSERT(test, *pv == i);
     }
 
-    zt_array_resize(array, zt_array_length(array) * 2);
+    {
+        int tt = 0;
+        int nn = zt_array_length(array);
 
+        for (i = 0; i < nn; i++) {
+            pv = zt_array_get(array, i);
+            if (*pv == i) {
+                tt++;
+            }
+        }
+
+        ZT_UNIT_ASSERT(test, nn == tt);
+    }
+
+    zt_array_resize(array, zt_array_length(array) * 2);
     ZT_UNIT_ASSERT(test, zt_array_length(array) == n * 2);
 
     array2 = zt_array_copy(array, zt_array_length(array));
@@ -44,7 +56,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     {
         int tt = 0;
 
-        for (i = 0; i < n * 2; i++) {
+        for (i = 0; i < n; i++) {
             pv = zt_array_get(array2, i);
             if (*pv == i) {
                 tt++;
