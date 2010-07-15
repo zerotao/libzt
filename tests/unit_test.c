@@ -53,6 +53,7 @@ main(int argc, char *argv[])
     struct zt_unit       * unit;
     struct zt_unit_suite * suite1;
     struct zt_unit_test  * test1;
+    int                    result = 0;
 
     unit = zt_unit_init();
 
@@ -92,5 +93,8 @@ main(int argc, char *argv[])
      * register_msg_queue_suite(unit);
      */
 
-    return zt_unit_main(unit, argc, argv);
+    result = zt_unit_main(unit, argc, argv);
+
+    zt_unit_release(&unit);
+    return result;
 } /* main */
