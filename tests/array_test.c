@@ -70,9 +70,14 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     {
         char * tmp = "This is a test";
+        char * data = NULL;
 
         array = zt_array_with_cstr(tmp);
-        ZT_UNIT_ASSERT(test, strcmp(tmp, zt_array_data(array)) == 0);
+        data = zt_array_data(array);
+
+        ZT_UNIT_ASSERT(test, zt_array_length(array) == strlen(tmp));
+
+        ZT_UNIT_ASSERT(test, strncmp(tmp, data, zt_array_length(array)) == 0);
         zt_array_free(&array);
     }
 } /* basic_tests */
