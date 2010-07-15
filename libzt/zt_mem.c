@@ -583,6 +583,8 @@ zt_mem_pool_group_destroy(zt_mem_pool_group * group)
         }
     }
 
+    XFREE(group->pools);
+    XFREE(group);
     return ret;
 }
 
