@@ -65,10 +65,27 @@ struct zt_table {
 
 #define ZT_DEFAULT_TABLE_POOL "zt.table.pool"
 
+static void table_pool_cleanup() {
+    zt_mem_pool * table_mem_pool;
+
+    /* cleaning up */
+    table_mem_pool = zt_mem_pool_get(ZT_DEFAULT_TABLE_POOL);
+    if(table_mem_pool) {
+        zt_mem_pool_destroy(&table_mem_pool);
+    }
+}
+
 zt_mem_pool *
 table_pool_init(long elts)
 {
-    return zt_mem_pool_init(ZT_DEFAULT_TABLE_POOL, elts, sizeof(zt_table), NULL, NULL, 0);
+    zt_mem_pool * table_mem_pool;
+
+    table_mem_pool = zt_mem_pool_init(ZT_DEFAULT_TABLE_POOL, elts, sizeof(zt_table), NULL, NULL, 0);
+
+    if(table_mem_pool) {
+        atexit(table_pool_cleanup);
+    }
+    return table_mem_pool;
 }
 
 zt_table *
@@ -157,7 +174,9 @@ zt_table_destroy(zt_table *h)
         XFREE(h->name);
     }
 
+    zt_mem_pool_destroy(&h->node_pool);
     zt_mem_heap_destroy(&h->table_heap);
+    zt_mem_pool_release((void **)&h);
 }
 
 int

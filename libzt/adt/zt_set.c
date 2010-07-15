@@ -16,6 +16,7 @@ zt_set_init(int (*match)(const void *key1,
     set->tbl = zt_table_init(NULL, zt_table_hash_int, match, 128, 0, cdata);
     set->match = match;
     set->destroy = destroy;
+    set->length = 0;
 
     return set;
 }
