@@ -116,7 +116,7 @@ zt_bstream_free(zt_bstream *bs)
     zt_assert(bs);
 
     zt_array_free(&(*bs)->data);
-    XFREE(bs);
+    XFREE(*bs);
     return;
 }
 
