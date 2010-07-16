@@ -141,12 +141,18 @@ uuid_generic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
     ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
 
+    XFREE(uuids1);
+    XFREE(uuids2);
+
     zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_short_fmt);
     zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_short_fmt);
     zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_short_fmt);
 
     ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
     ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
+
+    XFREE(uuids1);
+    XFREE(uuids2);
 }
 
 int

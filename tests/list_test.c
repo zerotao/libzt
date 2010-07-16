@@ -62,6 +62,17 @@ basic_tests(struct zt_unit_test *test, void *data)
         al2 = zt_elist_data(tmp2, list_elt, list);
 
         ZT_UNIT_ASSERT(test, al->value + al2->value == 9);
+
+    }
+
+    zt_elist_for_each_safe(&list1, tmp, tmp2) {
+        al = zt_elist_data(tmp, list_elt, list);
+        XFREE(al);
+    }
+
+    zt_elist_for_each_safe(&list2, tmp, tmp2) {
+        al = zt_elist_data(tmp, list_elt, list);
+        XFREE(al);
     }
 }
 
