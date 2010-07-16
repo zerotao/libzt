@@ -23,6 +23,10 @@ zt_stack_pop(zt_stack *stack)
 {
     zt_stack * elt;
 
+    if(zt_stack_empty(stack)) {
+        return NULL;
+    }
+
     elt = zt_elist_get_next(stack);
     zt_elist_remove(elt);
     return (elt);
