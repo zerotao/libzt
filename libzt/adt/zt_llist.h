@@ -25,6 +25,19 @@ char *ListTooShort = "List is too short";
 #define zt_llist_tail(_pair) \
     (_pair)->tail
 
+static INLINE void
+zt_llist_free(zt_pair *p)
+{
+    zt_pair * h;
+    zt_pair * op;
+
+    while(p != NULL) {
+        op = p;
+        h = zt_llist_head(p);
+        p = zt_llist_tail(p);
+        XFREE(op);
+    }
+}
 
 static INLINE zt_llist
 zt_llist_cons(void *head, zt_pair *tail)

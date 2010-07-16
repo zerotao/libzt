@@ -15,6 +15,9 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     m = (char *)zt_llist_nth(y, 1);
     ZT_UNIT_ASSERT(test, strcmp(m, "a"));
+
+    zt_llist_free(y);
+    zt_llist_free(x);
 }
 
 int
