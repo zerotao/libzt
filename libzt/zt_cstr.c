@@ -24,7 +24,6 @@
 #include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
-#include "zt_log.h"
 
 /*!
  * generate an index based on an index statement i and length len
@@ -719,7 +718,6 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
         }
 
         if ((c2 = hex_to_char(*hex++)) == -1) {
-            zt_log_printf(zt_log_err, "ivalid hex value %c%c", hex[-2], hex[-1]);
             return -1;
         } else {
             n++;
