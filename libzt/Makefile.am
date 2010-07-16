@@ -50,7 +50,8 @@ libzt_la_SOURCES = 		\
 		zt_sha1.c		\
 		zt_uuid.c		\
 		zt_exceptions.c \
-    zt_ipv4_tbl.c
+		zt_ipv4_tbl.c	\
+		zt_atexit.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = 	\
@@ -74,7 +75,8 @@ pkginclude_HEADERS = 	\
 		zt_sha1.h		\
 		zt_uuid.h		\
 		zt_exceptions.h \
-    zt_ipv4_tbl.h
+		zt_ipv4_tbl.h	\
+		zt_atexit.h
 
 
 # The following is required in the Makefile.am for common.h
