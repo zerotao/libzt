@@ -43,27 +43,32 @@ basic_tests(struct zt_unit_test *test, void *data)
         qe = XCALLOC(queue_elt, 1);
 
         se->n = values[i];
-        qe->n = values[VALUES_MAX - i];
+        qe->n = values[(VALUES_MAX-1) - i];
 
         zt_stack_push(&stk, &se->member);
         zt_queue_enqueue(&que, &qe->member);
     }
 
 
-    for (i = 0; i < sizeof_array(values); i++) {
+    for (i = 0; i < VALUES_MAX; i++) {
         tse = zt_stack_pop(&stk);
         tqe = zt_queue_dequeue(&que);
 
         se = zt_stack_data(tse, stack_elt, member);
-        qe = zt_queue_data(tse, queue_elt, member);
+        qe = zt_queue_data(tqe, queue_elt, member);
+
         if (i == 0) {
             ZT_UNIT_ASSERT(test, se->n == qe->n);
             ZT_UNIT_ASSERT(test, se->n == qe->n);
         }
+
+        XFREE(se);
+        XFREE(qe);
     }
 
     ZT_UNIT_ASSERT(test, zt_stack_empty(&stk));
     ZT_UNIT_ASSERT(test, zt_queue_empty(&que));
+
 } /* basic_tests */
 
 
