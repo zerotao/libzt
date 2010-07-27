@@ -610,14 +610,21 @@ zt_cstr_basename(char *npath, int len, const char *path, const char *suffix)
 char *
 zt_cstr_dirname(char *npath, int len, const char *path)
 {
-    int end = 0;
+    int   end = -1;
+    int   ps_len = 0;
 
     zt_assert(npath);
     zt_assert(path);
 
     memset(npath, '\0', len);
 
-    if ((end = zt_cstr_rfind(path, 0, -1, PATH_SEPERATOR)) == -1) {
+    /* if the end of the path is the PATH_SEPERATOR then skip over it */
+    ps_len = strlen(PATH_SEPERATOR);
+    if (strcmp(&path[strlen(path) - ps_len], PATH_SEPERATOR) == 0) {
+        end = end - ps_len;
+    }
+
+    if ((end = zt_cstr_rfind(path, 0, end, PATH_SEPERATOR)) == -1) {
         end = -1;
     } else {
         end = end - 1;

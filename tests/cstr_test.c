@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 #include <libzt/zt_cstr.h>
 #include <libzt/zt_unit.h>
 
@@ -28,8 +29,8 @@ basic_tests(struct zt_unit_test *test, void *data)
     char * path = "/home/jshiffer/config.foo";
     char * interface = "Interface";
     char * spain = "The rain in Spain";
-    char   bname[255];
-    char   dname[255];
+    char   bname[PATH_MAX+1];
+    char   dname[PATH_MAX+1];
     char * free_me;
     char * free_me2;
     char * hex = "34aa973cd4c4daa4f61eEB2BDBAD27316534016FXXX";
@@ -50,23 +51,23 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, (zt_cstr_rcspn(test_string1, "Q") == strlen(test_string1)));
 
 #if !defined(_WIN32)
-    zt_cstr_basename(bname, 254, path, NULL);
+    zt_cstr_basename(bname, PATH_MAX, path, NULL);
     ZT_UNIT_ASSERT(test, (!strcmp(bname, "config.foo")));
-    zt_cstr_basename(bname, 254, path, ".foo");
+    zt_cstr_basename(bname, PATH_MAX, path, ".foo");
     ZT_UNIT_ASSERT(test, (!strcmp(bname, "config")));
-    zt_cstr_basename(bname, 254, "c:\\Windows\\System32\\", NULL);
+
+    zt_cstr_basename(bname, PATH_MAX, "c:\\Windows\\System32\\", NULL);
     ZT_UNIT_ASSERT(test, (!strcmp(bname, "c:\\Windows\\System32\\")));
 
-    zt_cstr_dirname(dname, 254, path);
+    zt_cstr_dirname(dname, PATH_MAX, path);
     ZT_UNIT_ASSERT(test, (!strcmp(dname, "/home/jshiffer")));
-    zt_cstr_dirname(bname, 254, "c:\\Windows\\System32\\");
-    ZT_UNIT_ASSERT(test, (!strcmp(bname, "c:\\Windows\\System32\\")));
+
+    zt_cstr_dirname(bname, PATH_MAX, "/foo/bar/baz/");
+    ZT_UNIT_ASSERT(test, (!strcmp(bname, "/foo/bar")));
 
     ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "baz/"), "/foo/bar/baz/") == 0); XFREE(free_me);
 
     ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "/baz/"), "/foo/bar/baz/") == 0); XFREE(free_me);
-
-
 
 #else /* _WIN32 */
       /* reverse the mapping */
