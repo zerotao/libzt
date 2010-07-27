@@ -56,6 +56,8 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(strings.h, break)
 AC_CHECK_HEADERS(errno.h assert.h syslog.h)
 AC_CHECK_HEADERS(limits.h)
+AC_CHECK_HEADERS(stdint.h)
+AC_CHECK_HEADERS(stdbool.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -69,10 +71,21 @@ AC_TRY_COMPILE(,[long long i;],
 AC_TRY_COMPILE(,[long double d;],
 		AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define if C compiler supports long double type]))
 
-AC_CHECK_TYPE(u_int64_t, unsigned long long)
-AC_CHECK_TYPE(u_int32_t, unsigned long)
-AC_CHECK_TYPE(u_int16_t, unsigned short)
-AC_CHECK_TYPE(u_int8_t, unsigned char)
+AC_TYPE_INT64_T
+AC_TYPE_UINT64_T
+AC_TYPE_INT32_T
+AC_TYPE_UINT32_T
+AC_TYPE_INT16_T
+AC_TYPE_UINT16_T
+AC_TYPE_INT8_T
+AC_TYPE_UINT8_T
+
+AC_CHECK_TYPE(bool, [], [], [[#include <stdbool.h>]])
+
+# AC_CHECK_TYPE(u_int64_t, unsigned long long)
+# AC_CHECK_TYPE(u_int32_t, unsigned long)
+# AC_CHECK_TYPE(u_int16_t, unsigned short)
+# AC_CHECK_TYPE(u_int8_t, unsigned char)
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(bzero memset break)
@@ -134,7 +147,7 @@ AC_OUTPUT_COMMANDS([
 
 #ifndef `echo $common_dir|$dirname|$upper`_COMMON_H
 #define `echo $common_dir|$dirname|$upper`_COMMON_H 1
-  
+
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -176,6 +189,26 @@ _EOF_
     echo '# define PATH_MAX 1024' >> $tmpfile
     echo '#endif' >> $tmpfile
 
+# stdint.h
+    if test x$ac_cv_header_stdint_h = xyes; then
+      echo '#include <stdint.h>' >> $tmpfile
+    else
+      echo '#error No stdint available' >> $tmpfile
+    fi
+
+# stdbool
+    if test x$ac_cv_header_stdbool_h = xyes; then
+        echo '#include <stdbool.h>' >> $tmpfile
+    else
+        if test x$ac_cv_type_bool == xno; then
+            echo 'typedef bool unsigned char;' >> $tmpfile
+            echo '#undef true' >> $tmpfile
+            echo '#define true (bool)1' >> $tmpfile
+            echo '#undef false' >> $tmpfile
+            echo '#define false (bool)0' >> $tmpfile
+        fi
+    fi
+
 # string/strings.h
     if test x$ac_cv_header_strings_h = xyes; then
       echo '#include <strings.h>' >> $tmpfile
@@ -197,16 +230,16 @@ _EOF_
     if test x$ac_cv_func_strrchr = xno; then
       echo '#define strrchr rindex' >> $tmpfile
     fi
-   
+
 # get everything from common_h.in
 # The ugly but portable cpp stuff comes from here
     infile=$srcdir/$common_dir/`echo $outfile | sed 's,.*/,,g;s,\..*$,,g'`_h.in
     if test -f $infile; then
-      sed '/^##.*$/d' $infile >> $tmpfile 
-    fi    
+      sed '/^##.*$/d' $infile >> $tmpfile
+    fi
 
 # Anything that needs to go into a C_DECLS
-    ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null 
+    ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
 
 # basename
     if test x$ac_cv_func_basename = xno || test x$zt_cv_func_basename = xno; then
@@ -254,7 +287,7 @@ _EOF_
       echo 'BEGIN_C_DECLS' >> $tmpfile
       cat ${tmpfile}2 >> $tmpfile
       echo 'END_C_DECLS' >> $tmpfile
-      ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null 
+      ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
     fi
 
     cat >> $tmpfile << _EOF_
@@ -267,7 +300,7 @@ _EOF_
     else
       mv $tmpfile $outfile
       touch $stampfile
-    fi 
+    fi
     ;;
   esac
 ],[
@@ -293,6 +326,8 @@ _EOF_
   ac_cv_header_assert_h=$ac_cv_header_assert_h
   ac_cv_header_errno_h=$ac_cv_header_errno_h
   ac_cv_header_limits_h=$ac_cv_header_limits_h
+  ac_cv_header_stdint_h=$ac_cv_header_stdint_h
+  ac_cv_header_stdbool_h=$ac_cv_header_stdbool_h
   ac_cv_header_stdlib_h=$ac_cv_header_stdlib_h
   ac_cv_header_stdarg_h=$ac_cv_header_stdarg_h
   ac_cv_header_string_h=$ac_cv_header_string_h
@@ -306,6 +341,17 @@ _EOF_
   ac_cv_sizeof_int=$ac_cv_sizeof_int
   ac_cv_sizeof_long=$ac_cv_sizeof_long
   ac_cv_sizeof_long_long=$ac_cv_sizeof_long_long
+
+  ac_cv_type_bool=$ac_cv_type_bool
+  ac_cv_type_uint64_t=$ac_cv_type_uint64_t
+  ac_cv_type_int64_t=$ac_cv_type_int64_t
+  ac_cv_type_uint32_t=$ac_cv_type_uint32_t
+  ac_cv_type_int32_t=$ac_cv_type_int32_t
+  ac_cv_type_uint16_t=$ac_cv_type_uint16_t
+  ac_cv_type_int16_t=$ac_cv_type_int16_t
+  ac_cv_type_uint8_t=$ac_cv_type_uint8_t
+  ac_cv_type_int8_t=$ac_cv_type_int8_t
+
 ])
 
 m4_pattern_allow(LIBOBJS)dnl
