@@ -26,13 +26,12 @@
 #include "zt_format.h"
 
 /*!
- * generate an index based on an index statement i and length len
- * i < 0 = (len + 1) + i
- * i >= 0 = i
- *
+ * generate an index based on an index statement i, j and length len
  */
-#define IDX(i, len) ((i) < 0 ? (i) + (len) : (i))
+#define BASE(i, len) ((i) >= (len) ? (len-1) : (i))
+#define IDX(i, len) ((i) < 0 ? BASE((i) + (len), (len)) : BASE((i), (len)))
 #define IDXLEN(i, j) ((i) < (j) ? ((j) - (i)) + 1 : ((i) - (j)) + 1)
+
 /*!
  * update s, i and j
  */
@@ -40,14 +39,19 @@
         int len;                      \
         zt_assert(s);                 \
         len = strlen(s);              \
-        i = IDX(i, len);              \
-        j = IDX(j, len);              \
-        if (i > j) {                  \
-            int t = i;                \
-            i = j;                    \
-            j = t;                    \
-        }                             \
-        zt_assert(i >= 0 && j < len); \
+        if (len > 0) {                \
+            i = IDX(i, len);              \
+            j = IDX(j, len);              \
+            if (i > j) {                  \
+                int t = i;                \
+                i = j;                    \
+                j = t;                    \
+            }                             \
+            zt_assert(i >= 0 && j < len); \
+        } else {                        \
+            i = 0;                      \
+            j = 0;                      \
+        }                               \
 } while (0)
 
 /*!
@@ -84,6 +88,11 @@ zt_cstr_dup(const char *s, int i, int j, int n)
     char * p;
 
     zt_assert(n >= 0);
+
+    if(!s) {
+        return NULL;
+    }
+
     CONVERT(s, i, j);
 
     p = new = XMALLOC(char, (n * IDXLEN(i, j)) + 1);
@@ -411,7 +420,7 @@ zt_cstr_find(const char *s, int i, int j, const char *str)
 }
 
 /*!
- * locates the first occurrence of the string str in the string referenced
+ * locates the first occurrence of the string str (in reverse) in the string referenced
  * by s[i:j]
  */
 int
@@ -445,13 +454,11 @@ zt_cstr_rfind(const char *s, int i, int j, const char *str)
 
 /*!
  * locates the first occurrence of any char in set in the string
- * referenced by s[i]
+ * referenced by s[i:j]
  */
 int
 zt_cstr_any(const char *s, int i, int j, const char *set)
 {
-    int orig;
-
     zt_assert(s);
     zt_assert(set);
 
@@ -459,9 +466,9 @@ zt_cstr_any(const char *s, int i, int j, const char *set)
 
     zt_assert(i >= 0 && i <= j);
 
-    for (orig = i; i <= j; i++) {
+    for (; i <= j; i++) {
         if (s[i] != '\0' && strchr(set, s[i])) {
-            return i - orig;
+            return i;
         }
     }
 
