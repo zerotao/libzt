@@ -83,15 +83,22 @@ typedef char* void_p;
 # define WHITESPACE " \t"
 #endif
 
+#ifdef _WIN32
+# ifndef PATH_SEPERATOR
+#  define PATH_SEPERATOR "\\"
+# endif
+# ifndef ENV_SEPERATOR
+#  define ENV_SEPERATOR ";"
+# endif
+#else /* _WIN32 */
 /* Unix Path */
-#ifndef PATH_SEPERATOR
-# define PATH_SEPERATOR "/"
-#endif
-
-/* Unix Shell */
-#ifndef ENV_SEPERATOR
-# define ENV_SEPERATOR ":"
-#endif
+# ifndef PATH_SEPERATOR
+#  define PATH_SEPERATOR "/"
+# endif
+# ifndef ENV_SEPERATOR
+#  define ENV_SEPERATOR ":"
+# endif
+#endif /* _WIN32 else */
 
 #ifndef HEX_DIGITS
 # define HEX_DIGITS "0123456789abcdef"
