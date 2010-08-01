@@ -40,7 +40,6 @@ struct zt_gc {
     void     * private_data;
     void       (*mark_fn)(struct zt_gc *, void *, void *);
     void       (*release_fn)(struct zt_gc *, void *, void **);
-
 };
 
 void zt_gc_init(zt_gc_t * gc,

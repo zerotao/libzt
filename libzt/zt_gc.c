@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
+
 #include "zt_macros.h"
 #include "zt_assert.h"
 
@@ -11,7 +19,7 @@
 
 static int one_is_white(zt_gc_collectable_t *mark)
 {
-    return( ZT_BIT_ISSET(mark->colour, colour)) ;          /* mark->colour == 1 ? 1 : 0; */
+    return ZT_BIT_ISSET(mark->colour, colour);             /* mark->colour == 1 ? 1 : 0; */
 }
 static void one_clear_white(zt_gc_collectable_t *mark)
 {
@@ -24,7 +32,7 @@ static void one_set_white(zt_gc_collectable_t *mark)
 
 static int zero_is_white(zt_gc_collectable_t *mark)
 {
-    return( ZT_BIT_ISUNSET(mark->colour, colour)) ;        /* mark->colour == 0 ? 1 : 0; */
+    return ZT_BIT_ISUNSET(mark->colour, colour);           /* mark->colour == 0 ? 1 : 0; */
 }
 static void zero_clear_white(zt_gc_collectable_t *mark)
 {
@@ -37,7 +45,7 @@ static void zero_set_white(zt_gc_collectable_t *mark)
 
 static int is_protected(zt_gc_collectable_t *mark)
 {
-    return( ZT_BIT_ISSET(mark->colour, protected)) ;
+    return ZT_BIT_ISSET(mark->colour, protected);
 }
 
 void
@@ -109,7 +117,7 @@ dump_elist(char *name, zt_elist *p)
     printf("%s %p [", name, (void *)p);
     c = 1;
     count = 0;
-    zt_elist_for_each(p, tmp){
+    zt_elist_for_each(p, tmp) {
         if (tmp->next == p) {
             c = 0;
         }
@@ -196,17 +204,17 @@ zt_gc_destroy(zt_gc_t *gc)
 
     zt_gc_scan(gc, TRUE);
 
-    zt_elist_for_each_safe(gc->white, elt, dont_use){
+    zt_elist_for_each_safe(gc->white, elt, dont_use) {
         zt_elist_remove(elt);
         gc->release_fn(gc, gc->private_data, (void **)&elt);
     }
 
-    zt_elist_for_each_safe(gc->grey, elt, dont_use){
+    zt_elist_for_each_safe(gc->grey, elt, dont_use) {
         zt_elist_remove(elt);
         gc->release_fn(gc, gc->private_data, (void **)&elt);
     }
 
-    zt_elist_for_each_safe(gc->black, elt, dont_use){
+    zt_elist_for_each_safe(gc->black, elt, dont_use) {
         zt_elist_remove(elt);
         gc->release_fn(gc, gc->private_data, (void **)&elt);
     }
@@ -268,7 +276,6 @@ zt_gc_unregister_value(zt_gc_t *gc, void *v)
     zt_gc_collectable_t * mark = (zt_gc_collectable_t *)v;
 
     zt_elist_remove(&mark->list);
-
 }
 
 void
@@ -328,7 +335,6 @@ zt_gc_free_white(zt_gc_t *gc)
         /* } */
     }
     /* printf("Done\n"); */
-
 }
 
 void
@@ -446,9 +452,9 @@ zt_gc_mark_value(zt_gc_t *gc, void *value)
         gc->clear_white(mark);
         zt_elist_remove(&mark->list);
         zt_elist_add_tail(gc->grey, &mark->list);
-        return(TRUE);
+        return TRUE;
     }
-    return(FALSE);
+    return FALSE;
 }
 
 void
@@ -472,19 +478,18 @@ void zt_gc_for_each(zt_gc_t * gc, void (*cb)(void * value, void * data, int ty),
     zt_elist            * dont_use = NULL;
     zt_gc_collectable_t * mark;
 
-    zt_elist_for_each_safe(gc->black, elt, dont_use){
+    zt_elist_for_each_safe(gc->black, elt, dont_use) {
         mark = zt_elist_data(elt, zt_gc_collectable_t, list);
         cb(mark, cb_data, 0);
     }
 
-    zt_elist_for_each_safe(gc->grey, elt, dont_use){
+    zt_elist_for_each_safe(gc->grey, elt, dont_use) {
         mark = zt_elist_data(elt, zt_gc_collectable_t, list);
         cb(mark, cb_data, 1);
     }
 
-    zt_elist_for_each_safe(gc->white, elt, dont_use){
+    zt_elist_for_each_safe(gc->white, elt, dont_use) {
         mark = zt_elist_data(elt, zt_gc_collectable_t, list);
         cb(mark, cb_data, 2);
     }
-
 }

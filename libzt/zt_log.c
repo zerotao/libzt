@@ -11,31 +11,47 @@
  *
  */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
+#endif
+
+#ifdef HAVE_STRING_H
+# include <string.h>
 #endif
 
 #include "zt_log.h"
 #include "zt_log/log_private.h"
+#include "zt_atexit.h"
+
+void
+log_atexit(void * data) {
+    zt_log_ty   * logp = data;
+
+    logp = zt_log_logger(NULL);
+
+    if(logp) {
+        zt_log_close(logp);
+    }
+}
 
 zt_log_ty *
 zt_log_logger(zt_log_ty *log)
 {
-    static zt_log_ty *log_log_ptr = NULL;
-    static int        forced = 0;
+    static zt_log_ty    * log_log_ptr = NULL;
+    zt_log_ty           * last = NULL;
 
-    if (!log && !log_log_ptr) {
-        log_log_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
-        forced = 1;
-    }
-
-    if (log) {
-        if (forced) {
-            zt_log_close(log_log_ptr), forced = 0;
+    if (!log) {
+        /* caller wants the current logger */
+        if(!log_log_ptr) {
+            /* allocate a default logger */
+            log_log_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
+            zt_atexit(log_atexit, log_log_ptr);
         }
-        log_log_ptr = log;
+        return log_log_ptr;
     }
 
-    return(log_log_ptr);
+    last = log_log_ptr;
+    log_log_ptr = log;
+    return last;
 }
 
 zt_log_ty *
@@ -56,7 +72,7 @@ zt_log_debug_logger(zt_log_ty *log)
         log_debug_ptr = log;
     }
 
-    return(log_debug_ptr);
+    return log_debug_ptr;
 }
 
 zt_log_level
@@ -70,7 +86,7 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 
     olevel = log->level;
     log->level = level;
-    return(olevel);
+    return olevel;
 }
 
 zt_log_level
@@ -79,7 +95,7 @@ zt_log_get_level(zt_log_ty *log)
     if (!log) {
         log = zt_log_logger(NULL);
     }
-    return(log->level);
+    return log->level;
 }
 
 unsigned int
@@ -92,7 +108,7 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
     }
     oopts = log->opts;
     log->opts = opts;
-    return(oopts);
+    return oopts;
 }
 
 unsigned int
@@ -101,7 +117,7 @@ zt_log_get_opts(zt_log_ty *log)
     if (!log) {
         log = zt_log_logger(NULL);
     }
-    return(log->opts);
+    return log->opts;
 }
 
 void

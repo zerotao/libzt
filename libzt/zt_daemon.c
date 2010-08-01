@@ -49,7 +49,7 @@ zt_daemonize( char *root, mode_t mask, int options)
     if ((pid = fork()) == (pid_t)(-1)) { /* first error */
         zt_log_printf(zt_log_emerg, "failed to fork(): %s", strerror(errno));
         exit(1);
-    }else if (pid == 0) {   /* first child */
+    } else if (pid == 0) {  /* first child */
         /* FIXME: Not everyone has setsid.  Add support for them. */
         if (setsid() == -1) {
             zt_log_printf(zt_log_emerg, "faild to setsid(): %s", strerror(errno));
@@ -71,7 +71,7 @@ zt_daemonize( char *root, mode_t mask, int options)
              * closed all of the file descriptors
              */
             exit(1);
-        }else if (pid2 == 0) { /* second child */
+        } else if (pid2 == 0) { /* second child */
             int fd;
             if (root != NULL) {
                 chdir(root);
@@ -80,7 +80,7 @@ zt_daemonize( char *root, mode_t mask, int options)
             fd = open("/dev/null", O_RDWR);    /* stdin */
             dup(fd);    /* stdout */
             dup(fd); /* stderr */
-        } else {     /* second parent */
+        } else {                                           /* second parent */
             sleep(1);
             exit(0);
         }
@@ -91,5 +91,5 @@ zt_daemonize( char *root, mode_t mask, int options)
     }
 
     /* At this point we are in the second child properly forked and closed off */
-    return(0);
+    return 0;
 } /* zt_daemonize */

@@ -43,7 +43,6 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, list1.next == &list1);
 
     for (i = 0; i < sizeof_array(values); i++) {
-
         al = XCALLOC(list_elt, 1);
         al->value = values[i];
 
@@ -63,8 +62,18 @@ basic_tests(struct zt_unit_test *test, void *data)
         al2 = zt_elist_data(tmp2, list_elt, list);
 
         ZT_UNIT_ASSERT(test, al->value + al2->value == 9);
+
     }
 
+    zt_elist_for_each_safe(&list1, tmp, tmp2) {
+        al = zt_elist_data(tmp, list_elt, list);
+        XFREE(al);
+    }
+
+    zt_elist_for_each_safe(&list2, tmp, tmp2) {
+        al = zt_elist_data(tmp, list_elt, list);
+        XFREE(al);
+    }
 }
 
 int
@@ -74,5 +83,5 @@ register_list_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "list tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

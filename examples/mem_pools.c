@@ -10,7 +10,7 @@
  * Description:
  */
 #include <stdio.h>
-
+#include <string.h>
 #include <libzt/zt.h>
 #include <libzt/zt_mem.h>
 
@@ -50,7 +50,7 @@ main(int argc, char *argv[])
         printf("%s\n", zt_mem_heap_get_name(heap));
     } else {
         printf("failed to alloc a heap\n");
-        return(-1);
+        return -1;
     }
 
     group = zt_mem_pool_group_init(pool_group, sizeof_array(pool_group) - 1);
@@ -88,7 +88,7 @@ main(int argc, char *argv[])
     printf("pool lookup: ");
     if (tpool == zt_mem_pool_get("testpool")) {
         printf("success\n");
-    }else {
+    } else {
         printf("failed\n");
     }
 
@@ -96,6 +96,7 @@ main(int argc, char *argv[])
 
     for (i = 0; i < NPTEST; i++) {
         data[i] = zt_mem_pool_alloc(pool);
+        memset(data[i], 0, sizeof(struct pool_test)+4092);
         data[i]->one = i;
         data[i]->two = i * 100;
         data[i]->three = i * 1000;
@@ -112,10 +113,11 @@ main(int argc, char *argv[])
     printf("*RELEASE*\n");
     zt_mem_pool_destroy(&tpool);
     zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
+
     zt_mem_pool_destroy(&pool);
     zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
 
     zt_mem_heap_destroy(&heap);
-    return(0);
+    return 0;
 } /* main */
 

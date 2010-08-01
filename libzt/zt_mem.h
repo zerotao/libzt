@@ -62,7 +62,6 @@ struct zt_mem_pool_desc {
     zt_page_release_test release_test;
     void               * cb_data;
     int                  flags;
-
 };
 
 typedef struct zt_mem_pool_stats zt_mem_pool_stats;

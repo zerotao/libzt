@@ -7,7 +7,6 @@ zt_set_init(int (*match)(const void *key1,
                          const void *key2, void *cdata),
             void (*destroy)(void *data),
             void *cdata)
-
 {
     zt_set * set;
 
@@ -17,8 +16,9 @@ zt_set_init(int (*match)(const void *key1,
     set->tbl = zt_table_init(NULL, zt_table_hash_int, match, 128, 0, cdata);
     set->match = match;
     set->destroy = destroy;
+    set->length = 0;
 
-    return(set);
+    return set;
 }
 
 static int
@@ -30,7 +30,7 @@ _destroy(void *key, void *datum, void *param)
         destroy((void *)datum);
     }
 
-    return(0);
+    return 0;
 }
 
 void
@@ -49,18 +49,18 @@ int
 zt_set_insert(zt_set *set, const void *data)
 {
     if (zt_set_is_member(set, data)) {
-        return(1);
+        return 1;
     }
 
     set->length++;
-    return(zt_table_set(set->tbl, (void *)data, (void *)data));
+    return zt_table_set(set->tbl, (void *)data, (void *)data);
 }
 
 int zt_set_remove(zt_set *set, void **data)
 {
     *data = zt_table_del(set->tbl, *data);
     set->length--;
-    return(0);
+    return 0;
 }
 
 struct _set_pair {
@@ -74,7 +74,7 @@ static int _union(void *key, void *datum, void *param)
 
     p = (struct _set_pair *)param;
 
-    return(zt_set_insert(p->s2, datum));
+    return zt_set_insert(p->s2, datum);
 }
 
 int zt_set_union(zt_set *setu, const zt_set *set1, const zt_set *set2)
@@ -86,7 +86,7 @@ int zt_set_union(zt_set *setu, const zt_set *set1, const zt_set *set2)
     zt_table_for_each(set1->tbl, _union, &s);
     zt_table_for_each(set2->tbl, _union, &s);
 
-    return(0);
+    return 0;
 }
 
 static int _intersect(void *key, void *datum, void *param)
@@ -96,9 +96,9 @@ static int _intersect(void *key, void *datum, void *param)
     p = (struct _set_pair *)param;
 
     if (zt_set_is_member(p->s1, datum)) {
-        return(zt_set_insert(p->s2, datum));
+        return zt_set_insert(p->s2, datum);
     }
-    return(0);
+    return 0;
 }
 
 int zt_set_intersection(zt_set *seti, const zt_set *set1, const zt_set *set2)
@@ -108,8 +108,7 @@ int zt_set_intersection(zt_set *seti, const zt_set *set1, const zt_set *set2)
     p.s1 = (zt_set *)set2;
     p.s2 = (zt_set *)seti;
 
-    return(zt_table_for_each(set1->tbl, _intersect, &p));
-
+    return zt_table_for_each(set1->tbl, _intersect, &p);
 }
 
 static int _difference(void *key, void *datum, void *param)
@@ -119,9 +118,9 @@ static int _difference(void *key, void *datum, void *param)
     p = (struct _set_pair *)param;
 
     if (!zt_set_is_member(p->s1, datum)) {
-        return(zt_set_insert(p->s2, datum));
+        return zt_set_insert(p->s2, datum);
     }
-    return(0);
+    return 0;
 }
 
 int zt_set_difference(zt_set *setd, const zt_set *set1, const zt_set *set2)
@@ -131,15 +130,15 @@ int zt_set_difference(zt_set *setd, const zt_set *set1, const zt_set *set2)
     p.s1 = (zt_set *)set2;
     p.s2 = (zt_set *)setd;
 
-    return(zt_table_for_each(set1->tbl, _difference, &p));
+    return zt_table_for_each(set1->tbl, _difference, &p);
 }
 
 int zt_set_is_member(const zt_set *set, const void *data)
 {
     if (zt_table_get(set->tbl, data) != NULL) {
-        return(1);
+        return 1;
     }
-    return(0);
+    return 0;
 }
 
 int _is_subset(void *key, void *datum, void *param)
@@ -147,10 +146,10 @@ int _is_subset(void *key, void *datum, void *param)
     struct _set_pair * p = (struct _set_pair *)param;
 
     if (zt_set_is_member(p->s1, datum)) {
-        return(0);
+        return 0;
     }
 
-    return(-1);
+    return -1;
 }
 
 int zt_set_is_subset(const zt_set *set1, const zt_set *set2)
@@ -160,10 +159,10 @@ int zt_set_is_subset(const zt_set *set1, const zt_set *set2)
     p.s1 = (zt_set *)set2;
 
     if (set1->length > set2->length) {
-        return(0);
+        return 0;
     }
 
-    return(zt_table_for_each(set1->tbl, _is_subset, &p) == 0);
+    return zt_table_for_each(set1->tbl, _is_subset, &p) == 0;
 }
 
 int zt_set_is_equal(const zt_set *set1, const zt_set *set2)
@@ -173,10 +172,10 @@ int zt_set_is_equal(const zt_set *set1, const zt_set *set2)
     p.s1 = (zt_set *)set2;
 
     if (set1->length != set2->length) {
-        return(-1);
+        return -1;
     }
 
-    return(zt_table_for_each(set1->tbl, _is_subset, &p));
+    return zt_table_for_each(set1->tbl, _is_subset, &p);
 }
 
 
@@ -185,11 +184,11 @@ struct _iterator_data {
     void          * param;
 };
 
-static int _table_to_set_iterator(void *key, void *data,  void *param)
+static int _table_to_set_iterator(void *key, void *data, void *param)
 {
     struct _iterator_data * p = (struct _iterator_data *)param;
 
-    return(p->iterator(data, p->param));
+    return p->iterator(data, p->param);
 }
 
 int
@@ -203,6 +202,6 @@ zt_set_for_each(zt_set *set, zt_set_iterator iterator, void *param)
     d.iterator = iterator;
     d.param = param;
 
-    return(zt_table_for_each(set->tbl, _table_to_set_iterator, &d));
+    return zt_table_for_each(set->tbl, _table_to_set_iterator, &d);
 }
 

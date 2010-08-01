@@ -27,14 +27,26 @@ basic_tests(struct zt_unit_test *test, void *data)
         zt_array_put(array, i, &values[i]);
     }
 
-
     for (i = 0; i < n; i++) {
         pv = zt_array_get(array, i);
         ZT_UNIT_ASSERT(test, *pv == i);
     }
 
-    zt_array_resize(array, zt_array_length(array) * 2);
+    {
+        int tt = 0;
+        int nn = zt_array_length(array);
 
+        for (i = 0; i < nn; i++) {
+            pv = zt_array_get(array, i);
+            if (*pv == i) {
+                tt++;
+            }
+        }
+
+        ZT_UNIT_ASSERT(test, nn == tt);
+    }
+
+    zt_array_resize(array, zt_array_length(array) * 2);
     ZT_UNIT_ASSERT(test, zt_array_length(array) == n * 2);
 
     array2 = zt_array_copy(array, zt_array_length(array));
@@ -44,7 +56,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     {
         int tt = 0;
 
-        for (i = 0; i < n * 2; i++) {
+        for (i = 0; i < n; i++) {
             pv = zt_array_get(array2, i);
             if (*pv == i) {
                 tt++;
@@ -58,9 +70,14 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     {
         char * tmp = "This is a test";
+        char * data = NULL;
 
         array = zt_array_with_cstr(tmp);
-        ZT_UNIT_ASSERT(test, strcmp(tmp, zt_array_data(array)) == 0);
+        data = zt_array_data(array);
+
+        ZT_UNIT_ASSERT(test, zt_array_length(array) == strlen(tmp));
+
+        ZT_UNIT_ASSERT(test, strncmp(tmp, data, zt_array_length(array)) == 0);
         zt_array_free(&array);
     }
 } /* basic_tests */
@@ -71,6 +88,6 @@ int register_array_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "array tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }
 

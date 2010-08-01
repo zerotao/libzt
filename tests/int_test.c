@@ -232,7 +232,6 @@ test_case_unsigned_sub(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_ulong_sub(ULONG_MIN, 1));
     ZT_UNIT_ASSERT(test, zt_ulong_sub(1, ULONG_MIN) == 1 - ULONG_MIN);
 # endif /* ifndef __x86_64__ */
-
 } /* test_case_unsigned_sub */
 
 static void
@@ -313,7 +312,6 @@ test_case_signed_mul(struct zt_unit_test *test, void *data)
 
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_short_mul(2, SHORT_MAX));
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_short_mul(SHORT_MAX, 2));
-
 } /* test_case_signed_mul */
 
 static void
@@ -524,5 +522,5 @@ register_int_suite(struct zt_unit *unit)
     zt_unit_register_test(suite, "unsigned multiplication", test_case_unsigned_mul);
     zt_unit_register_test(suite, "signed division", test_case_signed_div);
     zt_unit_register_test(suite, "unsigned division", test_case_unsigned_div);
-    return(0);
+    return 0;
 }

@@ -41,7 +41,6 @@ basic_tests(struct zt_unit_test *test, void *data)
      *    zt_time_print_result(&tr, "test_fn", 1);
      *    }
      */
-
 }
 
 int
@@ -51,5 +50,5 @@ register_time_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "time tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

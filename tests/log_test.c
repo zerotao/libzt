@@ -19,18 +19,19 @@
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-    char       position1[255];
-    char       position2[255];
+    char          position1[255];
+    char          position2[255];
+    zt_log_ty   * logger;
     /* zt_log_ty *lstderr = zt_log_stderr((ZT_LOG_WITH_PROGNAME | ZT_LOG_WITH_LEVEL));  */
-    zt_log_ty *lfile = zt_log_file( "log.err",
-                                    ZT_LOG_FILE_OVERWRITE,
-                                    (ZT_LOG_EMU_SYSLOG | ZT_LOG_WITH_LEVEL));
+    zt_log_ty   * lfile = zt_log_file( "log.err",
+                                      ZT_LOG_FILE_OVERWRITE,
+                                      (ZT_LOG_EMU_SYSLOG | ZT_LOG_WITH_LEVEL));
 
     /*    zt_log_ty *lsyslog = zt_log_syslog(LOG_PID, LOG_DAEMON, ZT_LOG_RAW); */
 
     zt_progname("./unit_test", STRIP_DIR);
 
-    zt_log_logger(lfile);
+    logger = zt_log_logger(lfile);
     zt_log_debug_logger(lfile);
 
     zt_log_set_opts(lfile, (ZT_LOG_RAW));
@@ -64,6 +65,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     sprintf(position2, "(%s:%d)", __FILE__, __LINE__); ZT_LOG_DEBUG_INFO(lfile), zt_log_lprintf(lfile, zt_log_debug, "lprintf with debugging");
 
     zt_log_close(lfile);
+    zt_log_logger(logger);
 
     {
         FILE *file = fopen("log.err", "r");
@@ -120,5 +122,5 @@ register_log_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "logging tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

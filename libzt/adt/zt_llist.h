@@ -25,6 +25,19 @@ char *ListTooShort = "List is too short";
 #define zt_llist_tail(_pair) \
     (_pair)->tail
 
+static INLINE void
+zt_llist_free(zt_pair *p)
+{
+    zt_pair * h;
+    zt_pair * op;
+
+    while(p != NULL) {
+        op = p;
+        h = zt_llist_head(p);
+        p = zt_llist_tail(p);
+        XFREE(op);
+    }
+}
 
 static INLINE zt_llist
 zt_llist_cons(void *head, zt_pair *tail)
@@ -34,7 +47,7 @@ zt_llist_cons(void *head, zt_pair *tail)
     llist = XCALLOC(zt_pair, 1);
     zt_llist_head(llist) = head;
     zt_llist_tail(llist) = tail;
-    return(llist);
+    return (llist);
 }
 
 static INLINE void *
@@ -49,7 +62,7 @@ zt_llist_nth(zt_llist pair, int offt)
         THROW(ListTooShort);
     }
 
-    return(zt_llist_head(pair));
+    return (zt_llist_head(pair));
 }
 
 static INLINE zt_llist
@@ -63,7 +76,7 @@ zt_llist_nthtail(zt_llist pair, int offt)
     if (pair == NULL) {
         THROW(ListTooShort);
     }
-    return(zt_llist_tail(pair));
+    return (zt_llist_tail(pair));
 }
 
 static INLINE zt_llist
@@ -76,7 +89,7 @@ zt_llist_ppop(zt_llist *list)
     if (rlist != NULL) {
         *list = zt_llist_tail(rlist);
     }
-    return(rlist);
+    return (rlist);
 }
 
 static INLINE void *
@@ -88,24 +101,24 @@ zt_llist_pop(zt_llist *list)
 
     z = zt_llist_ppop(list);
     if (z == NULL) {
-        return( z) ;
+        return (z);
     }
     item = zt_llist_head(z);
     XFREE(z);
-    return(item);
+    return (item);
 }
 
 static INLINE zt_llist
 zt_llist_push(void *item, zt_llist *list)
 {
-    return(*list = zt_llist_cons(item, *list));
+    return (*list = zt_llist_cons(item, *list));
 }
 
 static INLINE zt_llist
 zt_llist_ppush(zt_pair *p, zt_llist *list)
 {
     zt_llist_tail(p) = *list;
-    return(*list = p);
+    return (*list = p);
 }
 
 static INLINE zt_llist
@@ -116,7 +129,7 @@ zt_llist_nreverse(zt_llist llist)
     while (llist != NULL) {
         zt_llist_ppush(zt_llist_ppop(&llist), &rlist);
     }
-    return(rlist);
+    return (rlist);
 }
 
 static INLINE zt_llist
@@ -130,7 +143,7 @@ zt_llist_reverse(zt_llist llist)
         rlist = zt_llist_cons(i, rlist);
         p = zt_llist_tail(p);
     }
-    return(rlist);
+    return (rlist);
 }
 
 static INLINE zt_llist
@@ -149,7 +162,7 @@ zt_llist_nmerge(zt_llist l1, zt_llist l2, int (*cmp)())
         zt_llist_ppush(zt_llist_ppop(&l2), &rlst);
     }
 
-    return(zt_llist_nreverse(rlst));
+    return (zt_llist_nreverse(rlst));
 }
 
 
@@ -158,12 +171,12 @@ zt_llist zt_llist_split(zt_llist lst)
     zt_llist tail;
 
     if (lst == NULL) {
-        return( NULL) ;
+        return (NULL);
     }
     tail = zt_llist_tail(lst);
 
     if ((lst == NULL) || (tail == NULL)) {
-        return(lst);
+        return (lst);
     }
 
     while ((tail != NULL) && ((tail = zt_llist_tail(tail)) != NULL)) {
@@ -172,7 +185,7 @@ zt_llist zt_llist_split(zt_llist lst)
     }
     tail = zt_llist_tail(lst);
     zt_llist_tail(lst) = NULL;
-    return(tail);
+    return (tail);
 }
 
 static INLINE zt_llist
@@ -181,11 +194,11 @@ zt_llist_sort(zt_llist lst, int (*cmp)())
     zt_llist lst2;
 
     if ((lst == NULL) || (zt_llist_tail(lst) == NULL)) {
-        return(lst);
+        return (lst);
     }
 
     lst2 = zt_llist_split(lst);
-    return(zt_llist_nmerge(zt_llist_sort(lst, cmp), zt_llist_sort(lst2, cmp), cmp));
+    return (zt_llist_nmerge(zt_llist_sort(lst, cmp), zt_llist_sort(lst2, cmp), cmp));
 }
 
 
@@ -214,4 +227,4 @@ zt_llist_sort(zt_llist lst, int (*cmp)())
 
 
 END_C_DECLS
-#endif _ZT_LLIST_H_
+#endif /* _ZT_LLIST_H_ */

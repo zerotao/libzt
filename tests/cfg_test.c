@@ -44,18 +44,41 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, (f == 99.999));
     ZT_UNIT_ASSERT(test, (!strcmp(s, "This is a string")));
 
+    zt_cfg_get_int(cfg, "main", "int_var", &i);
+    zt_cfg_get_bool(cfg, "main", "bool_var", &b);
+    zt_cfg_get_float(cfg, "main", "float_var", &f);
+    zt_cfg_get_string(cfg, "main", "string_var", &s);
+
+    ZT_UNIT_ASSERT(test, (b == 1));
+    ZT_UNIT_ASSERT(test, (i == 1));
+    ZT_UNIT_ASSERT(test, (f == 99.999));
+    ZT_UNIT_ASSERT(test, (!strcmp(s, "This is a string")));
+
     f = f + 100.00;
 
     zt_cfg_set(cfg, "main2", "float_var", &f, zt_cfg_float);
     zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_float);
     zt_cfg_get(cfg, "main2", "float_var", &f2, zt_cfg_float);
     zt_cfg_get(cfg, "main3", "float_var", &f3, zt_cfg_float);
+
     ZT_UNIT_ASSERT(test, (f == 199.999));
     ZT_UNIT_ASSERT(test, (f2 == 199.999));
     ZT_UNIT_ASSERT(test, (f3 == 99.999));
 
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_bool) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_float) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "int_var", &i, zt_cfg_string) == -1));
+
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_bool) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_int) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "float_var", &f, zt_cfg_string) == -1));
+
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "string_var", &i, zt_cfg_bool) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "string_var", &i, zt_cfg_float) == -1));
+    ZT_UNIT_ASSERT(test, (zt_cfg_get(cfg, "main", "string_var", &i, zt_cfg_int) == -1));
+
     zt_cfg_close(cfg);
-}
+} /* basic_tests */
 
 int
 register_cfg_suite(struct zt_unit *unit)
@@ -64,5 +87,5 @@ register_cfg_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "cfg tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

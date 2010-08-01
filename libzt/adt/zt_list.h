@@ -24,9 +24,9 @@ typedef zt_elist zt_elist_elt;
 
 #define zt_elist(N) zt_elist N = zt_elist_init(N)
 
-#define zt_elist_reset(P) do {           \
-        (P)->prev = (P);                \
-        (P)->next = (P);                \
+#define zt_elist_reset(P) do { \
+        (P)->prev = (P);       \
+        (P)->next = (P);       \
 } while (0)
 
 #define zt_elist_get_next(P) ((P)->next)
@@ -36,18 +36,18 @@ typedef zt_elist zt_elist_elt;
 #define zt_elist_data(PTR, TYPE, ELT) \
     containerof(PTR, TYPE, ELT)
 
-#define zt_elist_for_each(h, p)             \
-    for ((p) = (h)->next; (p) != (h);       \
+#define zt_elist_for_each(h, p)       \
+    for ((p) = (h)->next; (p) != (h); \
          (p) = (p)->next)
 
-#define zt_elist_for_each_safe(h, p, n)         \
-    for ((p) = (h)->next, (n) = (p)->next;      \
+#define zt_elist_for_each_safe(h, p, n)    \
+    for ((p) = (h)->next, (n) = (p)->next; \
          (p) != (h); (p) = (n), (n) = (n)->next)
 
 static INLINE int
 zt_elist_empty(zt_elist *head)
 {
-    return(head->next == head);
+    return (head->next == head);
 }
 
 

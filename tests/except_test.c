@@ -35,29 +35,29 @@ static char *f1(int i)
             TRY_RETURN Pass;
         },
         {
-            CATCH(fe, TRY_RETURN Pass;);
+            CATCH(fe, TRY_RETURN Pass; );
         });
-    return(Fail);
+    return Fail;
 }
 
 int foo(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count++;
-    return(0);
+    return 0;
 }
 int bar(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count++;
-    return(1);
+    return 1;
 }
 int newbar(void *e, void* t, char *et, char *f, char *ff, int l)
 {
     test_count = 0xDEADBEEF;
-    return(0);
+    return 0;
 }
 int fooexit(void *e, void* t, char *et, char *f, char *ff, int l)
 {
-    return(-1);
+    return -1;
 }
 
 static void
@@ -66,9 +66,9 @@ basic_tests(struct zt_unit_test *test, void *data)
     {
         char *do_try = Fail;
         DO_TRY
-              THROW(do_try);
+        THROW(do_try);
         ELSE_TRY
-              CATCH(do_try, do_try = Pass;);
+        CATCH(do_try, do_try = Pass; );
         END_TRY
 
         ZT_UNIT_ASSERT(test, do_try == Pass);
@@ -79,7 +79,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         THROW(do_try);
         END_TRY
         ELSE_TRY
-        CATCH(do_try, do_try = Pass;);
+        CATCH(do_try, do_try = Pass; );
         END_TRY
         ZT_UNIT_ASSERT(test, do_try == Pass);
     }
@@ -89,7 +89,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         TRY({
                 TRY(THROW(do_try), {});
             }, {
-                CATCH(do_try, do_try = Pass;);
+                CATCH(do_try, do_try = Pass; );
             });
         ZT_UNIT_ASSERT(test, do_try == Pass);
     }
@@ -115,7 +115,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                 foo = f1(0);
                 THROW(foo);
             }, {
-                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass););
+                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass); );
             });
 
 
@@ -123,9 +123,8 @@ basic_tests(struct zt_unit_test *test, void *data)
                 foo = f1(1);
                 THROW(foo);
             }, {
-                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass););
+                CATCH(foo, ZT_UNIT_ASSERT(test, foo == Pass); );
             });
-
     }
 
     /*Test Domains*/
@@ -193,7 +192,6 @@ basic_tests(struct zt_unit_test *test, void *data)
          * #include <zt_assert.h>
          *         TRY_THROW(zt_assertion.failed);
          */
-
     }
 
 
@@ -206,15 +204,15 @@ basic_tests(struct zt_unit_test *test, void *data)
             {
                 THROW(rethrow);
             } ELSE_TRY {
-                CATCH(rethrow, rethrow = Fail;);
+                CATCH(rethrow, rethrow = Fail; );
                 RETHROW();
             }
             END_TRY;
         }
         ELSE_TRY
         {
-            CATCH(printf, rethrow = Fail;);
-            CATCH(rethrow, rethrow = Pass;);
+            CATCH(printf, rethrow = Fail; );
+            CATCH(rethrow, rethrow = Pass; );
         }
         END_TRY;
         ZT_UNIT_ASSERT(test, rethrow == Pass);
@@ -245,7 +243,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                                unwind = Pass;
                            });
         } ELSE_TRY {
-            CATCH(unwind, unwind = Fail;);
+            CATCH(unwind, unwind = Fail; );
         } END_TRY;
         ZT_UNIT_ASSERT(test, unwind == Pass);
     }
@@ -254,44 +252,44 @@ basic_tests(struct zt_unit_test *test, void *data)
     {
         char *catch = Fail;
 
-        TRY ({
-             TRY({
-                 THROW(catch );
-                 }, {
-                 CATCH(catch , catch = Pass;);
-                 });
-             }, {
-             CATCH(catch , catch = Fail;);
-             });
-        ZT_UNIT_ASSERT (test, catch == Pass);
+        TRY({
+                TRY({
+                        THROW(catch );
+                    }, {
+                        CATCH(catch, catch = Pass; );
+                    });
+            }, {
+                CATCH(catch, catch = Fail; );
+            });
+        ZT_UNIT_ASSERT(test, catch == Pass);
     }
 
 /*Test CATCH in wind*/
     {
         char *domain = Pass;
 
-        TRY({ CATCH(domain, domain = Fail;); }, { });
+        TRY({ CATCH(domain, domain = Fail; ); }, { });
         ZT_UNIT_ASSERT(test, domain == Pass);
     }
 
     {
-        char    * domain = Fail;
+        char * domain = Fail;
         TRY({
-            THROW(domain);
+                THROW(domain);
             }, {
-            CATCH(except_CatchAll, domain = Pass;);
+                CATCH(except_CatchAll, domain = Pass; );
             });
         ZT_UNIT_ASSERT(test, domain == Pass);
     }
 
     {
         TRY({
-            THROW(zt_exception.memory.no_mem);
+                THROW(zt_exception.memory.no_mem);
             }, {
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception));
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory));
-            ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory.no_mem));
-            CATCH(zt_exception, );
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception));
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory));
+                ZT_UNIT_ASSERT(test, EXCEPTION_IN(zt_exception.memory.no_mem));
+                CATCH(zt_exception, );
             });
     }
 
@@ -364,15 +362,16 @@ basic_tests(struct zt_unit_test *test, void *data)
      *
      *      }
      */
-}
+} /* basic_tests */
 
 
 int
-register_except_suite(struct zt_unit *unit){
-    struct zt_unit_suite    * suite;
+register_except_suite(struct zt_unit *unit)
+{
+    struct zt_unit_suite * suite;
 
     suite = zt_unit_register_suite(unit, "except tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
 
-    return( 0) ;
+    return 0;
 }

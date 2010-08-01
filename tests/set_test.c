@@ -4,7 +4,7 @@
 #include <libzt/adt/zt_set.h>
 #include <libzt/zt_unit.h>
 
-ssize_t values0_19[] =  {
+ssize_t values0_19[] = {
     0,  1,  2,  3,  4,  5,
     6,  7,  8,  9,  10,
     11, 12, 13, 14, 15,
@@ -24,7 +24,7 @@ static int union_test(void *data, void *param)
 
     values0_19_fill[result] = result;
 
-    return(0);
+    return 0;
 }
 
 static int intersection_test(void *data, void *param)
@@ -38,7 +38,7 @@ static int intersection_test(void *data, void *param)
 
     values0_19_fill[result] = result;
 
-    return(0);
+    return 0;
 }
 
 static int difference_test(void *data, void *param)
@@ -48,11 +48,11 @@ static int difference_test(void *data, void *param)
 
     ZT_UNIT_ASSERT(test,
                    (values0_19_fill[result] == 0) &&
-                   result <  MAX_LEN / 2);
+                   result < MAX_LEN / 2);
 
     values0_19_fill[result] = result;
 
-    return(0);
+    return 0;
 }
 
 static void
@@ -100,7 +100,6 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     zt_set_destroy(set1);
     zt_set_destroy(set2);
-
 } /* basic_tests */
 
 
@@ -111,5 +110,5 @@ register_set_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "set tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

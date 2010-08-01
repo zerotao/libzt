@@ -33,7 +33,7 @@ zt_array_new(int len, int size)
         arrayrep_init(array, len, size, NULL);
     }
 
-    return(array);
+    return array;
 }
 
 void
@@ -64,35 +64,37 @@ zt_array_with(char *data, int len, int size, int copy)
 {
     zt_array array;
 
-    array = XMALLOC(struct zt_array, 1);
-
-    if (array->data) {
-        XFREE(array->data);
-    }
+    array = XCALLOC(struct zt_array, 1);
 
     zt_array_set_data(array, data, len, size, copy);
 
-    return(array);
+    return array;
 }
 
 zt_array
 zt_array_with_cstr(char *str)
 {
-    return(zt_array_with((char *)str, strlen(str), sizeof(char), 1));
+    return zt_array_with((char *)str, strlen(str), sizeof(char), 1);
 }
 
 void
 zt_array_resize(zt_array array, int len)
 {
     zt_assert(array);
-    zt_assert(len >= 0);
+    zt_assert(len > 0);
 
     if (array->length == 0) {
         array->data = XCALLOC(char, len * array->size);
     } else if (len > 0) {
         array->data = XREALLOC(char, array->data, len * array->size);
+        /* lear the added space */
+        if(len > array->length) {
+            int   rlen = len - array->length;
+            memset(&array->data[array->length*array->size], 0, rlen * array->size);
+        }
     } else {
         XFREE(array->data);
+        array->data = NULL;
     }
 
     array->length = len;
@@ -113,14 +115,14 @@ zt_array_copy(zt_array array, int len)
                MIN(array->length, copy->length) * copy->size);
     }
 
-    return(copy);
+    return copy;
 }
 
 int
 zt_array_length(zt_array array)
 {
     zt_assert(array);
-    return(array->length);
+    return array->length;
 }
 
 int
@@ -133,21 +135,21 @@ zt_array_set_length(zt_array array, int len)
     olen = array->length;
 
     array->length = len;
-    return(olen);
+    return olen;
 }
 
 int
 zt_array_size(zt_array array)
 {
     zt_assert(array);
-    return(array->size);
+    return array->size;
 }
 
 char *
 zt_array_data(zt_array array)
 {
     zt_assert(array);
-    return(array->data);
+    return array->data;
 }
 
 
@@ -160,7 +162,7 @@ zt_array_elem_copy(zt_array array, int offt, void *elem)
     zt_assert(elem);
 
     memcpy(elem, array->data + offt * array->size, array->size);
-    return(elem);
+    return elem;
 }
 
 void *
@@ -174,7 +176,7 @@ zt_array_get(zt_array array, int offt)
      * memcpy(elem, array->data + offt * array->size, array->size);
      * *elem = ;
      */
-    return (array->data + offt * array->size); /* *elem; */
+    return array->data + offt * array->size;     /* *elem; */
 }
 
 void *
@@ -186,5 +188,5 @@ zt_array_put(zt_array array, int offt, void *elem)
 
     memcpy(array->data + offt * array->size, elem, array->size);
 
-    return(elem);
+    return elem;
 }

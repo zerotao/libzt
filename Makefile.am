@@ -41,6 +41,7 @@ EXTRA_DIST = \
 # 	 mkepm -f native @PACKAGE@.list;)
 
 test:
+	$(MAKE)
 	$(MAKE) -C tests test
 
 coverage::

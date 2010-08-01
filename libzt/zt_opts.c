@@ -67,11 +67,11 @@ print_default(zt_opt_types type, void *value)
         }
         break;
         case zt_opt_func:
-            /* FALLTHRU */
+        /* FALLTHRU */
         case zt_opt_ofunc:
-            /* FALLTHRU */
+        /* FALLTHRU */
         case zt_opt_rfunc:
-            /* FALLTHRU */
+        /* FALLTHRU */
         case zt_opt_help:
             break;
     } /* switch */
@@ -82,7 +82,7 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
 {
     int i = 0;
 
-    fprintf(stderr, "Usage: %s %s" NL, basename(argv[0]), option_string);
+    fprintf(stderr, "usage: %s %s" NL, basename(argv[0]), option_string);
 
     if (max_opts > 0) {
         fprintf(stderr, NL "Options:" NL);
@@ -98,7 +98,7 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
             if (opts[i].long_opt) {
                 if (isoptchar(opts[i].opt)) {
                     offt += fprintf(stderr, ", --%s", opts[i].long_opt);
-                } else{
+                } else {
                     offt += fprintf(stderr, BLANK "    --%s", INDENT(1), opts[i].long_opt);
                 }
             }
@@ -114,12 +114,12 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
             } else
             if (zt_opts_usage_t[opts[i].type].desc) {
                 if (isoptchar(opts[i].opt)) {
-                    fprintf(stderr, 
+                    fprintf(stderr,
                             BLANK ": eg. -%c %s" NL,
                             INDENT(1),
                             opts[i].opt,
                             zt_opts_usage_t[opts[i].type].desc ? zt_opts_usage_t[opts[i].type].desc : "");
-                } else{
+                } else {
                     fprintf(stderr,
                             BLANK ": eg. --%s %s" NL,
                             INDENT(1),
@@ -136,23 +136,23 @@ zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int m
 int
 zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
 {
-#define OPT_MAX 255
-#define OPT_MAX_DOUBLE 512
+#define OPT_MAX 512
     int  i = 0;
-    char optstring[OPT_MAX_DOUBLE];
+    char optstring[OPT_MAX];
     int  opt_index = 0;
     int  max_opts = 0;
     int  nopt_chars = -2;
-
+    int  result = 0;
 
 #ifdef HAVE_GETOPT_LONG
     struct option *longopts = NULL;
 #endif
+
     /* opterr = 0; */ /* turn off the default error message */
     if (!opts) {
-        return(-1);
+        return -1;
     }
-    memset(optstring, '\0', OPT_MAX_DOUBLE);
+    memset(optstring, '\0', OPT_MAX);
 
     for (i = 0; (opts[i].description != NULL); i++) {
         if (opts[i].opt <= 0) {
@@ -162,17 +162,18 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
 #ifdef HAVE_GETOPT_LONG
     longopts = XCALLOC(struct option, i + 1);
+    optstring[0] = '+';
+    opt_index++;
 #endif
 
-    for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX_DOUBLE; i++) {
-
+    for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX; i++) {
         if (isoptchar(opts[i].opt)) {
             optstring[opt_index++] = opts[i].opt;
         }
 
 #ifdef HAVE_GETOPT_LONG
         longopts[i].name = opts[i].long_opt;
-        longopts[i].has_arg = 0;
+        longopts[i].has_arg = no_argument;
         /* FIXME: I need to do something here to handle longopts without short opts */
         longopts[i].flag = NULL;
         longopts[i].val = opts[i].opt;
@@ -194,7 +195,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                 }
 
 #ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = 2;
+                longopts[i].has_arg = optional_argument;
 #endif
                 break;
 
@@ -208,7 +209,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                 }
 
 #ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = 1;
+                longopts[i].has_arg = required_argument;
 #endif
                 break;
         } /* switch */
@@ -233,7 +234,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
             if (auto_usage) {
                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
             }
-            return(EXIT_FAILURE);
+            result = EXIT_FAILURE;
+            goto RETURN;
         }
         for (i = 0; i < max_opts; i++) {
             if (c != opts[i].opt) {
@@ -251,9 +253,9 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                             || (!(strcasecmp("yes", &optarg[offset])))
                             || (!(strcasecmp("t", &optarg[offset])))) {
                             *(int *)opts[i].val = 1;
-                        }else if ((!(strcasecmp("false", &optarg[offset])))
-                                  || (!(strcasecmp("no", &optarg[offset])))
-                                  || (!(strcasecmp("f", &optarg[offset])))) {
+                        } else if ((!(strcasecmp("false", &optarg[offset])))
+                                   || (!(strcasecmp("no", &optarg[offset])))
+                                   || (!(strcasecmp("f", &optarg[offset])))) {
                             *(int *)opts[i].val = 0;
                         } else {
                             printf("Invalid value \"%s\" for %s (expecting [t|f|yes|no|true|false]).\n",
@@ -261,7 +263,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                             if (auto_usage) {
                                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                             }
-                            return( EXIT_FAILURE) ;
+                            result = EXIT_FAILURE;
+                            goto RETURN;
                         }
                     } else {
                         *(int *)opts[i].val = !*(int *)opts[i].val;
@@ -278,7 +281,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return( EXIT_FAILURE) ;
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_string:
@@ -289,7 +293,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return( EXIT_FAILURE) ;
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_func:
@@ -297,7 +302,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return( EXIT_FAILURE) ;
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_ofunc:
@@ -305,7 +311,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return( EXIT_FAILURE) ;
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_rfunc:
@@ -313,13 +320,14 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        return( EXIT_FAILURE) ;
+                        result = EXIT_FAILURE;
+                        goto RETURN;
                     }
                     break;
                 case zt_opt_flag:
                     if (*(int *)opts[i].val > 0) {
                         *(int *)opts[i].val = 0;
-                    }else{
+                    } else {
                         *(int *)opts[i].val = 1;
                     }
                     break;
@@ -327,20 +335,26 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     if (auto_usage) {
                         zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                     }
-                    return( -1) ;
+                    result = -1;
+                    goto RETURN;
                     break;
                 default:
                     printf("Unknown arg type %d\n", opts[i].opt);
-                    return( EXIT_FAILURE) ;
+                    result = EXIT_FAILURE;
+                    goto RETURN;
             } /* switch */
         }
     }
+    *argc -= optind;
+    *argv += optind;
+
+    optind = 1;
+
+RETURN:
 #ifdef HAVE_GETOPT_LONG
     XFREE(longopts);
 #endif
-    *argc -= optind;
-    *argv += optind;
-    return(0);
+    return result;
 } /* zt_opts_process */
 
 /*
@@ -348,5 +362,5 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
  */
 static INLINE int isoptchar(int x)
 {
-    return((x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9'));
+    return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
 }

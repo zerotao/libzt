@@ -7,6 +7,4 @@
 
 zt_pair *zt_cons(void *obj, zt_cons *cons)
 {
-
-
 }

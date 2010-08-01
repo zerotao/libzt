@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import types
 import yaml
 import os
 
@@ -49,9 +50,10 @@ def stat_ut(fd):
         tests = yaml.load_all(fd)
 
         for suite in tests:
-            for suite_name, values in suite.items():
-                sstats = stat_suite(values)
-                stats.append(sstats)
+            if type(suite) not in types.StringTypes:
+                for suite_name, values in suite.items():
+                    sstats = stat_suite(values)
+                    stats.append(sstats)
 
     except Exception, e:
         print "Error parsing Unit Test input: %s" % e

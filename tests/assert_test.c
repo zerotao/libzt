@@ -24,13 +24,13 @@ basic_tests(struct zt_unit_test *test, void *data)
     zt_log_ty * log;
 
     log = zt_log_file("/dev/null", 0, 0);
-
     olog = zt_log_logger(log);
 
     zt_assert(1 == 1);
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.assertion.failed, zt_assert(1 == 0));
 
     zt_log_logger(olog);
+    zt_log_close(log);
 }
 
 int
@@ -40,5 +40,5 @@ register_assert_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "assert tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

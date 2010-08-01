@@ -98,7 +98,12 @@ basic_tests(struct zt_unit_test *test, void *data)
                     sizeof(char), 0);
 
 
+
     ZT_UNIT_ASSERT(test, strcmp(string_test, test_string) == 0);
+
+    zt_bstream_free(&bs);
+    zt_bstream_free(&clone);
+
 } /* basic_tests */
 
 int
@@ -108,5 +113,5 @@ register_bstream_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "bstream", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return(0);
+    return 0;
 }

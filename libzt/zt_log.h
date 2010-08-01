@@ -28,14 +28,14 @@
 BEGIN_C_DECLS
 
 enum zt_log_level {
-    zt_log_emerg = 0,
-    zt_log_alert,
-    zt_log_crit,
-    zt_log_err,
-    zt_log_warning,
-    zt_log_notice,
-    zt_log_info,
-    zt_log_debug,
+    zt_log_emerg = 0,   /* Panic - total system failure (application should exit now) */
+    zt_log_alert,                                          /* A condition that should be corrected immediately, such as a corrupted system database. */
+    zt_log_crit,                                           /* Critical conditions, e.g., hard device errors. */
+    zt_log_err,                                            /* Program Errors (eg. could not find file "foo") */
+    zt_log_warning,                                        /* Program Warnings (eg. val X is too large - rounding) */
+    zt_log_notice,                                         /* Not an error but user correctable (eg. could not find config file X, switching to defaults) */
+    zt_log_info,                                           /* Informational Messages (eg. we have just passed chattanooga) */
+    zt_log_debug,                                          /* Messages that contain information normally of use only when debugging a program. */
     zt_log_max
 };
 typedef enum zt_log_level zt_log_level;
@@ -59,7 +59,7 @@ extern void zt_log_lstrerror( zt_log_ty *, zt_log_level, int, char *, ... ) FORM
 extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, char *, va_list ) FORMAT((printf, 3, 0));
 
 /* zt_log_strerror(level, errnum, fmt, ...) */
-#define zt_log_strerror( level, errnum, ... )    \
+#define zt_log_strerror( level, errnum, ... ) \
     zt_log_lstrerror( 0, level, errnum, __VA_ARGS__ )
 
 /* zt_log_printf(level, fmt, ...) */

@@ -20,7 +20,7 @@ libzt_la_LIBADD = 					\
 #if interface add AGE++
 #if interface remove AGE = 0
 # check eev
-libzt_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
+libzt_la_LDFLAGS = -version-info 2:0:0  -export-dynamic
 libzt_gc_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
 libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 
@@ -51,7 +51,9 @@ libzt_la_SOURCES = 		\
 		zt_uuid.c		\
 		zt_exceptions.c \
     zt_ipv4_tbl.c \
-	  zt_ez_mempool.c
+	  zt_ez_mempool.c \
+		zt_ipv4_tbl.c	\
+		zt_atexit.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = 	\
@@ -75,8 +77,9 @@ pkginclude_HEADERS = 	\
 		zt_sha1.h		\
 		zt_uuid.h		\
 		zt_exceptions.h \
-    zt_ipv4_tbl.h \
-    zt_ez_mempool.h
+    zt_ez_mempool.h \
+		zt_ipv4_tbl.h	\
+		zt_atexit.h
 
 
 # The following is required in the Makefile.am for common.h

@@ -108,15 +108,12 @@ basic_tests(struct zt_unit_test *test, void *data)
            *     zt_gc_unprotect(&gc, last);
            *     last = NULL;
            * } */
-
-
-
     }
 
     {
         int mark_base = REND;
-        int free_base = (REND - 3) - 1;          /* - 3 for root, root->value.a, protected - 1 for last object added*/
-        int int_seen_base = ((REND * 3) - 6);          /* root->value.a, protected, last_object need to be subtracted out */
+        int free_base = (REND - 3) - 1;                    /* - 3 for root, root->value.a, protected - 1 for last object added*/
+        int int_seen_base = ((REND * 3) - 6);              /* root->value.a, protected, last_object need to be subtracted out */
 
         /* for the last object placed on the scan queue */
 #if DEBUG
@@ -130,8 +127,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         /* second pass */
         zt_gc_scan(&gc, 1);
 
-        int_seen_base += 3;        /* root->value.a + protected + last_alloc */
-        mark_base += 1;        /* root->value.a */
+        int_seen_base += 3;                                /* root->value.a + protected + last_alloc */
+        mark_base += 1;                                    /* root->value.a */
         free_base += 1;
 #if DEBUG
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
@@ -144,8 +141,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         /* third pass */
         zt_gc_scan(&gc, 1);
 
-        int_seen_base += 2;        /* protected + root->value.a */
-        mark_base += 1;        /* root->value.a */
+        int_seen_base += 2;                                /* protected + root->value.a */
+        mark_base += 1;                                    /* root->value.a */
         free_base += 1;
 #if DEBUG
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
@@ -160,8 +157,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         /* printf("Destory %d %d %d\n", ints_marked, atoms_marked, atoms_freed); */
 
         int_seen_base += 2;
-        mark_base += 1;        /* root->value.a */
-        free_base += 3;        /* root, root->value.a, protected */
+        mark_base += 1;                                    /* root->value.a */
+        free_base += 3;                                    /* root, root->value.a, protected */
 #if DEBUG
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
         printf("Final seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
@@ -170,8 +167,6 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, atoms_marked == mark_base);
         ZT_UNIT_ASSERT(test, atoms_freed == free_base);
     }
-
-
 } /* basic_tests */
 
 int
@@ -181,5 +176,5 @@ register_gc_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "gc tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
-    return( 0) ;
+    return 0;
 }

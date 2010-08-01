@@ -50,15 +50,16 @@ u_int32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
 #define ZT_HASH4_MASK(hash) \
     (hash = ((hash >> 4) ^ hash) & ZT_HASH_MASK(4))
 
-#define ZT_HASH_SUB32_MASK(hash, x) \
-    if ((x) < 32) {    \
-        if ((x) < 16) {    \
-            (hash = ((hash >> (x)) ^ hash) & ZT_HASH_MASK(x));     \
-        } else {    \
-            (hash = ((hash >> (x)) ^ (hash & ZT_HASH_MASK(x))));     \
-        }    \
+/* *INDENT-OFF* */
+#define ZT_HASH_SUB32_MASK(hash, x)                                   \
+    if ((x) < 32) {                                                   \
+        if ((x) < 16) {                                               \
+            (hash = ((hash >> (x)) ^ hash) & ZT_HASH_MASK(x));        \
+        } else {                                                      \
+            (hash = ((hash >> (x)) ^ (hash & ZT_HASH_MASK(x))));      \
+        }                                                             \
     }
-
+/* *INDENT-ON* */
 
 #endif    /* _ZT_HASH_H_ */
 

@@ -29,20 +29,20 @@ void zt_cfg_close( zt_cfg_ty *cfg )
 }
 
 #undef zt_cfg_get
-int 
+int
 zt_cfg_get( zt_cfg_ty *cfg, char *block, char *name, void * value, zt_cfg_type type )
 {
     if (cfg && cfg->vtbl->get) {
-        return(cfg->vtbl->get(cfg, block, name, value, type));
+        return cfg->vtbl->get(cfg, block, name, value, type);
     }
-    return(0);
+    return 0;
 }
 
 #undef zt_cfg_set
 int zt_cfg_set( zt_cfg_ty *cfg, char *block, char *name, void *value, zt_cfg_type type )
 {
     if (cfg && cfg->vtbl->set) {
-        return(cfg->vtbl->set(cfg, block, name, value, type));
+        return cfg->vtbl->set(cfg, block, name, value, type);
     }
-    return(0);
+    return 0;
 }

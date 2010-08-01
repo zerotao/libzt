@@ -33,15 +33,15 @@
 #include "log_private.h"
 
 zt_log_level_desc_ty zt_log_level_desc[] = {
-    { zt_log_emerg,   "Emergency"     },
-    { zt_log_alert,   "Alert"         },
-    { zt_log_crit,    "Critical"      },
-    { zt_log_err,     "Error"         },
-    { zt_log_warning, "Warning"       },
-    { zt_log_notice,  "Notice"        },
-    { zt_log_info,    "Info"          },
-    { zt_log_debug,   "Debug"         },
-    { -1,             NULL            },
+    { zt_log_emerg,   "Emergency" },
+    { zt_log_alert,   "Alert"     },
+    { zt_log_crit,    "Critical"  },
+    { zt_log_err,     "Error"     },
+    { zt_log_warning, "Warning"   },
+    { zt_log_notice,  "Notice"    },
+    { zt_log_info,    "Info"      },
+    { zt_log_debug,   "Debug"     },
+    { -1,             NULL        },
 };
 
 zt_log_ty *
@@ -61,7 +61,7 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
     result->opts = opts;
     result->level = zt_log_max;
 
-    return(result);
+    return result;
 }
 
 char*
@@ -140,5 +140,5 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         XFREE(nbuff);
     }
     strcat(buff, "\n");
-    return(buff);
+    return buff;
 } /* zt_log_gen_fmt */

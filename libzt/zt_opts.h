@@ -27,9 +27,9 @@ enum zt_opt_types {
     zt_opt_flag,
     zt_opt_int,
     zt_opt_string,
-    zt_opt_func,
-    zt_opt_ofunc,
-    zt_opt_rfunc,
+    zt_opt_func,  /* any arg */
+    zt_opt_ofunc, /* optional arg */
+    zt_opt_rfunc, /* required arg */
     zt_opt_help
 };
 typedef enum zt_opt_types zt_opt_types;

@@ -9,17 +9,17 @@
 #define ZT_UNIT_EXCEPTION_DEFAULT "Unknown Error"
 char * zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
 
-#define yaml_dict(name, offt)    \
+#define yaml_dict(name, offt) \
     printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
 
-#define yaml_list_elt(value, fmt, offt)    \
+#define yaml_list_elt(value, fmt, offt) \
     printf(BLANK "- " fmt "\n", INDENT_TO(offt, 2, 0), value)
 
-#define yaml_value(name, offt_1, value_fmt, value)    \
-    do {    \
-        int offt;    \
-        offt = printf(BLANK "%s", INDENT_TO(offt_1, 2, 0), name);    \
-        printf(BLANK ": " value_fmt "\n", INDENT_TO(30, 2, offt), value);    \
+#define yaml_value(name, offt_1, value_fmt, value)                        \
+    do {                                                                  \
+        int offt;                                                         \
+        offt = printf(BLANK "%s", INDENT_TO(offt_1, 2, 0), name);         \
+        printf(BLANK ": " value_fmt "\n", INDENT_TO(30, 2, offt), value); \
     } while (0)
 
 void
@@ -38,7 +38,7 @@ zt_unit_init(void)
     zt_elist_reset(&unit->suites);
     unit->failures = 0;
     unit->successes = 0;
-    return(unit);
+    return unit;
 }
 
 void
@@ -82,7 +82,7 @@ zt_unit_register_suite(struct zt_unit     * unit,
 
     zt_elist_reset(&suite->tests);
     zt_elist_add_tail(&unit->suites, &suite->suite);
-    return(suite);
+    return suite;
 }
 
 void
@@ -129,7 +129,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
     test->assertions = 0;
 
     zt_elist_add_tail(&suite->tests, &test->test);
-    return(test);
+    return test;
 }
 
 void
@@ -159,13 +159,12 @@ zt_unit_run(struct zt_unit    * unit)
     int                    result = 0;
 
     zt_elist_for_each(&unit->suites, tmp) {
-
         unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
         if (zt_unit_run_suite(unit, unit_suite) < 0) {
             result = -1;
         }
     }
-    return(result);
+    return result;
 }
 
 
@@ -205,7 +204,7 @@ zt_unit_run_suite(struct zt_unit    * unit,
             }
         }
     }
-    return(0);
+    return 0;
 }
 
 
@@ -275,7 +274,7 @@ zt_unit_run_test(struct zt_unit    * unit,
     yaml_value("assertions", 6, "%ld", test->assertions);
     yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 
-    return(test->success);
+    return test->success;
 }
 
 #include <string.h>
@@ -289,7 +288,7 @@ char **str_split(char *str, char * delim, int *elts)
     size_t memsize;
 
     if (str == NULL || delim == NULL) {
-        return (NULL);
+        return NULL;
     }
 
     argc = 1;
@@ -316,7 +315,7 @@ char **str_split(char *str, char * delim, int *elts)
 
     *elts = argc;
 
-    for (ap = argv; (*ap = strsep(&tmp, delim)) != NULL;) {
+    for (ap = argv; (*ap = strsep(&tmp, delim)) != NULL; ) {
         if (**ap != '\0') {
             ++ap;
             if (--argc <= 0) {
@@ -325,7 +324,7 @@ char **str_split(char *str, char * delim, int *elts)
         }
     }
 
-    return(argv);
+    return argv;
 } /* str_split */
 
 void str_split_free(char ***argv)
@@ -397,7 +396,7 @@ zt_unit_run_by_name(struct zt_unit    * unit,
 
 done:
     str_split_free(&targetv);
-    return(result);
+    return result;
 } /* zt_unit_run_by_name */
 
 void
@@ -410,7 +409,7 @@ zt_unit_list(struct zt_unit *unit)
 
     yaml_dict("Test Suites", 0);
 
-    zt_elist_for_each(&unit->suites, tmp){
+    zt_elist_for_each(&unit->suites, tmp) {
         unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
         yaml_dict(unit_suite->name, 2);
         zt_elist_for_each(&unit_suite->tests, tmp2) {
@@ -456,7 +455,7 @@ zt_unit_main(struct zt_unit    * unit,
             }
         } else {
             if ((result = zt_unit_run(unit)) < 0) {
-                return(result);
+                return result;
             }
         }
     }
@@ -466,6 +465,6 @@ zt_unit_main(struct zt_unit    * unit,
             result = -1;
         }
     }
-    return(result);
+    return result;
 } /* zt_unit_main */
 

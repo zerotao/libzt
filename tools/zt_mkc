@@ -1,375 +1,471 @@
-#!/usr/bin/perl -w
+#!/bin/sh
+AUTHOR='Jason L. Shiffer'
+EMAIL='<jshiffer@zerotao.org'
+OWNER='Jason L. Shiffer'
 
-my %CDATA = ();
-my $USAGE = <<EOF;
-usage:
-$0 [opts] [component] [[sub][...]]
+put_header() {
+    out=$1
+    DN=`dirname $0`
 
-opts:
--p generate a component with a public interface (for optimizations)
--c generate the main component
--s generate 1 or more subs
--m generate a Makefile.am
--o overwrite files
-
-subs will be generated thus:
-  a sub of unix would generate a file <component>/<component>_unix.[ch]
-  and functions <component>_unix...
-EOF
-
-use strict;
-use Getopt::Std;
-
-if(@ARGV < 1){
-    print $USAGE;
-    exit;
+    $DN/hdr -A "$AUTHOR" -E "$EMAIL" -O "$OWNER" $out
 }
 
-my %options = ();
+put_component_c() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
 
-getopts("hpcsmo", \%options);
+    put_header "$file"
 
-if(defined $options{h}) {
-    print $USAGE;
-    exit 0;
+    cat >> ${file} <<EOF
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
+#include "${cfname}.h"
+#include "${cfname}/private.h"
+
+void ${prefix}${cname}_destroy(${prefix}${cname} **${cname})
+{
+    if(*${cname} && (*${cname})->vtbl->destructor) {
+        (*${cname})->vtbl->destructor(*${cname});
+    }
+    *${cname} = NULL;
 }
 
-$CDATA{PUBLIC} = $options{p} if defined $options{p};
-$CDATA{GENCOMP} = $options{c} if defined $options{c};
-$CDATA{GENSUBS} = $options{s} if defined $options{s};
-$CDATA{GENMAKE} = $options{m} if defined $options{m};
-$CDATA{OVERWRITE} = $options{o} if defined $options{o};
-
-
-$CDATA{LOCALDIR} = $ENV{PWD};
-$CDATA{LOCALDIR} =~ s/.*\/(\w+)/$1/;
-
-my $name = shift;
-if($name){
-    my @sub_modules = ();
-    if(@ARGV){
-	@sub_modules = @ARGV;
-    }
-    $CDATA{name} = $name;
-    $CDATA{NAME} = $name;
-    $CDATA{NAME} =~ tr/a-z/A-Z/;
-    $CDATA{SUBS} = \@sub_modules;
-    mk_component(%CDATA);
-}else{
-    print $USAGE;
-exit 1;
-}
-exit;
-
-sub mk_component {
-    my (%DATA) = @_;
-    my $name = $DATA{name};
-
-    if(!$DATA{OVERWRITE}){
-      # test for the files and directories that we need
-      if(-e $name){ print "A file or directory named \"$name\" already exists! exiting\n"; exit; }
-      if(-e "$name.c"){ print "A file named \"$name.c\" already exists! exiting\n"; exit; }
-      if(-e "$name.h"){ print "A file named \"$name.h\" already exists! exiting\n"; exit; }
-    }
-
-    # create the directory
-    if(! -d $name){mkdir $name, 0777;}
-
-    my $PRIVATE = gen_private_interface($name);
-    my $PUBLIC = gen_public_interface($name);
-    my $WARNING = gen_opt_warning($name);
-
-    if($DATA{PUBLIC}){
-	$DATA{PUBLIC_INTERFACE} = "$WARNING $PUBLIC $PRIVATE";
-	$DATA{PRIVATE_INTERFACE} = "";
-    }else{
-	$DATA{PUBLIC_INTERFACE} = "$PUBLIC";
-	$DATA{PRIVATE_INTERFACE} = "$PRIVATE";
-    }
-
-    # make the main files
-    if($DATA{GENCOMP}){
-      print_public_c("$name.c", %DATA);
-      print_public_h("$name.h", %DATA);
-      print_private_c("$name/$name" . "_private.c", %DATA);
-      print_private_h("$name/$name" . "_private.h", %DATA);
-      print_interface_h("$name/$name" . "_interface.h", %DATA);
-    }
-
-    if($DATA{GENSUBS}){
-      my $sub = "";
-      foreach $sub (@{$DATA{SUBS}}){
-	print_sub_h($sub, %DATA);
-	print_sub_c($sub, %DATA);
-      }
-    }
-
-    if($DATA{GENMAKE}){
-      print_makefile_am(%DATA);
-    }
-}
-
-sub print_interface_h {
-  my ($file, %DATA) = @_;
-  open(FILE, "> $file") || die "Cannot open file $file: $!";
-  print FILE <<EOF;
-#ifndef _$DATA{NAME}_INTERFACE_H_
-#define _$DATA{NAME}_INTERFACE_H_
-
-#include <$DATA{LOCALDIR}/$DATA{name}.h>
-
-EOF
-  my $sub = "";
-  foreach $sub (@{$DATA{SUBS}}){
-    print FILE "#include <$DATA{LOCALDIR}/$DATA{name}/$DATA{name}_$sub.h>", "\n";
-  }
-  print FILE <<EOF;
-#endif  /* _$DATA{NAME}_INTERFACE_H_ */
 EOF
 }
 
-sub print_sub_h {
-    my($sub, %DATA) = @_;
-    my $SUB = $sub;
-    $SUB =~ tr/a-z/A-Z/;
-    open(FILE, "> $DATA{name}/$DATA{name}_$sub.h") || die "Cannot open file $DATA{name}/$DATA{name}_$sub.c: $!";
-  print FILE <<EOF;
-#ifndef _$DATA{NAME}_${SUB}_H_
-#define _$DATA{NAME}_${SUB}_H_
+put_component_h() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
 
-#include <$DATA{LOCALDIR}/$DATA{name}.h>
+    put_header "$file"
+
+    CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
+
+    cat >> ${file} <<EOF
+#ifndef _${CFNAME}_H_
+#define _${CFNAME}_H_
 
 #ifdef __cplusplus
 extern "C" {
-#pragma }
 #endif /* __cplusplus */
 
-extern $DATA{name}_ty *
-$DATA{name}_$sub(void);
+/* public interface */
+typedef struct ${prefix}${cname} ${prefix}${cname};
+
+void ${prefix}${cname}_destroy(${prefix}${cname} **${cname});
 
 #ifdef __cplusplus
 }
-#endif
-#endif  /* _$DATA{NAME}_${SUB}_H_ */
+#endif /* __cplusplus */
+
+#include <${cfname}/interface.h>
+
+#endif /* _${CFNAME}_H_ */
 EOF
-    close(FILE);
 }
-sub print_sub_c {
-    my($sub, %DATA) = @_;
-    my $sub_ty = $sub . "_ty";
-    open(FILE, "> $DATA{name}/$DATA{name}_$sub.c") || die "Cannot open file $DATA{name}/$DATA{name}_$sub.c: $!";
-    print FILE <<EOF;
 
-#include "$DATA{name}_private.h"
 
-/* local declarations */
-static void destructor($DATA{name}_ty *$DATA{name});
+put_private_c() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
 
-/* component data */
-/* Uncomment to create a private data section
- * also check $DATA{name}_vtbl_ty
- *
- * typedef struct $DATA{name}_$sub $DATA{name}_$sub;
- * struct $DATA{name}_$sub {
- *   $DATA{name}_ty      inherited;
+    put_header "$file"
+
+    cat >> ${file} <<EOF
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
+#include <stdlib.h>
+
+#include "private.h"
+
+${prefix}${cname} *
+${prefix}${cname}_new(${prefix}${cname}_vtbl * vptr)
+{
+    ${prefix}${cname}    * result;
+
+    result = calloc(1, vptr->size);
+    result->vtbl = vptr;
+    return(result);
+}
+EOF
+}
+
+put_private_h() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
+
+    CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
+
+    put_header "$file"
+
+    cat >> ${file} <<EOF
+/* Private interface to ${cname}
+ * You should NOT access this directly
+ * unless you are extending the cname with
+ * another sub-class
  */
-     /* private data */
- /* };
-  */
-static $DATA{name}_vtbl_ty vtbl = {
-/* for private data uncomment the following line and
- * remove the $DATA{name}_ty
- * sizeof($DATA{name}_$sub_ty), 
- */
-  sizeof($DATA{name}_ty),
-  destructor,
+#ifndef _${CFNAME}_PRIVATE_H_
+#define _${CFNAME}_PRIVATE_H_
+
+#include <stdlib.h>
+#include <${cfname}.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+/* base class definition */
+struct ${prefix}${cname} {
+    /* base class attributes */
+
+    /* end base class attributes */
+    struct ${prefix}${cname}_vtbl   * vtbl;
 };
 
-$DATA{name}_ty *
-$DATA{name}_$sub(void)
-{
-    $DATA{name}_ty	* result;
-    /* $DATA{name}_$sub_ty * $sub; */
+/* function pointer table */
+typedef struct ${prefix}${cname}_vtbl ${prefix}${cname}_vtbl;
+struct ${prefix}${cname}_vtbl {
+    size_t    size;         /* contains the size of the (sub)class definition */
 
-    result = $DATA{name}_new(&vtbl);
-    /* $sub = ($DATA{name}_$sub_ty *)result; */
-    /* do local work here */
+    /* virtual function pointers */
+    void    (*destructor)(${prefix}${cname} *);
+};
+
+/* base allocator */
+${prefix}${cname} * ${prefix}${cname}_new(${prefix}${cname}_vtbl * vptr);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* _${CFNAME}_PRIVATE_H_ */
+EOF
+}
+
+put_sub_h() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
+    sub=$6
+
+    CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
+    SUB=`echo ${sub} | tr 'a-z' 'A-Z'`
+
+    put_header "$file"
+
+    cat >> ${file} <<EOF
+#ifndef _${CFNAME}_${SUB}_H_
+#define _${CFNAME}_${SUB}_H_
+
+#include <${cfname}.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+extern ${prefix}${cname} * ${prefix}${cname}_${sub}(void);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* _${CFNAME}_${SUB}_H_ */
+EOF
+
+}
+
+put_sub_c() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
+    sub=$6
+
+    put_header "$file"
+
+    cat >> ${file} <<EOF
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
+
+#include "private.h"
+
+/* locals */
+static void destructor(${prefix}${cname} * ${cname});
+
+/* cname data */
+struct ${prefix}${cname}_${sub} {
+    ${prefix}${cname}     parent;
+    /* sub class locals */
+};
+
+static ${prefix}${cname}_vtbl vtbl = {
+    sizeof(${prefix}${cname}_$sub),
+    destructor,
+};
+
+${prefix}${cname} * ${prefix}${cname}_${sub}(void)
+{
+    ${prefix}${cname}               * result;
+    struct ${prefix}${cname}_${sub} * ${sub};
+
+    result = ${prefix}${cname}_new(&vtbl);
+    ${sub} = (struct ${prefix}${cname}_${sub} *)result;
+
+    /* local setup here */
 
     return result;
 }
 
-/* local definitions */
-static void 
-destructor($DATA{name}_ty *$DATA{name})
+/* local destructor */
+static void destructor(${prefix}${cname} * ${cname})
 {
+    struct ${prefix}${cname}_${sub}    * ${sub};
+    ${sub} = (struct ${prefix}${cname}_${sub} *)${cname};
+
     return;
 }
 
 EOF
-    close(FILE);
+
 }
 
-sub print_makefile_am {
-    my (%DATA) = @_;
-    my $sub = "";
-    open(FILE, "> $DATA{name}/Makefile.am") || die "Cannot open file $DATA{name}/Makefile.am: $!";
-    print FILE <<EOF;
-noinst_LTLIBRARIES = lib$DATA{name}.la
+put_interface_h() {
+    file=$1
+    cfname=$2
+    cname=$3
+    prefix=$4
+    header=$5
 
-lib$DATA{name}_la_SOURCES = \\
-		$DATA{name}_private.c \\
+    CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
+
+    shift 5
+
+    put_header "$file"
+
+    cat >> ${file} <<EOF
+#ifndef _${CFNAME}_INTERFACE_H_
+#define _${CFNAME}_INTERFACE_H_
+
+#include <${cfname}.h>
 EOF
-    my $num = scalar(@{$DATA{SUBS}});
-    foreach $sub (@{$DATA{SUBS}}){
-	if($num == 1){
-	    print FILE "		$DATA{name}_$sub.c", "\n";
-	}else{
-	    print FILE "		$DATA{name}_$sub.c \\", "\n";
-	}
-	$num--;
-    }
-    print FILE <<EOF;
 
-DEFS := \@DEFS\@ -I/usr/include -I. -I\$(srcdir) -I../..
+    for sub in $@; do
+        cat >> ${file} <<EOF
+#include <${cfname}/${sub}.h>
 
-pkgincludedir = \${includedir}/$DATA{name}
+/* sub-class headers */
+EOF
+    done
+
+    cat >> ${file} <<EOF
+/* end of sub-class headers */
+#endif /* _${CFNAME}_INTERFACE_H_ */
+EOF
+
+}
+
+put_makefile_am() {
+    file=$1
+    cfname=$2
+    cname=$3
+
+    shift 3
+    subs=$#
+    if [ $subs != 0 ]; then
+        cont="\\"
+    fi
+
+    > ${file}
+
+    cat >> ${file} <<EOF
+noinst_LTLIBRARIES = lib${cfname}.la
+lib${cfname}_la_SOURCES =\\
+        private.c  ${cont}
+EOF
+    X=$subs
+    for sub in $@; do
+        if [ $X == 1 ]; then
+            echo "        ${sub}.c" >> ${file}
+        else
+            echo "        ${sub}.c        \\" >> ${file}
+        fi
+        X=$((X-1))
+    done
+    cat >> ${file} <<EOF
+DEFS := @DEFS@ -I/usr/include -I. -I@top_srcdir@/src -I..
+
+pkgincludedir = \$(includedir)/${cfname}
 pkginclude_HEADERS = \\
-		$DATA{name}_private.h \\
+        private.h    \\
+        interface.h  ${cont}
 EOF
-    $num = scalar(@{$DATA{SUBS}});
-    foreach $sub (@{$DATA{SUBS}}){
-	if($num == 1){
-	    print FILE "		$DATA{name}_$sub.h", "\n";
-	}else{
-	    print FILE "		$DATA{name}_$sub.h \\", "\n";
-	}
-	$num--;
-    }
-    print FILE <<EOF;
-
+    X=$subs
+    for sub in $@; do
+        if [ $X == 1 ]; then
+            echo "        ${sub}.h" >> ${file}
+        else
+            echo "        ${sub}.h  \\" >> ${file}
+        fi
+        X=$((X-1))
+    done
+    cat >> ${file} <<EOF
 include \$(top_srcdir)/Makefile.extra
 EOF
-    close(FILE);
 }
-sub print_public_c {
-    my ($file, %DATA) = @_;
-    open(CFILE, "> $file") || die "Cannot open file $file: $!";
-    print CFILE <<EOF;
 
-#include "$name.h"
+usage() {
+    cat <<EOF
+usage:
+$0 [opts] [cname] [[sub] [...]]
 
+opts:
+-h          this help text
+-m          generate a Makefile.am
+-o          overwrite files
+-p<prefix>  prefix to use for structures and functions
+-d<dir>     directory to generate the component (defile $PWD)
+-H<file>    file to use as a header for generated files
+-f<cfname>  use <cfname> for the file names (default <cname>)
+-O<OWNER>   Owner to use in comments
+-A<AUTHOR>  Author to use in comments
+-E<EMAIL>   Email to use in comments
+
+files are generated thus:
+  <cfname>.h
+  <cfname>.c
+  <cfname>/Makefile.am (if requested)
+  <cfname>/interface.h
+  <cfname>/private.h
+  <cfname>/private.c
+  <cfname>/<sub>.h
+  <cfname>/<sub>.c
+  ...
 EOF
-    close(CFILE);
 }
 
-sub print_public_h {
-  my ($file, %DATA) = @_;
-  open(FILE, "> $file") || die "Cannot open file $file: $!";
 
-  print FILE <<EOF;
-#ifndef _$DATA{NAME}_H_
-#define _$DATA{NAME}_H_
 
-#ifdef __cplusplus
-extern "C" {
-#pragma }
-#endif /* __cplusplus */
+# main
+base_dir="."
+gen_make=0
+overwrite=0
+header=0
+prefix=""
+cfname=""
 
-$DATA{PUBLIC_INTERFACE}
+while getopts "mohp:d:f:O:A:E:" flag
+do
+    case "$flag" in
+        m)
+            gen_make=1
+            ;;
+        o)
+            overwrite=1
+            ;;
+        h)
+            usage
+            exit 0
+            ;;
+        p)
+            prefix=$OPTARG
+            ;;
+        d)
+            base_dir=$OPTARG
+            ;;
+        f)
+            cfname=$OPTARG
+            ;;
+        O)
+            OWNER=$OPTARG
+            ;;
+        A)
+            AUTHOR=$OPTARG
+            ;;
+        E)
+            EMAIL=$OPTARG
+            ;;
+        *)
+            echo "Unknown option $flag"
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift $((${OPTIND}-1))
 
-#ifdef __cplusplus
-}
-#endif
+if [ $# == 0 ]; then
+    usage
+    exit
+fi
 
-#include <$DATA{LOCALDIR}/$DATA{name}/$DATA{name}_interface.h>
+cname=$1; shift;
 
-#endif  /* _$DATA{NAME}_H_ */
-EOF
-close(FILE);
-}
+if [ x"$cfname" == x"" ]; then
+    cfname=${cname}
+fi
 
-sub print_private_c {
-    my ($file, %DATA) = @_;
-    open(FILE, "> $file") || die "Cannot open file $file: $!";
-    print FILE <<EOF;
-#include <stdlib.h>
-#include "$DATA{name}_private.h"
 
-${name}_ty*
-${name}_new (${name}_vtbl_ty *vptr)
-{
-  ${name}_ty *result;
-  result = calloc(1, vptr->size);
-  result->vtbl = vptr;
-  return(result);
-}
-EOF
-    close(FILE);
-}
+# check files
+if [ $overwrite == 0 ]; then
+    E=0
+    check_file() {
+        if [ -f $1 ]; then
+            echo "$1 already exists"
+            E=1
+        fi
+    }
+    check_file ${base_dir}/${cfname}.h
+    check_file ${base_dir}/${cfname}.c
+    check_file ${base_dir}/${cfname}/public.h
+    check_file ${base_dir}/${cfname}/public.c
+    check_file ${base_dir}/${cfname}/interface.c
+    if [ $gen_make == 1 ]; then
+        check_file ${base_dir}/${cfname}/Makefile.am
+    fi
+    for sub in $@; do
+        check_file ${base_dir}/${cfname}/${sub}.c
+        check_file ${base_dir}/${cfname}/${sub}.h
+    done
+    if [ $E == 1 ]; then
+        echo "remove them or use option -o to overwrite"
+        exit 1;
+    fi
+fi
 
-sub print_private_h {
-  my ($file, %DATA) = @_;
-  my $name = $DATA{name};
+# generate the component
+if [ ! -d ${base_dir}/${cfname} ]; then
+    mkdir -p "${base_dir}/${cfname}";
+fi
 
-  open(FILE, "> $file") || die "Cannot open file $file: $!";
-  print FILE <<EOF;
-/* Private interface to $name
- * You should NOT access this directly
- * unless you are extending the component
- */
-#ifndef _$DATA{NAME}_PRIVATE_H_
-#define _$DATA{NAME}_PRIVATE_H_
+put_component_c "${base_dir}/${cfname}.c" "${cfname}" "${cname}" "${prefix}" ${header}
+put_component_h "${base_dir}/${cfname}.h" "${cfname}" "${cname}" "${prefix}" ${header}
+put_private_c "${base_dir}/${cfname}/private.c" "${cfname}" "${cname}" "${prefix}" ${header}
+put_private_h "${base_dir}/${cfname}/private.h" "${cfname}" "${cname}" "${prefix}" ${header}
 
-#include <stdlib.h>
-#include <$DATA{LOCALDIR}/${name}.h>
+put_interface_h "${base_dir}/${cfname}/interface.h" "${cfname}" "${cname}" "${prefix}" ${header} $@
 
-#ifdef __cplusplus
-extern "C" {
-#pragma }
-#endif /* __cplusplus */
+# # generate each sub component
+for sub in $@; do
+    put_sub_c "${base_dir}/${cfname}/${sub}.c" "${cfname}" "${cname}" "${prefix}" ${header} ${sub}
+    put_sub_h "${base_dir}/${cfname}/${sub}.h" "${cfname}" "${cname}" "${prefix}" ${header} ${sub}
+done
 
-$DATA{PRIVATE_INTERFACE}
-
-${name}_ty *${name}_new (${name}_vtbl_ty *);
-#ifdef __cplusplus
-}
-#endif
-#endif  /* _$DATA{NAME}_PRIVATE_H_ */
-EOF
-    close(FILE);
-}
-
-sub gen_private_interface {
-  $name = shift;
-  my $INTERFACE = <<EOF;
-struct ${name}_ty {
-  struct ${name}_vtbl_ty *vtbl;
-  /* rest of opts */
-};
-  
-typedef struct ${name}_vtbl_ty ${name}_vtbl_ty;
-struct ${name}_vtbl_ty {
-  size_t size;
-  /* virtual function pointers */
-  void (* destructor)(${name}_ty *);
-};
-EOF
-  return ($INTERFACE);
-}
-
-sub gen_public_interface {
-  my $name = shift;
-  my $INTERFACE = "typedef struct ${name}_ty ${name}_ty;";
-  return $INTERFACE;
-}
-
-sub gen_opt_warning {
-  my $name = shift;
-  my $WARNING = <<EOF;
-/* This is here for optimization purposes
- * you should not access this directly unless
- * you are extending the component
- */
-EOF
-return $WARNING;
-}
+put_makefile_am "${base_dir}/${cfname}/Makefile.am" "${cfname}" "${cname}" $@

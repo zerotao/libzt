@@ -6,6 +6,13 @@
  *
  * $Id:
  */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif /* HAVE_STRING_H */
 
 #include <stdio.h>
 
@@ -40,7 +47,7 @@ _except_install_default_handler(except_handler h)
 
     _except_default_handler = h;
 
-    return(p);
+    return p;
 }
 
 void _except_install_handler(void *e, except_handler h)
@@ -108,16 +115,16 @@ void _except_remove_handler(void *e, except_handler h)
         if (prev == NULL) {   /* First one */
             stack->handlers = handler->next;
             free(handler);
-        }else if (handler->h == h) {
+        } else if (handler->h == h) {
             prev->next = handler->next;
             free(handler);
-        }else{
+        } else {
             zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
         }
         if (stack->handlers == NULL) {
             stack->e = NULL;
         }
-    }else{
+    } else {
         zt_log_printf(zt_log_crit, "Attempt to remove a non installed exception Handler.");
     }
 }
@@ -165,7 +172,7 @@ void _except_call_handlers(struct except_Frame *estack)
                     break;
             } /* switch */
         }
-    }else{
+    } else {
         if (_except_default_handler) {
             _except_default_handler(*(void **)estack->exception,
                                     estack->etext,
@@ -209,7 +216,6 @@ void _except_unhandled_exception(void *exc, char *etext, const char *efile, unsi
 
 int domain_default_except_handler(void *exc, char *etext, char *file, char *func, int line)
 {
-
     if (EXCEPTION_IN(zt_exception) && exc) {
         char * error;
         int    len = strlen((char *)exc) + strlen(etext) + 2 + 1;
@@ -219,12 +225,11 @@ int domain_default_except_handler(void *exc, char *etext, char *file, char *func
         _except_unhandled_exception(NULL, error, file, line, func, 0);
         XFREE(error);
         abort();
-
     } else {
         _except_unhandled_exception(NULL, etext, file, line, func, 1);
     }
 
 
 
-    return(0);
+    return 0;
 }
