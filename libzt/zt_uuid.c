@@ -33,7 +33,7 @@ srandomdev(void)
     fd = open("/dev/urandom", O_RDONLY);
 
     if (fd < 0 || read(fd, &rand_data,
-                       sizeof(uint32_t)) != sizeof(uint32_t)) {
+                   sizeof(uint32_t)) != sizeof(uint32_t)) {
         /* this is a shitty situation.... */
         rand_data = time(NULL);
     }
