@@ -243,43 +243,43 @@ _EOF_
 
 # basename
     if test x$ac_cv_func_basename = xno || test x$zt_cv_func_basename = xno; then
-      echo 'extern char *basename _((const char *path));' >> ${tmpfile}2
+      echo 'extern char *basename (const char *path);' >> ${tmpfile}2
     fi
 
 # vsyslog
     if test x$ac_cv_func_vsyslog = xno || test x$zt_cv_func_vsyslog = xno; then
       echo '#include <stdarg.h>' >> ${tmpfile}2
-      echo 'extern void vsyslog _((int, char *, va_list));' >> ${tmpfile}2
+      echo 'extern void vsyslog (int, char *, va_list);' >> ${tmpfile}2
     fi
 
 # strcspn
     if test x$ac_cv_func_strcspn = xno; then
-      echo 'extern size_t strcspn _((const char *string, const char *accept));' >> ${tmpfile}2
+      echo 'extern size_t strcspn (const char *string, const char *accept);' >> ${tmpfile}2
     fi
 
 # strerror
     if test x$ac_cv_func_strerror = xno; then
-      echo 'extern char *strerror _((int err));' >> ${tmpfile}2
+      echo 'extern char *strerror (int err);' >> ${tmpfile}2
     fi
 
 # strsignal
     if test x$ac_cv_func_strsignal = xno; then
-      echo 'extern char *strsignal _((int signo));' >> ${tmpfile}2
+      echo 'extern char *strsignal (int signo);' >> ${tmpfile}2
     fi
 
 # strspn
     if test x$ac_cv_func_strspn = xno; then
-      echo 'extern size_t strspn _((const char *string, const char *reject));' >> ${tmpfile}2
+      echo 'extern size_t strspn (const char *string, const char *reject);' >> ${tmpfile}2
     fi
 
 # vfprintf
     if test x$ac_cv_func_vfprintf = xno; then
-      echo 'extern int vfprintf _((FILE *file, const char *format, va_list ap));' >> ${tmpfile}2
+      echo 'extern int vfprintf (FILE *file, const char *format, va_list ap);' >> ${tmpfile}2
     fi
 
 # waitpid
     if test x$ac_cv_func_waitpid = xno; then
-      echo 'extern pid_t waitpid _((pid_t pid, int *pstatus, int options));' >> ${tmpfile}2
+      echo 'extern pid_t waitpid (pid_t pid, int *pstatus, int options);' >> ${tmpfile}2
     fi
 
 # end tests

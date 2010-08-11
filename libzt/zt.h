@@ -58,11 +58,7 @@ typedef char* void_p;
 #endif
 
 #ifndef _
-# if defined(__STDC__) || defined(__STDC_HOSTED__)
 #  define _(x) x
-# else
-#  define _(x) ()
-# endif
 #endif /* ifndef _ */
 
 /************ Convienience Definitions  ************/
