@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "zt_ptr_array.h"
+
+zt_ptr_array *
+zt_ptr_array_init(void) 
+{
+    zt_ptr_array *array;
+
+    if (!(array = calloc(sizeof(zt_ptr_array), 1))) {
+	return NULL;
+    }
+
+    array->size = ZT_PTR_ARRAY_DEFAULT_SIZE;
+
+    if (!(array->array = malloc(sizeof(char *) * array->size))) {
+       free(array);
+       return NULL;
+    }
+
+    return array;
+}
+
+
+int 
+zt_ptr_array_copy_data(zt_ptr_array *src, char **dstbuf) 
+{
+    uint32_t i;
+
+    if (src == NULL || dstbuf == NULL) {
+	return -1;
+    }
+
+    for (i = 0; i < src->count; i++) {
+	dstbuf[i] = src->array[i];
+    }
+
+    return 0;
+}
+
+int
+zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand) 
+{
+    size_t size;
+    char **ndata;
+
+    if (array == NULL) {
+	return -1;
+    }
+
+    if (expand == 0) {
+	size = ZT_PTR_ARRAY_DEFAULT_SIZE;
+    } else {
+	size = expand;
+    }
+
+    if ((array->size + size) < array->size) {
+	/* error on overflow */
+	return -1;
+    }
+
+    ndata = malloc(sizeof(char *) * (array->size + size));
+
+    if (ndata == NULL) {
+	return -1;
+    }
+
+    if (zt_ptr_array_copy_data(array, ndata) < 0) {
+       return -1;
+    }       
+
+    array->size += size;
+
+    return 0;
+}
+
+int
+zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, uint32_t src_idx, uint32_t dst_idx) 
+{
+    if (src_idx > array->count) {
+	return -1;
+    }
+
+    if (dst_idx > array->count) {
+	return -1;
+    }
+
+    array->array[dst_idx] = array->array[src_idx];
+
+    return 0;
+}
+
+int
+zt_ptr_array_del(zt_ptr_array *array, void *data, int should_free)
+{
+    uint32_t i;
+
+    if (array == NULL || data == NULL) {
+	return -1;
+    }
+
+    for (i = 0; i < array->count; i++) {
+	if (array->array[i] == data) {
+	    zt_ptr_array_move_idx_to_idx(array, array->count - 1, i);
+	    array->count--;
+
+	    if (should_free) {
+		free(data);
+	    }
+
+	}
+    }
+
+    return -1;
+}
+
+int 
+zt_ptr_array_add(zt_ptr_array *array, void *data)
+{
+    if (data == NULL || array == NULL) {
+	return 0;
+    }
+
+    if (zt_ptr_array_is_full(array)) {
+       if (zt_ptr_array_resize(array, 0) < 0) {
+	   return -1;
+       }
+    }
+
+    array->array[array->count] = data;
+    array->count++;
+
+    return 0;
+
+}
+
+void *
+zt_ptr_array_get_idx(zt_ptr_array *array, uint32_t idx) 
+{
+    if (idx > array->count) {
+	return NULL;
+    }
+
+    return array->array[idx];
+}
