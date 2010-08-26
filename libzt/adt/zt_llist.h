@@ -17,8 +17,7 @@ struct zt_pair {
 };
 typedef zt_pair    *zt_llist;
 
-char *IncorrectType = "Incorrect Type";
-char *ListTooShort = "List is too short";
+static char *zt_llist_too_short = "List is too short";
 
 #define zt_llist_head(_pair) \
     (_pair)->head
@@ -59,7 +58,7 @@ zt_llist_nth(zt_llist pair, int offt)
     }
 
     if (pair == NULL) {
-        THROW(ListTooShort);
+        THROW(zt_llist_too_short);
     }
 
     return (zt_llist_head(pair));
@@ -74,7 +73,7 @@ zt_llist_nthtail(zt_llist pair, int offt)
     }
 
     if (pair == NULL) {
-        THROW(ListTooShort);
+        THROW(zt_llist_too_short);
     }
     return (zt_llist_tail(pair));
 }
