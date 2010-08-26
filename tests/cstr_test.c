@@ -36,6 +36,8 @@ basic_tests(struct zt_unit_test *test, void *data)
     char * hex = "34aa973cd4c4daa4f61eEB2BDBAD27316534016FXXX";
     char   digest[20];
     char   hex2[41];
+    char *split_test = "a/b/c/d";
+    char **split_test_out;
 
 
     zt_cstr_chomp(chomp_test);
@@ -49,6 +51,17 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     ZT_UNIT_ASSERT(test, (zt_cstr_rcspn(test_string1, "QRZ\nno") == strlen(test_string1) - 1));
     ZT_UNIT_ASSERT(test, (zt_cstr_rcspn(test_string1, "Q") == strlen(test_string1)));
+
+    split_test_out = zt_cstr_split(split_test, "/");
+    ZT_UNIT_ASSERT_NOT_EQUAL(test, split_test_out, NULL);
+
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)split_test_out[0], "a"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)split_test_out[1], "b"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)split_test_out[2], "c"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)split_test_out[3], "d"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, split_test_out[4], NULL);
+
+    zt_cstr_split_free(split_test_out);
 
 #if !defined(_WIN32)
     zt_cstr_basename(bname, PATH_MAX, path, NULL);
