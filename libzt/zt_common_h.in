@@ -16,11 +16,11 @@ BEGIN_C_DECLS
 
 /* These entry points to the API are guaranteed to be functions */
 
-extern void_p xcalloc_p	_((size_t num, size_t size));
-extern void_p xmalloc_p	_((size_t num));
-extern void_p xrealloc_p _((void_p p, size_t num));
-extern void xfree_p _((void_p stale));
-extern char *xstrdup _((const char *string));
+extern void_p xcalloc_p	(size_t num, size_t size);
+extern void_p xmalloc_p	(size_t num);
+extern void_p xrealloc_p (void_p p, size_t num);
+extern void xfree_p (void_p stale);
+extern char *xstrdup (const char *string);
 
 END_C_DECLS
 

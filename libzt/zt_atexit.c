@@ -38,8 +38,10 @@ void zt_atexit_call() {
     while(!zt_stack_empty(&cb_stack)) {
         se = zt_stack_pop(&cb_stack);
         cb = zt_stack_data(se, struct zt_atexit_cb, member);
-        cb->fn(cb->data);
-        XFREE(cb);
+        if(cb && cb->fn) {
+            cb->fn(cb->data);
+            XFREE(cb);
+        }
     }
 }
 
