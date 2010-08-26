@@ -166,7 +166,7 @@ zt_llist_nmerge(zt_llist l1, zt_llist l2, int (*cmp)())
 }
 
 
-zt_llist INLINE zt_llist_split(zt_llist lst)
+static INLINE zt_llist zt_llist_split(zt_llist lst)
 {
     zt_llist tail;
 
