@@ -28,18 +28,18 @@
 /*!
  * generate an index based on an index statement i, j and length len
  */
-#define BASE(i, len) ((i) >= (len) ? (len-1) : (i))
+#define BASE(i, len) ((i) >= (len) ? (len - 1) : (i))
 #define IDX(i, len) ((i) < 0 ? BASE((i) + (len), (len)) : BASE((i), (len)))
 #define IDXLEN(i, j) ((i) < (j) ? ((j) - (i)) + 1 : ((i) - (j)) + 1)
 
 /*!
  * update s, i and j
  */
-#define CONVERT(s, i, j) do {         \
-        int len;                      \
-        zt_assert(s);                 \
-        len = strlen(s);              \
-        if (len > 0) {                \
+#define CONVERT(s, i, j) do {             \
+        int len;                          \
+        zt_assert(s);                     \
+        len = strlen(s);                  \
+        if (len > 0) {                    \
             i = IDX(i, len);              \
             j = IDX(j, len);              \
             if (i > j) {                  \
@@ -48,10 +48,10 @@
                 j = t;                    \
             }                             \
             zt_assert(i >= 0 && j < len); \
-        } else {                        \
-            i = 0;                      \
-            j = 0;                      \
-        }                               \
+        } else {                          \
+            i = 0;                        \
+            j = 0;                        \
+        }                                 \
 } while (0)
 
 /*!
@@ -89,7 +89,7 @@ zt_cstr_dup(const char *s, int i, int j, int n)
 
     zt_assert(n >= 0);
 
-    if(!s) {
+    if (!s) {
         return NULL;
     }
 
@@ -610,8 +610,8 @@ zt_cstr_basename(char *npath, int len, const char *path, const char *suffix)
 char *
 zt_cstr_dirname(char *npath, int len, const char *path)
 {
-    int   end = -1;
-    int   ps_len = 0;
+    int end = -1;
+    int ps_len = 0;
 
     zt_assert(npath);
     zt_assert(path);
@@ -760,3 +760,73 @@ zt_cstr_copy(const char * from, int i, int j, char * to, int len)
     memcpy(to, &from[i], min);
     return min;
 }
+
+int
+zt_cstr_split_free(char **array)
+{
+    int   elem;
+
+    if (array == NULL) {
+        return 0;
+    }
+
+    elem = 0;
+
+    while (1) {
+        if (array[elem] == NULL) {
+            break;
+        }
+
+        free(array[elem++]);
+    }
+
+    free(array);
+
+    return 0;
+}
+
+char **
+zt_cstr_split(const char *str, const char *delim)
+{
+    char **split_arr;
+    char  *str_copy;
+    char  *endptr;
+    char  *tok;
+    int    count;
+    int    size;
+
+    if (str == NULL || delim == NULL) {
+        return NULL;
+    }
+
+    split_arr = XMALLOC(char *, 128);
+
+    size = 128;
+    count = 0;
+    endptr = NULL;
+
+    str_copy = strdup(str);
+
+    for (tok = strtok_r(str_copy, delim, &endptr);
+         tok != NULL; tok = strtok_r(NULL, delim, &endptr)) {
+        if (count >= size - 1) {
+            split_arr = XREALLOC(char *, split_arr, size + 8);
+
+            if (split_arr == NULL) {
+                return NULL;
+            }
+
+            size = size + 8;
+        }
+
+        split_arr[count++] = strdup(tok);
+        split_arr[count] = NULL;
+    }
+
+    XFREE(str_copy);
+
+    return split_arr;
+}
+
+
+

@@ -63,6 +63,8 @@ extern char* zt_cstr_path_append( const char *, const char * );
 extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
 extern size_t zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
 extern int zt_cstr_copy(const char * from, int i, int j, char * to, int len);
+extern char **zt_cstr_split(const char *str, const char *delim);
+extern int zt_cstr_split_free(char **arr);
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/

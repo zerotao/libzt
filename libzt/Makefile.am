@@ -50,7 +50,6 @@ libzt_la_SOURCES = 		\
 		zt_sha1.c		\
 		zt_uuid.c		\
 		zt_exceptions.c \
-    zt_ipv4_tbl.c \
 	  zt_ez_mempool.c \
 		zt_ipv4_tbl.c	\
 		zt_atexit.c
