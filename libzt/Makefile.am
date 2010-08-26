@@ -11,7 +11,7 @@ libzt_la_LIBADD = 					\
 		../replace/libreplace.la 	\
 		adt/libzt_adt.la			\
 		zt_log/libzt_log.la			\
-		zt_cfg/libzt_cfg.la	
+		zt_cfg/libzt_cfg.la
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -50,8 +50,8 @@ libzt_la_SOURCES = 		\
 		zt_sha1.c		\
 		zt_uuid.c		\
 		zt_exceptions.c \
-	  zt_ez_mempool.c \
-		zt_ipv4_tbl.c	\
+		zt_ipv4_tbl.c \
+		zt_ez_mempool.c \
 		zt_atexit.c
 
 pkgincludedir = ${includedir}/libzt
@@ -70,13 +70,13 @@ pkginclude_HEADERS = 	\
 		zt_progname.h	\
 		zt_cstr.h		\
 		zt_time.h		\
-	    zt_macros.h		\
+		zt_macros.h		\
 		zt_gc.h			\
 		zt_int.h		\
 		zt_sha1.h		\
 		zt_uuid.h		\
 		zt_exceptions.h \
-    zt_ez_mempool.h \
+		zt_ez_mempool.h \
 		zt_ipv4_tbl.h	\
 		zt_atexit.h
 
