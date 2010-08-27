@@ -139,7 +139,7 @@ zt_ptr_array_free(zt_ptr_array *array, int free_members) {
         return -1;
     }
 
-    if (free_members > 0 && free_member) {
+    if (free_members > 0) {
         for (i = 0; i < array->count; i++) {
             void *memb;
 
