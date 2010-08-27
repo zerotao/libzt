@@ -6,14 +6,16 @@
 #include "zt_ptr_array.h"
 
 zt_ptr_array *
-zt_ptr_array_init(void) {
+zt_ptr_array_init(void *args, zt_ptr_array_free_cb free_cb) {
     zt_ptr_array *array;
 
     if (!(array = calloc(sizeof(zt_ptr_array), 1))) {
         return NULL;
     }
 
-    array->size = ZT_PTR_ARRAY_DEFAULT_SIZE;
+    array->size    = ZT_PTR_ARRAY_DEFAULT_SIZE;
+    array->args    = args;
+    array->free_cb = free_cb;
 
     if (!(array->array = malloc(sizeof(char *) * array->size))) {
         free(array);
@@ -90,7 +92,7 @@ zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, uint32_t src_idx, uint32_t dst
 }
 
 int
-zt_ptr_array_del(zt_ptr_array *array, void *data, int should_free) {
+zt_ptr_array_del(zt_ptr_array *array, void *data) {
     uint32_t i;
 
     if (array == NULL || data == NULL) {
@@ -102,8 +104,8 @@ zt_ptr_array_del(zt_ptr_array *array, void *data, int should_free) {
             zt_ptr_array_move_idx_to_idx(array, array->count - 1, i);
             array->count--;
 
-            if (should_free) {
-                free(data);
+            if (array->free_cb) {
+                array->free_cb(data);
             }
         }
     }
@@ -125,6 +127,31 @@ zt_ptr_array_add(zt_ptr_array *array, void *data) {
 
     array->array[array->count] = data;
     array->count++;
+
+    return 0;
+}
+
+int
+zt_ptr_array_free(zt_ptr_array *array, int free_members) {
+    uint32_t i;
+
+    if (array == NULL) {
+        return -1;
+    }
+
+    if (free_members > 0) {
+        for (i = 0; i < array->count; i++) {
+            void *memb;
+
+            if ((memb = array->array[i]) == NULL) {
+                continue;
+            }
+
+            array->free_cb ? array->free_cb(memb) : free(memb);
+        }
+    }
+
+    free(array);
 
     return 0;
 }
