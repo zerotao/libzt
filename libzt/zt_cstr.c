@@ -24,6 +24,7 @@
 #include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
+#include "adt/zt_ptr_array.h"
 
 /*!
  * generate an index based on an index statement i, j and length len
@@ -44,8 +45,8 @@
             j = IDX(j, len);              \
             if (i > j) {                  \
                 int t = i;                \
-                i = j;                    \
-                j = t;                    \
+                i     = j;                    \
+                j     = t;                    \
             }                             \
             zt_assert(i >= 0 && j < len); \
         } else {                          \
@@ -58,8 +59,7 @@
  * return a newly allocated substring
  */
 char *
-zt_cstr_sub(const char *s, int i, int j)
-{
+zt_cstr_sub(const char *s, int i, int j) {
     char * new;
     char * p;
 
@@ -67,12 +67,12 @@ zt_cstr_sub(const char *s, int i, int j)
 
     new = XMALLOC(char, IDXLEN(i, j) + 1);
 
-    p = new;
+    p   = new;
 
     while (i <= j) {
         *p++ = s[i++];
     }
-    *p = '\0';
+    *p  = '\0';
     return new;
 }
 
@@ -80,8 +80,7 @@ zt_cstr_sub(const char *s, int i, int j)
  * return a newly allocated string containing n copies of s[i:j] plus NUL
  */
 char *
-zt_cstr_dup(const char *s, int i, int j, int n)
-{
+zt_cstr_dup(const char *s, int i, int j, int n) {
     int    k;
 
     char * new;
@@ -115,8 +114,7 @@ zt_cstr_dup(const char *s, int i, int j, int n)
  */
 char *
 zt_cstr_cat(const char *s1, int i1, int j1,
-            const char *s2, int i2, int j2)
-{
+            const char *s2, int i2, int j2) {
     char * new;
     char * p;
 
@@ -141,24 +139,23 @@ zt_cstr_cat(const char *s1, int i1, int j1,
  * return a newly allocated string containing s[i:j]s1[i1:j1]...sn[in:jn]
  */
 char *
-zt_cstr_catv(const char *s, ...)
-{
+zt_cstr_catv(const char *s, ...) {
     char       * new;
     char       * p;
     const char * save = s;
     int          i;
     int          j;
-    int          len = 0;
+    int          len  = 0;
     va_list      ap;
 
     va_start(ap, s);
 
     while (s) {
-        i = va_arg(ap, int);
-        j = va_arg(ap, int);
+        i    = va_arg(ap, int);
+        j    = va_arg(ap, int);
         CONVERT(s, i, j);
         len += IDXLEN(i, j) + 1;
-        s = va_arg(ap, const char *);
+        s    = va_arg(ap, const char *);
     }
 
     va_end(ap);
@@ -185,8 +182,7 @@ zt_cstr_catv(const char *s, ...)
  * returns a newly allocated string containing the reverse of s[i:j]
  */
 char *
-zt_cstr_reverse(const char *s, int i, int j)
-{
+zt_cstr_reverse(const char *s, int i, int j) {
     char * new;
     char * p;
 
@@ -209,8 +205,7 @@ zt_cstr_reverse(const char *s, int i, int j)
  */
 char *
 zt_cstr_map(const char *s, int i, int j,
-            const char *from, const char *to)
-{
+            const char *from, const char *to) {
     char map[256] = { 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
                       10,  11,  12,  13,  14,  15,  16,  17,  18,  19,
                       20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
@@ -248,7 +243,7 @@ zt_cstr_map(const char *s, int i, int j,
         char * p;
 
         CONVERT(s, i, j);
-        p = new = XMALLOC(char, IDXLEN(i, j) + 1);
+        p  = new = XMALLOC(char, IDXLEN(i, j) + 1);
         while (i <= j) {
             *p++ = map[(unsigned char)s[i++]];
         }
@@ -263,14 +258,13 @@ zt_cstr_map(const char *s, int i, int j,
  * returns the index into s that i corrisponds to.
  */
 int
-zt_cstr_pos(const char *s, int i)
-{
+zt_cstr_pos(const char *s, int i) {
     int len;
 
     zt_assert(s);
 
     len = strlen(s);
-    i = IDX(i, len);
+    i   = IDX(i, len);
 
     zt_assert(i >= 0 && i <= len);
     return i;
@@ -280,8 +274,7 @@ zt_cstr_pos(const char *s, int i)
  * returns the length of the slice represented by [i:j]
  */
 int
-zt_cstr_len(const char *s, int i, int j)
-{
+zt_cstr_len(const char *s, int i, int j) {
     CONVERT(s, i, j);
     return IDXLEN(i, j);
 }
@@ -292,8 +285,7 @@ zt_cstr_len(const char *s, int i, int j)
  */
 int
 zt_cstr_cmp(const char *s1, int i1, int j1,
-            const char *s2, int i2, int j2)
-{
+            const char *s2, int i2, int j2) {
     CONVERT(s1, i1, j1);
     CONVERT(s2, i2, j2);
 
@@ -316,8 +308,7 @@ zt_cstr_cmp(const char *s1, int i1, int j1,
  * in the string referenced by s[i:j]
  */
 int
-zt_cstr_chr(const char *s, int i, int j, int c)
-{
+zt_cstr_chr(const char *s, int i, int j, int c) {
     zt_assert(s);
 
     CONVERT(s, i, j);
@@ -333,8 +324,7 @@ zt_cstr_chr(const char *s, int i, int j, int c)
  * locates the last occurrence of c in the string referenced by s[i:j]
  */
 int
-zt_cstr_rchr(const char *s, int i, int j, int c)
-{
+zt_cstr_rchr(const char *s, int i, int j, int c) {
     zt_assert(s);
 
     CONVERT(s, i, j);
@@ -352,8 +342,7 @@ zt_cstr_rchr(const char *s, int i, int j, int c)
  * referenced by s[i:j]
  */
 int
-zt_cstr_upto(const char *s, int i, int j, const char *set)
-{
+zt_cstr_upto(const char *s, int i, int j, const char *set) {
     zt_assert(set);
 
     CONVERT(s, i, j);
@@ -372,8 +361,7 @@ zt_cstr_upto(const char *s, int i, int j, const char *set)
  * by s[i:j]
  */
 int
-zt_cstr_rupto(const char *s, int i, int j, const char *set)
-{
+zt_cstr_rupto(const char *s, int i, int j, const char *set) {
     zt_assert(set);
 
     CONVERT(s, i, j);
@@ -391,8 +379,7 @@ zt_cstr_rupto(const char *s, int i, int j, const char *set)
  * by s[i:j]
  */
 int
-zt_cstr_find(const char *s, int i, int j, const char *str)
-{
+zt_cstr_find(const char *s, int i, int j, const char *str) {
     int len;
 
     CONVERT(s, i, j);
@@ -424,8 +411,7 @@ zt_cstr_find(const char *s, int i, int j, const char *str)
  * by s[i:j]
  */
 int
-zt_cstr_rfind(const char *s, int i, int j, const char *str)
-{
+zt_cstr_rfind(const char *s, int i, int j, const char *str) {
     int len;
     int offt;
 
@@ -457,8 +443,7 @@ zt_cstr_rfind(const char *s, int i, int j, const char *str)
  * referenced by s[i:j]
  */
 int
-zt_cstr_any(const char *s, int i, int j, const char *set)
-{
+zt_cstr_any(const char *s, int i, int j, const char *set) {
     zt_assert(s);
     zt_assert(set);
 
@@ -480,8 +465,7 @@ zt_cstr_any(const char *s, int i, int j, const char *set)
  * referenced by s[i]
  */
 int
-zt_cstr_rany(const char *s, int i, int j, const char *set)
-{
+zt_cstr_rany(const char *s, int i, int j, const char *set) {
     int orig;
 
     zt_assert(s);
@@ -502,8 +486,7 @@ zt_cstr_rany(const char *s, int i, int j, const char *set)
 
 /* strip the \n from the end of a string */
 char*
-zt_cstr_chomp(char *str)
-{
+zt_cstr_chomp(char *str) {
     zt_assert(str);
     {
         int i = 0;
@@ -517,13 +500,12 @@ zt_cstr_chomp(char *str)
 
 /* Strip white space characters from the front and back of the string */
 char*
-zt_cstr_strip(char *str)
-{
+zt_cstr_strip(char *str) {
     zt_assert(str);
     {
         /* strip whitespace from the beginning of the string */
         int len = 0;
-        int nl = 0;
+        int nl  = 0;
         len = strspn(str, WHITESPACE);
         memmove(str, &str[len], (strlen(str) - len) + 1); /* +1 captures \0 */
 
@@ -544,10 +526,9 @@ zt_cstr_strip(char *str)
 }
 
 size_t
-zt_cstr_rspn(const char *s, const char *accept)
-{
+zt_cstr_rspn(const char *s, const char *accept) {
     int len = strlen(s);
-    int i = 0;
+    int i   = 0;
 
     zt_assert(s);
     zt_assert(accept);
@@ -560,10 +541,9 @@ zt_cstr_rspn(const char *s, const char *accept)
 }
 
 size_t
-zt_cstr_rcspn(const char *s, const char *reject)
-{
+zt_cstr_rcspn(const char *s, const char *reject) {
     int len = strlen(s);
-    int i = 0;
+    int i   = 0;
 
     zt_assert(s);
     zt_assert(reject);
@@ -577,8 +557,7 @@ zt_cstr_rcspn(const char *s, const char *reject)
 }
 
 char*
-zt_cstr_basename(char *npath, int len, const char *path, const char *suffix)
-{
+zt_cstr_basename(char *npath, int len, const char *path, const char *suffix) {
     int start;
     int end;
 
@@ -608,9 +587,8 @@ zt_cstr_basename(char *npath, int len, const char *path, const char *suffix)
 
 
 char *
-zt_cstr_dirname(char *npath, int len, const char *path)
-{
-    int end = -1;
+zt_cstr_dirname(char *npath, int len, const char *path) {
+    int end    = -1;
     int ps_len = 0;
 
     zt_assert(npath);
@@ -636,8 +614,7 @@ zt_cstr_dirname(char *npath, int len, const char *path)
 
 
 char *
-zt_cstr_path_append(const char *path1, const char *path2)
-{
+zt_cstr_path_append(const char *path1, const char *path2) {
     char * rpath = NULL;
     int    len1;
     int    len2;
@@ -645,8 +622,8 @@ zt_cstr_path_append(const char *path1, const char *path2)
     int    x;
     int    y;
 
-    len1 = strlen(path1);
-    len2 = strlen(path2);
+    len1    = strlen(path1);
+    len2    = strlen(path2);
     sep_len = strlen(PATH_SEPERATOR);
 
     for (y = len1 - 1; y > 0 && strncmp(&path1[y], PATH_SEPERATOR, sep_len) == 0; y--) {
@@ -667,8 +644,7 @@ zt_cstr_path_append(const char *path1, const char *path2)
  * string
  */
 size_t
-zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen)
-{
+zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen) {
     size_t n;
     char * dptr = hex;
 
@@ -683,8 +659,7 @@ zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen)
 }
 
 static int8_t
-hex_to_char(char hex)
-{
+hex_to_char(char hex) {
     uint8_t c = hex;
 
     if (c >= '0' && c <= '9') {
@@ -713,8 +688,7 @@ hex_to_char(char hex)
  * to convert all data in hex.
  */
 size_t
-zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
-{
+zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen) {
     size_t n;
     size_t y;
 
@@ -723,7 +697,7 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
     }
 
     for (n = 0, y = 0; n < hlen && *hex != '\0' && y < dlen; n++) {
-        int8_t c = hex_to_char(*hex++);
+        int8_t c  = hex_to_char(*hex++);
         int8_t c2;
         int8_t cc = 0;
 
@@ -748,85 +722,92 @@ zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen)
 }
 
 int
-zt_cstr_copy(const char * from, int i, int j, char * to, int len)
-{
+zt_cstr_copy(const char * from, int i, int j, char * to, int len) {
     int flen;
     int min;
 
     CONVERT(from, i, j);
     flen = IDXLEN(i, j);
 
-    min = MIN(flen, len);
+    min  = MIN(flen, len);
     memcpy(to, &from[i], min);
     return min;
 }
 
-int
-zt_cstr_split_free(char **array)
-{
-    int   elem;
-
-    if (array == NULL) {
-        return 0;
-    }
-
-    elem = 0;
-
-    while (1) {
-        if (array[elem] == NULL) {
-            break;
-        }
-
-        free(array[elem++]);
-    }
-
-    free(array);
-
-    return 0;
+inline int
+zt_cstr_split_free(zt_ptr_array *array) {
+    return zt_ptr_array_free(array, 1);
 }
 
-char **
-zt_cstr_split(const char *str, const char *delim)
-{
-    char **split_arr;
-    char  *str_copy;
-    char  *endptr;
-    char  *tok;
-    int    count;
-    int    size;
+inline int
+zt_cstr_cut_free(zt_ptr_array *array) {
+    return zt_ptr_array_free(array, 1);
+}
+
+zt_ptr_array *
+zt_cstr_split(const char *str, const char *delim) {
+    char         *str_copy;
+    char         *endptr;
+    char         *tok;
+    zt_ptr_array *split_array;
 
     if (str == NULL || delim == NULL) {
         return NULL;
     }
 
-    split_arr = XMALLOC(char *, 128);
+    split_array = zt_ptr_array_init(NULL, (zt_ptr_array_free_cb)free);
 
-    size = 128;
-    count = 0;
-    endptr = NULL;
+    endptr      = NULL;
 
-    str_copy = strdup(str);
+    str_copy    = strdup(str);
 
-    for (tok = strtok_r(str_copy, delim, &endptr);
-         tok != NULL; tok = strtok_r(NULL, delim, &endptr)) {
-        if (count >= size - 1) {
-            split_arr = XREALLOC(char *, split_arr, size + 8);
-
-            if (split_arr == NULL) {
-                return NULL;
-            }
-
-            size = size + 8;
+    for (tok = strtok_r(str_copy, delim, &endptr); tok != NULL;
+         tok = strtok_r(NULL, delim, &endptr)) {
+        if (zt_ptr_array_add(split_array, (void *)strdup(tok)) < 0) {
+            zt_ptr_array_free(split_array, 1);
+            free(str_copy);
+            return NULL;
         }
-
-        split_arr[count++] = strdup(tok);
-        split_arr[count] = NULL;
     }
 
-    XFREE(str_copy);
+    free(str_copy);
 
-    return split_arr;
+    return split_array;
 }
 
+zt_ptr_array *
+zt_cstr_cut(const char *str, const char *delim) {
+    char         *str_copy;
+    char         *cut_tok;
+    zt_ptr_array *cuts;
 
+    if ((cuts = zt_ptr_array_init(NULL, free)) < 0) {
+        return NULL;
+    }
+
+    cut_tok = str_copy = strdup(str);
+
+    if (zt_ptr_array_add(cuts, (void *)strdup(cut_tok)) < 0) {
+        zt_ptr_array_free(cuts, 1);
+        free(str_copy);
+        return NULL;
+    }
+
+    while ((cut_tok = strstr(cut_tok, delim))) {
+        cut_tok++;
+
+        if (*cut_tok == '\0') {
+            break;
+        }
+
+        if (zt_ptr_array_add(cuts, (void *)strdup(cut_tok)) < 0) {
+            zt_ptr_array_free(cuts, 1);
+            free(str_copy);
+            return NULL;
+        }
+    }
+
+    free(str_copy);
+    return cuts;
+}
 

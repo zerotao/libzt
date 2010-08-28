@@ -158,7 +158,7 @@ zt_ptr_array_free(zt_ptr_array *array, int free_members) {
 
 void *
 zt_ptr_array_get_idx(zt_ptr_array *array, uint32_t idx) {
-    if (idx > array->count) {
+    if (idx >= array->count) {
         return NULL;
     }
 
