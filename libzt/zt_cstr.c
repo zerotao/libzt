@@ -776,7 +776,7 @@ zt_cstr_split(const char *str, const char *delim) {
 }
 
 zt_ptr_array *
-zt_cstr_cut(const char *str, const char *delim) {
+zt_cstr_cut(const char *str, const char *delim, int keep_delim) {
     char         *str_copy;
     char         *cut_tok;
     zt_ptr_array *cuts;
@@ -785,13 +785,8 @@ zt_cstr_cut(const char *str, const char *delim) {
         return NULL;
     }
 
-    cut_tok = str_copy = strdup(str);
-
-    if (zt_ptr_array_add(cuts, (void *)strdup(cut_tok)) < 0) {
-        zt_ptr_array_free(cuts, 1);
-        free(str_copy);
-        return NULL;
-    }
+    cut_tok    = str_copy = strdup(str);
+    keep_delim = keep_delim ? 1 : 0;
 
     while ((cut_tok = strstr(cut_tok, delim))) {
         cut_tok++;
@@ -800,7 +795,7 @@ zt_cstr_cut(const char *str, const char *delim) {
             break;
         }
 
-        if (zt_ptr_array_add(cuts, (void *)strdup(cut_tok)) < 0) {
+        if (zt_ptr_array_add(cuts, (void *)strdup((char *)(cut_tok - keep_delim))) < 0) {
             zt_ptr_array_free(cuts, 1);
             free(str_copy);
             return NULL;
