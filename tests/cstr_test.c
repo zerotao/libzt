@@ -36,7 +36,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     char * hex = "34aa973cd4c4daa4f61eEB2BDBAD27316534016FXXX";
     char   digest[20];
     char   hex2[41];
-    char *split_test = "a/b/c/d";
+    char *split_test = "/a/b/c/d/";
     zt_ptr_array *split_array;
     zt_ptr_array *cut_array;
 
@@ -62,13 +62,31 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(split_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_split_free(split_array), 0);
 
-    cut_array = zt_cstr_cut(split_test, "/");
+    cut_array = zt_cstr_cut(split_test, '/', 1);
     ZT_UNIT_ASSERT_NOT_EQUAL(test, cut_array, NULL);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d"), 0);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d"), 0);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d"), 0);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "/a/b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "/b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "/d/"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
+    ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
+
+    cut_array = zt_cstr_cut(split_test, '/', 0); 
+    ZT_UNIT_ASSERT_NOT_EQUAL(test, cut_array, NULL);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
+    ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
+
+    cut_array = zt_cstr_tok(split_test, '/', 0);
+    ZT_UNIT_ASSERT_NOT_EQUAL(test, cut_array, NULL);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "/a/b/c/d"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "/a/b/c"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "/a/b"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "/a"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL); 
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
 #if !defined(_WIN32)
