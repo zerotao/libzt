@@ -23,6 +23,7 @@ int zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand);
 int zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, uint32_t src_idx, uint32_t dst_idx);
 int zt_ptr_array_del(zt_ptr_array *array, void *data);
 int zt_ptr_array_add(zt_ptr_array *array, void *data);
+int zt_ptr_array_copy(zt_ptr_array *dst, zt_ptr_array *src);
 void *zt_ptr_array_get_idx(zt_ptr_array *array, uint32_t idx);
 
 #endif

@@ -114,6 +114,23 @@ zt_ptr_array_del(zt_ptr_array *array, void *data) {
 }
 
 int
+zt_ptr_array_copy(zt_ptr_array *dst, zt_ptr_array *src) {
+    uint32_t i;
+
+    if (dst == NULL || src == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < src->count; i++) {
+        if (zt_ptr_array_add(dst, zt_ptr_array_get_idx(src, i))) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int
 zt_ptr_array_add(zt_ptr_array *array, void *data) {
     if (data == NULL || array == NULL) {
         return 0;
