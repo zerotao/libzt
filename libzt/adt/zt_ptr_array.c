@@ -114,7 +114,7 @@ zt_ptr_array_del(zt_ptr_array *array, void *data) {
 }
 
 int
-zt_ptr_array_copy(zt_ptr_array *dst, zt_ptr_array *src) {
+zt_ptr_array_cat(zt_ptr_array *dst, zt_ptr_array *src) {
     uint32_t i;
 
     if (dst == NULL || src == NULL) {
