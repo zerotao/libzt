@@ -38,4 +38,14 @@ void *zt_ez_mempool_alloc(zt_ez_mempool *pool, size_t size);
  * @returns nothing
  */
 void zt_ez_mempool_destroy(zt_ez_mempool *pool);
+
+/**
+ * Add an already-allocated piece of memory to a pool
+ * @param pool the memory pool
+ * @param data the pointer to an allocated chunk of memory
+ * @param size of the data
+ * @return 0 on success, -1 on error
+ */
+int zt_ez_mempool_add_buffer(zt_ez_mempool *, void *, size_t);
+
 #endif
