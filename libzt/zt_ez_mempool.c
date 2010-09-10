@@ -7,8 +7,7 @@
 
 static void
 chunk_append(zt_ez_mempool_chunk **head,
-             zt_ez_mempool_chunk *chunk)
-{
+             zt_ez_mempool_chunk  *chunk) {
     if (*head == NULL) {
         *head = chunk;
         return;
@@ -19,23 +18,21 @@ chunk_append(zt_ez_mempool_chunk **head,
 }
 
 static zt_ez_mempool_chunk *
-zt_ez_mempool_chunk_init(const size_t size)
-{
+zt_ez_mempool_chunk_init(const size_t size) {
     zt_ez_mempool_chunk *chunk;
 
-    chunk = malloc(sizeof(zt_ez_mempool_chunk));
+    chunk       = malloc(sizeof(zt_ez_mempool_chunk));
 
     chunk->sz   = size;
     chunk->data = calloc(size, 1);
     chunk->next = NULL;
 
-    return(chunk);
+    return chunk;
 }
 
 static void
 pool_append(zt_ez_mempool **head,
-            zt_ez_mempool  *pool)
-{
+            zt_ez_mempool  *pool) {
     if (*head == NULL) {
         *head = pool;
         return;
@@ -46,14 +43,13 @@ pool_append(zt_ez_mempool **head,
 }
 
 zt_ez_mempool *
-zt_ez_mempool_init(zt_ez_mempool *parent)
-{
+zt_ez_mempool_init(zt_ez_mempool *parent) {
     zt_ez_mempool *pool;
 
     pool = calloc(sizeof(zt_ez_mempool), 1);
 
     if (pool == NULL) {
-        return(NULL);
+        return NULL;
     }
 
     if (parent != NULL) {
@@ -61,12 +57,11 @@ zt_ez_mempool_init(zt_ez_mempool *parent)
         pool->parent = parent;
     }
 
-    return(pool);
+    return pool;
 }
 
 static void
-free_chunks(zt_ez_mempool_chunk *chunks)
-{
+free_chunks(zt_ez_mempool_chunk *chunks) {
     zt_ez_mempool_chunk *chunk_ptr;
 
     chunk_ptr = chunks;
@@ -74,7 +69,7 @@ free_chunks(zt_ez_mempool_chunk *chunks)
     while (chunk_ptr != NULL) {
         zt_ez_mempool_chunk *tofree;
 
-        tofree = chunk_ptr;
+        tofree    = chunk_ptr;
         free(chunk_ptr->data);
         chunk_ptr = chunk_ptr->next;
         free(tofree);
@@ -82,8 +77,7 @@ free_chunks(zt_ez_mempool_chunk *chunks)
 }
 
 void
-zt_ez_mempool_destroy(zt_ez_mempool *pool)
-{
+zt_ez_mempool_destroy(zt_ez_mempool *pool) {
     zt_ez_mempool *pool_ptr;
 
     pool_ptr = pool->subpools;
@@ -104,24 +98,45 @@ zt_ez_mempool_destroy(zt_ez_mempool *pool)
 }
 
 void *
-zt_ez_mempool_alloc(zt_ez_mempool *pool, size_t size)
-{
+zt_ez_mempool_alloc(zt_ez_mempool *pool, size_t size) {
     zt_ez_mempool_chunk *chunk;
 
     chunk = zt_ez_mempool_chunk_init(size);
 
     if (chunk == NULL) {
-        return(NULL);
+        return NULL;
     }
 
     chunk_append(&pool->chunks, chunk);
 
-    return(chunk->data);
+    return chunk->data;
 }
 
+int
+zt_ez_mempool_add_buffer(zt_ez_mempool *pool, void *data, size_t size) {
+    zt_ez_mempool_chunk *chunk;
+
+    if (data == NULL || size == 0) {
+        return -1;
+    }
+
+    if (!(chunk = malloc(sizeof(zt_ez_mempool_chunk)))) {
+        perror("malloc");
+        return -1;
+    }
+
+    chunk->sz   = size;
+    chunk->data = data;
+    chunk->next = NULL;
+
+    chunk_append(&pool->chunks, chunk);
+
+    return 0;
+}
+
+
 #if 0
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     zt_ez_mempool *main_pool;
     zt_ez_mempool *subpool;
     char          *data;
@@ -131,18 +146,18 @@ int main(int argc, char **argv)
 
 
     zt_ez_mempool_alloc(main_pool, 1024);
-    zt_ez_mempool_alloc(subpool,   1024);
-    zt_ez_mempool_alloc(subpool,   1024);
-    zt_ez_mempool_alloc(subpool,   1024);
-    zt_ez_mempool_alloc(subpool,   1024);
-    zt_ez_mempool_alloc(subpool,   1024);
+    zt_ez_mempool_alloc(subpool, 1024);
+    zt_ez_mempool_alloc(subpool, 1024);
+    zt_ez_mempool_alloc(subpool, 1024);
+    zt_ez_mempool_alloc(subpool, 1024);
+    zt_ez_mempool_alloc(subpool, 1024);
 
     subpool = zt_ez_mempool_init(subpool);
 
-    zt_ez_mempool_alloc(subpool,   1024);
+    zt_ez_mempool_alloc(subpool, 1024);
     zt_ez_mempool_alloc(main_pool, 1024);
 
     zt_ez_mempool_destroy(main_pool);
-    return(0);
+    return 0;
 }
 #endif
