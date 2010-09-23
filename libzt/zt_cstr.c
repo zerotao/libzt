@@ -825,6 +825,10 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim)
 
     while((cut_tok = strrchr(str_copy, delim)) != str_copy)
     {
+	if (cut_tok == NULL) {
+	    break;
+	}
+
 	if (zt_ptr_array_add(cuts, (void *)strdup(str_copy)) < 0) {
 	    zt_ptr_array_free(cuts, 1);
 	    free(str_copy);
