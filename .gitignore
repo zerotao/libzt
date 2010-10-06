@@ -31,3 +31,9 @@ tests/unit_test
 tools/libzt.pc
 tools/project.spec
 tests/log.err
+*.o
+*.lo
+*.la
+tags
+*.deps
+*.libs
