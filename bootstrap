@@ -2,14 +2,14 @@
 # bootstrap        Bootstrap Script
 # Copyright (C) 2000, 2002, 2003, 2005, ETG, Inc. All Rights Reserved.
 #
-# This file is proprietary and confidential and must not be distributed without the 
+# This file is proprietary and confidential and must not be distributed without the
 # express permission of the copyright holder.
 #
 # See file COPYING for details.
-# 
+#
 # $Id: bootstrap,v 1.2 2003/06/10 03:53:34 jshiffer Exp $
-# 
-# 
+#
+#
 # History:  -jshiffer 12/19/00 3:53pm: Created.
 
 
@@ -59,7 +59,7 @@ error () {
 }
 
 # find the apps and set if necessary
-progvar LIBTOOLIZE libtoolize
+progvar LIBTOOLIZE glibtoolize libtoolize
 progvar ACLOCAL aclocal
 progvar AUTOHEADER autoheader
 progvar AUTOCONF autoconf
