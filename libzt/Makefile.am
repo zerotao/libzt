@@ -57,6 +57,7 @@ libzt_la_SOURCES = 		\
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = 	\
 		zt.h			\
+		zt_internal.h	\
 		zt_unit.h		\
 		zt_assert.h		\
 		zt_cfg.h		\

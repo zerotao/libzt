@@ -28,7 +28,7 @@
 
 #include <unistd.h>
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "../zt_progname.h"
 #include "log_private.h"
 

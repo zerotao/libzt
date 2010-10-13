@@ -19,7 +19,7 @@
 
 #include <math.h>
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_unit.h>
 #include <libzt/zt_uuid.h>
 #include <libzt/zt_time.h>

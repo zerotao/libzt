@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include "zt.h"
+#include "zt_internal.h"
 #include "zt_mem.h"
 #include "zt_ipv4_tbl.h"
 

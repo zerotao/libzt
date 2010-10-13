@@ -15,7 +15,7 @@
 
 #include <sys/types.h>
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_mem.h>
 
 BEGIN_C_DECLS

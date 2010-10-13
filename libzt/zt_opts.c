@@ -27,7 +27,7 @@
 #include <getopt.h>
 #endif
 
-#include "zt.h"
+#include "zt_internal.h"
 #include "zt_opts.h"
 
 

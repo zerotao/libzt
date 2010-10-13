@@ -11,7 +11,7 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_mem.h>
 
 struct pool_test {

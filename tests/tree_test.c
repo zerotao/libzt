@@ -11,7 +11,7 @@
  */
 #include <string.h>
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/adt/zt_tree.h>
 #include <libzt/zt_unit.h>
 

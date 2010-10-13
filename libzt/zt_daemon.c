@@ -25,7 +25,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "zt.h"
+#include "zt_internal.h"
 #include "zt_log.h"
 
 /*!

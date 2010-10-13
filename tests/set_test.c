@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/adt/zt_set.h>
 #include <libzt/zt_unit.h>
 
