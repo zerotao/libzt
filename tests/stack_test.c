@@ -42,13 +42,21 @@ basic_tests(struct zt_unit_test *test, void *data)
         se = XCALLOC(stack_elt, 1);
         qe = XCALLOC(queue_elt, 1);
 
-        se->n = values[i];
-        qe->n = values[(VALUES_MAX-1) - i];
+        se->n = values[(VALUES_MAX-1) - i];
+        qe->n = values[i];
 
         zt_stack_push(&stk, &se->member);
         zt_queue_enqueue(&que, &qe->member);
     }
 
+    tse = zt_stack_peek(&stk);
+    tqe = zt_queue_peek(&que);
+
+    se = zt_stack_data(tse, stack_elt, member);
+    qe = zt_queue_data(tqe, queue_elt, member);
+
+    ZT_UNIT_ASSERT(test, se->n == values[0]);
+    ZT_UNIT_ASSERT(test, qe->n == values[0]);
 
     for (i = 0; i < VALUES_MAX; i++) {
         tse = zt_stack_pop(&stk);
@@ -57,10 +65,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         se = zt_stack_data(tse, stack_elt, member);
         qe = zt_queue_data(tqe, queue_elt, member);
 
-        if (i == 0) {
-            ZT_UNIT_ASSERT(test, se->n == qe->n);
-            ZT_UNIT_ASSERT(test, se->n == qe->n);
-        }
+        ZT_UNIT_ASSERT(test, se->n == values[i]);
+        ZT_UNIT_ASSERT(test, qe->n == values[i]);
 
         XFREE(se);
         XFREE(qe);
