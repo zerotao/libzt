@@ -15,7 +15,7 @@ typedef zt_stack zt_stack_elt;
 #define zt_stack_reset zt_elist_reset
 #define zt_stack_empty zt_elist_empty
 #define zt_stack_data zt_elist_data
-#define zt_stack_peek zt_elist_next
+#define zt_stack_peek zt_elist_get_next
 #define zt_stack_push zt_elist_add
 
 static INLINE zt_stack *
