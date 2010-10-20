@@ -73,7 +73,7 @@ zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand) {
 
     free(array->array);
 
-    array->array = ndata;
+    array->array = (void **)ndata;
     array->size += size;
 
     return 0;
