@@ -205,6 +205,7 @@ zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
     if (cbs->iput_loop) {
         _zt_threadpool_cbs.iput_loop = cbs->iput_loop;
     }
+
     if (cbs->oput_loop) {
         _zt_threadpool_cbs.oput_loop = cbs->oput_loop;
     }
@@ -225,8 +226,13 @@ zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
         _zt_threadpool_cbs.finalize = cbs->finalize;
     }
 
+    /* sometimes we don't want an output worker */
+    if (cbs->oput_loop == NULL) {
+        _zt_threadpool_cbs.oput_loop = NULL;
+    }
+
     return 0;
-}
+} /* zt_threadpool_set_callbacks */
 static void *
 _zt_threadpool_oput_loop(void *args) {
     zt_threadpool *tpool;
