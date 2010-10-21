@@ -159,7 +159,7 @@ zt_threads_pthreads_alloc_thread(void) {
     return calloc(sizeof(pthread_t), 1);
 }
 
-int 
+int
 zt_threads_pthreads_kill(void *_thread) {
     pthread_t *thread;
 
@@ -192,8 +192,8 @@ zt_threads_use_pthreads(void) {
     struct zt_threads_cntrl_callbacks cntrl_cbs = {
         zt_threads_pthreads_start,
         zt_threads_pthreads_end,
-	zt_threads_pthreads_kill,
-	zt_threads_pthread_id
+        zt_threads_pthreads_kill,
+        zt_threads_pthread_id
     };
 
     zt_threads_set_lock_callbacks(&cbs);

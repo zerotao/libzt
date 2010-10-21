@@ -169,7 +169,7 @@ zt_threads_end(void *args) {
 int
 zt_threads_kill(void *thread) {
     if (_zt_threads_cntrl_cbs.kill) {
-	return _zt_threads_cntrl_cbs.kill(thread);
+        return _zt_threads_cntrl_cbs.kill(thread);
     }
     return 0;
 }
@@ -177,7 +177,7 @@ zt_threads_kill(void *thread) {
 unsigned int
 zt_threads_id(void) {
     if (_zt_threads_cntrl_cbs.id) {
-	return _zt_threads_cntrl_cbs.id();
+        return _zt_threads_cntrl_cbs.id();
     }
 
     return 0;
