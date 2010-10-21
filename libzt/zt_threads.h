@@ -35,7 +35,8 @@ struct zt_threads_cntrl_callbacks {
 
 struct zt_threadpool_callbacks {
     /* the function that reads from the queue */
-    void * (*loop)(void *args);
+    void * (*iput_loop)(void *args);
+    void * (*oput_loop)(void *args);
 
     /* the function to call before going into the loop, the output
      * of this data will be sent to the worker callback  */
@@ -46,7 +47,19 @@ struct zt_threadpool_callbacks {
      * if function returns 1, the output will be
      * inserted into the oput_queue
      */
-    int (*worker)(void *init_data, void *data);
+    /* the input worker is fed data from the input queue,
+       if the return value is not NULL, the returned data
+       is placed in the output queue */
+    void *(*iput_worker)(void *init_data, void *data);
+
+    /* the output worker is fed data via the output queue
+       if the return value is not NULL, the finalize data
+       function will be called */
+    void *(*oput_worker)(void *init_data, void *data);
+
+    /* a function which is called after the oput worker is
+       done processing the data */
+    void (*finalize)(void *init_data, void *data);
 };
 
 struct zt_threadpool_entry {
@@ -56,7 +69,8 @@ struct zt_threadpool_entry {
 };
 
 struct zt_threadpool {
-    void **threads;
+    void **iput_threads;
+    void **oput_threads;
     void  *iput_mutex;
     void  *oput_mutex;
     void  *iput_cond;

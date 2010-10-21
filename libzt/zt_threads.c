@@ -9,7 +9,8 @@
 
 #ifndef _ZT_DISABLE_THREAD_SUPPORT
 
-static void *_zt_threadpool_loop(void *args);
+static void * _zt_threadpool_iput_loop(void *args);
+static void * _zt_threadpool_oput_loop(void *args);
 
 struct zt_threads_lock_callbacks  _zt_threads_lock_cbs = {
     NULL, NULL, NULL, NULL
@@ -24,7 +25,7 @@ struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs = {
 };
 
 struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
-    _zt_threadpool_loop, NULL, NULL
+    _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL
 };
 
 void                            * (*zt_threads_alloc_thread)(void);
@@ -191,30 +192,95 @@ int
 zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
     if (cbs == NULL) {
         /* set our defaults */
-        _zt_threadpool_cbs.loop   = _zt_threadpool_loop;
-        _zt_threadpool_cbs.init   = NULL;
-        _zt_threadpool_cbs.worker = NULL;
+        _zt_threadpool_cbs.iput_loop   = _zt_threadpool_iput_loop;
+        _zt_threadpool_cbs.oput_loop   = _zt_threadpool_oput_loop;
+        _zt_threadpool_cbs.init        = NULL;
+        _zt_threadpool_cbs.iput_worker = NULL;
+        _zt_threadpool_cbs.oput_worker = NULL;
 
         return 0;
     }
 
-    if (cbs->loop) {
-        _zt_threadpool_cbs.loop = cbs->loop;
+
+    if (cbs->iput_loop) {
+        _zt_threadpool_cbs.iput_loop = cbs->iput_loop;
+    }
+    if (cbs->oput_loop) {
+        _zt_threadpool_cbs.oput_loop = cbs->oput_loop;
     }
 
     if (cbs->init) {
         _zt_threadpool_cbs.init = cbs->init;
     }
 
-    if (cbs->worker) {
-        _zt_threadpool_cbs.worker = cbs->worker;
+    if (cbs->iput_worker) {
+        _zt_threadpool_cbs.iput_worker = cbs->iput_worker;
+    }
+
+    if (cbs->oput_worker) {
+        _zt_threadpool_cbs.oput_worker = cbs->oput_worker;
+    }
+
+    if (cbs->finalize) {
+        _zt_threadpool_cbs.finalize = cbs->finalize;
     }
 
     return 0;
 }
+static void *
+_zt_threadpool_oput_loop(void *args) {
+    zt_threadpool *tpool;
+    void          *init_data = NULL;
+
+    tpool = (zt_threadpool *)args;
+
+    if (_zt_threadpool_cbs.init) {
+        init_data = _zt_threadpool_cbs.init(args);
+    }
+
+    while (1) {
+        zt_threadpool_entry *entry = NULL;
+
+        if (zt_threads_lock(0, tpool->oput_mutex)) {
+            zt_threads_end(NULL);
+        }
+
+        if (TAILQ_EMPTY(&tpool->oput_queue)) {
+            zt_threads_cond_wait(tpool->oput_cond, tpool->oput_mutex, NULL);
+        } else {
+            entry = TAILQ_FIRST(&tpool->oput_queue);
+            TAILQ_REMOVE(&tpool->oput_queue, entry, next);
+        }
+
+        zt_threads_unlock(0, tpool->oput_mutex);
+
+        if (entry == NULL) {
+            continue;
+        }
+
+        if (_zt_threadpool_cbs.oput_worker) {
+            void *input;
+
+            input = _zt_threadpool_cbs.oput_worker(init_data, entry->data);
+
+            if (input != NULL) {
+                if (_zt_threadpool_cbs.finalize) {
+                    _zt_threadpool_cbs.finalize(init_data, input);
+                }
+            }
+        }
+
+        if (entry != NULL) {
+            free(entry);
+        }
+    }
+
+    return NULL;
+} /* _zt_threadpool_loop */
+
 
 static void *
-_zt_threadpool_loop(void *args) {
+_zt_threadpool_iput_loop(void *args) {
     zt_threadpool *tpool;
     void          *init_data = NULL;
 
@@ -228,7 +294,6 @@ _zt_threadpool_loop(void *args) {
         zt_threadpool_entry *entry = NULL;
 
         if (zt_threads_lock(0, tpool->iput_mutex)) {
-            fprintf(stderr, "lock error...\n");
             zt_threads_end(NULL);
         }
 
@@ -245,12 +310,13 @@ _zt_threadpool_loop(void *args) {
             continue;
         }
 
-        if (_zt_threadpool_cbs.worker) {
-            int status;
-            status = _zt_threadpool_cbs.worker(init_data, entry->data);
+        if (_zt_threadpool_cbs.iput_worker) {
+            void *input;
 
-            if (status == 1) {
-                zt_threadpool_insert_oput(tpool, entry->data);
+            input = _zt_threadpool_cbs.iput_worker(init_data, entry->data);
+
+            if (input != NULL) {
+                zt_threadpool_insert_oput(tpool, input);
             }
         }
 
@@ -309,8 +375,16 @@ zt_threadpool_start(zt_threadpool *tpool) {
     int i;
 
     for (i = 0; i < tpool->min_threads; i++) {
-        tpool->threads[i] = zt_threads_alloc_thread();
-        zt_threads_start(tpool->threads[i], NULL, _zt_threadpool_cbs.loop, (void *)tpool);
+        tpool->iput_threads[i] = zt_threads_alloc_thread();
+        zt_threads_start(tpool->iput_threads[i], NULL, _zt_threadpool_cbs.iput_loop, (void *)tpool);
+    }
+
+    if (_zt_threadpool_cbs.oput_loop) {
+        for (i = 0; i < tpool->min_threads; i++) {
+            tpool->oput_threads[i] = zt_threads_alloc_thread();
+            zt_threads_start(tpool->oput_threads[i], NULL,
+                             _zt_threadpool_cbs.oput_loop, (void *)tpool);
+        }
     }
 
     return 0;
@@ -325,11 +399,15 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
     tpool->max_threads  = max_threads;
     tpool->thread_count = min_threads;
 
-    tpool->threads      = calloc(sizeof(void *), min_threads);
+    tpool->iput_threads = calloc(sizeof(void *), min_threads);
     tpool->iput_mutex   = zt_threads_alloc_lock(0);
     tpool->oput_mutex   = zt_threads_alloc_lock(0);
     tpool->iput_cond    = zt_threads_cond_alloc(0);
     tpool->oput_cond    = zt_threads_cond_alloc(0);
+
+    if (_zt_threadpool_cbs.oput_loop) {
+        tpool->oput_threads = calloc(sizeof(void *), min_threads);
+    }
 
     if (pipe_iput) {
         pipe(tpool->iput_fd_sigs);
