@@ -33,7 +33,8 @@ unit_test_SOURCES = 	\
 	tree_test.c			\
 	sha1_test.c			\
 	uuid_test.c     	\
-    ipv4_tbl_test.c 
+    ipv4_tbl_test.c 	\
+	include_test.c
 
 EXTRA_DIST = 		\
 	cfg_test.ini

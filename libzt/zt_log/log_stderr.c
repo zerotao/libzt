@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "log_private.h"
 
 static void destructor(zt_log_ty *log)

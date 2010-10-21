@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "zt.h"
+#include "zt_internal.h"
 #include "zt_log.h"
 #include "zt_cstr.h"
 #include "zt_assert.h"

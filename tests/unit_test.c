@@ -45,7 +45,7 @@ extern int register_tree_suite(struct zt_unit *unit);
 extern int register_sha1_suite(struct zt_unit *unit);
 extern int register_uuid_suite(struct zt_unit *unit);
 extern int register_ipv4_tbl_suite(struct zt_unit *unit);
-
+extern int register_include_suite(struct zt_unit *unit);
 
 
 int
@@ -85,8 +85,9 @@ main(int argc, char *argv[])
     register_tree_suite(unit);
     register_sha1_suite(unit);
     register_uuid_suite(unit);
+    register_include_suite(unit);
     /* register_ipv4_tbl_suite(unit); */
-
+    register_include_suite(unit);
 
     /*
      * register_adt_suite(unit);

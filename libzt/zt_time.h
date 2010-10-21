@@ -14,7 +14,7 @@
 #define _ZT_TIME_H_
 
 #include <sys/time.h>
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 
 struct time_result {
     struct timeval sys_time;

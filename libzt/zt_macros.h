@@ -14,7 +14,7 @@
 #ifndef _ZT_MACROS_H_
 #define _ZT_MACROS_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 
 BEGIN_C_DECLS
 

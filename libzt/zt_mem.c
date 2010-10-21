@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "zt.h"
+#include "zt_internal.h"
 #include "adt/zt_list.h"
 #include "zt_mem.h"
 #include "zt_atexit.h"

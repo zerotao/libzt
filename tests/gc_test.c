@@ -1,4 +1,4 @@
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_gc.h>
 #include <libzt/zt_unit.h>
 

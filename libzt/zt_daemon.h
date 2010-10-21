@@ -14,7 +14,7 @@
 #ifndef _ZT_DAEMON_H_
 #define _ZT_DAEMON_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <sys/types.h>
 
 BEGIN_C_DECLS

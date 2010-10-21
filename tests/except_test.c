@@ -14,7 +14,7 @@
 
 /* because we test the EXCEPT_DESC below */
 #define EXCEPT_DEFINE
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_exceptions.h>
 #include <libzt/zt_unit.h>
 

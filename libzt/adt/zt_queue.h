@@ -1,7 +1,7 @@
 #ifndef _ZT_QUEUE_H_
 #define _ZT_QUEUE_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/adt/zt_list.h>
 BEGIN_C_DECLS
 
@@ -15,7 +15,7 @@ typedef zt_queue zt_queue_elt;
 #define zt_queue_reset zt_elist_reset
 #define zt_queue_empty zt_elist_empty
 #define zt_queue_data zt_elist_data
-#define zt_queue_peek zt_elist_next
+#define zt_queue_peek zt_elist_get_prev
 #define zt_queue_enqueue zt_elist_add
 
 static INLINE zt_queue *

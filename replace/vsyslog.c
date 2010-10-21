@@ -2,8 +2,8 @@
 #  include <config.h>
 #endif
 
-#include <libzt/zt.h>
-#include <libzt/assert.h>
+#include <libzt/zt_internal.h>
+#include <libzt/zt_assert.h>
 
 #ifdef HAVE_SYSLOG_H
 #  include <syslog.h>

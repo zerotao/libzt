@@ -1,5 +1,5 @@
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_time.h>
 #include <libzt/zt_log.h>
 #include <libzt/zt_unit.h>
