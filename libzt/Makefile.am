@@ -2,6 +2,7 @@ SUBDIRS = 		\
 	adt			\
 	zt_cfg 		\
 	zt_log 		\
+  zt_threads \
 	.
 
 
@@ -12,6 +13,10 @@ libzt_la_LIBADD = 					\
 		adt/libzt_adt.la			\
 		zt_log/libzt_log.la			\
 		zt_cfg/libzt_cfg.la
+
+if PTHREADS
+libzt_la_LIBADD += zt_threads/libzt_threads_pthreads.la
+endif 
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -52,6 +57,7 @@ libzt_la_SOURCES = 		\
 		zt_exceptions.c \
 		zt_ipv4_tbl.c \
 		zt_ez_mempool.c \
+    zt_threads.c \
 		zt_atexit.c
 
 pkgincludedir = ${includedir}/libzt
@@ -79,6 +85,7 @@ pkginclude_HEADERS = 	\
 		zt_exceptions.h \
 		zt_ez_mempool.h \
 		zt_ipv4_tbl.h	\
+    zt_threads.h \
 		zt_atexit.h
 
 

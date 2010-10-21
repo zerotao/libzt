@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+#define _ZT_THREADS_HAVE_PTHREADS
+#include <libzt/zt.h>
+
+void *mutex;
+
+void * 
+example_thread_cb(void *_data) {
+    char *data = (char *)_data;
+
+    while(1) {
+	/* lock the mutex */
+	zt_threads_lock(0, mutex);
+	printf("id=%u data=%s\n", zt_threads_id(), data);
+	zt_threads_unlock(0, mutex);
+	usleep(80000);
+    }
+
+    zt_threads_end(NULL);
+}
+
+
+void *
+example_init_cb(void *args) {
+    return (void *)"example init data";
+}
+
+int
+example_work_cb(void *init_data, void *data) 
+{
+    printf("id = %u init_data = %s, data = %s\n", 
+	    zt_threads_id(), (char *)init_data, (char *)data);
+    return 0;
+}
+
+int main(int argc, char **argv) {
+    /* tell libzt to use pthreads */
+    zt_threads_use_pthreads();
+
+    int i;
+
+    void *thread1;
+    void *thread2;
+
+    /* allocate a mutex */
+    mutex = zt_threads_alloc_lock(0);
+
+    /* allocate some threads */
+    thread1 = zt_threads_alloc_thread();
+    thread2 = zt_threads_alloc_thread();
+
+    /* start up the threads */
+    zt_threads_start(thread1, NULL, example_thread_cb, (void *)"one");
+    zt_threads_start(thread2, NULL, example_thread_cb, (void *)"two");
+
+    /* loop for a few */
+    for (i = 0; i <= 2; i++) {
+	printf("parent...\n");
+	sleep(1);
+    }
+
+    zt_threads_kill(thread1);
+    zt_threads_kill(thread2);
+
+    /* lets do some threadpools */
+    {
+	zt_threadpool *tpool;
+
+	struct zt_threadpool_callbacks tpcbs = {
+	    NULL, example_init_cb, example_work_cb
+	};
+
+	/* set our callbacks, leave the threadpool looper function to default (NULL) */
+	zt_threadpool_set_callbacks(&tpcbs);
+
+	/* create a threadpool with five listeners, also don't create 
+	   pipe based signaling */
+	tpool = zt_threadpool_init(5, 5, 0, 0);
+
+	/* start up the threadpool */
+	printf("-------- starting test threadpool -------------\n");
+	zt_threadpool_start(tpool);
+
+	for (i = 0; i <= 20; i++) {
+	    zt_threadpool_insert_iput(tpool, (void *)"blah");
+	    usleep(90000);
+	}
+    }
+
+    return 0;
+}
+

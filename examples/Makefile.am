@@ -6,6 +6,7 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_
 EXAMPLE_APPS = 		\
 		mem_pools	\
 		mem_timing	\
+    threads \
 		types
 
 all: $(EXAMPLE_APPS)
@@ -21,6 +22,8 @@ mem_timing_SOURCES = \
 
 types_SOURCES = \
 	types.c
+
+threads_SOURCES = threads.c
 
 noinst_HEADERS = test.h
 

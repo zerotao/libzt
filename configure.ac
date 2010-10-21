@@ -3,6 +3,7 @@ dnl configure.in source file; run autoconf to create configure script
 AC_REVISION($Revision: 1.5 $)dnl this revision of this configure.in
 AC_PREREQ(2.13)
 AC_INIT(libzt)
+m4_include([acx_pthread.m4])
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_SRCDIR(libzt/Makefile.am)
 AC_CONFIG_AUX_DIR(aux_files)
@@ -119,6 +120,29 @@ AC_WITH_DEBUG
 AC_WITH_DIST_RELEASE
 AC_WITH_PROFILING
 AC_WITH_COVERAGE
+
+AC_ARG_ENABLE(thread-support,
+     AS_HELP_STRING(--disable-thread-support, disable support for threading),
+  [], [enable_thread_support=yes])
+
+have_pthreads=no
+
+if test "$enable_thread_support" != "no"; then
+  ACX_PTHREAD([
+  AC_DEFINE(HAVE_PTHREADS, 1,
+    [Define if we have pthreads on this system])
+  have_pthreads=yes])
+  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+fi
+
+AM_CONDITIONAL(PTHREADS, [test "$have_pthreads" != "no" && test "$enable_thread_support" != "no"])
+
+# check if we should compile locking into the library
+if test x$enable_thread_support = xno; then
+   AC_DEFINE(DISABLE_THREAD_SUPPORT, 1,
+  [Define if libzt should not be compiled with thread support])
+fi
+
 
 AC_OUTPUT_COMMANDS([
   if test -n "$CONFIG_FILES" && test -n "$CONFIG_HEADERS"; then
@@ -374,6 +398,7 @@ libzt/Makefile
 libzt/zt_log/Makefile
 libzt/zt_cfg/Makefile
 libzt/adt/Makefile
+libzt/zt_threads/Makefile
 tools/Makefile
 tools/libzt.pc
 examples/Makefile
