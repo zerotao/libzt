@@ -8,7 +8,7 @@
 
 #include <zt_threads.h>
 
-void *
+zt_threads_mutex *
 zt_threads_pthreads_lock_alloc(int locktype) {
     pthread_mutex_t *lock;
 
@@ -25,7 +25,7 @@ zt_threads_pthreads_lock_alloc(int locktype) {
 }
 
 void
-zt_threads_pthreads_lock_free(void *_lock, int locktype) {
+zt_threads_pthreads_lock_free(zt_threads_mutex *_lock, int locktype) {
     pthread_mutex_t *lock;
 
     lock = (pthread_mutex_t *)_lock;
@@ -35,7 +35,7 @@ zt_threads_pthreads_lock_free(void *_lock, int locktype) {
 }
 
 int
-zt_threads_pthreads_lock(int mode, void *_lock) {
+zt_threads_pthreads_lock(int mode, zt_threads_mutex *_lock) {
     pthread_mutex_t *lock;
 
     lock = (pthread_mutex_t *)_lock;
@@ -48,7 +48,7 @@ zt_threads_pthreads_lock(int mode, void *_lock) {
 }
 
 int
-zt_threads_pthreads_unlock(int mode, void *_lock) {
+zt_threads_pthreads_unlock(int mode, zt_threads_mutex *_lock) {
     pthread_mutex_t *lock;
 
     lock = (pthread_mutex_t *)_lock;
@@ -56,7 +56,7 @@ zt_threads_pthreads_unlock(int mode, void *_lock) {
     return pthread_mutex_unlock(lock);
 }
 
-void *
+zt_threads_cond *
 zt_threads_pthreads_cond_alloc(int condtype) {
     pthread_cond_t *cond;
 
@@ -73,7 +73,7 @@ zt_threads_pthreads_cond_alloc(int condtype) {
 }
 
 void
-zt_threads_pthreads_cond_free(void *_cond) {
+zt_threads_pthreads_cond_free(zt_threads_cond *_cond) {
     pthread_cond_t *cond;
 
     cond = (pthread_cond_t *)_cond;
@@ -82,7 +82,7 @@ zt_threads_pthreads_cond_free(void *_cond) {
 }
 
 int
-zt_threads_pthreads_cond_signal(void *_cond, int broadcast) {
+zt_threads_pthreads_cond_signal(zt_threads_cond *_cond, int broadcast) {
     pthread_cond_t *cond;
     int             status;
 
@@ -98,7 +98,7 @@ zt_threads_pthreads_cond_signal(void *_cond, int broadcast) {
 }
 
 int
-zt_threads_pthreads_cond_wait(void *_cond, void *_lock, struct timeval *tv) {
+zt_threads_pthreads_cond_wait(zt_threads_cond *_cond, zt_threads_mutex *_lock, struct timeval *tv) {
     int              status;
     pthread_cond_t  *cond;
     pthread_mutex_t *lock;
@@ -135,7 +135,7 @@ zt_threads_pthreads_cond_wait(void *_cond, void *_lock, struct timeval *tv) {
 }
 
 int
-zt_threads_pthreads_start(void *_thread, void *_attr,
+zt_threads_pthreads_start(zt_threads_thread *_thread, zt_threads_attr *_attr,
                           void * (*start_cb)(void *), void *args) {
     pthread_t      *thread;
     pthread_attr_t *attr;
@@ -154,13 +154,13 @@ zt_threads_pthreads_end(void *args) {
     return pthread_exit(args);
 }
 
-void *
+zt_threads_thread *
 zt_threads_pthreads_alloc_thread(void) {
     return calloc(sizeof(pthread_t), 1);
 }
 
 int
-zt_threads_pthreads_kill(void *_thread) {
+zt_threads_pthreads_kill(zt_threads_thread *_thread) {
     pthread_t *thread;
 
     thread = (pthread_t *)_thread;

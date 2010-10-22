@@ -12,24 +12,29 @@
 typedef struct zt_threadpool zt_threadpool;
 typedef struct zt_threadpool_entry zt_threadpool_entry;
 
+typedef void zt_threads_mutex;
+typedef void zt_threads_cond;
+typedef void zt_threads_thread;
+typedef void zt_threads_attr;
+
 struct zt_threads_lock_callbacks {
     void * (*alloc)(int locktype);
-    void   (*free)(void * lock, int locktype);
-    int    (*lock)(int mode, void *lock);
-    int    (*unlock)(int mode, void *lock);
+    void   (*free)(zt_threads_mutex * lock, int locktype);
+    int    (*lock)(int mode, zt_threads_mutex *lock);
+    int    (*unlock)(int mode, zt_threads_mutex *lock);
 };
 
 struct zt_threads_cond_callbacks {
-    void * (*alloc)(int condtype);
-    void   (*free)(void *cond);
-    int    (*signal)(void *cond, int broadcast);
-    int    (*wait)(void *cond, void *lock, struct timeval *timeout);
+    zt_threads_cond * (*alloc)(int condtype);
+    void              (*free)(zt_threads_cond *cond);
+    int               (*signal)(zt_threads_cond *cond, int broadcast);
+    int               (*wait)(zt_threads_cond *cond, zt_threads_mutex *lock, struct timeval *timeout);
 };
 
 struct zt_threads_cntrl_callbacks {
-    int          (*start)(void *thread, void *attr, void * (*start_cb)(void *), void *arg);
+    int          (*start)(zt_threads_thread *thread, zt_threads_attr *attr, void * (*start_cb)(void *), void *arg);
     void         (*end)(void *arg);
-    int          (*kill)(void *thread);
+    int          (*kill)(zt_threads_thread *thread);
     unsigned int (*id)(void);
 };
 
@@ -69,12 +74,12 @@ struct zt_threadpool_entry {
 };
 
 struct zt_threadpool {
-    void **iput_threads;
-    void **oput_threads;
-    void  *iput_mutex;
-    void  *oput_mutex;
-    void  *iput_cond;
-    void  *oput_cond;
+    zt_threads_thread **iput_threads;
+    zt_threads_thread **oput_threads;
+    zt_threads_mutex   *iput_mutex;
+    zt_threads_mutex   *oput_mutex;
+    zt_threads_cond    *iput_cond;
+    zt_threads_cond    *oput_cond;
 
     /* used to signal things via a pipe */
     int iput_fd_sigs[2];
@@ -91,18 +96,18 @@ struct zt_threadpool {
 extern struct zt_threads_lock_callbacks  _zt_threads_lock_cbs;
 extern struct zt_threads_cond_callbacks  _zt_threads_cond_cbs;
 extern struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs;
-extern void                            * (*zt_threads_alloc_thread)(void);
+extern zt_threads_thread               * (*zt_threads_alloc_thread)(void);
 
 /* module declarations */
 int zt_threads_set_lock_callbacks(struct zt_threads_lock_callbacks *);
 int zt_threads_set_cond_callbacks(struct zt_threads_cond_callbacks *);
 int zt_threads_set_cntrl_callbacks(struct zt_threads_cntrl_callbacks *);
 
-void *zt_threads_alloc_lock(int type);
+zt_threads_mutex *zt_threads_alloc_lock(int type);
 void  zt_threads_free_lock(void *lock, int type);
 int   zt_threads_lock(int mode, void *lock);
 int   zt_threads_unlock(int mode, void *lock);
-void *zt_threads_cond_alloc(int type);
+zt_threads_cond *zt_threads_cond_alloc(int type);
 void  zt_threads_cond_free(void *cond);
 int   zt_threads_cond_signal(void *cond, int broadcast);
 int   zt_threads_cond_wait(void *cond, void *lock, struct timeval *timeout);
@@ -110,7 +115,6 @@ int   zt_threads_start(void *thread, void *attr, void * (*start_cb)(void *), voi
 void  zt_threads_end(void *args);
 int   zt_threads_kill(void *thread);
 unsigned int zt_threads_id(void);
-
 
 #if defined(_ZT_THREADS_HAVE_PTHREADS)
 #define ZT_THREADS_PTHREADS_IMPLEMENTED 1

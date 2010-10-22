@@ -6,7 +6,7 @@
 #define _ZT_THREADS_HAVE_PTHREADS
 #include <libzt/zt.h>
 
-void *mutex;
+zt_threads_mutex *mutex;
 
 void *
 example_thread_cb(void *_data) {
@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
 
     int   i;
 
-    void *thread1;
-    void *thread2;
+    zt_threads_thread *thread1;
+    zt_threads_thread *thread2;
 
     /* allocate a mutex */
     mutex   = zt_threads_alloc_lock(0);

@@ -28,7 +28,7 @@ struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
     _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL
 };
 
-void                            * (*zt_threads_alloc_thread)(void);
+zt_threads_thread               * (*zt_threads_alloc_thread)(void);
 
 int
 zt_threads_set_lock_callbacks(struct zt_threads_lock_callbacks *cbs) {
@@ -81,7 +81,7 @@ zt_threads_set_cntrl_callbacks(struct zt_threads_cntrl_callbacks *cbs) {
     return -1;
 }
 
-void *
+zt_threads_mutex *
 zt_threads_alloc_lock(int type) {
     if (_zt_threads_lock_cbs.alloc) {
         return _zt_threads_lock_cbs.alloc(type);
@@ -91,7 +91,7 @@ zt_threads_alloc_lock(int type) {
 }
 
 void
-zt_threads_free_lock(void * lock, int locktype) {
+zt_threads_free_lock(zt_threads_mutex * lock, int locktype) {
     if (_zt_threads_lock_cbs.free) {
         _zt_threads_lock_cbs.free(lock, locktype);
     } else {
@@ -100,7 +100,7 @@ zt_threads_free_lock(void * lock, int locktype) {
 }
 
 int
-zt_threads_lock(int mode, void *lock) {
+zt_threads_lock(int mode, zt_threads_mutex *lock) {
     if (_zt_threads_lock_cbs.lock) {
         return _zt_threads_lock_cbs.lock(mode, lock);
     }
@@ -109,7 +109,7 @@ zt_threads_lock(int mode, void *lock) {
 }
 
 int
-zt_threads_unlock(int mode, void *lock) {
+zt_threads_unlock(int mode, zt_threads_mutex *lock) {
     if (_zt_threads_lock_cbs.unlock) {
         return _zt_threads_lock_cbs.unlock(mode, lock);
     }
@@ -117,7 +117,7 @@ zt_threads_unlock(int mode, void *lock) {
     return 0;
 }
 
-void *
+zt_threads_cond *
 zt_threads_cond_alloc(int type) {
     if (_zt_threads_cond_cbs.alloc) {
         return _zt_threads_cond_cbs.alloc(type);
@@ -127,14 +127,14 @@ zt_threads_cond_alloc(int type) {
 }
 
 void
-zt_threads_cond_free(void *cond) {
+zt_threads_cond_free(zt_threads_cond *cond) {
     if (_zt_threads_cond_cbs.free) {
         return _zt_threads_cond_cbs.free(cond);
     }
 }
 
 int
-zt_threads_cond_signal(void *cond, int broadcast) {
+zt_threads_cond_signal(zt_threads_cond *cond, int broadcast) {
     if (_zt_threads_cond_cbs.signal) {
         return _zt_threads_cond_cbs.signal(cond, broadcast);
     }
@@ -143,7 +143,7 @@ zt_threads_cond_signal(void *cond, int broadcast) {
 }
 
 int
-zt_threads_cond_wait(void *cond, void *lock, struct timeval *timeout) {
+zt_threads_cond_wait(zt_threads_cond *cond, zt_threads_mutex *lock, struct timeval *timeout) {
     if (_zt_threads_cond_cbs.wait) {
         return _zt_threads_cond_cbs.wait(cond, lock, timeout);
     }
@@ -152,7 +152,7 @@ zt_threads_cond_wait(void *cond, void *lock, struct timeval *timeout) {
 }
 
 int
-zt_threads_start(void *thread, void *attr, void * (*cb)(void *), void *args) {
+zt_threads_start(zt_threads_thread *thread, zt_threads_cond *attr, void * (*cb)(void *), void *args) {
     if (_zt_threads_cntrl_cbs.start) {
         return _zt_threads_cntrl_cbs.start(thread, attr, cb, args);
     }
@@ -168,7 +168,7 @@ zt_threads_end(void *args) {
 }
 
 int
-zt_threads_kill(void *thread) {
+zt_threads_kill(zt_threads_thread *thread) {
     if (_zt_threads_cntrl_cbs.kill) {
         return _zt_threads_cntrl_cbs.kill(thread);
     }
@@ -238,6 +238,7 @@ zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
 
     return 0;
 } /* zt_threadpool_set_callbacks */
+
 static void *
 _zt_threadpool_oput_loop(void *args) {
     zt_threadpool *tpool;
@@ -413,14 +414,14 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
     tpool->max_threads  = max_threads;
     tpool->thread_count = min_threads;
 
-    tpool->iput_threads = calloc(sizeof(void *), min_threads);
+    tpool->iput_threads = calloc(sizeof(zt_threads_thread *), min_threads);
     tpool->iput_mutex   = zt_threads_alloc_lock(0);
     tpool->oput_mutex   = zt_threads_alloc_lock(0);
     tpool->iput_cond    = zt_threads_cond_alloc(0);
     tpool->oput_cond    = zt_threads_cond_alloc(0);
 
     if (_zt_threadpool_cbs.oput_loop) {
-        tpool->oput_threads = calloc(sizeof(void *), min_threads);
+        tpool->oput_threads = calloc(sizeof(zt_threads_thread *), min_threads);
     }
 
     if (pipe_iput) {
