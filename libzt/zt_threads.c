@@ -188,6 +188,16 @@ zt_threads_id(void) {
 * threadpool defs
 *****************************************************************/
 
+void
+zt_threadpool_disable_iput_loop(void) {
+    _zt_threadpool_cbs.iput_loop = NULL;
+}
+
+void
+zt_threadpool_disable_oput_loop(void) {
+    _zt_threadpool_cbs.oput_loop = NULL;
+}
+
 int
 zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
     if (cbs == NULL) {
@@ -224,11 +234,6 @@ zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs) {
 
     if (cbs->finalize) {
         _zt_threadpool_cbs.finalize = cbs->finalize;
-    }
-
-    /* sometimes we don't want an output worker */
-    if (cbs->oput_loop == NULL) {
-        _zt_threadpool_cbs.oput_loop = NULL;
     }
 
     return 0;
@@ -380,9 +385,12 @@ int
 zt_threadpool_start(zt_threadpool *tpool) {
     int i;
 
-    for (i = 0; i < tpool->min_threads; i++) {
-        tpool->iput_threads[i] = zt_threads_alloc_thread();
-        zt_threads_start(tpool->iput_threads[i], NULL, _zt_threadpool_cbs.iput_loop, (void *)tpool);
+    if (_zt_threadpool_cbs.iput_loop) {
+        for (i = 0; i < tpool->min_threads; i++) {
+            tpool->iput_threads[i] = zt_threads_alloc_thread();
+            zt_threads_start(tpool->iput_threads[i], NULL,
+                             _zt_threadpool_cbs.iput_loop, (void *)tpool);
+        }
     }
 
     if (_zt_threadpool_cbs.oput_loop) {

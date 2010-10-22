@@ -48,17 +48,17 @@ struct zt_threadpool_callbacks {
      * inserted into the oput_queue
      */
     /* the input worker is fed data from the input queue,
-       if the return value is not NULL, the returned data
-       is placed in the output queue */
+     * if the return value is not NULL, the returned data
+     * is placed in the output queue */
     void *(*iput_worker)(void *init_data, void *data);
 
     /* the output worker is fed data via the output queue
-       if the return value is not NULL, the finalize data
-       function will be called */
+     * if the return value is not NULL, the finalize data
+     * function will be called */
     void *(*oput_worker)(void *init_data, void *data);
 
     /* a function which is called after the oput worker is
-       done processing the data */
+     * done processing the data */
     void (*finalize)(void *init_data, void *data);
 };
 
@@ -124,6 +124,8 @@ int zt_threadpool_start(zt_threadpool *tpool);
 int zt_threadpool_set_callbacks(struct zt_threadpool_callbacks *cbs);
 int zt_threadpool_insert_iput(zt_threadpool *, void *);
 int zt_threadpool_insert_oput(zt_threadpool *, void *);
+void zt_threadpool_disable_iput_loop(void);
+void zt_threadpool_disable_oput_loop(void);
 
 #endif /* _ZT_DISABLE_THREAD_SUPPORT */
 
