@@ -405,6 +405,26 @@ zt_threadpool_start(zt_threadpool *tpool) {
     return 0;
 }
 
+int
+zt_threadpool_iput_fd_reader(zt_threadpool *tpool) {
+    return tpool->iput_fd_sigs[0];
+}
+
+int
+zt_threadpool_iput_fd_writer(zt_threadpool *tpool) {
+    return tpool->iput_fd_sigs[1];
+}
+
+int
+zt_threadpool_oput_fd_reader(zt_threadpool *tpool) {
+    return tpool->oput_fd_sigs[0];
+}
+
+int
+zt_threadpool_oput_fd_writer(zt_threadpool *tpool) {
+    return tpool->oput_fd_sigs[1];
+}
+
 zt_threadpool *
 zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_oput) {
     zt_threadpool *tpool;

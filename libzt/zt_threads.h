@@ -131,6 +131,11 @@ int zt_threadpool_insert_oput(zt_threadpool *, void *);
 void zt_threadpool_disable_iput_loop(void);
 void zt_threadpool_disable_oput_loop(void);
 
+int zt_threadpool_iput_fd_reader(zt_threadpool *tpool);
+int zt_threadpool_oput_fd_reader(zt_threadpool *tpool);
+int zt_threadpool_iput_fd_writer(zt_threadpool *tpool);
+int zt_threadpool_oput_fd_writer(zt_threadpool *tpool);
+
 #endif /* _ZT_DISABLE_THREAD_SUPPORT */
 
 #endif /* __ZT_THREADS_H__ */
