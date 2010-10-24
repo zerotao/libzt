@@ -174,6 +174,14 @@ zt_threads_pthread_id(void) {
 }
 
 int
+zt_threads_pthread_join(zt_threads_thread *_thread, void **data) {
+    pthread_t *thread;
+
+    thread = (pthread_t *)_thread;
+    return pthread_join(*thread, data);
+}
+
+int
 zt_threads_use_pthreads(void) {
     struct zt_threads_lock_callbacks  cbs = {
         zt_threads_pthreads_lock_alloc,
@@ -193,7 +201,8 @@ zt_threads_use_pthreads(void) {
         zt_threads_pthreads_start,
         zt_threads_pthreads_end,
         zt_threads_pthreads_kill,
-        zt_threads_pthread_id
+        zt_threads_pthread_id,
+        zt_threads_pthread_join
     };
 
     zt_threads_set_lock_callbacks(&cbs);

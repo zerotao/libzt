@@ -36,6 +36,7 @@ struct zt_threads_cntrl_callbacks {
     void         (*end)(void *arg);
     int          (*kill)(zt_threads_thread *thread);
     unsigned int (*id)(void);
+    int          (*join)(zt_threads_thread *thread, void **data);
 };
 
 struct zt_threadpool_callbacks {
@@ -89,6 +90,8 @@ struct zt_threadpool {
     int max_threads;
     int thread_count;
 
+    int kill;
+
     TAILQ_HEAD(, zt_threadpool_entry) iput_queue;
     TAILQ_HEAD(, zt_threadpool_entry) oput_queue;
 };
@@ -114,6 +117,7 @@ int   zt_threads_cond_wait(void *cond, void *lock, struct timeval *timeout);
 int   zt_threads_start(void *thread, void *attr, void * (*start_cb)(void *), void *arg);
 void  zt_threads_end(void *args);
 int   zt_threads_kill(void *thread);
+int   zt_threads_join(void *thread, void **data);
 unsigned int zt_threads_id(void);
 
 #if defined(_ZT_THREADS_HAVE_PTHREADS)
@@ -137,6 +141,7 @@ int zt_threadpool_iput_fd_writer(zt_threadpool *tpool);
 int zt_threadpool_oput_fd_writer(zt_threadpool *tpool);
 
 void * zt_threadpool_get_oput(zt_threadpool *tpool);
+int zt_threadpool_kill(zt_threadpool *tpool);
 
 #endif /* _ZT_DISABLE_THREAD_SUPPORT */
 

@@ -21,7 +21,7 @@ struct zt_threads_cond_callbacks  _zt_threads_cond_cbs = {
 };
 
 struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs = {
-    NULL, NULL
+    NULL, NULL, NULL, NULL, NULL
 };
 
 struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
@@ -175,6 +175,15 @@ zt_threads_kill(zt_threads_thread *thread) {
     return 0;
 }
 
+int
+zt_threads_join(zt_threads_thread *thread, void **data) {
+    if (_zt_threads_cntrl_cbs.join) {
+        return _zt_threads_cntrl_cbs.join(thread, data);
+    }
+
+    return 0;
+}
+
 unsigned int
 zt_threads_id(void) {
     if (_zt_threads_cntrl_cbs.id) {
@@ -258,17 +267,29 @@ _zt_threadpool_oput_loop(void *args) {
         }
 
         if (TAILQ_EMPTY(&tpool->oput_queue)) {
+            if (tpool->kill) {
+                zt_threads_unlock(0, tpool->oput_mutex);
+                zt_threads_end(NULL);
+                return NULL;
+            }
             zt_threads_cond_wait(tpool->oput_cond, tpool->oput_mutex, NULL);
         } else {
             entry = TAILQ_FIRST(&tpool->oput_queue);
             TAILQ_REMOVE(&tpool->oput_queue, entry, next);
         }
 
-        zt_threads_unlock(0, tpool->oput_mutex);
 
         if (entry == NULL) {
+            if (tpool->kill == 1) {
+                zt_threads_unlock(0, tpool->oput_mutex);
+                zt_threads_end(NULL);
+                return NULL;
+            }
+            zt_threads_unlock(0, tpool->oput_mutex);
             continue;
         }
+
+        zt_threads_unlock(0, tpool->oput_mutex);
 
         if (_zt_threadpool_cbs.oput_worker) {
             void *input;
@@ -310,17 +331,30 @@ _zt_threadpool_iput_loop(void *args) {
         }
 
         if (TAILQ_EMPTY(&tpool->iput_queue)) {
+            if (tpool->kill) {
+                zt_threads_unlock(0, tpool->iput_mutex);
+                zt_threads_end(NULL);
+                return NULL;
+            }
             zt_threads_cond_wait(tpool->iput_cond, tpool->iput_mutex, NULL);
         } else {
             entry = TAILQ_FIRST(&tpool->iput_queue);
             TAILQ_REMOVE(&tpool->iput_queue, entry, next);
         }
 
-        zt_threads_unlock(0, tpool->iput_mutex);
-
         if (entry == NULL) {
+            if (tpool->kill == 1) {
+                zt_threads_unlock(0, tpool->iput_mutex);
+                zt_threads_end(NULL);
+                return NULL;
+            }
+
+            zt_threads_unlock(0, tpool->iput_mutex);
+
             continue;
         }
+
+        zt_threads_unlock(0, tpool->iput_mutex);
 
         if (_zt_threadpool_cbs.iput_worker) {
             void *input;
@@ -343,6 +377,7 @@ _zt_threadpool_iput_loop(void *args) {
 int
 zt_threadpool_insert_iput(zt_threadpool *tpool, void *data) {
     zt_threadpool_entry *entry;
+    int                  i = 0;
 
     entry       = calloc(sizeof(zt_threadpool_entry), 1);
     entry->data = data;
@@ -353,7 +388,7 @@ zt_threadpool_insert_iput(zt_threadpool *tpool, void *data) {
         zt_threads_cond_signal(tpool->iput_cond, 0);
 
         if (tpool->iput_fd_sigs[1] >= 0) {
-            write(tpool->iput_fd_sigs[1], "", 1);
+            write(tpool->iput_fd_sigs[1], &i, 1);
         }
     }
     zt_threads_unlock(0, tpool->iput_mutex);
@@ -364,6 +399,7 @@ zt_threadpool_insert_iput(zt_threadpool *tpool, void *data) {
 int
 zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
     zt_threadpool_entry *entry;
+    int                  i = 0;
 
     entry       = calloc(sizeof(zt_threadpool_entry), 1);
     entry->data = data;
@@ -374,7 +410,7 @@ zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
         zt_threads_cond_signal(tpool->oput_cond, 0);
 
         if (tpool->oput_fd_sigs[1] >= 0) {
-            write(tpool->oput_fd_sigs[1], "", 1);
+            write(tpool->oput_fd_sigs[1], &i, 1);
         }
     }
     zt_threads_unlock(0, tpool->oput_mutex);
@@ -399,8 +435,14 @@ zt_threadpool_get_oput(zt_threadpool *tpool) {
     } while (0);
 
     zt_threads_unlock(0, tpool->oput_mutex);
+
+    if (entry == NULL) {
+        return NULL;
+    }
+
     data = entry->data;
     free(entry);
+
     return data;
 }
 
@@ -445,6 +487,37 @@ zt_threadpool_oput_fd_reader(zt_threadpool *tpool) {
 int
 zt_threadpool_oput_fd_writer(zt_threadpool *tpool) {
     return tpool->oput_fd_sigs[1];
+}
+
+int
+zt_threadpool_kill(zt_threadpool *tpool) {
+    int i;
+
+    tpool->kill = 1;
+
+    /* signal all threads, and let them die */
+    zt_threads_cond_signal(tpool->iput_cond, 1);
+    zt_threads_cond_signal(tpool->oput_cond, 1);
+
+    for (i = 0; i < tpool->min_threads; i++) {
+        if (_zt_threadpool_cbs.iput_loop) {
+            zt_threads_join(tpool->iput_threads[i], NULL);
+        }
+
+        if (_zt_threadpool_cbs.oput_loop) {
+            zt_threads_join(tpool->oput_threads[i], NULL);
+        }
+    }
+
+    if (tpool->oput_fd_sigs[1] >= 0) {
+        write(tpool->oput_fd_sigs[1], &tpool->kill, 1);
+    }
+
+    if (tpool->iput_fd_sigs[1] >= 0) {
+        write(tpool->iput_fd_sigs[1], &tpool->kill, 1);
+    }
+
+    return 0;
 }
 
 zt_threadpool *
