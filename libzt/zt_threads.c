@@ -382,6 +382,28 @@ zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
     return 0;
 }
 
+void *
+zt_threadpool_get_oput(zt_threadpool *tpool) {
+    zt_threadpool_entry *entry;
+    void                *data;
+
+    zt_threads_lock(0, tpool->oput_mutex);
+
+    do {
+        if (TAILQ_EMPTY(&tpool->oput_queue)) {
+            break;
+        }
+
+        entry = TAILQ_FIRST(&tpool->oput_queue);
+        TAILQ_REMOVE(&tpool->oput_queue, entry, next);
+    } while (0);
+
+    zt_threads_unlock(0, tpool->oput_mutex);
+    data = entry->data;
+    free(entry);
+    return data;
+}
+
 int
 zt_threadpool_start(zt_threadpool *tpool) {
     int i;
