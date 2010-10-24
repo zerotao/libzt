@@ -21,6 +21,10 @@
 #include <libzt/zt_format.h>
 #include <libzt/zt_int.h>
 
+#ifndef ZT_WITHOUT_THREADS
+#include <libzt/zt_threads.h>
+#endif
+
 #ifndef ZT_WITHOUT_ADT
 # include <libzt/adt/zt_array.h>
 # include <libzt/adt/zt_list.h>
