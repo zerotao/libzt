@@ -98,7 +98,12 @@ basic_tests(struct zt_unit_test *test, void *data)
                     sizeof(char), 0);
 
 
+
     ZT_UNIT_ASSERT(test, strcmp(string_test, test_string) == 0);
+
+    zt_bstream_free(&bs);
+    zt_bstream_free(&clone);
+
 } /* basic_tests */
 
 int

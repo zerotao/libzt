@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "../zt_assert.h"
 #include "../zt_exceptions.h"
 #include "zt_array.h"
@@ -64,11 +64,7 @@ zt_array_with(char *data, int len, int size, int copy)
 {
     zt_array array;
 
-    array = XMALLOC(struct zt_array, 1);
-
-    if (array->data) {
-        XFREE(array->data);
-    }
+    array = XCALLOC(struct zt_array, 1);
 
     zt_array_set_data(array, data, len, size, copy);
 
@@ -85,14 +81,20 @@ void
 zt_array_resize(zt_array array, int len)
 {
     zt_assert(array);
-    zt_assert(len >= 0);
+    zt_assert(len > 0);
 
     if (array->length == 0) {
         array->data = XCALLOC(char, len * array->size);
     } else if (len > 0) {
         array->data = XREALLOC(char, array->data, len * array->size);
+        /* lear the added space */
+        if(len > array->length) {
+            int   rlen = len - array->length;
+            memset(&array->data[array->length*array->size], 0, rlen * array->size);
+        }
     } else {
         XFREE(array->data);
+        array->data = NULL;
     }
 
     array->length = len;

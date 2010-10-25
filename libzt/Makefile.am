@@ -2,6 +2,7 @@ SUBDIRS = 		\
 	adt			\
 	zt_cfg 		\
 	zt_log 		\
+  zt_threads \
 	.
 
 
@@ -11,7 +12,11 @@ libzt_la_LIBADD = 					\
 		../replace/libreplace.la 	\
 		adt/libzt_adt.la			\
 		zt_log/libzt_log.la			\
-		zt_cfg/libzt_cfg.la	
+		zt_cfg/libzt_cfg.la
+
+if PTHREADS
+libzt_la_LIBADD += zt_threads/libzt_threads_pthreads.la
+endif 
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -20,7 +25,7 @@ libzt_la_LIBADD = 					\
 #if interface add AGE++
 #if interface remove AGE = 0
 # check eev
-libzt_la_LDFLAGS = -version-info 2:0:0  -export-dynamic
+libzt_la_LDFLAGS = -version-info 2:0:1  -export-dynamic
 libzt_gc_la_LDFLAGS = -version-info 1:0:0  -export-dynamic
 libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 
@@ -50,11 +55,15 @@ libzt_la_SOURCES = 		\
 		zt_sha1.c		\
 		zt_uuid.c		\
 		zt_exceptions.c \
-    zt_ipv4_tbl.c
+		zt_ipv4_tbl.c \
+		zt_ez_mempool.c \
+    zt_threads.c \
+		zt_atexit.c
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = 	\
 		zt.h			\
+		zt_internal.h	\
 		zt_unit.h		\
 		zt_assert.h		\
 		zt_cfg.h		\
@@ -68,13 +77,16 @@ pkginclude_HEADERS = 	\
 		zt_progname.h	\
 		zt_cstr.h		\
 		zt_time.h		\
-	    zt_macros.h		\
+		zt_macros.h		\
 		zt_gc.h			\
 		zt_int.h		\
 		zt_sha1.h		\
 		zt_uuid.h		\
 		zt_exceptions.h \
-    zt_ipv4_tbl.h
+		zt_ez_mempool.h \
+		zt_ipv4_tbl.h	\
+    zt_threads.h \
+		zt_atexit.h
 
 
 # The following is required in the Makefile.am for common.h

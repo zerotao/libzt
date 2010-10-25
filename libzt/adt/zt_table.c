@@ -12,7 +12,7 @@
 #include <limits.h>
 #include <string.h>
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "../zt_mem.h"
 #include "../zt_log.h"
 #include "zt_hash.h"
@@ -68,7 +68,11 @@ struct zt_table {
 zt_mem_pool *
 table_pool_init(long elts)
 {
-    return zt_mem_pool_init(ZT_DEFAULT_TABLE_POOL, elts, sizeof(zt_table), NULL, NULL, 0);
+    zt_mem_pool * table_mem_pool;
+
+    table_mem_pool = zt_mem_pool_init(ZT_DEFAULT_TABLE_POOL, elts, sizeof(zt_table), NULL, NULL, 0);
+
+    return table_mem_pool;
 }
 
 zt_table *
@@ -157,7 +161,9 @@ zt_table_destroy(zt_table *h)
         XFREE(h->name);
     }
 
+    zt_mem_pool_destroy(&h->node_pool);
     zt_mem_heap_destroy(&h->table_heap);
+    zt_mem_pool_release((void **)&h);
 }
 
 int

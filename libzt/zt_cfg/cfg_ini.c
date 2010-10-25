@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "../zt_log.h"
 #include "../zt_assert.h"
 

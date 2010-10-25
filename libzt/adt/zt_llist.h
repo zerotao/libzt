@@ -6,7 +6,7 @@
 #ifndef _ZT_LLIST_H_
 #define _ZT_LLIST_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_assert.h>
 BEGIN_C_DECLS
 
@@ -17,14 +17,26 @@ struct zt_pair {
 };
 typedef zt_pair    *zt_llist;
 
-char *IncorrectType = "Incorrect Type";
-char *ListTooShort = "List is too short";
+static char *zt_llist_too_short = "List is too short";
 
 #define zt_llist_head(_pair) \
     (_pair)->head
 #define zt_llist_tail(_pair) \
     (_pair)->tail
 
+static INLINE void
+zt_llist_free(zt_pair *p)
+{
+    zt_pair * h;
+    zt_pair * op;
+
+    while(p != NULL) {
+        op = p;
+        h = zt_llist_head(p);
+        p = zt_llist_tail(p);
+        XFREE(op);
+    }
+}
 
 static INLINE zt_llist
 zt_llist_cons(void *head, zt_pair *tail)
@@ -46,7 +58,7 @@ zt_llist_nth(zt_llist pair, int offt)
     }
 
     if (pair == NULL) {
-        THROW(ListTooShort);
+        THROW(zt_llist_too_short);
     }
 
     return (zt_llist_head(pair));
@@ -61,7 +73,7 @@ zt_llist_nthtail(zt_llist pair, int offt)
     }
 
     if (pair == NULL) {
-        THROW(ListTooShort);
+        THROW(zt_llist_too_short);
     }
     return (zt_llist_tail(pair));
 }
@@ -153,7 +165,7 @@ zt_llist_nmerge(zt_llist l1, zt_llist l2, int (*cmp)())
 }
 
 
-zt_llist zt_llist_split(zt_llist lst)
+static INLINE zt_llist zt_llist_split(zt_llist lst)
 {
     zt_llist tail;
 

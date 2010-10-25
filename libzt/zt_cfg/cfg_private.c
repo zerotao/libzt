@@ -19,7 +19,7 @@
 #include <strings.h>
 #endif
 
-#include "../zt.h"
+#include "../zt_internal.h"
 #include "../zt_log.h"
 #include "cfg_private.h"
 

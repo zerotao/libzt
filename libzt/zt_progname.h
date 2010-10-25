@@ -14,12 +14,12 @@
 #ifndef _ZT_PROGNAME_H_
 #define _ZT_PROGNAME_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 
 #define STRIP_DIR 1
 
 BEGIN_C_DECLS
 extern char *zt_progname(char *path, int flags);
-
+extern char *zt_progpath(char *prog);
 END_C_DECLS
 #endif /* _ZT_PROGNAME_H_ */

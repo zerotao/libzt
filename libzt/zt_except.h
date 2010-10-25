@@ -13,7 +13,7 @@
 #ifndef _ZT_EXCEPT_H_
 #define _ZT_EXCEPT_H_
 
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_macros.h>
 
 #include <setjmp.h>

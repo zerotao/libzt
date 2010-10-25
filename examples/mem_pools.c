@@ -10,8 +10,8 @@
  * Description:
  */
 #include <stdio.h>
-
-#include <libzt/zt.h>
+#include <string.h>
+#include <libzt/zt_internal.h>
 #include <libzt/zt_mem.h>
 
 struct pool_test {
@@ -96,6 +96,7 @@ main(int argc, char *argv[])
 
     for (i = 0; i < NPTEST; i++) {
         data[i] = zt_mem_pool_alloc(pool);
+        memset(data[i], 0, sizeof(struct pool_test)+4092);
         data[i]->one = i;
         data[i]->two = i * 100;
         data[i]->three = i * 1000;
@@ -112,6 +113,7 @@ main(int argc, char *argv[])
     printf("*RELEASE*\n");
     zt_mem_pool_destroy(&tpool);
     zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
+
     zt_mem_pool_destroy(&pool);
     zt_mem_pools_display(0, DISPLAY_POOL_HEADER_ONLY);
 

@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "zt.h"
+#include "zt_internal.h"
 #include "adt/zt_list.h"
 #include "zt_mem.h"
+#include "zt_atexit.h"
 
 /*
  * FIXME: threads will need these wrapped
@@ -18,6 +19,7 @@ static struct {
 
 static zt_elist(pools);
 static zt_elist(sets);
+static int mem_atexit = 0;
 
 /* static long x_sys_page_size = 0; */
 
@@ -87,6 +89,7 @@ static int zt_mem_page_destroy(zt_mem_page *page);
 static zt_mem_page *zt_mem_page_alloc(zt_mem_pool *);
 static void zt_mem_elt_list_display(int offset, zt_elist *head);
 static int zt_default_release_test(int total_pages, int free_pages, int cache_size, int, void *cb_data);
+static void zt_mem_release(void * data);
 
 /* exported functions */
 zt_mem_heap*
@@ -163,7 +166,7 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
         }
     } else {
         *epp = elts;
-        *page_size = (elts * size) + sizeof(zt_mem_page);
+        *page_size = (elts * (sizeof(zt_mem_elt) + size)) + sizeof(zt_mem_page);
         *npages = 1;
     }
 
@@ -183,6 +186,11 @@ zt_mem_pool_init(char *name, long elts,
     long          pcache;
 
     x_calculate_page_data(elts ? elts : 1, size, &npage_size, &epp, &npages);
+
+    if (!mem_atexit) {
+        zt_atexit(zt_mem_release, NULL);
+        mem_atexit = 1;
+    }
 
     if (elts > 0) {
         if (elts < epp) {
@@ -473,6 +481,19 @@ zt_mem_pools_display(int offset, int flags)
     printf(BLANK "}\n", INDENT(offset));
 }
 
+static void
+zt_mem_release(void * data)
+{
+    zt_elist    * tmp;
+    zt_elist    * tmp2;
+    zt_mem_pool * pool;
+
+    zt_elist_for_each_safe(&pools, tmp, tmp2) {
+        pool = zt_elist_data(tmp, zt_mem_pool, pool_list);
+        zt_mem_pool_destroy(&pool);
+    }
+}
+
 void
 zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags)
 {
@@ -583,6 +604,8 @@ zt_mem_pool_group_destroy(zt_mem_pool_group * group)
         }
     }
 
+    XFREE(group->pools);
+    XFREE(group);
     return ret;
 }
 

@@ -12,9 +12,11 @@
  * Description:
  */
 #include <libzt/zt_exceptions.h>
-#include <libzt/zt_assert.h>
 #include <libzt/zt_log.h>
+
+#undef NDEBUG
 #include <libzt/zt_unit.h>
+#include <libzt/zt_assert.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)
@@ -24,13 +26,13 @@ basic_tests(struct zt_unit_test *test, void *data)
     zt_log_ty * log;
 
     log = zt_log_file("/dev/null", 0, 0);
-
     olog = zt_log_logger(log);
 
     zt_assert(1 == 1);
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.assertion.failed, zt_assert(1 == 0));
 
     zt_log_logger(olog);
+    zt_log_close(log);
 }
 
 int

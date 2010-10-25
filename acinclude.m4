@@ -19,7 +19,7 @@ AC_DEFUN([AC_WITH_PEDANTIC],
 		;;
 	esac
   ],
-  [ 
+  [
     AC_MSG_RESULT(no)
   ])
 ])
@@ -44,7 +44,7 @@ AC_DEFUN([AC_WITH_OPTFLAGS],
 		;;
 	esac
   ],
-  [ 
+  [
     AC_MSG_RESULT(yes)
     CFLAGS="$CFLAGS -O3"
   ])
@@ -59,8 +59,8 @@ AC_DEFUN([AC_WITH_DEBUG],
   [
 	case "$with_debug" in
 	     no)
-		AC_MSG_RESULT(no)
-		CFLAGS="$CFLAGS"
+		    AC_MSG_RESULT(no)
+		    CFLAGS="$CFLAGS -DNDEBUG"
 		;;
 	     yes)
 	        AC_MSG_RESULT(-DDEBUG)
@@ -72,9 +72,9 @@ AC_DEFUN([AC_WITH_DEBUG],
 	        ;;
 	esac
   ],
-  [ 
-    AC_MSG_RESULT(yes)
-    CFLAGS="$CFLAGS -g"
+  [
+    AC_MSG_RESULT(no)
+    CFLAGS="$CFLAGS -DNDEBUG"
   ])
 ])
 
@@ -105,7 +105,7 @@ AC_DEFUN([AC_WITH_PROFILING],
 AC_DEFUN([AC_WITH_DIST_RELEASE],
  [AC_MSG_CHECKING(whether to add a release variable)
   AC_ARG_WITH(release,
-  [  --with-release[=REL]    Enable release REL. 
+  [  --with-release[=REL]    Enable release REL.
   --without-release       Disable release versioning (default).],
   [
 	case "$with_release" in

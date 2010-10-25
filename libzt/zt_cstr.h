@@ -17,7 +17,8 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdarg.h>
-#include <libzt/zt.h>
+#include <libzt/zt_internal.h>
+#include <libzt/adt/zt_ptr_array.h>
 
 BEGIN_C_DECLS
 
@@ -63,6 +64,11 @@ extern char* zt_cstr_path_append( const char *, const char * );
 extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
 extern size_t zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
 extern int zt_cstr_copy(const char * from, int i, int j, char * to, int len);
+extern zt_ptr_array *zt_cstr_split(const char *str, const char *delim);
+extern zt_ptr_array *zt_cstr_cut(const char *str, const int delim, int keep_delim);
+extern zt_ptr_array *zt_cstr_tok(const char *str, const int delim, int keep_delim);
+extern inline int zt_cstr_split_free(zt_ptr_array *);
+extern inline int zt_cstr_cut_free(zt_ptr_array *);
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/

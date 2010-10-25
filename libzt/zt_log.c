@@ -20,26 +20,38 @@
 
 #include "zt_log.h"
 #include "zt_log/log_private.h"
+#include "zt_atexit.h"
+
+void
+log_atexit(void * data) {
+    zt_log_ty   * logp = data;
+
+    logp = zt_log_logger(NULL);
+
+    if(logp) {
+        zt_log_close(logp);
+    }
+}
 
 zt_log_ty *
 zt_log_logger(zt_log_ty *log)
 {
-    static zt_log_ty *log_log_ptr = NULL;
-    static int        forced = 0;
+    static zt_log_ty    * log_log_ptr = NULL;
+    zt_log_ty           * last = NULL;
 
-    if (!log && !log_log_ptr) {
-        log_log_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
-        forced = 1;
-    }
-
-    if (log) {
-        if (forced) {
-            zt_log_close(log_log_ptr), forced = 0;
+    if (!log) {
+        /* caller wants the current logger */
+        if(!log_log_ptr) {
+            /* allocate a default logger */
+            log_log_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
+            zt_atexit(log_atexit, log_log_ptr);
         }
-        log_log_ptr = log;
+        return log_log_ptr;
     }
 
-    return log_log_ptr;
+    last = log_log_ptr;
+    log_log_ptr = log;
+    return last;
 }
 
 zt_log_ty *

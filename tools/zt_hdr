@@ -1,0 +1,116 @@
+#!/bin/sh
+
+AUTHOR='Jason L. Shiffer'
+EMAIL='<jshiffer@zerotao.org>'
+OWNER='Jason L. Shiffer'
+FNAME=''
+NOTES=''
+COPYRIGHT='Copyright (C) 2010'
+DESC=''
+
+HEADER="
+/*!
+ * Filename: @FILENAME@
+ * Description: @DESC@
+ *
+ * Author: @AUTHOR@ @EMAIL@
+ * Copyright:
+ *      @COPYRIGHT@, @OWNER@
+ *      See file COPYING for details
+ *
+ * Notes:
+ *   @NOTES@
+ */
+ "
+
+usage() {
+    F=`basename $0`
+    cat <<EOF
+usage: ${F} [opts] file
+
+  options:
+    -C <COPY>    Copyright to use
+    -O <OWNER>   Owner to use
+    -A <AUTHOR>  Author to use
+    -E <EMAIL>   Email to use
+    -F <FNAME>   Fname to use (overrides <file>)
+    -D <DESC>    Description to use
+    -N <NOTES>   Notes to add
+EOF
+}
+
+while getopts "hC:O:A:E:F:D:N:" flag
+do
+    case "$flag" in
+        h)
+            usage
+            exit 0
+            ;;
+        C)
+            COPYRIGHT=$OPTARG
+            ;;
+        O)
+            OWNER=$OPTARG
+            ;;
+        A)
+            AUTHOR=$OPTARG
+            ;;
+        E)
+            EMAIL=$OPTARG
+            ;;
+        F)
+            FNAME=$OPTARG
+            ;;
+        D)
+            DESC=$OPTARG
+            ;;
+        N)
+            NOTES=$OPTARG
+            ;;
+        f)
+            header=$optarg
+            ;;
+        *)
+            echo "unknown option: $flag"
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift $((${OPTIND}-1))
+
+if [ $# == 0 ]; then
+    out=""
+else
+    out="$1"
+    if [ x"$FNAME" == x"" ]; then
+        FNAME=`basename ${out}`
+    fi
+fi
+
+header_clean=0
+if [ x"$header" == x"" ]; then
+    header=`mktemp -t hdr`
+    echo "$HEADER" > $header
+    header_clean=1
+fi
+
+F=`mktemp -t hdr`
+sed -e "s/@FILENAME@/${FNAME}/g" \
+    -e "s/@NOTES@/${NOTES}/g" \
+    -e "s/@DESC@/${DESC}/g" \
+    -e "s/@COPYRIGHT@/${COPYRIGHT}/g" \
+    -e "s/@AUTHOR@/${AUTHOR}/g" \
+    -e "s/@EMAIL@/${EMAIL}/g" \
+    -e "s/@OWNER@/${OWNER}/g" $header > ${F}
+
+if [ x"${out}" != x"" ]; then
+    cat ${F} > ${out}
+else
+    cat ${F}
+fi
+
+rm -f ${F}
+if [ $header_clean == 1 ]; then
+    rm -f ${header}
+fi
