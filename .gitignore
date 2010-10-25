@@ -37,3 +37,4 @@ tests/log.err
 tags
 *.deps
 *.libs
+examples/threads
