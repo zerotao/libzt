@@ -10,7 +10,7 @@ AC_CONFIG_AUX_DIR(aux_files)
 
 AC_CANONICAL_SYSTEM
 
-AM_INIT_AUTOMAKE(libzt, 1.0.0, jshiffer@zerotao.org)
+AM_INIT_AUTOMAKE(libzt, 1.1.0, jshiffer@zerotao.org)
 
 
 dnl AM_MAINTAINER_MODE
