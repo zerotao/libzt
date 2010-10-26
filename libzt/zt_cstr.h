@@ -70,5 +70,11 @@ extern zt_ptr_array *zt_cstr_tok(const char *str, const int delim, int keep_deli
 extern inline int zt_cstr_split_free(zt_ptr_array *);
 extern inline int zt_cstr_cut_free(zt_ptr_array *);
 
+/* String formatting */
+
+/* Integer display length */
+size_t zt_cstr_int_display_len(int value);
+
+
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/

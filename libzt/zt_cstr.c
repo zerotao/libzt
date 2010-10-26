@@ -844,6 +844,26 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim)
     return cuts;
 }
 
+size_t zt_cstr_int_display_len(int value)
+{
+    int result;
+    result = value >= 0 ? 1 : 2;
+
+    while ((value >= 1000) || (value <= -1000)) {
+        result += 3;
+        value /= 1000;
+    }
+
+    if ((value >= 100) || (value <= -100)) {
+        return result + 2;
+    }
+
+    if ((value >= 10) || (value <= -10)) {
+        return result + 1;
+    }
+
+    return result;
+}
 
 
 
