@@ -273,7 +273,7 @@ _zt_threadpool_oput_loop(void *args) {
                 return NULL;
             }
             zt_threads_cond_wait(tpool->oput_cond, tpool->oput_mutex, NULL);
-            zt_threads_unlock(0, tpool->oput_mutex, NULL);
+            zt_threads_unlock(0, tpool->oput_mutex);
             continue;
         } else {
             entry = TAILQ_FIRST(&tpool->oput_queue);
