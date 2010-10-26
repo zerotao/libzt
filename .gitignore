@@ -38,3 +38,4 @@ tags
 *.deps
 *.libs
 examples/threads
+aux_files
