@@ -33,7 +33,7 @@ srandomdev(void)
     fd = open("/dev/urandom", O_RDONLY);
 
     if (fd < 0 || read(fd, &rand_data,
-                   sizeof(uint32_t)) != sizeof(uint32_t)) {
+                       sizeof(uint32_t)) != sizeof(uint32_t)) {
         /* this is a shitty situation.... */
         rand_data = time(NULL);
     }
@@ -186,24 +186,39 @@ int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags)
     int    ty;
     int    i;
 
+    if (uuid == NULL) {
+        return -1;
+    }
+
     len = strlen(uuid);
 
-    ty = ZT_BIT_ISSET(flags, zt_uuid_std_fmt) ? zt_uuid_std_fmt : zt_uuid_short_fmt;
-
-    if (ty == zt_uuid_std_fmt && len != UUID_STR_LEN) {
-        return -1;
+    switch (flags) {
+        case zt_uuid_std_fmt:
+            if (len != UUID_STR_LEN) {
+                return -1;
+            }
+            break;
+        case zt_uuid_short_fmt:
+            if (len != UUID_SHORT_STR_LEN) {
+                return -1;
+            }
+            break;
+        default:
+            return -1;
     }
 
-    if (ty == zt_uuid_short_fmt && len != UUID_SHORT_STR_LEN) {
-        return -1;
-    }
+
+    /* 550e8400-e29b-41d4-a716-446655440000
+     * 550e8400 - e 2  9  b  -  4  1  d  4  -  a  7  1  6  -  446655440000
+     * 01234567 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23              */
 
     for (i = 0; i < len; i++) {
-        if (ty == zt_uuid_std_fmt) {
+        if (flags == zt_uuid_std_fmt) {
             switch (i) {
-                case 9:
+                case 8:
                 case 13:
-                case 17:
+                case 18:
+                case 23:
                     if (uuid[i] != '-') {
                         return -1;
                     }
