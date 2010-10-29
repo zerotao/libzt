@@ -34,20 +34,18 @@ progvar ()
     eval R=\\\$"$VV"
     eval R=$R
 
-    if [ x${R} == x"" ]; then
-
-	for (( i=1; i<=$#; i++ )); do
-	    type $1 > /dev/null 2>&1
-	    if [[ $? = 0 ]]; then
-		V=$1
-	    fi
-	    shift;
-	done
-    else
-	# the environment alread sets it
-	return;
+    if [ x"${R}" \!= x"" ]; then
+        # the environment alread sets it
+        return;
     fi
 
+    while [ $# -gt 0 -a x"$V" = x"" ]; do
+        type $1 > /dev/null 2>&1
+        if [[ $? = 0 ]]; then
+            V=$1
+        fi
+        shift;
+    done
 
     eval $VV=$V
     unset V
