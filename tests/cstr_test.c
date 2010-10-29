@@ -203,6 +203,112 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == -1);
 } /* basic_tests */
 
+
+static void
+intlen_test(struct zt_unit_test *test, void *data UNUSED)
+{
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 1);
+    }
+
+    for (i = 10; i < 100; i++) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 2);
+    }
+
+    for (i = 100; i < 1000; i++) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 3);
+    }
+
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(1000) == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(9999) == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(10000) == 5);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(99999) == 5);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(100000) == 6);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(999999) == 6);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(1000000) == 7);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(9999999) == 7);
+
+    for (i = -1; i > -10; i--) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 2);
+    }
+
+    for (i = -10; i > -100; i--) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 3);
+    }
+
+    for (i = -100; i > -1000; i--) {
+        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 4);
+    }
+
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-1000) == 5);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-9999) == 5);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-10000) == 6);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-99999) == 6);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-100000) == 7);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-999999) == 7);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-1000000) == 8);
+    ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-9999999) == 8);
+} /* intlen_test */
+
+static void
+itoa_test(struct zt_unit_test *test, void *data UNUSED)
+{
+    int                   i;
+    char                  buffer[100];
+
+    memset(buffer, 0, 100);
+
+    /* Illegal input validation. */
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(NULL, 0, 0, 100) == -1);
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 0, 0, 0) == -1);
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 10, 5, 6) == -1);
+
+    /* Valid inputs */
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 0, 0, 100) == 1);
+    ZT_UNIT_ASSERT(test, strcmp("0", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 3, 0, 100) == 1);
+    ZT_UNIT_ASSERT(test, strcmp("3", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 10, 0, 100) == 2);
+    ZT_UNIT_ASSERT(test, strcmp("10", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 42, 0, 100) == 2);
+    ZT_UNIT_ASSERT(test, strcmp("42", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 987654321, 0, 100) == 9);
+    ZT_UNIT_ASSERT(test, strcmp("987654321", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, -3, 0, 100) == 2);
+    ZT_UNIT_ASSERT(test, strcmp("-3", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, -10, 0, 100) == 3);
+    ZT_UNIT_ASSERT(test, strcmp("-10", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, -42, 0, 100) == 3);
+    ZT_UNIT_ASSERT(test, strcmp("-42", buffer) == 0);
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, -987654321, 0, 100) == 10);
+    ZT_UNIT_ASSERT(test, strcmp("-987654321", buffer) == 0);
+
+    /* offset */
+    for (i = 0; i < 20; i++) {
+        buffer[i] = 'a';
+    }
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, 301, 3, 100) == 6);
+    ZT_UNIT_ASSERT(test, strcmp("aaa301", buffer) == 0);
+
+    for (i = 0; i < 20; i++) {
+        buffer[i] = 'a';
+    }
+
+    ZT_UNIT_ASSERT(test, zt_cstr_itoa(buffer, -5920, 4, 100) == 9);
+    ZT_UNIT_ASSERT(test, strcmp("aaaa-5920", buffer) == 0);
+} /* itoa_test */
+
 int
 register_cstr_suite(struct zt_unit *unit)
 {
@@ -210,5 +316,7 @@ register_cstr_suite(struct zt_unit *unit)
 
     suite = zt_unit_register_suite(unit, "string utils tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_tests);
+    zt_unit_register_test(suite, "intlen", intlen_test);
+    zt_unit_register_test(suite, "itoa", itoa_test);
     return 0;
 }

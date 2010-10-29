@@ -844,6 +844,55 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim)
     return cuts;
 }
 
+static char * _itoa_integers = "9876543210123456789";
+
+size_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz)
+{
+    size_t loc;
+    size_t result;
+
+    result = loc = offset + zt_cstr_int_display_len(value);
+
+    if ((s == NULL) || (loc > bufsiz)) {
+        return -1;
+    }
+
+    if (value < 0) {
+        s[offset] = '-';
+    }
+
+    s[loc] = 0;
+    loc--;
+
+    do {
+        s[loc] = *(_itoa_integers + 9 + (value % 10));
+        value /= 10;
+        loc--;
+    } while(value != 0);
+
+    return result;
+}
+
+size_t zt_cstr_int_display_len(int value)
+{
+    int result;
+    result = value >= 0 ? 1 : 2;
+
+    while ((value >= 1000) || (value <= -1000)) {
+        result += 3;
+        value /= 1000;
+    }
+
+    if ((value >= 100) || (value <= -100)) {
+        return result + 2;
+    }
+
+    if ((value >= 10) || (value <= -10)) {
+        return result + 1;
+    }
+
+    return result;
+}
 
 
 
