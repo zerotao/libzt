@@ -23,7 +23,7 @@
 
 typedef struct zt_atexit_cb zt_atexit_cb;
 struct zt_atexit_cb {
-    zt_stack      member;
+    zt_stack_t    member;
     void        (*fn)(void *data);
     void        * data;
 };
@@ -31,8 +31,8 @@ struct zt_atexit_cb {
 /* FIXME: global needs thread safety */
 static zt_stack(cb_stack);
 
-void zt_atexit_call() {
-    zt_stack            * se;
+void zt_atexit_call(void) {
+    zt_stack_t          * se;
     struct zt_atexit_cb * cb;
 
     while(!zt_stack_empty(&cb_stack)) {

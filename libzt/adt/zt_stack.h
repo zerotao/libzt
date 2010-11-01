@@ -6,11 +6,11 @@
 
 BEGIN_C_DECLS
 
-typedef zt_elist zt_stack;
+typedef zt_elist_t zt_stack_t;
 /* feelgood typedef */
-typedef zt_stack zt_stack_elt;
+typedef zt_stack_t zt_stack_elt_t;
 
-#define zt_stack(N) zt_stack N = zt_stack_init(N)
+#define zt_stack(N) zt_stack_t N = zt_stack_init(N)
 #define zt_stack_init zt_elist_init
 #define zt_stack_reset zt_elist_reset
 #define zt_stack_empty zt_elist_empty
@@ -18,10 +18,10 @@ typedef zt_stack zt_stack_elt;
 #define zt_stack_peek zt_elist_get_next
 #define zt_stack_push zt_elist_add
 
-static INLINE zt_stack *
-zt_stack_pop(zt_stack *stack)
+static INLINE zt_stack_t *
+zt_stack_pop(zt_stack_t *stack)
 {
-    zt_stack * elt;
+    zt_stack_t * elt;
 
     if(zt_stack_empty(stack)) {
         return NULL;

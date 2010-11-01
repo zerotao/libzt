@@ -19,14 +19,14 @@ typedef void (*zt_unit_teardown_fn)(void *data);
 typedef void (*zt_unit_test_fn)(struct zt_unit_test *test, void *data);
 
 struct zt_unit {
-    zt_elist     suites;
+    zt_elist_t   suites;
     unsigned int successes;
     unsigned int failures;
 };
 
 struct zt_unit_suite {
-    zt_elist            suite;
-    zt_elist            tests;
+    zt_elist_t          suite;
+    zt_elist_t          tests;
     char              * name;
     zt_unit_setup_fn    setup_fn;
     zt_unit_teardown_fn teardown_fn;
@@ -36,7 +36,7 @@ struct zt_unit_suite {
 };
 
 struct zt_unit_test {
-    zt_elist        test;
+    zt_elist_t      test;
     char          * name;
     zt_unit_test_fn test_fn;
     int             success;

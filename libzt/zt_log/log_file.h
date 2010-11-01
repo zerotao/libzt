@@ -18,7 +18,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#pragma }
 #endif /* __cplusplus */
 
 extern zt_log_ty *zt_log_file(char *name, int fopts, int lopts);

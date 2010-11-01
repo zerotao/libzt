@@ -67,8 +67,17 @@ extern int zt_cstr_copy(const char * from, int i, int j, char * to, int len);
 extern zt_ptr_array *zt_cstr_split(const char *str, const char *delim);
 extern zt_ptr_array *zt_cstr_cut(const char *str, const int delim, int keep_delim);
 extern zt_ptr_array *zt_cstr_tok(const char *str, const int delim, int keep_delim);
-extern inline int zt_cstr_split_free(zt_ptr_array *);
-extern inline int zt_cstr_cut_free(zt_ptr_array *);
+extern int zt_cstr_split_free(zt_ptr_array *);
+extern int zt_cstr_cut_free(zt_ptr_array *);
+
+/* String formatting */
+
+/* Integer to ascii, with buffer length. Returns offset to trailing 0, or 0 on failure. */
+size_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz);
+
+/* Integer display length */
+size_t zt_cstr_int_display_len(int value);
+
 
 END_C_DECLS
 #endif /*_ZT_STRINGS_H_*/

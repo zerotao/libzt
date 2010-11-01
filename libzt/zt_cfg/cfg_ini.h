@@ -15,7 +15,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#pragma }
 #endif /* __cplusplus */
 
 extern zt_cfg_ty *

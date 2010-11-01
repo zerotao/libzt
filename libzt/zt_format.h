@@ -14,6 +14,7 @@
 #define _ZT_FORMAT_H_
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include <libzt/zt_internal.h>
 #include <libzt/zt_exceptions.h>

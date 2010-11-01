@@ -5,12 +5,12 @@
 #include <libzt/adt/zt_list.h>
 BEGIN_C_DECLS
 
-typedef zt_elist zt_queue;
+typedef zt_elist_t zt_queue_t;
 
 /* feelgood typedef */
-typedef zt_queue zt_queue_elt;
+typedef zt_queue_t zt_queue_elt_t;
 
-#define zt_queue(N) zt_queue N = zt_queue_init(N)
+#define zt_queue(N) zt_queue_t N = zt_queue_init(N)
 #define zt_queue_init zt_elist_init
 #define zt_queue_reset zt_elist_reset
 #define zt_queue_empty zt_elist_empty
@@ -18,10 +18,10 @@ typedef zt_queue zt_queue_elt;
 #define zt_queue_peek zt_elist_get_prev
 #define zt_queue_enqueue zt_elist_add
 
-static INLINE zt_queue *
-zt_queue_dequeue(zt_queue *queue)
+static INLINE zt_queue_t *
+zt_queue_dequeue(zt_queue_t *queue)
 {
-    zt_queue * elt;
+    zt_queue_t * elt;
 
     elt = zt_elist_get_prev(queue);
     zt_elist_remove(elt);

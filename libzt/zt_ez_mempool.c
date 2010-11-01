@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <arpa/inet.h>
 #include "zt_ez_mempool.h"
 
 static void

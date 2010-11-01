@@ -13,7 +13,13 @@
 #ifndef _ZT_TIME_H_
 #define _ZT_TIME_H_
 
+#ifdef WIN32
+#include <WinSock2.h>
+#else
 #include <sys/time.h>
+#endif
+
+
 #include <libzt/zt_internal.h>
 
 struct time_result {

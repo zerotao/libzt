@@ -14,12 +14,11 @@
 #ifndef _ZT_CFG_PRIVATE_H_
 #define _ZT_CFG_PRIVATE_H_
 
-#include <stdlib.h>
+#include <stdio.h>
 #include <libzt/zt_cfg.h>
 
 #ifdef __cplusplus
 extern "C" {
-#pragma }
 #endif /* __cplusplus */
 
 struct zt_cfg_value_ty {

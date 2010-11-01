@@ -6,6 +6,7 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
+#include <stdio.h>
 
 #include "zt_assert.h"
 #include "zt_log.h"
@@ -21,6 +22,7 @@ zt_uuid_t  NAMESPACE_X500 = { { { 0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1
 
 static int rand_initialized = 0;
 
+void srandomdev(void);
 #ifndef HAVE_SRANDOMDEV
 #include <fcntl.h>
 #include <time.h>
@@ -35,7 +37,7 @@ srandomdev(void)
     if (fd < 0 || read(fd, &rand_data,
                        sizeof(uint32_t)) != sizeof(uint32_t)) {
         /* this is a shitty situation.... */
-        rand_data = time(NULL);
+        rand_data = (uint32_t)time(NULL);
     }
 
     srandom(rand_data);
@@ -182,9 +184,9 @@ int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2)
 
 int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags)
 {
-    size_t len;
-    int    ty;
-    int    i;
+    size_t    len;
+    int       ty;
+    size_t    i;
 
     if (uuid == NULL) {
         return -1;

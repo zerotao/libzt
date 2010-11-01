@@ -40,7 +40,12 @@
 #  endif
 #endif /* ifdef __GNUC__ */
 
-#if defined(__STDC__) || defined(__STDC_HOSTED__)
+#if defined(WIN32)
+# define STR(x)    #x
+# define CONC(x, y)    x##y
+# define CONC3(x, y, z)   x##y##z
+typedef void* void_p;
+#elif defined(__STDC__) || defined(__STDC_HOSTED__)
 # define STR(x)    # x
 # define CONC(x, y)    x ## y
 # define CONC3(x, y, z)   x ## y ## z
@@ -48,7 +53,7 @@ typedef void* void_p;
 #else
 # define STR(x)    "x"
 # define CONC(x, y)    x /**/ y
-# define CONC3(x, y)    x /**/ y /**/ z
+# define CONC3(x, y, z)    x /**/ y /**/ z
 typedef char* void_p;
 #endif /* if defined(__STDC__) || defined(__STDC_HOSTED__) */
 
@@ -109,7 +114,9 @@ typedef char* void_p;
 # define FORMAT(x) __attribute__((format x))
 #else
 # define NORETURN
+#ifndef WIN32
 # define CONST
+#endif
 # define UNUSED
 # define FORMAT(x)
 #endif /* if (__GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)) && (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0) */
@@ -138,8 +145,12 @@ typedef char* void_p;
 #endif    /* _WIN32 */
 
 #ifndef __GNUC__
+#ifdef _WIN32 // SGC
+# define __PRETTY_FUNCTION__ ""
+#else /* _WIN32 */
 # define __FUNCTION__        ""
 # define __PRETTY_FUNCTION__ ""
+#endif /* _WIN32 */
 #endif
 
 /* local defines */
