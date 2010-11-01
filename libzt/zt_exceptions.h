@@ -6,6 +6,10 @@
 #endif
 #include <libzt/zt_except.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 EXCEPT_DESC(zt_exception, "Exceptions",
             EXCEPT_GROUP(assertion, "Assertions",
                          EXCEPTION(failed, "Assertion Failed"))
@@ -25,5 +29,9 @@ EXCEPT_DESC(zt_exception, "Exceptions",
             EXCEPT_GROUP(math, "Math Exception",
                          EXCEPTION(divide_by_zero, "Divide By Zero")
                          EXCEPTION(overflow, "Arithmetic overflow")));
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif  /* _ZT_EXCEPTIONS_H_ */
