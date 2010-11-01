@@ -13,7 +13,11 @@
  * Description:
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <limits.h>
 #include <string.h>
@@ -51,7 +55,7 @@ zt_progpath(char *prog) {
         if(_progpath[0] == '\0') {
             /* the passed in path did not include a path */
             char        * path;
-            int           offt = 0;
+            size_t        offt = 0;
             int           base = 0;
             size_t        len;
             char        * tpath;

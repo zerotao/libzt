@@ -11,7 +11,9 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -734,12 +736,12 @@ zt_cstr_copy(const char * from, int i, int j, char * to, int len) {
     return min;
 }
 
-inline int
+int
 zt_cstr_split_free(zt_ptr_array *array) {
     return zt_ptr_array_free(array, 1);
 }
 
-inline int
+int
 zt_cstr_cut_free(zt_ptr_array *array) {
     return zt_ptr_array_free(array, 1);
 }

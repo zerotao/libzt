@@ -524,6 +524,7 @@ cvt_s(int code, va_list app,
       unsigned char flags[],
       int width, int precision)
 {
+    size_t lstr;
     char * str = va_arg(app, char *);
 
     zt_assert(str != NULL);
@@ -534,7 +535,10 @@ cvt_s(int code, va_list app,
             if (i < 0) {
                 i = -i;
             }
-            if (i < strlen(str)) {
+
+            lstr = strlen(str);
+            zt_assert(lstr < INT_MAX);
+            if (i < (int)lstr) {
                 str = str + i;
             }
             width = INT_MIN;

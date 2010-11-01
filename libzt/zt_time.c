@@ -10,8 +10,10 @@
  * Notes:
  *
  */
-#include <sys/time.h>
+
+#ifndef WIN32
 #include <sys/resource.h>
+#endif
 
 #include "zt_time.h"
 #include "zt_log.h"
@@ -54,8 +56,8 @@ zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2)
     dt->tv_usec = t2->tv_usec - t1->tv_usec;
 
     while (dt->tv_usec < 0) {
-        dt->tv_usec += 1000000.0;
-        dt->tv_sec -= 1.0;
+        dt->tv_usec += 1000000;
+        dt->tv_sec -= 1;
     }
     return dt;
 }
@@ -91,8 +93,8 @@ zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, fl
     zt_assert(sys);
     zt_assert(total);
 
-    *usr = result->usr_time.tv_sec + result->usr_time.tv_usec / 1000000.0;
-    *sys = result->sys_time.tv_sec + result->sys_time.tv_usec / 1000000.0;
+    *usr = (float) (result->usr_time.tv_sec + result->usr_time.tv_usec / 1000000.0);
+    *sys = (float) (result->sys_time.tv_sec + result->sys_time.tv_usec / 1000000.0);
     *total = *usr + *sys;
 }
 
@@ -114,6 +116,7 @@ zt_time_calibrate(void)
 void *
 zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
 {
+#ifndef WIN32
     struct rusage rafter;
     struct rusage rbefore;
     int           i;
@@ -137,6 +140,9 @@ zt_time(int n, struct time_result *tv, void *(*test)(void *), void *data)
     zt_sub_time(&tv->sys_time, &tv->sys_time, &_calibration_time.sys_time);
 
     return ret;
+#else
+    return NULL;  // TODO
+#endif
 }
 
 void

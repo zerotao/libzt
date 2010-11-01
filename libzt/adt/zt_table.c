@@ -146,7 +146,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
 void
 zt_table_destroy(zt_table *h)
 {
-    int i;
+    unsigned long i;
 
     for (i = 0; i < h->num_buckets; i++) {
         struct table_node *node = h->buckets[i];
@@ -248,7 +248,7 @@ zt_table_del(zt_table *h, const void *key)
 int
 zt_table_copy(zt_table *t1, zt_table *t2)
 {
-    int i;
+    unsigned long i;
     int any = 0;
 
     for (i = 0; i < t1->num_buckets; i++) {
@@ -267,7 +267,7 @@ zt_table_copy(zt_table *t1, zt_table *t2)
 int
 zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 {
-    int i;
+    unsigned long i;
     int res;
 
     for (i = 0; i < h->num_buckets; i++) {

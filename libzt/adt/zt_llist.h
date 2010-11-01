@@ -32,7 +32,7 @@ zt_llist_free(zt_pair *p)
 
     while(p != NULL) {
         op = p;
-        h = zt_llist_head(p);
+        h = (zt_pair*) zt_llist_head(p);
         p = zt_llist_tail(p);
         XFREE(op);
     }
@@ -146,7 +146,7 @@ zt_llist_reverse(zt_llist llist)
 }
 
 static INLINE zt_llist
-zt_llist_nmerge(zt_llist l1, zt_llist l2, int (*cmp)())
+zt_llist_nmerge(zt_llist l1, zt_llist l2, int (*cmp)(void*,void*))
 {
     zt_llist rlst = NULL;
 
@@ -188,16 +188,16 @@ static INLINE zt_llist zt_llist_split(zt_llist lst)
 }
 
 static INLINE zt_llist
-zt_llist_sort(zt_llist lst, int (*cmp)())
+zt_llist_sort(zt_llist lst, int (*cmp)(void*, void*))
 {
-    zt_llist lst2;
+    zt_llist lst_2;
 
     if ((lst == NULL) || (zt_llist_tail(lst) == NULL)) {
         return (lst);
     }
 
-    lst2 = zt_llist_split(lst);
-    return (zt_llist_nmerge(zt_llist_sort(lst, cmp), zt_llist_sort(lst2, cmp), cmp));
+    lst_2 = zt_llist_split(lst);
+    return (zt_llist_nmerge(zt_llist_sort(lst, cmp), zt_llist_sort(lst_2, cmp), cmp));
 }
 
 

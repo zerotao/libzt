@@ -20,7 +20,7 @@ static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 typedef struct list_elt list_elt;
 struct list_elt {
-    zt_elist list;
+    zt_elist_t list;
     int      value;
 };
 
@@ -31,8 +31,8 @@ basic_tests(struct zt_unit_test *test, void *data)
     list_elt * al;
     list_elt * al2;
 
-    zt_elist * tmp;
-    zt_elist * tmp2;
+    zt_elist_t * tmp;
+    zt_elist_t * tmp2;
 
     int        i;
 

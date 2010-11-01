@@ -4,12 +4,12 @@
 #include <libzt/zt_unit.h>
 
 typedef struct stack_elt {
-    zt_stack member;
+    zt_stack_t member;
     int      n;
 }stack_elt;
 
 typedef struct queue_elt {
-    zt_queue member;
+    zt_queue_t member;
     int      n;
 }queue_elt;
 
@@ -22,8 +22,8 @@ basic_tests(struct zt_unit_test *test, void *data)
     stack_elt * se;
     queue_elt * qe;
 
-    zt_stack  * tse;
-    zt_queue  * tqe;
+    zt_stack_t  * tse;
+    zt_queue_t  * tqe;
 
     int         i;
 

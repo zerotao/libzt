@@ -44,8 +44,8 @@ zt_unit_init(void)
 void
 zt_unit_release(struct zt_unit **unit)
 {
-    zt_elist * ignore;
-    zt_elist * tmp;
+    zt_elist_t * ignore;
+    zt_elist_t * tmp;
 
     zt_assert(unit);
     zt_assert(*unit);
@@ -88,8 +88,8 @@ zt_unit_register_suite(struct zt_unit     * unit,
 void
 zt_unit_release_suite(struct zt_unit_suite **suite)
 {
-    zt_elist * ignore;
-    zt_elist * tmp;
+    zt_elist_t * ignore;
+    zt_elist_t * tmp;
 
     zt_assert(suite);
     zt_assert(*suite);
@@ -154,7 +154,7 @@ zt_unit_release_test(struct zt_unit_test **test)
 int
 zt_unit_run(struct zt_unit    * unit)
 {
-    zt_elist             * tmp;
+    zt_elist_t           * tmp;
     struct zt_unit_suite * unit_suite;
     int                    result = 0;
 
@@ -172,7 +172,7 @@ int
 zt_unit_run_suite(struct zt_unit    * unit,
                   struct zt_unit_suite     * suite)
 {
-    zt_elist            * tmp;
+    zt_elist_t          * tmp;
     struct zt_unit_test * unit_test;
     int                   result;
 
@@ -340,7 +340,7 @@ zt_unit_run_by_name(struct zt_unit    * unit,
     char                 **targetv;
     struct zt_unit_suite * unit_suite = NULL;
     struct zt_unit_test  * unit_test = NULL;
-    zt_elist             * tmp;
+    zt_elist_t           * tmp;
     int                    result = 0;
     int                    len;
 
@@ -402,8 +402,8 @@ done:
 void
 zt_unit_list(struct zt_unit *unit)
 {
-    zt_elist             * tmp;
-    zt_elist             * tmp2;
+    zt_elist_t           * tmp;
+    zt_elist_t           * tmp2;
     struct zt_unit_suite * unit_suite;
     struct zt_unit_test  * unit_test;
 

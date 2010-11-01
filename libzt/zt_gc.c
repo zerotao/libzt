@@ -6,6 +6,8 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
+#include <stdio.h>
+
 #include "zt_macros.h"
 #include "zt_assert.h"
 
@@ -94,12 +96,12 @@ static void
 resize_rootset(zt_gc_t *gc, int new_size)
 {
     if (gc->rootset == NULL) {
-        gc->rootset = XCALLOC(zt_elist *, new_size);
+        gc->rootset = XCALLOC(zt_elist_t *, new_size);
         gc->rootset_next = 0;
     } else {
         int diff = new_size - gc->rootset_size;
         int i;
-        gc->rootset = XREALLOC(zt_elist *, gc->rootset, new_size);
+        gc->rootset = XREALLOC(zt_elist_t *, gc->rootset, new_size);
         for ( i = diff; i < new_size; i++) {
             gc->rootset[i] = NULL;
         }
@@ -108,9 +110,9 @@ resize_rootset(zt_gc_t *gc, int new_size)
 }
 
 static void
-dump_elist(char *name, zt_elist *p)
+dump_elist(char *name, zt_elist_t *p)
 {
-    zt_elist * tmp;
+    zt_elist_t * tmp;
     int        c;
     int        count;
 
@@ -194,8 +196,8 @@ zt_gc_init(zt_gc_t *gc,
 void
 zt_gc_destroy(zt_gc_t *gc)
 {
-    zt_elist * elt;
-    zt_elist * dont_use;
+    zt_elist_t * elt;
+    zt_elist_t * dont_use;
 
     if (gc->enabled != 0) {
         printf("# Warning: destroying gc while gc is disabled\n");
@@ -303,8 +305,8 @@ zt_gc_register_value(zt_gc_t *gc, void *v)
 void
 zt_gc_free_white(zt_gc_t *gc)
 {
-    zt_elist            * elt = NULL;
-    zt_elist            * dont_use = NULL;
+    zt_elist_t          * elt = NULL;
+    zt_elist_t          * dont_use = NULL;
     zt_gc_collectable_t * mark;
 
     if (zt_elist_empty(gc->white)) {
@@ -340,7 +342,7 @@ zt_gc_free_white(zt_gc_t *gc)
 void
 zt_gc_switch(zt_gc_t *gc)
 {
-    zt_elist * tmp_white;
+    zt_elist_t * tmp_white;
 
     /* in a traditional GC we would scan and reset the values here we
      * free the white list and swap the white list with the black list
@@ -390,8 +392,8 @@ zt_gc_scan(zt_gc_t *gc, int full_scan)
         /* move thru each object in the grey list moving it to the
          * black list and marking it as we go.
          */
-        zt_elist            * next;
-        zt_elist            * elt;
+        zt_elist_t          * next;
+        zt_elist_t          * elt;
         zt_gc_collectable_t * mark;
 
         elt = gc->scan;
@@ -474,8 +476,8 @@ zt_gc_print_heap(zt_gc_t *gc)
 
 void zt_gc_for_each(zt_gc_t * gc, void (*cb)(void * value, void * data, int ty), void * cb_data)
 {
-    zt_elist            * elt = NULL;
-    zt_elist            * dont_use = NULL;
+    zt_elist_t          * elt = NULL;
+    zt_elist_t          * dont_use = NULL;
     zt_gc_collectable_t * mark;
 
     zt_elist_for_each_safe(gc->black, elt, dont_use) {

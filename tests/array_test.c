@@ -11,8 +11,8 @@ basic_tests(struct zt_unit_test *test, void *data)
     int      i, n;
     int    * pv;
 
-    zt_array array = zt_array_new(10, sizeof(int));
-    zt_array array2;
+    zt_array_t array = zt_array_new(10, sizeof(int));
+    zt_array_t array2;
 
 
     ZT_UNIT_ASSERT(test, array != NULL);

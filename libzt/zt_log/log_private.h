@@ -20,7 +20,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#pragma }
 #endif /* __cplusplus */
 
 typedef struct zt_log_level_desc_ty zt_log_level_desc_ty;

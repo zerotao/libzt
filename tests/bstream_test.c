@@ -9,7 +9,7 @@
 static void
 basic_tests(struct zt_unit_test *test, void *data)
 {
-    zt_bstream bs, clone;
+    zt_bstream_t bs, clone;
     char     * test_string = "this is a test string",
                string_test[256] = "";
     uint8_t    test_uint8 = 0xDE,
