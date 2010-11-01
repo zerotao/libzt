@@ -15,12 +15,13 @@ example_thread_cb(void *_data) {
     while (1) {
         /* lock the mutex */
         zt_threads_lock(0, mutex);
-        printf("id=%u data=%s\n", zt_threads_id(), data);
+        printf("id=%lu data=%s\n", zt_threads_id(), data);
         zt_threads_unlock(0, mutex);
         usleep(80000);
     }
 
     zt_threads_end(NULL);
+    return NULL;
 }
 
 
@@ -31,14 +32,14 @@ example_init_cb(void *args) {
 
 void *
 example_iput_work_cb(void *init_data, void *data) {
-    printf("iput_worker: id = %u init_data = %s, data = %s\n",
+    printf("iput_worker: id = %lu init_data = %s, data = %s\n",
            zt_threads_id(), (char *)init_data, (char *)data);
     return "sending to oput";
 }
 
 void *
 example_oput_work_cb(void *init_data, void *data) {
-    printf("oput_worker: id = %u data = %s\n",
+    printf("oput_worker: id = %lu data = %s\n",
            zt_threads_id(), (char *)data);
     return "sending to finalizer";
 }

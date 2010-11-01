@@ -184,7 +184,7 @@ zt_threads_join(zt_threads_thread *thread, void **data) {
     return 0;
 }
 
-unsigned int
+unsigned long int
 zt_threads_id(void) {
     if (_zt_threads_cntrl_cbs.id) {
         return _zt_threads_cntrl_cbs.id();

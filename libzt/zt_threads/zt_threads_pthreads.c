@@ -168,7 +168,7 @@ zt_threads_pthreads_kill(zt_threads_thread *_thread) {
     return pthread_cancel(*thread);
 }
 
-unsigned int
+unsigned long int
 zt_threads_pthread_id(void) {
     return (unsigned int)pthread_self();
 }

@@ -32,11 +32,11 @@ struct zt_threads_cond_callbacks {
 };
 
 struct zt_threads_cntrl_callbacks {
-    int          (*start)(zt_threads_thread *thread, zt_threads_attr *attr, void * (*start_cb)(void *), void *arg);
-    void         (*end)(void *arg);
-    int          (*kill)(zt_threads_thread *thread);
-    unsigned int (*id)(void);
-    int          (*join)(zt_threads_thread *thread, void **data);
+    int               (*start)(zt_threads_thread *thread, zt_threads_attr *attr, void * (*start_cb)(void *), void *arg);
+    void              (*end)(void *arg);
+    int               (*kill)(zt_threads_thread *thread);
+    unsigned long int (*id)(void);
+    int               (*join)(zt_threads_thread *thread, void **data);
 };
 
 struct zt_threadpool_callbacks {
@@ -118,7 +118,7 @@ int   zt_threads_start(void *thread, void *attr, void * (*start_cb)(void *), voi
 void  zt_threads_end(void *args);
 int   zt_threads_kill(void *thread);
 int   zt_threads_join(void *thread, void **data);
-unsigned int zt_threads_id(void);
+unsigned long int zt_threads_id(void);
 
 #if defined(_ZT_THREADS_HAVE_PTHREADS)
 #define ZT_THREADS_PTHREADS_IMPLEMENTED 1
