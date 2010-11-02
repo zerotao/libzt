@@ -1,6 +1,6 @@
 #define ZT_WITH_UNIT
 
-#include <libzt/zt.h>
+#include <zt.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)

@@ -4,11 +4,11 @@
   <section id="definitions">
    <title>Definitions</title>
    <para>Access to these definitions is gained by adding
-    <filename class=headerfile>libzt/zt.h</filename> to your prokect.
+    <filename class=headerfile>zt.h</filename> to your prokect.
    </para>
 
-   <para>All of these definitions are wrapped in a #ifndef [DEFINITION] 
-    so that they are only defined if they have not been previously 
+   <para>All of these definitions are wrapped in a #ifndef [DEFINITION]
+    so that they are only defined if they have not been previously
     defined prior to including the above header file.
    </para>
    <variablelist>

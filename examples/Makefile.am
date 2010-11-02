@@ -1,4 +1,4 @@
-LDADD = $(top_builddir)/libzt/libzt.la 
+LDADD = $(top_builddir)/libzt/libzt.la
 
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
@@ -6,7 +6,7 @@ AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_
 EXAMPLE_APPS = 		\
 		mem_pools	\
 		mem_timing	\
-    threads \
+        threads     \
 		types
 
 all: $(EXAMPLE_APPS)

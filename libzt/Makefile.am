@@ -2,7 +2,7 @@ SUBDIRS = 		\
 	adt			\
 	zt_cfg 		\
 	zt_log 		\
-  zt_threads \
+    zt_threads  \
 	.
 
 
@@ -16,7 +16,7 @@ libzt_la_LIBADD = 					\
 
 if PTHREADS
 libzt_la_LIBADD += zt_threads/libzt_threads_pthreads.la
-endif 
+endif
 
 #CURRENT[:REVISION[:AGE]]
 #before release
@@ -32,7 +32,7 @@ libzt_unit_la_LDFLAGS = -version-info 1:0:0 -export-dynamic
 DEFS = @DEFS@
 AM_CPPFLAGS = -I$(top_builddir) -I$(top_builddir)/libzt -I$(top_srcdir) -I$(top_srcdir)/libzt -I$(srcdir)
 
-libzt_unit_la_SOURCES = 	\
+libzt_unit_la_SOURCES =	\
 		zt_unit.c
 
 libzt_gc_la_SOURCES = 	\
@@ -55,14 +55,17 @@ libzt_la_SOURCES = 		\
 		zt_sha1.c		\
 		zt_uuid.c		\
 		zt_exceptions.c \
-		zt_ipv4_tbl.c \
+		zt_ipv4_tbl.c   \
 		zt_ez_mempool.c \
-    zt_threads.c \
+        zt_threads.c    \
 		zt_atexit.c
+
+libztdir = ${includedir}
+libzt_HEADERS = \
+        zt.h
 
 pkgincludedir = ${includedir}/libzt
 pkginclude_HEADERS = 	\
-		zt.h			\
 		zt_internal.h	\
 		zt_unit.h		\
 		zt_assert.h		\
@@ -85,7 +88,7 @@ pkginclude_HEADERS = 	\
 		zt_exceptions.h \
 		zt_ez_mempool.h \
 		zt_ipv4_tbl.h	\
-    zt_threads.h \
+        zt_threads.h    \
 		zt_atexit.h
 
 

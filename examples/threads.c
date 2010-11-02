@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <errno.h>
 #define _ZT_THREADS_HAVE_PTHREADS
-#include <libzt/zt.h>
+#include <zt.h>
 
 zt_threads_mutex *mutex;
 

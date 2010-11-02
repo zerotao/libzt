@@ -2,14 +2,14 @@
 <section id="macros">
  <title>Macros</title>
  <para>
-  Access to these macros is gained by adding <filename class=headerfile>libzt/zt.h</filename> to 
+  Access to these macros is gained by adding <filename class=headerfile>zt.h</filename> to
   your project.  If you do not wish to include the main <filename class=headerfile>zt.h</filename> header then
   you may include the file <filename class=headerfile>macros.h</filename> instead.
  </para>
  <para>
-  Included are some of the standard macros included in many projects.  Including 
+  Included are some of the standard macros included in many projects.  Including
   the ones here removes the need to reinvent them in your own project.
- </para> 
+ </para>
  <funcsynopsis>
   <funcprototype>
    <funcdef><function>ABS</function></funcdef>
