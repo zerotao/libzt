@@ -32,13 +32,13 @@
 #  include <config.h>
 #endif
 
-#if HAVE_STRING_H
+#if defined(HAVE_STRING_H)
 #  include <string.h>
 #elif HAVE_STRINGS_H
 #  include <strings.h>
 #endif
 
-#if !HAVE_STRRCHR
+#if !defined(HAVE_STRRCHR)
 #  ifndef strrchr
 #    define strrchr rindex
 #  endif

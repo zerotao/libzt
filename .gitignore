@@ -39,3 +39,9 @@ tags
 *.libs
 examples/threads
 aux_files
+libzt/zt_replace.h
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+tools/libzt_gc.pc
+tools/libzt_unit.pc

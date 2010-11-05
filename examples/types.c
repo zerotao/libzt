@@ -6,7 +6,11 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-#include <libzt/zt_internal.h>
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
+
+#include <zt_internal.h>
 #include "test.h"
 
 

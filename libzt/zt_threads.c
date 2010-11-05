@@ -7,8 +7,6 @@
 #include <unistd.h>
 #include <zt_threads.h>
 
-#ifndef _ZT_DISABLE_THREAD_SUPPORT
-
 static void * _zt_threadpool_iput_loop(void *args);
 static void * _zt_threadpool_oput_loop(void *args);
 
@@ -562,6 +560,4 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
 
     return tpool;
 }
-
-#endif /* ifndef _ZT_DISABLE_THREAD_SUPPORT */
 
