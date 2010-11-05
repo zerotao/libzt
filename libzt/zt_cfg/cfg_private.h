@@ -15,7 +15,7 @@
 #define _ZT_CFG_PRIVATE_H_
 
 #include <stdio.h>
-#include <libzt/zt_cfg.h>
+#include <zt_cfg.h>
 
 #ifdef __cplusplus
 extern "C" {

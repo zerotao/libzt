@@ -33,7 +33,7 @@
 #ifndef _ZT_MEM_H_
 #define _ZT_MEM_H_
 
-#include <libzt/zt_exceptions.h>
+#include <zt_exceptions.h>
 
 #define POOL_NEVER_FREE    1
 

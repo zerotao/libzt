@@ -11,9 +11,9 @@
  */
 #include <string.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_tree.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <adt/zt_tree.h>
 
 #define REMOVED 8
 #define REMOVED2 6

@@ -15,7 +15,7 @@
 #ifndef _ZT_HASH_H_
 #define _ZT_HASH_H_
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 

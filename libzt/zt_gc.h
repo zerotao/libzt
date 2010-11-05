@@ -1,9 +1,9 @@
 #ifndef _ZT_GC_H_
 #define _ZT_GC_H_
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_list.h>
-#include <libzt/zt_exceptions.h>
+#include <zt_internal.h>
+#include <adt/zt_list.h>
+#include <zt_exceptions.h>
 
 BEGIN_C_DECLS
 

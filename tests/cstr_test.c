@@ -14,8 +14,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)
@@ -71,12 +71,12 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
-    cut_array = zt_cstr_cut(split_test, '/', 0); 
+    cut_array = zt_cstr_cut(split_test, '/', 0);
     ZT_UNIT_ASSERT_NOT_EQUAL(test, cut_array, NULL);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d/"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
@@ -86,7 +86,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "/a/b/c"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "/a/b"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "/a"), 0);
-    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL); 
+    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
 #if !defined(_WIN32)

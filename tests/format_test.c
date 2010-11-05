@@ -1,8 +1,8 @@
 #include <string.h>
-#include <libzt/zt_assert.h>
-#include <libzt/zt_format.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_assert.h>
+#include <zt_format.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
 static int
 cvt_S(int code, va_list app,

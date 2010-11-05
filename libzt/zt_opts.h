@@ -13,7 +13,7 @@
 #ifndef _ZT_OPTS_H_
 #define _ZT_OPTS_H_
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 BEGIN_C_DECLS
 

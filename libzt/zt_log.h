@@ -14,8 +14,8 @@
 #define _ZT_LOG_H_
 
 #include <stdarg.h>
-#include <libzt/zt_internal.h>
-#include <libzt/zt_progname.h>
+#include <zt_internal.h>
+#include <zt_progname.h>
 
 #define ZT_LOG_RAW           0
 #define ZT_LOG_WITH_DATE     1
@@ -114,6 +114,6 @@ extern void zt_log_close( zt_log_ty *log );
 #endif /* ifndef NDEBUG */
 
 END_C_DECLS
-#include <libzt/zt_log/log_interface.h>
+#include <zt_log/log_interface.h>
 
 #endif  /* _ZT_LOG_H_ */

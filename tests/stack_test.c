@@ -1,7 +1,7 @@
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_stack.h>
-#include <libzt/adt/zt_queue.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <adt/zt_stack.h>
+#include <adt/zt_queue.h>
 
 typedef struct stack_elt {
     zt_stack_t member;

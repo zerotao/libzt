@@ -185,6 +185,6 @@ typedef char* void_p;
 # define NEVER(X)       (X)
 #endif /* if defined(LIBZT_COVERAGE_TESTING) */
 
-#include <libzt/zt_macros.h>
-#include <libzt/zt_common.h>
+#include <zt_macros.h>
+#include <zt_common.h>
 #endif /*_ZT_H_*/

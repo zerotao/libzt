@@ -16,8 +16,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_exceptions.h>
+#include <zt_internal.h>
+#include <zt_exceptions.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_fmt_put_f)(int c, void *cl);

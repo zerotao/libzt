@@ -1,8 +1,8 @@
 #ifndef _ZT_QUEUE_H_
 #define _ZT_QUEUE_H_
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_list.h>
+#include <zt_internal.h>
+#include <adt/zt_list.h>
 BEGIN_C_DECLS
 
 typedef zt_elist_t zt_queue_t;

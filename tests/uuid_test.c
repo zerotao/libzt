@@ -19,10 +19,10 @@
 
 #include <math.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_unit.h>
-#include <libzt/zt_uuid.h>
-#include <libzt/zt_time.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_uuid.h>
+#include <zt_time.h>
 
 /* void * */
 /* time_uuid4(void * data) { */

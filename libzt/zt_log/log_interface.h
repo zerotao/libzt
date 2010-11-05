@@ -11,11 +11,11 @@
 #ifndef _LOG_INTERFACE_H_
 #define _LOG_INTERFACE_H_
 
-#include <libzt/zt_log.h>
+#include <zt_log.h>
 
-#include <libzt/zt_log/log_stderr.h>
-#include <libzt/zt_log/log_file.h>
+#include <zt_log/log_stderr.h>
+#include <zt_log/log_file.h>
 #ifndef ZT_NO_SYSLOG
-#include <libzt/zt_log/log_syslog.h>
+#include <zt_log/log_syslog.h>
 #endif
 #endif  /* _LOG_INTERFACE_H_ */

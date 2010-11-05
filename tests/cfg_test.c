@@ -14,8 +14,8 @@
 
 #include <string.h>
 
-#include <libzt/zt_cfg.h>
-#include <libzt/zt_unit.h>
+#include <zt_cfg.h>
+#include <zt_unit.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)

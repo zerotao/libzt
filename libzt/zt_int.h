@@ -4,8 +4,8 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_exceptions.h>
+#include <zt_internal.h>
+#include <zt_exceptions.h>
 
 BEGIN_C_DECLS
 

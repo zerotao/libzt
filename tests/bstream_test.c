@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include <libzt/adt/zt_bstream.h>
-#include <libzt/adt/zt_array.h>
-#include <libzt/zt_unit.h>
+#include <adt/zt_bstream.h>
+#include <adt/zt_array.h>
+#include <zt_unit.h>
 
 
 

@@ -30,7 +30,7 @@
 #ifndef _ZT_TREE_H_
 #define _ZT_TREE_H_
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 BEGIN_C_DECLS
 
 typedef struct zt_rbt zt_rbt;

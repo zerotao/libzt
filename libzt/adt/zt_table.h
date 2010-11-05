@@ -15,8 +15,8 @@
 
 #include <sys/types.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_mem.h>
+#include <zt_internal.h>
+#include <zt_mem.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_table_compare_cb)(const void *lhs, const void *rhs, void *cdata);

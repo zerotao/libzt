@@ -1,6 +1,6 @@
 #include <string.h>
-#include <libzt/adt/zt_llist.h>
-#include <libzt/zt_unit.h>
+#include <zt_unit.h>
+#include <adt/zt_llist.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)

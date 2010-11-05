@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_array.h>
+#include <zt_internal.h>
+#include <adt/zt_array.h>
 
 BEGIN_C_DECLS
 typedef struct zt_bstream *zt_bstream_t;

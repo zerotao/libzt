@@ -12,9 +12,9 @@
 
 #include <string.h>
 
-#include <libzt/zt_progname.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_progname.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
 static char * argv[] = { "test_app", NULL };
 

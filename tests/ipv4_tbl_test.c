@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <libzt/zt_ipv4_tbl.h>
-#include <libzt/zt_unit.h>
+#include <zt_ipv4_tbl.h>
+#include <zt_unit.h>
 
 static struct _test_s {
     char    *addr;

@@ -11,12 +11,12 @@
 /*
  * Description:
  */
-#include <libzt/zt_exceptions.h>
-#include <libzt/zt_log.h>
+#include <zt_exceptions.h>
+#include <zt_log.h>
 
 #undef NDEBUG
-#include <libzt/zt_unit.h>
-#include <libzt/zt_assert.h>
+#include <zt_unit.h>
+#include <zt_assert.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data)

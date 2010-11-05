@@ -17,8 +17,8 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdarg.h>
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_ptr_array.h>
+#include <zt_internal.h>
+#include <adt/zt_ptr_array.h>
 
 BEGIN_C_DECLS
 

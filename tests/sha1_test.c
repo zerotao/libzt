@@ -17,9 +17,9 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_unit.h>
-#include <libzt/zt_sha1.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_sha1.h>
 
 
 static void
