@@ -46,6 +46,7 @@ unsigned long powers_of_2[] = { 2,            4,         8,
 struct table_node {
     void              * datum;
     void              * key;
+    unsigned long       hash_key;
     struct table_node * next;
 };
 
@@ -170,6 +171,7 @@ int
 zt_table_set(zt_table *h, const void *key, const void *datum)
 {
     unsigned long       nkey = h->func(key, h->cdata);
+    unsigned long       skey = nkey;
     struct table_node * node;
     struct table_node * nn;
 
@@ -177,10 +179,13 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
     ZT_LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
 
     nn = h->buckets[nkey];
+
     if (!(h->flags & ZT_TABLE_ALLOW_DUP_KEYS)) {
         while (nn) {
-            if (h->cmp((void *)nn->key, key, h->cdata)) {
-                return 1;
+            if (nn->hash_key == skey) {
+                if (h->cmp((void *)nn->key, key, h->cdata)) {
+                    return 1;
+                }
             }
             nn = nn->next;
         }
@@ -189,6 +194,7 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
     node = (struct table_node *)zt_mem_pool_alloc(h->node_pool);
 
     node->next = h->buckets[nkey];
+    node->hash_key = skey;
     h->buckets[nkey] = node;
     node->key = (void *)key;
     node->datum = (void *)datum;
@@ -200,14 +206,20 @@ void *
 zt_table_get(zt_table *h, const void *key)
 {
     struct table_node *node;
-    int                nkey;
+    unsigned long      nkey;
+    unsigned long      skey;
 
     nkey = h->func(key, h->cdata);
+    skey = nkey;
+
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
     node = h->buckets[nkey];
+
     while (node) {
-        if (h->cmp((void *)node->key, key, h->cdata)) {
-            return node->datum;
+        if (node->hash_key == skey) {
+            if (h->cmp((void *)node->key, key, h->cdata)) {
+                return node->datum;
+            }
         }
         node = node->next;
     }
@@ -219,25 +231,27 @@ zt_table_del(zt_table *h, const void *key)
 {
     struct table_node * node;
     struct table_node * prev;
-    int                 nkey = h->func(key, h->cdata);
+    unsigned long       nkey = h->func(key, h->cdata);
+    unsigned long       skey = nkey;
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
-
 
     prev = node = h->buckets[nkey];
 
     while (node) {
-        if (h->cmp((void *)node->key, key, h->cdata)) {
-            void * datum = node->datum;
+        if (node->hash_key == skey) {
+            if (h->cmp((void *)node->key, key, h->cdata)) {
+                void * datum = node->datum;
 
-            if (prev == node) {
-                h->buckets[nkey] = node->next;
-            } else {
-                prev->next = node->next;
+                if (prev == node) {
+                    h->buckets[nkey] = node->next;
+                } else {
+                    prev->next = node->next;
+                }
+
+                zt_mem_pool_release((void **)&node);
+                return datum;
             }
-
-            zt_mem_pool_release((void **)&node);
-            return datum;
         }
 
         node = node->next;
@@ -249,7 +263,7 @@ int
 zt_table_copy(zt_table *t1, zt_table *t2)
 {
     unsigned long i;
-    int any = 0;
+    int           any = 0;
 
     for (i = 0; i < t1->num_buckets; i++) {
         struct table_node *node = t1->buckets[i];
@@ -268,7 +282,7 @@ int
 zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 {
     unsigned long i;
-    int res;
+    int           res;
 
     for (i = 0; i < h->num_buckets; i++) {
         struct table_node *tn;
