@@ -266,7 +266,7 @@ _EOF_
     ${RM-/bin/rm -f} ${tmpfile}2 2>/dev/null
 
 # basename
-    if test x$ac_cv_func_basename = xno || test x$zt_cv_func_basename = xno; then
+    if test x$ac_cv_func_basename = xno || test x$zt_cv_func_basename = xyes; then
       echo 'extern char *basename (const char *path);' >> ${tmpfile}2
     fi
 
