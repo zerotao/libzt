@@ -14,7 +14,7 @@
 #include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     /* test ABS */
     ZT_UNIT_ASSERT(test, (ABS(-1) == 1));

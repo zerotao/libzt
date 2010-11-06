@@ -18,7 +18,7 @@
 #include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char   test_string1[] = "  Ok \n";
     char * chomp_test = strdup(test_string1);

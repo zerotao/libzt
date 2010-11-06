@@ -32,7 +32,7 @@
 /* } */
 
 static void
-uuid4_tests(struct zt_unit_test *test, void *data)
+uuid4_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_uuid_t uuid;
     int       i;
@@ -63,7 +63,7 @@ uuid4_tests(struct zt_unit_test *test, void *data)
 }
 
 static void
-uuid5_tests(struct zt_unit_test *test, void *data)
+uuid5_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     /* get rid of the log message for the moment */
     char     * tdata[] = { "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -125,7 +125,7 @@ uuid5_tests(struct zt_unit_test *test, void *data)
 } /* uuid5_tests */
 
 static void
-uuid_generic_tests(struct zt_unit_test *test, void *data)
+uuid_generic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char    * uuids1;
     char    * uuids2;

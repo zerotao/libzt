@@ -15,8 +15,7 @@
 
 
 int
-main(int argc, char *argv[])
-{
+main(int argc UNUSED, char *argv[] UNUSED) {
     uint8_t           c8 = 0xFF;
     unsigned char      uc8 = 0xFF;
 

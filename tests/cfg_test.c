@@ -18,7 +18,7 @@
 #include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_cfg_ty *cfg = NULL;
     long       i = 0;

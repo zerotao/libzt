@@ -5,7 +5,7 @@
 #include <zt_unit.h>
 
 static int
-cvt_S(int code, va_list app,
+cvt_S(int code UNUSED, va_list app,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {
@@ -18,7 +18,7 @@ cvt_S(int code, va_list app,
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char   buf[256];
     char * str;

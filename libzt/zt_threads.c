@@ -5,6 +5,8 @@
 #include <errno.h>
 #include <sys/queue.h>
 #include <unistd.h>
+
+#include <zt.h>
 #include <zt_threads.h>
 
 static void * _zt_threadpool_iput_loop(void *args);

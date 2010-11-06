@@ -17,7 +17,7 @@
 #include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char          position1[255];
     char          position2[255];

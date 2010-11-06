@@ -17,7 +17,7 @@ static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 #define VALUES_MAX sizeof_array(values)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     stack_elt * se;
     queue_elt * qe;

@@ -287,7 +287,7 @@ zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 
 /* common hash functions */
 unsigned long
-zt_table_hash_int(const void *key, void *cdata)
+zt_table_hash_int(const void *key, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
     unsigned long   nkey = zt_hash32_buff(&skey, sizeof(int), ZT_HASH32_INIT);
@@ -296,7 +296,7 @@ zt_table_hash_int(const void *key, void *cdata)
 }
 
 int
-zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_int(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if ((void *)lhs == (void *)rhs) {
         return 1;
@@ -305,7 +305,7 @@ zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
 }
 
 unsigned long
-zt_table_hash_string(const void *key, void *cdata)
+zt_table_hash_string(const void *key, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
     unsigned long   nkey = zt_hash32_cstr(skey, ZT_HASH32_INIT);
@@ -314,7 +314,7 @@ zt_table_hash_string(const void *key, void *cdata)
 }
 
 int
-zt_table_compare_string(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if (strcmp((char *)lhs, (char *)rhs) == 0) {
         return 1;
@@ -323,7 +323,7 @@ zt_table_compare_string(const void *lhs, const void *rhs, void *cdata)
 }
 
 int
-zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if (strcasecmp((char *)lhs, (char *)rhs) == 0) {
         return 1;

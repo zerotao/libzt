@@ -48,7 +48,7 @@ int int_compare( zt_rbt_node *x, zt_rbt_node  *x2)
 } while (0)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_rbt         * br_root = NULL;
     zt_rbt_node    * iter;

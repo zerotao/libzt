@@ -809,7 +809,7 @@ zt_cstr_cut(const char *str, const int delim, int keep_delim) {
 }
 
 zt_ptr_array *
-zt_cstr_tok(const char *str, const int delim, int keep_delim)
+zt_cstr_tok(const char *str, const int delim, int keep_delim UNUSED)
 {
     char *str_copy;
     char *cut_tok;

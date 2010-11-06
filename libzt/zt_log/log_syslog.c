@@ -23,7 +23,7 @@ static void destructor(zt_log_ty *log)
     return;
 }
 
-static void print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
+static void print(zt_log_ty *log UNUSED, zt_log_level level, char *fmt, va_list ap)
 {
     int syslog_level = 0;
 

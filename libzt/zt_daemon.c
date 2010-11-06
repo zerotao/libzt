@@ -38,7 +38,7 @@
  */
 
 int
-zt_daemonize( char *root, mode_t mask, int options)
+zt_daemonize( char *root, mode_t mask, int options UNUSED)
 {
     pid_t         pid;
     pid_t         pid2;

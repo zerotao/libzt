@@ -72,7 +72,7 @@ test_pool(void *data)
 #define NPTEST 10000
 #define NPLOOP 500
 int
-main(int argc, char *argv[])
+main(int argc UNUSED, char *argv[] UNUSED)
 {
     struct test_data_t td_small;
     struct test_data_t td_large;

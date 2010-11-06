@@ -240,9 +240,9 @@ test_failed(struct zt_unit_test    * test,
 }
 
 int
-zt_unit_run_test(struct zt_unit    * unit,
-                 struct zt_unit_suite     * suite,
-                 struct zt_unit_test     * test)
+zt_unit_run_test(struct zt_unit         * unit UNUSED,
+                 struct zt_unit_suite   * suite,
+                 struct zt_unit_test    * test)
 {
     zt_assert(test);
 

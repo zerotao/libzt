@@ -3,7 +3,7 @@
 #include <adt/zt_llist.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char    * m = "c";
     zt_pair * x, * y;

@@ -482,7 +482,7 @@ zt_mem_pools_display(int offset, int flags)
 }
 
 static void
-zt_mem_release(void * data)
+zt_mem_release(void * data UNUSED)
 {
     zt_elist_t  * tmp;
     zt_elist_t  * tmp2;
@@ -627,7 +627,7 @@ zt_mem_set_init(char *name)
 }
 
 int
-zt_mem_set_add(zt_mem_set *set, void *d)
+zt_mem_set_add(zt_mem_set *set UNUSED, void *d UNUSED)
 {
     /* struct zt_mem_set_elt    * elt; */
 
@@ -639,7 +639,7 @@ zt_mem_set_add(zt_mem_set *set, void *d)
 }
 
 int
-zt_mem_set_release(zt_mem_set *set)
+zt_mem_set_release(zt_mem_set *set UNUSED)
 {
     /*
      * release the elt and release the wrapper
@@ -769,7 +769,7 @@ zt_mem_page_display(int offset, zt_mem_page *page)
 
 
 static int
-zt_default_release_test(int req_elts, int free_elts, int used_elts, int flags, void *cb_data)
+zt_default_release_test(int req_elts UNUSED, int free_elts UNUSED, int used_elts UNUSED, int flags, void *cb_data UNUSED)
 {
     if (flags & POOL_NEVER_FREE) {
         return 0;

@@ -5,7 +5,7 @@
 #include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     struct timeval tv1;
     struct timeval tv2;

@@ -23,7 +23,7 @@
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     /* get rid of the log message for the moment */
     char      * tdata[] = { "abc",

@@ -23,7 +23,7 @@ static int int_iterator(void *key, void *datum, void *param);
 static int str_free(void *key, void *datum, void *param);
 
 void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char       buf[1024];
     ssize_t    i;
@@ -69,7 +69,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 } /* basic_tests */
 
 static int
-str_free(void *key, void *datum, void *param)
+str_free(void *key, void *datum UNUSED, void *param UNUSED)
 {
     XFREE(key);
     return 0;

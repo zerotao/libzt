@@ -27,21 +27,21 @@ int   boolean = 0;
 int   flag = 0;
 
 int
-func(char *arg, void * data)
+func(char *arg UNUSED, void * data UNUSED)
 {
     printf("func\n");
     return EXIT_SUCCESS;
 }
 
 int
-ofunc(char *arg, void * data)
+ofunc(char *arg, void * data UNUSED)
 {
     printf("ofunc %s\n", arg);
     return EXIT_SUCCESS;
 }
 
 int
-rfunc(char * arg, void * data)
+rfunc(char * arg, void * data UNUSED)
 {
     printf("rfunc %s\n", arg);
     return EXIT_SUCCESS;
@@ -66,7 +66,7 @@ static char *s_argv[] = { "unit_test",
 #endif
 
 static void
-basic_opts_tests(struct zt_unit_test *test, void *data)
+basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     int                argc = sizeof_array(s_argv) - 1; /* -1 for NULL */
     char             **argv;

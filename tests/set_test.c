@@ -56,7 +56,7 @@ static int difference_test(void *data, void *param)
 }
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     int      i;
     zt_set * result;

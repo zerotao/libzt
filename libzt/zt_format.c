@@ -401,10 +401,10 @@ zt_fmt_outc(int c, void *cl)
 }
 
 static int
-cvt_c(int code, va_list app,
+cvt_c(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
-      int width, int precision)
+      int width, int precision UNUSED)
 {
     int tlen = 0;
 
@@ -422,7 +422,7 @@ cvt_c(int code, va_list app,
 
 
 static int
-cvt_d(int code, va_list app,
+cvt_d(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)
@@ -481,7 +481,7 @@ cvt_f(int code, va_list app,
 }
 
 static int
-cvt_o(int code, va_list app,
+cvt_o(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)
@@ -498,7 +498,7 @@ cvt_o(int code, va_list app,
 }
 
 static int
-cvt_p(int code, va_list app,
+cvt_p(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)
@@ -519,7 +519,7 @@ cvt_p(int code, va_list app,
 
 
 static int
-cvt_s(int code, va_list app,
+cvt_s(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)
@@ -549,7 +549,7 @@ cvt_s(int code, va_list app,
 }
 
 static int
-cvt_u(int code, va_list app,
+cvt_u(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)
@@ -567,7 +567,7 @@ cvt_u(int code, va_list app,
 }
 
 static int
-cvt_x(int code, va_list app,
+cvt_x(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       int width, int precision)

@@ -7,7 +7,7 @@
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_bstream_t bs, clone;
     char     * test_string = "this is a test string",

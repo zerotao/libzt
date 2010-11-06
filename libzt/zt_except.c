@@ -200,7 +200,7 @@ void except_unhandled_exception(struct except_Frame *stack, int flags)
                                 flags);
 }
 
-void _except_unhandled_exception(void *exc, char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
+void _except_unhandled_exception(void *exc UNUSED, char *etext, const char *efile, unsigned int eline, const char *efunc, int flags)
 {
     char bname[PATH_MAX];
 

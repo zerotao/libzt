@@ -20,8 +20,17 @@
 #include <strings.h>
 #endif
 
+#ifdef HAVE_LIBGEN_H
+#include <libgen.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef HAVE_CTYPE_H
 #include <ctype.h>
+#endif
 
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>

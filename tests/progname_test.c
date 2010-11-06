@@ -19,7 +19,7 @@
 static char * argv[] = { "test_app", NULL };
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char    * name = NULL;
     char    * path = NULL;

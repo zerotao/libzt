@@ -26,7 +26,7 @@ struct list_elt {
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     list_elt * al;
     list_elt * al2;

@@ -3,13 +3,13 @@
 
 
 void
-test_fn_1(struct zt_unit_test *test, void *data)
+test_fn_1(struct zt_unit_test *test, void *data UNUSED)
 {
     ZT_UNIT_ASSERT(test, 1 != 2);
 }
 
 void
-test_fn_2(struct zt_unit_test *test, void *data)
+test_fn_2(struct zt_unit_test *test, void *data UNUSED)
 {
     char * abc = "123";
 
