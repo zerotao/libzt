@@ -70,9 +70,12 @@ zt_progpath(char *prog) {
 
             len = strlen(path);
             while(offt < len) {
-                if ((offt = zt_cstr_any(path, offt, -1, ENV_SEPERATOR)) < 0) {
+                ssize_t   sofft;
+
+                if ((sofft = zt_cstr_any(path, offt, -1, ENV_SEPERATOR)) < 0) {
                     break;
                 }
+                offt = (size_t)sofft;
                 tpath = zt_cstr_catv(path, base, offt-1,
                                      PATH_SEPERATOR, 0, -1,
                                      prog, 0, -1, NULL);
