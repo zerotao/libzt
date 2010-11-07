@@ -42,7 +42,7 @@ zt_daemonize( char *root, mode_t mask, int options UNUSED)
 {
     pid_t         pid;
     pid_t         pid2;
-    int           i;
+    rlim_t        i;
     int           status;
     struct rlimit rlimits;
 
