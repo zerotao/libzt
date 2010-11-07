@@ -40,7 +40,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     int         i;
     zt_sha1_ctx ctx;
 
-    for (i = 0; i < sizeof_array(tdata); i++) {
+    for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_sha1_data(tdata[i], strlen(tdata[i]), digest);
         zt_sha1_tostr(digest, sha1);
         ZT_UNIT_ASSERT(test, strncmp(results[i], sha1, 40) == 0);

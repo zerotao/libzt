@@ -90,7 +90,7 @@ uuid5_tests(struct zt_unit_test *test, void *data UNUSED)
     int        fail_ver = 0;
     int        fail_variant = 0;
 
-    for (i = 0; i < sizeof_array(tdata); i++) {
+    for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_uuid5(tdata[i], strlen(tdata[i]), UUID_NS_OID, &uuid);
 
         zt_uuid_tostr(&uuid, &uuid_s, zt_uuid_std_fmt);
@@ -104,7 +104,7 @@ uuid5_tests(struct zt_unit_test *test, void *data UNUSED)
 
     fail_ver = 0;
     fail_variant = 0;
-    for (x = 0; x < sizeof_array(namespaces); x++) {
+    for (x = 0; x < (int)sizeof_array(namespaces); x++) {
         for (i = 0; i < 100; i++) {
             uint8_t y;
 
