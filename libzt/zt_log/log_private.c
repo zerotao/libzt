@@ -113,7 +113,7 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
     }
 
     if (opts & ZT_LOG_WITH_LEVEL) {
-        if ((level < zt_log_max) || (level >= 0)) {
+        if ((level < zt_log_max) && ((int)level >= zt_log_emerg)) {
             len += strlen(zt_log_level_desc[level].desc) + 2; /* ': ' + level desc */
             buff = XREALLOC(char, buff, len);
             if (opts != ZT_LOG_WITH_LEVEL) {
