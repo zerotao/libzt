@@ -34,7 +34,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     zt_elist_t * tmp;
     zt_elist_t * tmp2;
 
-    int        i;
+    size_t       i;
 
     zt_elist(list1);
     zt_elist(list2);
