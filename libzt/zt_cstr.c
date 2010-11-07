@@ -684,7 +684,7 @@ hex_to_char(char hex) {
  *        should be 2 times the size of the hex values in hex
  * dlen = holds the length of data
  *
- * returns - -1 on error and number of bytes in data on success
+ * returns - 0 on error or the number of bytes in data on success
  * --
  * if called with a NULL data will return the number of bytes required
  * to convert all data in hex.
@@ -692,23 +692,24 @@ hex_to_char(char hex) {
 size_t
 zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen) {
     size_t n;
-    size_t y;
+    size_t y = 0;
 
     if (data == NULL) {
         dlen = -1;
     }
 
     for (n = 0, y = 0; n < hlen && *hex != '\0' && y < dlen; n++) {
-        int8_t c  = hex_to_char(*hex++);
+        int8_t c;
         int8_t c2;
         int8_t cc = 0;
 
-        if (c == -1) {
-            continue;
+        if ((c = hex_to_char(*hex++)) == -1) {
+            errno = EINVAL;
+            return 0;
         }
 
         if ((c2 = hex_to_char(*hex++)) == -1) {
-            return -1;
+            return 0;
         } else {
             n++;
         }
@@ -848,10 +849,10 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim UNUSED)
 
 static char * _itoa_integers = "9876543210123456789";
 
-size_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz)
+ssize_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz)
 {
-    size_t loc;
-    size_t result;
+    size_t    loc;
+    ssize_t   result;
 
     result = loc = offset + zt_cstr_int_display_len(value);
 

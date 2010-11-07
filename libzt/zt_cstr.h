@@ -73,7 +73,7 @@ extern int zt_cstr_cut_free(zt_ptr_array *);
 /* String formatting */
 
 /* Integer to ascii, with buffer length. Returns offset to trailing 0, or 0 on failure. */
-size_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz);
+ssize_t zt_cstr_itoa(char *s, int value, size_t offset, size_t bufsiz);
 
 /* Integer display length */
 size_t zt_cstr_int_display_len(int value);

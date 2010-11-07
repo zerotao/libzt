@@ -33,7 +33,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char   dname[PATH_MAX+1];
     char * free_me;
     char * free_me2;
-    char * hex = "34aa973cd4c4daa4f61eEB2BDBAD27316534016FXXX";
+    char * hex = "34aa973cd4c4daa4f61FFB2BDBAD27316534016FXXX";
     char   digest[20];
     char   hex2[41];
     char *split_test = "/a/b/c/d/";
@@ -194,13 +194,18 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
 
     ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 40, NULL, 0) == 20);
-    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 43, digest, 23) == 20);
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 40, digest, 23) == 20);
+
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 43, digest, 23) == 0);
+    ZT_UNIT_ASSERT(test, errno == EINVAL);
+
     ZT_UNIT_ASSERT(test, zt_binary_to_hex(digest, 20, hex2, 41) == 40);
     free_me = zt_cstr_map(hex, 0, -1, ALPHA, alpha);
     ZT_UNIT_ASSERT(test, memcmp(hex2, free_me, 40) == 0);
     XFREE(free_me);
 
-    ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == -1);
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == 0);
+    ZT_UNIT_ASSERT(test, errno == EINVAL);
 } /* basic_tests */
 
 
