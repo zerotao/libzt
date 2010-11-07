@@ -171,7 +171,7 @@ zt_threads_pthreads_kill(zt_threads_thread *_thread) {
 
 unsigned long int
 zt_threads_pthread_id(void) {
-    return (unsigned int)pthread_self();
+    return (unsigned long int)pthread_self();
 }
 
 int
