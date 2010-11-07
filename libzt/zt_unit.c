@@ -342,7 +342,7 @@ zt_unit_run_by_name(struct zt_unit    * unit,
     struct zt_unit_test  * unit_test = NULL;
     zt_elist_t           * tmp;
     int                    result = 0;
-    int                    len;
+    size_t                 len;
 
     targetv = str_split(name, ".", &count);
 
