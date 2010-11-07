@@ -25,7 +25,7 @@ struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs = {
 };
 
 struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
-    _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL
+    _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL, NULL
 };
 
 zt_threads_thread               * (*zt_threads_alloc_thread)(void);
