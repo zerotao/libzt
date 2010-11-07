@@ -20,6 +20,7 @@
 
 #include "adt/zt_stack.h"
 #include "zt_assert.h"
+#include "zt_atexit.h"
 
 typedef struct zt_atexit_cb zt_atexit_cb;
 struct zt_atexit_cb {
@@ -31,7 +32,8 @@ struct zt_atexit_cb {
 /* FIXME: global needs thread safety */
 static zt_stack(cb_stack);
 
-void zt_atexit_call(void) {
+static void
+_atexit_call(void) {
     zt_stack_t          * se;
     struct zt_atexit_cb * cb;
 
@@ -45,8 +47,8 @@ void zt_atexit_call(void) {
     }
 }
 
-void zt_atexit(void (*fn)(void * data), void * data)
-{
+void
+zt_atexit(void (*fn)(void * data), void * data) {
     struct zt_atexit_cb * cb;
 
     zt_assert(fn);
@@ -54,7 +56,7 @@ void zt_atexit(void (*fn)(void * data), void * data)
     cb = XCALLOC(struct zt_atexit_cb, 1);
 
     if(zt_stack_empty(&cb_stack)) {
-        atexit(zt_atexit_call);
+        atexit(_atexit_call);
     }
 
     cb->fn = fn;

@@ -22,7 +22,7 @@
 #include "zt_log/log_private.h"
 #include "zt_atexit.h"
 
-void
+static void
 log_atexit(void * data) {
     zt_log_ty   * logp = data;
 

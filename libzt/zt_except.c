@@ -217,8 +217,8 @@ void _except_unhandled_exception(void *exc UNUSED, char *etext, const char *efil
 int domain_default_except_handler(void *exc, char *etext, char *file, char *func, int line)
 {
     if (EXCEPTION_IN(zt_exception) && exc) {
-        char * error;
-        int    len = strlen((char *)exc) + strlen(etext) + 2 + 1;
+        char    * error;
+        size_t    len = strlen((char *)exc) + strlen(etext) + 2 + 1;
 
         error = XCALLOC(char, len);
         snprintf(error, len, "%s(%s)", (char *)exc, etext);

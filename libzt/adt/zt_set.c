@@ -141,7 +141,7 @@ int zt_set_is_member(const zt_set *set, const void *data)
     return 0;
 }
 
-int _is_subset(void *key UNUSED, void *datum, void *param)
+static int _is_subset(void *key UNUSED, void *datum, void *param)
 {
     struct _set_pair * p = (struct _set_pair *)param;
 

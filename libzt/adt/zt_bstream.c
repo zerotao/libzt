@@ -1,7 +1,7 @@
 #include "zt_bstream.h"
 #include "../zt_assert.h"
 
-size_t
+static size_t
 _array_put(zt_array_t array, char *s, size_t offt, size_t len, int flip)
 {
     if (flip) {
@@ -18,7 +18,7 @@ _array_put(zt_array_t array, char *s, size_t offt, size_t len, int flip)
     return offt;
 }
 
-size_t
+static size_t
 _array_get(zt_array_t array, char *s, size_t offt, size_t len, int flip)
 {
     char *c;

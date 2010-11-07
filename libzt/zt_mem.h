@@ -109,6 +109,7 @@ void zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags);
 void zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags);
 void zt_mem_pools_display(int offset, int flags);
 zt_mem_pool * zt_mem_pool_get(char *name);
+int zt_mem_pool_get_stats(zt_mem_pool *pool, zt_mem_pool_stats *stats);
 
 /************ Sets ************/
 zt_mem_set * zt_mem_set_init(char *name);

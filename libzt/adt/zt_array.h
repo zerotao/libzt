@@ -28,6 +28,7 @@ extern char *   zt_array_data(zt_array_t array);
 extern size_t   zt_array_set_length(zt_array_t array, size_t len);
 extern void     zt_array_set_data(zt_array_t array, char *data, size_t len, size_t size, int copy);
 
+void *          zt_array_elem_copy(zt_array_t array, size_t offt, void *elem);
 extern void *   zt_array_get(zt_array_t array, size_t i); /* , void **elem); */
 extern void *   zt_array_put(zt_array_t array, size_t i, void *elem);
 

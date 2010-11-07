@@ -27,6 +27,7 @@
 
 #include "zt_internal.h"
 #include "zt_log.h"
+#include "zt_daemon.h"
 
 /*!
  * Name: zt_daemonize
