@@ -431,9 +431,9 @@ zt_unit_main(struct zt_unit    * unit,
     int                result = 0;
 
     struct zt_opt_args options[] = {
-        { 'h', "help", "This help text",       zt_opt_help, NULL,     NULL },
-        { 'l', "list", "list suites and test", zt_opt_flag, &do_list, NULL },
-        { 0 }
+        { 'h', "help", "This help text",       zt_opt_help, NULL,     NULL, NULL },
+        { 'l', "list", "list suites and test", zt_opt_flag, &do_list, NULL, NULL },
+        { 0, NULL, NULL, 0, NULL, NULL, NULL  }
     };
 
     if (zt_opts_process(&argc, &argv, options, "[options] <suite | suite.test> ...", TRUE, TRUE, NULL) != 0) {
