@@ -783,7 +783,7 @@ zt_cstr_cut(const char *str, const int delim, int keep_delim) {
     char         *cut_tok;
     zt_ptr_array *cuts;
 
-    if ((cuts = zt_ptr_array_init(NULL, free)) < 0) {
+    if ((cuts = zt_ptr_array_init(NULL, free)) == NULL) {
         return NULL;
     }
 
@@ -815,29 +815,29 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim UNUSED)
     char *cut_tok;
     zt_ptr_array *cuts;
 
-    if ((cuts = zt_ptr_array_init(NULL, free)) < 0) {
-	return NULL;
+    if ((cuts = zt_ptr_array_init(NULL, free)) == NULL) {
+        return NULL;
     }
 
     cut_tok = str_copy = strdup(str);
 
     if (str[strlen(str) - 1] == delim) {
-	str_copy[ strlen(str) - 1 ] = '\0';
+        str_copy[ strlen(str) - 1 ] = '\0';
     }
 
     while((cut_tok = strrchr(str_copy, delim)) != str_copy)
     {
-	if (cut_tok == NULL) {
-	    break;
-	}
+        if (cut_tok == NULL) {
+            break;
+        }
 
-	if (zt_ptr_array_add(cuts, (void *)strdup(str_copy)) < 0) {
-	    zt_ptr_array_free(cuts, 1);
-	    free(str_copy);
-	    return NULL;
-	}
+        if (zt_ptr_array_add(cuts, (void *)strdup(str_copy)) < 0) {
+            zt_ptr_array_free(cuts, 1);
+            free(str_copy);
+            return NULL;
+        }
 
-	*cut_tok = '\0';
+        *cut_tok = '\0';
     }
 
     zt_ptr_array_add(cuts, (void *)strdup(str_copy));
