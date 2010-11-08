@@ -14,18 +14,19 @@ set(zt_LIB_HDRS zt.h zt_internal.h zt_replace.h zt_unit.h zt_assert.h zt_cfg.h
 if(NOT WIN32)
     LIST(APPEND zt_LIB_SRCS zt_daemon.c)
     LIST(APPEND zt_LIB_HDRS zt_daemon.h)
+
+    if(HAVE_SYSLOG)
+        LIST(APPEND zt_LIB_SRCS zt_log/log_syslog.c)
+        LIST(APPEND zt_LIB_HDRS zt_log/log_syslog.h)
+    endif(HAVE_SYSLOG)
+
+    if(HAVE_PTHREAD)
+        LIST(APPEND zt_LIB_SRCS zt_threads.c)
+        LIST(APPEND zt_LIB_HDRS zt_threads.h)
+        LIST(APPEND zt_LIB_HDRS zt_threads/zt_threads_pthreads.c)
+    endif(HAVE_PTHREAD)
 endif(NOT WIN32)
 
-if(HAVE_PTHREAD)
-    LIST(APPEND zt_LIB_SRCS zt_threads.c)
-    LIST(APPEND zt_LIB_HDRS zt_threads.h)
-    LIST(APPEND zt_LIB_HDRS zt_threads/zt_threads_pthreads.c)
-endif(HAVE_PTHREAD)
-
-if(HAVE_SYSLOG)
-    LIST(APPEND zt_LIB_SRCS zt_log/log_syslog.c)
-    LIST(APPEND zt_LIB_HDRS zt_log/log_syslog.h)
-endif(HAVE_SYSLOG)
 
 file(GLOB adt_SRCS adt/*.c)
 file(GLOB adt_HDRS adt/*.h)

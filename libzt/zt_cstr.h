@@ -15,8 +15,8 @@
 #define _ZT_STRINGS_H_
 
 #include <stdint.h>
-#include <unistd.h>
 #include <stdarg.h>
+
 #include <zt_internal.h>
 #include <adt/zt_ptr_array.h>
 

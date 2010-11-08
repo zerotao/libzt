@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
+#endif
+
 #include <sys/queue.h>
-#include <unistd.h>
 
 #include <zt.h>
 #include <zt_threads.h>

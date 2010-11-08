@@ -26,7 +26,9 @@
 #include <strings.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "../zt_internal.h"
 #include "../zt_progname.h"
