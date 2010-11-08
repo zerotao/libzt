@@ -67,23 +67,25 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
 char*
 zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
 {
-    int   len = 0;
-    char *buff = NULL;
+    size_t    len = 0;
+    char    * buff = NULL;
 
     len = strlen(fmt) + 4;    /* format + seperator + "\n" + null */
     buff = (char *)XCALLOC(char, len); /* mem_calloc(len, sizeof(char)); */
 
     if (opts & ZT_LOG_WITH_DATE) {
-        char   sbuf[255];
-        time_t tt = time(NULL);
+        char      sbuf[255];
+        time_t    tt = time(NULL);
+
         len += strftime(sbuf, 254, "%b %e %H:%M:%S ", localtime(&tt));
         buff = XREALLOC(char, buff, len);
         sprintf(buff, "%s", sbuf);
     }
 
     if (opts & ZT_LOG_WITH_SYSNAME) {
-        char  sbuf[255];
-        char *t = NULL;
+        char      sbuf[255];
+        char    * t = NULL;
+
         gethostname(sbuf, 254);
         t = index(sbuf, '.');
         if (t) {
@@ -104,8 +106,9 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
     }
 
     if (opts & ZT_LOG_WITH_PID) {
-        char  sbuf[10 + 3];   /* pid + [] + null */
-        pid_t pid = getpid();
+        char      sbuf[10 + 3];   /* pid + [] + null */
+        pid_t     pid = getpid();
+
         sprintf(sbuf, "[%u]", pid);
         len += strlen(sbuf);
         buff = XREALLOC(char, buff, len);
@@ -127,8 +130,9 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
     }
     strcat(buff, fmt);
     if (((log->file) && (log->line > -1) && (log->function))) {
-        char *nbuff = NULL;
-        int   nlen = 13;  /* ': in  at (:)' + null */
+        char    * nbuff = NULL;
+        size_t    nlen = 13;  /* ': in  at (:)' + null */
+
         nlen += strlen(log->file);
         nlen += strlen(log->function);
         nlen += 10;    /* length of a int to str */

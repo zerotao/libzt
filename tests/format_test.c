@@ -4,10 +4,10 @@
 #include <zt_cstr.h>
 #include <zt_unit.h>
 
-static int
+static size_t
 cvt_S(int code UNUSED, va_list app,
       int put(int c, void *cl), void *cl,
-      unsigned char flags[], int width, int precision)
+      unsigned char flags[], ssize_t width, ssize_t precision)
 {
     char * str = va_arg(app, char *);
 

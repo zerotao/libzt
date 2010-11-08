@@ -81,7 +81,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
               void *cdata)
 {
     zt_table    * table;
-    int           nbuckets = 0;
+    size_t        nbuckets = 0;
     char          tname[1024];
     zt_mem_pool * table_mem_pool;
 
@@ -199,8 +199,8 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
 void *
 zt_table_get(zt_table *h, const void *key)
 {
-    struct table_node *node;
-    int                nkey;
+    struct table_node   * node;
+    size_t                nkey;
 
     nkey = h->func(key, h->cdata);
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
@@ -217,9 +217,9 @@ zt_table_get(zt_table *h, const void *key)
 void *
 zt_table_del(zt_table *h, const void *key)
 {
-    struct table_node * node;
-    struct table_node * prev;
-    int                 nkey = h->func(key, h->cdata);
+    struct table_node   * node;
+    struct table_node   * prev;
+    size_t                nkey = h->func(key, h->cdata);
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
 

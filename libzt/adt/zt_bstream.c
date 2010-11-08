@@ -47,7 +47,7 @@ zt_bstream_is_empty(zt_bstream_t bs)
 }
 
 
-int
+size_t
 zt_bstream_truncate(zt_bstream_t bs)
 {
     zt_assert(bs);
@@ -73,10 +73,10 @@ zt_bstream_set_array(zt_bstream_t bs, zt_array_t array, size_t offt)
     bs->offt = offt;
 }
 
-int
+size_t
 zt_bstream_rewind(zt_bstream_t bs)
 {
-    int oofft;
+    size_t oofft;
 
     zt_assert(bs);
 

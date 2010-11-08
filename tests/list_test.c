@@ -49,7 +49,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         zt_elist_add(&list1, &al->list);
 
         al = XCALLOC(list_elt, 1);
-        al->value = VALUES_MAX - values[i];
+        al->value = (int)(VALUES_MAX - values[i]);
 
         zt_elist_add(&list2, &al->list);
     }

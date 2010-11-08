@@ -180,9 +180,9 @@ zt_log_lvprintf(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 void
 zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, char *fmt, ...)
 {
-    va_list ap;
-    int     llen;
-    char  * nfmt;
+    va_list   ap;
+    size_t    llen;
+    char    * nfmt;
 
     if (!log) {
         log = zt_log_logger(NULL);

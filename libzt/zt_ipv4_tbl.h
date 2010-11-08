@@ -32,7 +32,7 @@ struct zt_ipv4_tbl {
  * @param size the size of the hash
  * @return a zt_ipv4_tbl *
  */
-zt_ipv4_tbl    *zt_ipv4_tbl_init(size_t size);
+zt_ipv4_tbl    *zt_ipv4_tbl_init(uint32_t size);
 
 /**
  * Frees up all memory for a zt_ipv4_tbl hash

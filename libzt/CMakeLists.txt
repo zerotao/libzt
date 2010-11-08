@@ -47,23 +47,24 @@ add_library(zt SHARED ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${lo
 set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
 target_link_libraries(zt replace)
 
-add_library(zt-static STATIC ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
-set_target_properties(zt-static PROPERTIES VERSION 2.0.1 SOVERSION 1 OUTPUT_NAME "zt")
-target_link_libraries(zt replace)
+# add_library(zt-static STATIC ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
+# set_target_properties(zt-static PROPERTIES VERSION 2.0.1 SOVERSION 1 OUTPUT_NAME "zt")
+# target_link_libraries(zt replace)
 
 add_library(zt_gc SHARED ${zt_gc_SRCS})
 set_target_properties(zt_gc PROPERTIES VERSION 1.0.0 SOVERSION 1)
 target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
 
-add_library(zt_gc-static STATIC ${zt_gc_SRCS})
-set_target_properties(zt_gc-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
+# add_library(zt_gc-static STATIC ${zt_gc_SRCS})
+# set_target_properties(zt_gc-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
 
 add_library(zt_unit SHARED ${zt_unit_SRCS})
 set_target_properties(zt_unit PROPERTIES VERSION 1.0.0 SOVERSION 1)
 target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in shared libs
 
-add_library(zt_unit-static STATIC ${zt_unit_SRCS})
-set_target_properties(zt_unit-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
+# add_library(zt_unit-static STATIC ${zt_unit_SRCS})
+# set_target_properties(zt_unit-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
+
 #################### installation ####################
 install(TARGETS zt zt_gc zt_unit ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 install(FILES ${zt_LIB_HDRS} ${zt_gc_HDRS} ${zt_unit_HDRS} DESTINATION include/libzt)

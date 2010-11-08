@@ -423,7 +423,7 @@ zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
 
 void *
 zt_threadpool_get_oput(zt_threadpool *tpool) {
-    zt_threadpool_entry *entry;
+    zt_threadpool_entry *entry = NULL;
     void                *data;
 
     zt_threads_lock(0, tpool->oput_mutex);

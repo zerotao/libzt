@@ -67,8 +67,8 @@ zt_unit_register_suite(struct zt_unit     * unit,
                        zt_unit_teardown_fn teardown_fn,
                        void     * data )
 {
-    int                    len;
-    struct zt_unit_suite * suite = XCALLOC(struct zt_unit_suite, 1);
+    size_t                    len;
+    struct zt_unit_suite    * suite = XCALLOC(struct zt_unit_suite, 1);
 
     zt_assert(name != NULL);
     len = strlen(name);
@@ -115,7 +115,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
                       zt_unit_test_fn test_fn)
 {
     struct zt_unit_test * test = XCALLOC(struct zt_unit_test, 1);
-    int                   len;
+    size_t                len;
 
     zt_assert(suite);
     zt_assert(name);
@@ -222,7 +222,7 @@ test_failed(struct zt_unit_test    * test,
             char    * efunc,
             int eline)
 {
-    int len;
+    size_t    len;
 
 #   define MAX_STR_INT    43
     zt_assert(test);

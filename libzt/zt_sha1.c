@@ -13,8 +13,11 @@
 #endif /* HAVE_STRING_H */
 
 /* SHA-1 origional by Steve Reid <steve@edmweb.com> */
+#include <limits.h>
+
 #include "zt_sha1.h"
 #include "zt_cstr.h"
+#include "zt_assert.h"
 
 typedef union CHAR64LONG16 CHAR64LONG16;
 union CHAR64LONG16 {
@@ -112,23 +115,28 @@ zt_sha1_init(zt_sha1_ctx *ctx)
 void
 zt_sha1_update(zt_sha1_ctx *ctx, uint8_t *data, size_t len)
 {
-    uint32_t i;
-    uint32_t j;
+    uint32_t      i;
+    uint32_t      j;
+    uint32_t      llen;
+
+    /* FIXME: 64bit (or better unbounded) sha1_update */
+    zt_assert(len <= UINT_MAX);
+    llen = (uint32_t)len;
 
     j = (ctx->count[0] >> 3) & 63;
-    if ((ctx->count[0] += len << 3) < (len << 3)) {
+    if ((ctx->count[0] += llen << 3) < (llen << 3)) {
         ctx->count[1]++;
     }
-    ctx->count[1] += (len >> 29);
-    if ((j + len) > 63) {
+    ctx->count[1] += (llen >> 29);
+    if ((j + llen) > 63) {
         memcpy(&ctx->buffer[j], data, (i = 64 - j));
         _sha1_transform(ctx->state, ctx->buffer);
-        for (; i + 63 < len; i += 64) {
+        for (; i + 63 < llen; i += 64) {
             _sha1_transform(ctx->state, &data[i]);
         }
         j = 0;
     } else { i = 0; }
-    memcpy(&ctx->buffer[j], &data[i], len - i);
+    memcpy(&ctx->buffer[j], &data[i], llen - i);
 }
 
 void

@@ -33,6 +33,8 @@
 #ifndef _ZT_MEM_H_
 #define _ZT_MEM_H_
 
+#include <unistd.h>
+#include <stdlib.h>
 #include <zt_exceptions.h>
 
 #define POOL_NEVER_FREE    1
@@ -48,16 +50,16 @@ typedef struct zt_mem_pool_group zt_mem_pool_group;
  * Description: callback function that can be set on a pool.  It will be called whenever a page is about to be released.
  *
  */
-typedef int (*zt_page_release_test)(int total_pages,
-                                    int free_pages,
-                                    int cache_size,
+typedef int (*zt_page_release_test)(size_t total_pages,
+                                    size_t free_pages,
+                                    size_t cache_size,
                                     int flags,
                                     void *cb_data);
 
 typedef struct zt_mem_pool_desc zt_mem_pool_desc;
 struct zt_mem_pool_desc {
     char               * name;
-    long                 elts;
+    size_t               elts;
     size_t               size;
     zt_page_release_test release_test;
     void               * cb_data;
@@ -66,17 +68,17 @@ struct zt_mem_pool_desc {
 
 typedef struct zt_mem_pool_stats zt_mem_pool_stats;
 struct zt_mem_pool_stats {
-    long   requested_elts;
-    long   actual_elts;
-    long   cached_pages;
-    long   free_pages;
-    long   pages;
-    long   elts_per_page;
-    size_t elt_size;
-    size_t page_size;
-    long   page_allocs;
-    long   page_frees;
-    int    flags;
+    size_t    requested_elts;
+    size_t    actual_elts;
+    size_t    cached_pages;
+    size_t    free_pages;
+    size_t    pages;
+    size_t    elts_per_page;
+    size_t    elt_size;
+    size_t    page_size;
+    size_t    page_allocs;
+    size_t    page_frees;
+    ssize_t   flags;
 };
 
 zt_mem_heap *zt_mem_heap_init(char *name, size_t size);
@@ -96,7 +98,7 @@ void * zt_mem_pool_alloc(zt_mem_pool *pool);
 void zt_mem_pool_release(void **data);
 int zt_mem_pool_release_free_pages(zt_mem_pool *pool);
 int zt_mem_pool_destroy(zt_mem_pool **pool);
-zt_mem_pool_group * zt_mem_pool_group_init(zt_mem_pool_desc * group, int len);
+zt_mem_pool_group * zt_mem_pool_group_init(zt_mem_pool_desc * group, size_t len);
 void *zt_mem_pool_group_alloc(zt_mem_pool_group * group, size_t size);
 #define zt_mem_pool_group_release zt_mem_pool_release
 /* void zt_mem_pool_group_release(void **data); */

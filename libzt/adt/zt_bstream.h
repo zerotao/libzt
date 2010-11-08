@@ -17,10 +17,10 @@ struct zt_bstream {
 
 /* predicates */
 extern int zt_bstream_is_empty(zt_bstream_t bs);
-extern int zt_bstream_truncate(zt_bstream_t bs);
+extern size_t zt_bstream_truncate(zt_bstream_t bs);
 extern void zt_bstream_set_data(zt_bstream_t bs, char *data, int len, char copy);
 extern void zt_bstream_set_array(zt_bstream_t bs, zt_array_t array, size_t offt);
-extern int zt_bstream_rewind(zt_bstream_t bs);
+extern size_t zt_bstream_rewind(zt_bstream_t bs);
 
 extern zt_bstream_t  zt_bstream_new(void);
 extern zt_bstream_t  zt_bstream_clone(zt_bstream_t bs);

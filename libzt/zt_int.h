@@ -133,7 +133,7 @@ ZT_INT_SIGNED_SUB(signed long, long, LONG)
         if (((_tmp) >> (sizeof(ltype) * 8)) > 0) {           \
             THROW(zt_exception.math.overflow);               \
         }                                                    \
-        return _tmp;                                         \
+        return (ltype)_tmp;                                  \
     }
 
 ZT_INT_UNSIGNED_MUL(unsigned char, uchar, UCHAR, unsigned int)
@@ -306,7 +306,7 @@ ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
         if (_tmp < CONC(sutype, _MIN)) {                      \
             THROW(zt_exception.math.overflow);                \
         }                                                     \
-        return _tmp;                                          \
+        return (ltype)_tmp;                                   \
     }
 
 ZT_INT_SIGNED_DIV(signed char, char, CHAR, signed int)

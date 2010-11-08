@@ -21,10 +21,10 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     uint64_t   test_uint64 = 0xDEADBEEF,
                uint64_test = 0;
 
-    float  test_float = 1.0,
-           float_test = 0;
+    float  test_float = 1.0f,
+           float_test = 0.0f;
     double test_double = 2.0,
-           double_test = 0;
+           double_test = 0.0;
 
 
 

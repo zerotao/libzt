@@ -78,7 +78,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
                 done = 1;
             }
         } while (!done);
-        node->i = n;
+        node->i = (int)n;
         zt_rbt_insert(&br_root, &(node->node), int_compare);
     }
 

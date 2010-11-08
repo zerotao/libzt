@@ -153,7 +153,8 @@ get_type(char* value, void* nvalue)
         return zt_cfg_bool;
     }
     if (value[0] == '\'' || value[0] == '\"') {
-        int len = strlen(&value[1]);
+        size_t    len = strlen(&value[1]);
+
         if (value[len] != '\'' || value[len] != '\"') {
             /* error  */
         }

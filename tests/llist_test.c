@@ -6,7 +6,8 @@ static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char    * m = "c";
-    zt_pair * x, * y;
+    zt_pair * x;
+    zt_pair * y;
 
     x = zt_llist_cons("a", NULL);
     x = zt_llist_cons("b", x);

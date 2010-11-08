@@ -56,7 +56,7 @@ zt_progpath(char *prog) {
             /* the passed in path did not include a path */
             char        * path;
             size_t        offt = 0;
-            int           base = 0;
+            ssize_t       base = 0;
             size_t        len;
             char        * tpath;
             struct stat   sbuf;
