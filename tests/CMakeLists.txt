@@ -1,7 +1,7 @@
 FILE(GLOB unit_SRCS *.c)
 
 add_executable(unit_test ${unit_SRCS})
-target_link_libraries(unit_test zt_unit zt)
+target_link_libraries(unit_test zt_unit zt_gc zt)
 
 # prep the tests
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg_test.ini
