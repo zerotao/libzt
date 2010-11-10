@@ -34,11 +34,4 @@ long sysconf( int name );
   typedef long ssize_t;
 #endif
 
-#ifdef HAVE_LONG_LONG
-typedef long long ssize_t;
-#else
-typedef long int ssize_t;
-#endif
-
-
 #endif /* _ZT_WIN32_H_ */
