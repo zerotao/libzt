@@ -185,7 +185,7 @@ cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv)
 
     /* Check for refrences */
     if (value->type == zt_cfg_string) {
-        variable = index(value->v.s, '.');
+        variable = strchr(value->v.s, '.');
         if (((variable) && (*variable == '.'))) {
             struct zt_cfg_value_ty* v = NULL;
             struct zt_cfg_block_ty* b = NULL;

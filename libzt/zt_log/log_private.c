@@ -89,7 +89,7 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         char    * t = NULL;
 
         gethostname(sbuf, 254);
-        t = index(sbuf, '.');
+        t = strchr(sbuf, '.');
         if (t) {
             *t = '\0';
         }

@@ -552,7 +552,7 @@ zt_cstr_strip(char *str) {
         memmove(str, &str[len], (strlen(str) - len) + 1); /* +1 captures \0 */
 
         /* strip whitespace from the end of the string */
-        if (index(str, '\n') != NULL) {
+        if (strchr(str, '\n') != NULL) {
             nl = 1;
         }
         len = zt_cstr_rspn(str, WHITESPACE "\n");

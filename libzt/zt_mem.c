@@ -21,7 +21,6 @@ static zt_elist(sets);
 static int mem_atexit = 0;
 
 /* static long x_sys_page_size = 0; */
-
 typedef struct zt_mem_elt zt_mem_elt;
 struct zt_mem_elt {
     zt_elist_t           free_elt_list;
