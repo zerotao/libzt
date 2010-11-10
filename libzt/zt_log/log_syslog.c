@@ -12,9 +12,8 @@
  * Description:
  */
 
-#include <syslog.h>
-
 #include "log_private.h"
+#include "log_syslog.h"
 
 static void destructor(zt_log_ty *log)
 {
