@@ -14,10 +14,10 @@
 
 
 #define DEFAULT_BUCKETS 512
-static int
-nbits(unsigned long val)
+static uint8_t
+nbits(size_t val)
 {
-    int nbits;
+    uint8_t nbits;
 
     for (nbits = 1; (val = val >> 1); nbits++) {
         ;
@@ -48,9 +48,9 @@ struct zt_table {
     zt_table_compare_cb   cmp;
     zt_table_hash_func_cb func;
     void                * cdata;
-    int                   nbits;
+    uint8_t               nbits;
     int                   flags;
-    unsigned long         num_buckets;
+    size_t                num_buckets;
     unsigned int          filled;
     zt_mem_pool         * node_pool;
     zt_mem_heap         * table_heap;
@@ -140,7 +140,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
 void
 zt_table_destroy(zt_table *h)
 {
-    unsigned long i;
+    size_t    i;
 
     for (i = 0; i < h->num_buckets; i++) {
         struct table_node *node = h->buckets[i];
@@ -163,9 +163,9 @@ zt_table_destroy(zt_table *h)
 int
 zt_table_set(zt_table *h, const void *key, const void *datum)
 {
-    unsigned long       nkey = h->func(key, h->cdata);
-    struct table_node * node;
-    struct table_node * nn;
+    size_t                nkey = h->func(key, h->cdata);
+    struct table_node   * node;
+    struct table_node   * nn;
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
     ZT_LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
@@ -242,8 +242,8 @@ zt_table_del(zt_table *h, const void *key)
 int
 zt_table_copy(zt_table *t1, zt_table *t2)
 {
-    unsigned long i;
-    int any = 0;
+    size_t    i;
+    int       any = 0;
 
     for (i = 0; i < t1->num_buckets; i++) {
         struct table_node *node = t1->buckets[i];
@@ -261,8 +261,8 @@ zt_table_copy(zt_table *t1, zt_table *t2)
 int
 zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 {
-    unsigned long i;
-    int res;
+    size_t    i;
+    int       res;
 
     for (i = 0; i < h->num_buckets; i++) {
         struct table_node *tn;
