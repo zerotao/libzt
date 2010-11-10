@@ -10,7 +10,7 @@
 #define VC_EXTRALEAN
 #include <Windows.h>
 
-#include "win32_stubs.h"
+#include "zt_win32.h"
 
 void srandom(unsigned int _Seed)
 {
