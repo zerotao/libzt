@@ -2,38 +2,14 @@
 set(zt_LIB_SRCS zt_assert.c zt_cfg.c  zt_except.c zt_format.c
                 zt_log.c zt_malloc.c zt_mem.c zt_progname.c zt_cstr.c
                 zt_time.c zt_sha1.c zt_uuid.c zt_exceptions.c zt_ipv4_tbl.c
-                zt_ez_mempool.c zt_atexit.c)
+                zt_ez_mempool.c zt_atexit.c zt_daemon.c zt_threads.c
+                zt_threads/zt_threads_pthreads.c zt_opts.c)
 
 set(zt_LIB_HDRS zt.h zt_internal.h zt_replace.h zt_assert.h zt_cfg.h
                 zt_except.h zt_format.h zt_log.h zt_mem.h zt_progname.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_exceptions.h zt_ez_mempool.h zt_ipv4_tbl.h
-                zt_atexit.h)
-
-
-if(NOT WIN32)
-    LIST(APPEND zt_LIB_SRCS zt_daemon.c)
-    LIST(APPEND zt_LIB_HDRS zt_daemon.h)
-
-    if(HAVE_SYSLOG)
-        LIST(APPEND zt_LIB_SRCS zt_log/log_syslog.c)
-        LIST(APPEND zt_LIB_HDRS zt_log/log_syslog.h)
-    endif(HAVE_SYSLOG)
-
-    if(HAVE_PTHREAD)
-        LIST(APPEND zt_LIB_SRCS zt_threads.c)
-        LIST(APPEND zt_LIB_HDRS zt_threads.h)
-        LIST(APPEND zt_LIB_HDRS zt_threads/zt_threads_pthreads.c)
-    endif(HAVE_PTHREAD)
-
-    LIST(APPEND zt_LIB_SRCS zt_opts.c)
-    LIST(APPEND zt_LIB_HDRS zt_opts.h)
-
-    LIST(APPEND zt_LIB_HDRS zt_unix.h)
-else(NOT WIN32)
-    LIST(APPEND zt_LIB_HDRS zt_win32.h)
-endif(NOT WIN32)
-
+                zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h)
 
 file(GLOB adt_SRCS adt/*.c)
 file(GLOB adt_HDRS adt/*.h)
@@ -43,6 +19,25 @@ file(GLOB log_HDRS zt_log/*.h)
 
 file(GLOB cfg_SRCS zt_cfg/*.c)
 file(GLOB cfg_HDRS zt_cfg/*.h)
+
+if(WIN32)
+    LIST(APPEND zt_LIB_HDRS zt_win32.h)
+    LIST(REMOVE zt_LIB_SRCS zt_daemon.c zt_log/log_syslog.c zt_threads.c
+                zt_threads/zt_threads_pthreads.c zt_opts.c)
+    LIST(REMOVE zt_LIB_HDRS zt_daemon.h zt_log/log_syslog.h zt_threads.h
+                zt_opts.h)
+else(WIN32)
+    LIST(APPEND zt_LIB_HDRS zt_unix.h)
+    if(NOT HAVE_SYSLOG)
+        LIST(REMOVE zt_lib_SRCS zt_log/log_syslog.c)
+        LIST(REMOVE zt_lib_HDRS zt_log/log_syslog.h)
+    endif(NOT HAVE_SYSLOG)
+
+    if(NOT HAVE_PTHREAD)
+        LIST(REMOVE zt_lib_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
+        LIST(REMOVE zt_lib_HDRS zt_threads.h)
+    endif(NOT HAVE_PTHREAD)
+endif(WIN32)
 
 # UNIT setup
 set(zt_unit_SRCS zt_unit.c zt_unit.h)

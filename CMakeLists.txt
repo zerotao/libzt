@@ -49,7 +49,7 @@ include(CheckFunctionExists)
 
 include(CheckDefFunctionExists)
 
-check_def_function_exists( syslog HAVE_SYSLOG )
+check_def_function_exists( openlog HAVE_SYSLOG )
 
 check_def_function_exists( basename HAVE_BASENAME )
 check_def_function_exists( pthread_create HAVE_PTHREAD )
