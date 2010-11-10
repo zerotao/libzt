@@ -4,6 +4,10 @@
 /* network functions */
 #include <WinSock2.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <direct.h>
+#include <tchar.h>
+#include <io.h>
 
 /* 4996 = *POSIX* function */
 #pragma warning( disable : 4996 )
