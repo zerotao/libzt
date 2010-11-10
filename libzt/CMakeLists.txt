@@ -11,14 +11,19 @@ set(zt_LIB_HDRS zt.h zt_internal.h zt_replace.h zt_assert.h zt_cfg.h
                 zt_uuid.h zt_exceptions.h zt_ez_mempool.h zt_ipv4_tbl.h
                 zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h)
 
-file(GLOB adt_SRCS adt/*.c)
-file(GLOB adt_HDRS adt/*.h)
+set(adt_SRCS adt/zt_array.c adt/zt_bstream.c adt/zt_hash.c adt/zt_llist.c
+             adt/zt_ptr_array.c adt/zt_set.c adt/zt_table.c adt/zt_tree.c)
+set(adt_HDRS adt/zt_array.h adt/zt_bstream.h adt/zt_hash.h adt/zt_list.h
+             adt/zt_llist.h adt/zt_ptr_array.h adt/zt_queue.h adt/zt_set.h adt/zt_stack.h
+             adt/zt_table.h adt/zt_tree.h)
 
-file(GLOB log_SRCS zt_log/*.c)
-file(GLOB log_HDRS zt_log/*.h)
+set(log_SRCS zt_log/log_file.c zt_log/log_private.c zt_log/log_stderr.c
+             zt_log/log_syslog.c)
+set(log_HDRS zt_log/log_file.h zt_log/log_interface.h zt_log/log_private.h
+             zt_log/log_stderr.h zt_log/log_syslog.h)
 
-file(GLOB cfg_SRCS zt_cfg/*.c)
-file(GLOB cfg_HDRS zt_cfg/*.h)
+set(cfg_SRCS zt_cfg/cfg_ini.c zt_cfg/cfg_private.c)
+set(cfg_HDRS zt_cfg/cfg_ini.h zt_cfg/cfg_interface.h zt_cfg/cfg_private.h)
 
 if(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_win32.h)
@@ -30,6 +35,7 @@ if(WIN32)
 
 else(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_unix.h)
+
     if(NOT HAVE_SYSLOG)
         LIST(REMOVE_ITEM log_SRCS zt_log/log_syslog.c)
         LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
@@ -39,6 +45,7 @@ else(WIN32)
         LIST(REMOVE_ITEM zt_lib_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
         LIST(REMOVE_ITEM zt_lib_HDRS zt_threads.h)
     endif(NOT HAVE_PTHREAD)
+
 endif(WIN32)
 
 # UNIT setup
