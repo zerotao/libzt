@@ -23,8 +23,8 @@
 
 #define ZT_HASH64_PRIME ((uint64_t)0x100000001b3ULL)
 
-uint64_t zt_hash64_buff(void *buf, size_t len, u_int64_t init);
-uint64_t zt_hash64_cstr(const u_int8_t *buf, u_int64_t init);
+uint64_t zt_hash64_buff(void *buf, size_t len, uint64_t init);
+uint64_t zt_hash64_cstr(const uint8_t *buf, uint64_t init);
 
 #endif /* __STDC_VERSION__ */
 
@@ -33,8 +33,8 @@ uint64_t zt_hash64_cstr(const u_int8_t *buf, u_int64_t init);
 #define ZT_HASH32_PRIME ((uint32_t)0x01000193U)
 
 
-uint32_t zt_hash32_buff(void *buf, size_t len, u_int32_t init);
-uint32_t zt_hash32_cstr(const u_int8_t *buf, u_int32_t init);
+uint32_t zt_hash32_buff(void *buf, size_t len, uint32_t init);
+uint32_t zt_hash32_cstr(const uint8_t *buf, uint32_t init);
 
 #define ZT_HASH_MASK(x) (((uint32_t)1 << (x)) - 1)
 

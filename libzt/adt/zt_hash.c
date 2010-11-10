@@ -41,7 +41,7 @@ zt_hash32_buff(void *buf, size_t len, uint32_t hval)
 }
 
 uint32_t
-zt_hash32_cstr(const uint8_t *str, u_int32_t hval)
+zt_hash32_cstr(const uint8_t *str, uint32_t hval)
 {
     unsigned char *s = (unsigned char *)str;    /* unsigned string */
 
