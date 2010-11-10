@@ -27,6 +27,7 @@ set(cfg_HDRS zt_cfg/cfg_ini.h zt_cfg/cfg_interface.h zt_cfg/cfg_private.h)
 
 if(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_win32.h)
+    LIST(APPEND zt_LIB_SRCS win32_stubs.c)
     LIST(REMOVE_ITEM zt_LIB_SRCS zt_daemon.c zt_threads.c zt_threads/zt_threads_pthreads.c zt_opts.c)
     LIST(REMOVE_ITEM zt_LIB_HDRS zt_daemon.h zt_threads.h zt_opts.h)
 
