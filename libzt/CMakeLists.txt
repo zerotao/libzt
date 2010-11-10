@@ -22,20 +22,22 @@ file(GLOB cfg_HDRS zt_cfg/*.h)
 
 if(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_win32.h)
-    LIST(REMOVE zt_LIB_SRCS zt_daemon.c zt_log/log_syslog.c zt_threads.c
-                zt_threads/zt_threads_pthreads.c zt_opts.c)
-    LIST(REMOVE zt_LIB_HDRS zt_daemon.h zt_log/log_syslog.h zt_threads.h
-                zt_opts.h)
+    LIST(REMOVE_ITEM zt_LIB_SRCS zt_daemon.c zt_threads.c zt_threads/zt_threads_pthreads.c zt_opts.c)
+    LIST(REMOVE_ITEM zt_LIB_HDRS zt_daemon.h zt_threads.h zt_opts.h)
+
+    LIST(REMOVE_ITEM log_SRCS zt_log/log_syslog.c)
+    LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
+
 else(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_unix.h)
     if(NOT HAVE_SYSLOG)
-        LIST(REMOVE zt_lib_SRCS zt_log/log_syslog.c)
-        LIST(REMOVE zt_lib_HDRS zt_log/log_syslog.h)
+        LIST(REMOVE_ITEM log_SRCS zt_log/log_syslog.c)
+        LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
     endif(NOT HAVE_SYSLOG)
 
     if(NOT HAVE_PTHREAD)
-        LIST(REMOVE zt_lib_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
-        LIST(REMOVE zt_lib_HDRS zt_threads.h)
+        LIST(REMOVE_ITEM zt_lib_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
+        LIST(REMOVE_ITEM zt_lib_HDRS zt_threads.h)
     endif(NOT HAVE_PTHREAD)
 endif(WIN32)
 
