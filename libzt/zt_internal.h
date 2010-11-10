@@ -13,14 +13,30 @@
 #ifndef _ZT_INTERNAL_H_
 #define _ZT_INTERNAL_H_
 
+/* only cross platform headers C99  or replacements */
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <limits.h>
+
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
 #ifdef WIN32
 # include <zt_win32.h>
 #else
 # include <zt_unix.h>
 #endif
-
-#include <stdio.h>
-#include <stdlib.h>
 
 #if WITH_DMALLOC
 # include <dmalloc.h>

@@ -13,8 +13,6 @@
 #ifndef _ZT_TABLE_H_
 #define _ZT_TABLE_H_
 
-#include <sys/types.h>
-
 #include <zt_internal.h>
 #include <zt_mem.h>
 

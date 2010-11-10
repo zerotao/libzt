@@ -6,12 +6,6 @@
  *
  * $Id$
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <string.h>
-
 #include "../zt_internal.h"
 #include "../zt_mem.h"
 #include "../zt_log.h"

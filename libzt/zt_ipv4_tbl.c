@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <arpa/inet.h>
 #include "zt_internal.h"
 #include "zt_mem.h"
 #include "zt_ipv4_tbl.h"

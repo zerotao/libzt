@@ -195,7 +195,7 @@ zt_mem_pool_init(char *name, ssize_t elts,
         if (elts < (ssize_t)epp) {
             pcache = 1;
         } else {
-            long tmp = elts % epp;
+            ssize_t tmp = elts % epp;
             pcache = elts / epp;
             if (tmp > 0) {
                 pcache++;
