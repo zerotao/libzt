@@ -89,7 +89,7 @@ char *zt_mem_heap_get_name(zt_mem_heap *heap);
 
 /************ Pools ************/
 zt_mem_pool * zt_mem_pool_init(char * name,
-                               long elts,
+                               ssize_t elts,
                                size_t size,
                                zt_page_release_test release_test,
                                void * cb_data,

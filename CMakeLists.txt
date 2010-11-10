@@ -8,7 +8,7 @@ set(PROJECT_VERSION 1.1.0)
 if(CMAKE_COMPILER_IS_GNUCC)
   # set(CMAKE_BUILD_TYPE distribution)
   # set(CMAKE_C_FLAGS_DISTRIBUTION "-Wall -Wextra -O2")
-  set(CMAKE_C_FLAGS "-O2 -Wall -Wextra -Wshorten-64-to-32") # -Wmissing-prototypes
+  set(CMAKE_C_FLAGS "-Wall -Wextra -Wshorten-64-to-32") # -Wmissing-prototypes
   # set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
 endif(CMAKE_COMPILER_IS_GNUCC)
 

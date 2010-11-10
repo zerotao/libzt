@@ -37,7 +37,7 @@ void *
 test_malloc(void *data)
 {
     struct test_data_t * td = data;
-    int                  size = td->size;
+    size_t               size = td->size;
     int                  i;
 
     for (i = 0; i < td->n; i++) {

@@ -136,7 +136,7 @@ zt_mem_heap_get_name(zt_mem_heap *heap)
 }
 
 static int
-x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *npages)
+x_calculate_page_data(ssize_t elts, size_t size, size_t *page_size, size_t *epp, size_t *npages)
 {
     static size_t sys_page_size = 0;
     size_t        usable_page_size = 0;
@@ -158,7 +158,7 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
     if (size < (usable_page_size / 2)) {
         *epp = usable_page_size / (sizeof(zt_mem_elt) + size);
         *page_size = sys_page_size;
-        if (elts > *epp) {
+        if (elts > (ssize_t)*epp) {
             *npages = elts / *epp;
         } else {
             *npages = 1;
@@ -173,16 +173,16 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
 }
 
 zt_mem_pool*
-zt_mem_pool_init(char *name, long elts,
+zt_mem_pool_init(char *name, ssize_t elts,
                  size_t size, zt_page_release_test release_test,
                  void *cb_data, int flags)
 {
     zt_mem_pool * pool;
     zt_mem_page * page;
-    long          epp;
-    long          npage_size;
-    long          npages;
-    long          pcache;
+    size_t        epp;
+    size_t        npage_size;
+    size_t        npages;
+    size_t        pcache;
 
     x_calculate_page_data(elts ? elts : 1, size, &npage_size, &epp, &npages);
 
@@ -192,7 +192,7 @@ zt_mem_pool_init(char *name, long elts,
     }
 
     if (elts > 0) {
-        if (elts < epp) {
+        if (elts < (ssize_t)epp) {
             pcache = 1;
         } else {
             long tmp = elts % epp;
