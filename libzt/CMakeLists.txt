@@ -42,8 +42,8 @@ else(WIN32)
     endif(NOT HAVE_SYSLOG)
 
     if(NOT HAVE_PTHREAD)
-        LIST(REMOVE_ITEM zt_lib_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
-        LIST(REMOVE_ITEM zt_lib_HDRS zt_threads.h)
+        LIST(REMOVE_ITEM zt_LIB_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
+        LIST(REMOVE_ITEM zt_LIB_HDRS zt_threads.h)
     endif(NOT HAVE_PTHREAD)
 
 endif(WIN32)
@@ -61,6 +61,10 @@ target_link_libraries(zt replace)
 if(WIN32)
     target_link_libraries(zt ws2_32)
 endif(WIN32)
+
+if(HAVE_PTHREAD)
+    target_link_libraries(zt ${CMAKE_THREAD_LIBS_INIT})
+endif(HAVE_PTHREAD)
 
 # add_library(zt-static STATIC ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
 # set_target_properties(zt-static PROPERTIES VERSION 2.0.1 SOVERSION 1 OUTPUT_NAME "zt")

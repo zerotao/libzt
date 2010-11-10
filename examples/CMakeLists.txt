@@ -8,5 +8,7 @@ target_link_libraries(mem_timing zt)
 add_executable(types types.c test.h)
 target_link_libraries(types zt)
 
+if(HAVE_PTHREAD)
 add_executable(threads threads.c test.h)
 target_link_libraries(threads zt)
+endif(HAVE_PTHREAD)

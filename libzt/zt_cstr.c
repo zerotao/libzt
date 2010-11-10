@@ -805,8 +805,7 @@ zt_cstr_split(const char *str, const char *delim) {
 
     str_copy    = strdup(str);
 
-    for (tok = strtok_r(str_copy, delim, &endptr); tok != NULL;
-         tok = strtok_r(NULL, delim, &endptr)) {
+    for (tok = strtok_r(str_copy, delim, &endptr); tok != NULL; tok = strtok_r(NULL, delim, &endptr)) {
         if (zt_ptr_array_add(split_array, (void *)strdup(tok)) < 0) {
             zt_ptr_array_free(split_array, 1);
             free(str_copy);
