@@ -195,7 +195,7 @@ zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, char *fmt, ...)
     llen = strlen(fmt);
 
 
-    nfmt = (char *)alloca(llen + 256);
+    nfmt = (char *)malloc(llen + 256);
     memcpy(nfmt, fmt, llen);
     nfmt[llen] = ':';
     nfmt[llen + 1] = ' ';
@@ -206,7 +206,7 @@ zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, char *fmt, ...)
     zt_log_lvprintf(log, level, nfmt, ap);
     va_end(ap);
 
-    /* free(nfmt); */
+    free(nfmt);
 }
 
 void

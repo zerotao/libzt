@@ -20,8 +20,8 @@
 #include <sys/types.h>
 #include <limits.h>
 
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
 #endif
 
 #ifdef HAVE_STRING_H
