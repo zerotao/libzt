@@ -9,7 +9,7 @@
 #include <tchar.h>
 #include <io.h>
 
-/* 4996 = *POSIX* function */
+/* 4996 = The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _*. See online help for details. */
 #pragma warning( disable : 4996 )
 
 /* random functions */
@@ -17,10 +17,13 @@ void srandom(unsigned int _Seed);
 long int random(void);
 
 /* string functions */
-int snprintf(char * s, size_t n, const char * format, ...);
-int strcasecmp(const char *s1, const char *s2);
-char *index(const char *s, int c);
+//int snprintf(char * s, size_t n, const char * format, ...);
+#define snprintf _snprintf
+//int strcasecmp(const char *s1, const char *s2);
+#define strcasecmp _stricmp
+
 char *strtok_r(char *str, const char *delim, char **saveptr);
+//#define strtok_r _strtok_r
 
 /* memory functions */
 void *alloca(size_t size);
