@@ -3,6 +3,10 @@
 
 /* network functions */
 #include <WinSock2.h>
+#include <errno.h>
+
+/* 4996 = *POSIX* function */
+#pragma warning( disable : 4996 )
 
 /* random functions */
 void srandom(unsigned int _Seed);
