@@ -10,13 +10,13 @@
  *
  */
 
-#ifndef _ZT_H_
-#define _ZT_H_
+#ifndef _ZT_INTERNAL_H_
+#define _ZT_INTERNAL_H_
 
 #ifdef WIN32
-# include <windows.h>
+# include <zt_win32.h>
 #else
-# include <unistd.h>
+# include <zt_unix.h>
 #endif
 
 #include <stdio.h>
@@ -248,4 +248,4 @@ END_C_DECLS
 #endif
 
 #include <zt_replace.h>
-#endif /*_ZT_H_*/
+#endif /*_ZT_INTERNAL_H_*/

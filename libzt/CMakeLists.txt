@@ -29,6 +29,9 @@ if(NOT WIN32)
     LIST(APPEND zt_LIB_SRCS zt_opts.c)
     LIST(APPEND zt_LIB_HDRS zt_opts.h)
 
+    LIST(APPEND zt_LIB_HDRS zt_unix.h)
+else(NOT WIN32)
+    LIST(APPEND zt_LIB_HDRS zt_win32.h)
 endif(NOT WIN32)
 
 
