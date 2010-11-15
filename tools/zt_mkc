@@ -7,7 +7,7 @@ put_header() {
     out=$1
     DN=`dirname $0`
 
-    $DN/hdr -A "$AUTHOR" -E "$EMAIL" -O "$OWNER" $out
+    $DN/zt_hdr -A "$AUTHOR" -E "$EMAIL" -O "$OWNER" $out
 }
 
 put_component_c() {
