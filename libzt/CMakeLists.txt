@@ -5,7 +5,7 @@ set(zt_LIB_SRCS zt_assert.c zt_cfg.c  zt_except.c zt_format.c
                 zt_ez_mempool.c zt_atexit.c zt_daemon.c zt_threads.c
                 zt_threads/zt_threads_pthreads.c zt_opts.c)
 
-set(zt_LIB_HDRS zt.h zt_internal.h zt_replace.h zt_assert.h zt_cfg.h
+set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/libzt/zt_replace.h zt_assert.h zt_cfg.h
                 zt_except.h zt_format.h zt_log.h zt_mem.h zt_progname.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_exceptions.h zt_ez_mempool.h zt_ipv4_tbl.h
@@ -56,7 +56,7 @@ set(zt_unit_SRCS zt_unit.c zt_unit.h)
 set(zt_gc_SRCS zt_gc.c zt_gc.h)
 
 ################ library definitions ################
-add_library(zt SHARED ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
+add_library(zt SHARED ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
 set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
 target_link_libraries(zt replace)
 if(WIN32)
@@ -87,6 +87,7 @@ target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in share
 
 #################### installation ####################
 install(TARGETS zt zt_gc zt_unit ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
+install(FILES zt.h zt_unit.h zt_gc.h DESTINATION include)
 install(FILES ${zt_LIB_HDRS} ${zt_gc_HDRS} ${zt_unit_HDRS} DESTINATION include/libzt)
 install(FILES ${adt_HDRS} DESTINATION include/libzt/adt)
 install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
