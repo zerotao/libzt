@@ -17,16 +17,12 @@ void srandom(unsigned int _Seed);
 long int random(void);
 
 /* string functions */
-//int snprintf(char * s, size_t n, const char * format, ...);
-#define snprintf _snprintf
-//int strcasecmp(const char *s1, const char *s2);
-#define strcasecmp _stricmp
+int snprintf(char * s, size_t n, const char * format, ...);
+//#define snprintf _snprintf
+int strcasecmp(const char *s1, const char *s2);
+//#define strcasecmp _stricmp
 
 char *strtok_r(char *str, const char *delim, char **saveptr);
-//#define strtok_r _strtok_r
-
-/* memory functions */
-void *alloca(size_t size);
 
 /* error function */
 int strerror_r(int errnum, char *buf, size_t buflen);
