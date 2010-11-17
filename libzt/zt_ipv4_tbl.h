@@ -134,6 +134,6 @@ uint32_t zt_ipv4_ip2int(const char *str);
  * @param addr the uint32_t representation of an IP address
  * @return the string representation of the IP address
  */
-const char *zt_ipv4_int2ip(uint32_t addr);
+char *zt_ipv4_int2ip(uint32_t addr);
 
 #endif /* ifndef _ZT_IPV4_TBL_H_ */

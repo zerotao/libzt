@@ -319,14 +319,14 @@ zt_ipv4_ip2int(const char *str)
     return ntohl(inet_addr(str));
 }
 
-const char     *
+char     *
 zt_ipv4_int2ip(uint32_t addr)
 {
-    uint32_t a;
+    struct in_addr  a;
 
-    a = ntohl(addr);
+    a.s_addr = ntohl(addr);
 
-    return inet_ntoa(*(struct in_addr *)&a);
+    return strdup(inet_ntoa(a));
 }
 
 int
