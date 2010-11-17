@@ -100,15 +100,15 @@ static int parse_block(FILE* file, struct cfg_bvv_ty* bvv)
 
 static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
 {
-    char   buff[BUFMAX];
-    int    end;
-    char * var;
-    char * val;
-    char * tok;
-    int    len;
-    int    vallen;
-    int    i;
-    int    c;
+    char      buff[BUFMAX];
+    size_t    end;
+    char    * var;
+    char    * val;
+    char    * tok;
+    size_t    len;
+    size_t    vallen;
+    size_t    i;
+    int       c;
 
     memset(buff, '\0', BUFMAX);
     if (fgets(buff, BUFMAX, file) == NULL) {
@@ -146,7 +146,9 @@ static int parse_line(FILE* file, struct cfg_bvv_ty* bvv)
             break;
         }
     }
+
     vallen = strlen(val);
+    /* strip trailing whitespace */
     for (i = vallen - 1; i > 0; i--) {
         if ((val[i] == ' ') || (val[i] == '\t')) {
             val[i] = '\0';

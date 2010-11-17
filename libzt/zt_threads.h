@@ -6,7 +6,6 @@
 #define ZT_THREADS_LOCK_NONBLOCKING (1 << 0)
 #define ZT_THREADS_LOCK_DUMMY       (1 << 1)
 
-#ifndef _ZT_DISABLE_THREAD_SUPPORT
 #include <sys/queue.h>
 
 typedef struct zt_threadpool zt_threadpool;
@@ -120,10 +119,7 @@ int   zt_threads_kill(void *thread);
 int   zt_threads_join(void *thread, void **data);
 unsigned long int zt_threads_id(void);
 
-#if defined(_ZT_THREADS_HAVE_PTHREADS)
-#define ZT_THREADS_PTHREADS_IMPLEMENTED 1
 int zt_threads_use_pthreads(void);
-#endif
 
 /* threadpool defs */
 extern struct zt_threadpool_callbacks _zt_threadpool_callbacks;
@@ -142,8 +138,6 @@ int zt_threadpool_oput_fd_writer(zt_threadpool *tpool);
 
 void * zt_threadpool_get_oput(zt_threadpool *tpool);
 int zt_threadpool_kill(zt_threadpool *tpool);
-
-#endif /* _ZT_DISABLE_THREAD_SUPPORT */
 
 #endif /* __ZT_THREADS_H__ */
 

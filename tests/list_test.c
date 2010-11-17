@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <libzt/adt/zt_list.h>
-#include <libzt/zt_unit.h>
+#include <adt/zt_list.h>
+#include <zt_unit.h>
 
 static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 #define VALUES_MAX sizeof_array(values) - 1
@@ -26,7 +26,7 @@ struct list_elt {
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     list_elt * al;
     list_elt * al2;
@@ -34,7 +34,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     zt_elist_t * tmp;
     zt_elist_t * tmp2;
 
-    int        i;
+    size_t       i;
 
     zt_elist(list1);
     zt_elist(list2);
@@ -49,7 +49,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         zt_elist_add(&list1, &al->list);
 
         al = XCALLOC(list_elt, 1);
-        al->value = VALUES_MAX - values[i];
+        al->value = (int)(VALUES_MAX - values[i]);
 
         zt_elist_add(&list2, &al->list);
     }

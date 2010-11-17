@@ -24,9 +24,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
 
 #include "zt_internal.h"
 #include "zt_log.h"
+#include "zt_daemon.h"
 
 /*!
  * Name: zt_daemonize
@@ -38,11 +40,11 @@
  */
 
 int
-zt_daemonize( char *root, mode_t mask, int options)
+zt_daemonize( char *root, mode_t mask, int options UNUSED)
 {
     pid_t         pid;
     pid_t         pid2;
-    int           i;
+    rlim_t        i;
     int           status;
     struct rlimit rlimits;
 
@@ -63,7 +65,11 @@ zt_daemonize( char *root, mode_t mask, int options)
             exit(1);
         }
         for (i = 0; i < rlimits.rlim_cur; i++) {
-            close(i);
+            if (i > INT_MAX) {
+                /* int cast protection */
+                i = INT_MAX;
+            }
+            close((int)i);
         }                                                  /* Close all of the filehandles */
 
         if ((pid2 = fork()) == (pid_t)(-1)) {

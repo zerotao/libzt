@@ -6,7 +6,7 @@
 #ifndef _ZT_LIST_H_
 #define _ZT_LIST_H_
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 BEGIN_C_DECLS
 /*
  *  elists are based on an article I read about linux kernel linked lists.

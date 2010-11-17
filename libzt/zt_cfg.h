@@ -13,8 +13,8 @@
 #ifndef _ZT_CFG_H_
 #define _ZT_CFG_H_
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_log.h>
+#include <zt_internal.h>
+#include <zt_log.h>
 
 BEGIN_C_DECLS
 
@@ -76,6 +76,6 @@ int zt_cfg_set( zt_cfg_ty *, char *, char *, void *, zt_cfg_type );
     zt_cfg_set( cfg, block, name, addr, zt_cfg_string)
 
 END_C_DECLS
-#include <libzt/zt_cfg/cfg_interface.h>
+#include <zt_cfg/cfg_interface.h>
 
 #endif  /* _ZT_CFG_H_ */

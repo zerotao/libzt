@@ -32,7 +32,7 @@
  */
 
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 #include "zt_tree.h"
 
 

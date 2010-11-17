@@ -11,8 +11,8 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <libzt/zt_internal.h>
-#include <libzt/zt_mem.h>
+#include <zt_internal.h>
+#include <zt_mem.h>
 
 struct pool_test {
     int one;
@@ -35,7 +35,7 @@ zt_mem_pool_desc pool_group[] = {
 };
 
 int
-main(int argc, char *argv[])
+main(int argc UNUSED, char *argv[] UNUSED)
 {
     struct zt_mem_heap       * heap;
     struct zt_mem_pool       * pool;

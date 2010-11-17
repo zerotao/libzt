@@ -185,7 +185,6 @@ int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2)
 int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags)
 {
     size_t    len;
-    int       ty;
     size_t    i;
 
     if (uuid == NULL) {

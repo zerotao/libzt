@@ -153,7 +153,8 @@ get_type(char* value, void* nvalue)
         return zt_cfg_bool;
     }
     if (value[0] == '\'' || value[0] == '\"') {
-        int len = strlen(&value[1]);
+        size_t    len = strlen(&value[1]);
+
         if (value[len] != '\'' || value[len] != '\"') {
             /* error  */
         }
@@ -184,7 +185,7 @@ cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv)
 
     /* Check for refrences */
     if (value->type == zt_cfg_string) {
-        variable = index(value->v.s, '.');
+        variable = strchr(value->v.s, '.');
         if (((variable) && (*variable == '.'))) {
             struct zt_cfg_value_ty* v = NULL;
             struct zt_cfg_block_ty* b = NULL;

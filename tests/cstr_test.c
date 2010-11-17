@@ -14,11 +14,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char   test_string1[] = "  Ok \n";
     char * chomp_test = strdup(test_string1);
@@ -33,7 +33,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     char   dname[PATH_MAX+1];
     char * free_me;
     char * free_me2;
-    char * hex = "34aa973cd4c4daa4f61eEB2BDBAD27316534016FXXX";
+    char * hex = "34aa973cd4c4daa4f61FFB2BDBAD27316534016FXXX";
     char   digest[20];
     char   hex2[41];
     char *split_test = "/a/b/c/d/";
@@ -71,12 +71,12 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
-    cut_array = zt_cstr_cut(split_test, '/', 0); 
+    cut_array = zt_cstr_cut(split_test, '/', 0);
     ZT_UNIT_ASSERT_NOT_EQUAL(test, cut_array, NULL);
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d/"), 0); 
-    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d/"), 0); 
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 0), "a/b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "b/c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "c/d/"), 0);
+    ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "d/"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
@@ -86,7 +86,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 1), "/a/b/c"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 2), "/a/b"), 0);
     ZT_UNIT_ASSERT_EQUAL(test, strcmp((const char *)zt_ptr_array_get_idx(cut_array, 3), "/a"), 0);
-    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL); 
+    ZT_UNIT_ASSERT_EQUAL(test, zt_ptr_array_get_idx(cut_array, 4), NULL);
     ZT_UNIT_ASSERT_EQUAL(test, zt_cstr_cut_free(cut_array), 0);
 
 #if !defined(_WIN32)
@@ -194,13 +194,18 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 
     ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 40, NULL, 0) == 20);
-    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 43, digest, 23) == 20);
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 40, digest, 23) == 20);
+
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 43, digest, 23) == 0);
+    ZT_UNIT_ASSERT(test, errno == EINVAL);
+
     ZT_UNIT_ASSERT(test, zt_binary_to_hex(digest, 20, hex2, 41) == 40);
     free_me = zt_cstr_map(hex, 0, -1, ALPHA, alpha);
     ZT_UNIT_ASSERT(test, memcmp(hex2, free_me, 40) == 0);
     XFREE(free_me);
 
-    ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == -1);
+    ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == 0);
+    ZT_UNIT_ASSERT(test, errno == EINVAL);
 } /* basic_tests */
 
 

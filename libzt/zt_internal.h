@@ -10,8 +10,37 @@
  *
  */
 
-#ifndef _ZT_H_
-#define _ZT_H_
+#ifndef _ZT_INTERNAL_H_
+#define _ZT_INTERNAL_H_
+
+/* only cross platform headers C99  or replacements */
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <limits.h>
+
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#ifdef WIN32
+# include <zt_win32.h>
+#else
+# include <zt_unix.h>
+#endif
+
+#if WITH_DMALLOC
+# include <dmalloc.h>
+#endif /* WITH_DMALLOC */
 
 #ifdef __cplusplus
 # define BEGIN_C_DECLS      extern "C" {
@@ -185,6 +214,54 @@ typedef char* void_p;
 # define NEVER(X)       (X)
 #endif /* if defined(LIBZT_COVERAGE_TESTING) */
 
-#include <libzt/zt_macros.h>
-#include <libzt/zt_common.h>
-#endif /*_ZT_H_*/
+#include <zt_macros.h>
+
+
+#ifndef PATH_MAX
+# define PATH_MAX FILENAME_MAX
+#endif
+
+#if defined(WIN32)
+# include <windows.h>
+#else
+# include <errno.h>
+#endif
+
+extern char *memoryError;
+#define XCALLOCS(size, num)     (xcalloc ((num), (size)))
+#define XMALLOCS(size, num)     (xmalloc ((num) * (size)))
+#define XCALLOC(type, num)	((type *) xcalloc ((num), sizeof(type)))
+#define XMALLOC(type, num)	((type *) xmalloc ((num) * sizeof(type)))
+#define XREALLOC(type, p, num)	((type *) xrealloc (((void_p)p), (num) * sizeof(type)))
+#define XFREE(stale)   	  	       	  	   	 \
+do {							 \
+   if (stale) { free ((void_p) stale);  stale = 0; }	 \
+} while(0)
+#define XSTRDUP xstrdup
+
+BEGIN_C_DECLS
+
+/* These entry points to the API are guaranteed to be functions */
+
+extern void_p xcalloc_p	(size_t num, size_t size);
+extern void_p xmalloc_p	(size_t num);
+extern void_p xrealloc_p (void_p p, size_t num);
+extern void xfree_p (void_p stale);
+extern char *xstrdup (const char *string);
+
+END_C_DECLS
+
+/* Let dmalloc provide mainstream `x' family mallocation API, or else
+   provide our own which points to the `f_' family above.  Note that
+   when using dmalloc, the functions wrapped by my `f_' API will be
+   (correctly) redefined to use the dmalloc library. */
+
+#ifndef WITH_DMALLOC
+#  define xcalloc  xcalloc_p
+#  define xmalloc  xmalloc_p
+#  define xrealloc xrealloc_p
+#  define xfree    xfree_p
+#endif
+
+#include <zt_replace.h>
+#endif /*_ZT_INTERNAL_H_*/

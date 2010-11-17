@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <errno.h>
-#include <sys/queue.h>
-#include <unistd.h>
-#include <zt_threads.h>
 
-#ifndef _ZT_DISABLE_THREAD_SUPPORT
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+
+#include <sys/queue.h>
+
+#include <zt.h>
+#include <zt_threads.h>
 
 static void * _zt_threadpool_iput_loop(void *args);
 static void * _zt_threadpool_oput_loop(void *args);
@@ -25,7 +28,7 @@ struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs = {
 };
 
 struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
-    _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL
+    _zt_threadpool_iput_loop, _zt_threadpool_oput_loop, NULL, NULL, NULL, NULL
 };
 
 zt_threads_thread               * (*zt_threads_alloc_thread)(void);
@@ -423,7 +426,7 @@ zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
 
 void *
 zt_threadpool_get_oput(zt_threadpool *tpool) {
-    zt_threadpool_entry *entry;
+    zt_threadpool_entry *entry = NULL;
     void                *data;
 
     zt_threads_lock(0, tpool->oput_mutex);
@@ -562,6 +565,4 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
 
     return tpool;
 }
-
-#endif /* ifndef _ZT_DISABLE_THREAD_SUPPORT */
 

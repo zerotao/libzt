@@ -4,7 +4,7 @@
 #ifdef ZT_EXCEPTIONS_DEFINE
 # define EXCEPT_DEFINE
 #endif
-#include <libzt/zt_except.h>
+#include <zt_except.h>
 
 #ifdef __cplusplus
 extern "C" {

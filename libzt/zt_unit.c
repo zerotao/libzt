@@ -67,8 +67,8 @@ zt_unit_register_suite(struct zt_unit     * unit,
                        zt_unit_teardown_fn teardown_fn,
                        void     * data )
 {
-    int                    len;
-    struct zt_unit_suite * suite = XCALLOC(struct zt_unit_suite, 1);
+    size_t                    len;
+    struct zt_unit_suite    * suite = XCALLOC(struct zt_unit_suite, 1);
 
     zt_assert(name != NULL);
     len = strlen(name);
@@ -115,7 +115,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
                       zt_unit_test_fn test_fn)
 {
     struct zt_unit_test * test = XCALLOC(struct zt_unit_test, 1);
-    int                   len;
+    size_t                len;
 
     zt_assert(suite);
     zt_assert(name);
@@ -222,7 +222,7 @@ test_failed(struct zt_unit_test    * test,
             char    * efunc,
             int eline)
 {
-    int len;
+    size_t    len;
 
 #   define MAX_STR_INT    43
     zt_assert(test);
@@ -240,9 +240,9 @@ test_failed(struct zt_unit_test    * test,
 }
 
 int
-zt_unit_run_test(struct zt_unit    * unit,
-                 struct zt_unit_suite     * suite,
-                 struct zt_unit_test     * test)
+zt_unit_run_test(struct zt_unit         * unit UNUSED,
+                 struct zt_unit_suite   * suite,
+                 struct zt_unit_test    * test)
 {
     zt_assert(test);
 
@@ -342,7 +342,7 @@ zt_unit_run_by_name(struct zt_unit    * unit,
     struct zt_unit_test  * unit_test = NULL;
     zt_elist_t           * tmp;
     int                    result = 0;
-    int                    len;
+    size_t                 len;
 
     targetv = str_split(name, ".", &count);
 
@@ -431,9 +431,9 @@ zt_unit_main(struct zt_unit    * unit,
     int                result = 0;
 
     struct zt_opt_args options[] = {
-        { 'h', "help", "This help text",       zt_opt_help, NULL,     NULL },
-        { 'l', "list", "list suites and test", zt_opt_flag, &do_list, NULL },
-        { 0 }
+        { 'h', "help", "This help text",       zt_opt_help, NULL,     NULL, NULL },
+        { 'l', "list", "list suites and test", zt_opt_flag, &do_list, NULL, NULL },
+        { 0, NULL, NULL, 0, NULL, NULL, NULL  }
     };
 
     if (zt_opts_process(&argc, &argv, options, "[options] <suite | suite.test> ...", TRUE, TRUE, NULL) != 0) {

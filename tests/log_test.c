@@ -12,12 +12,12 @@
 
 #include <string.h>
 #define DEBUG
-#include <libzt/zt_log.h>
-#include <libzt/zt_progname.h>
-#include <libzt/zt_unit.h>
+#include <zt_log.h>
+#include <zt_progname.h>
+#include <zt_unit.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char          position1[255];
     char          position2[255];

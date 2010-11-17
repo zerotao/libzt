@@ -20,7 +20,7 @@
 #endif
 
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 struct time_result {
     struct timeval sys_time;
@@ -40,6 +40,8 @@ void zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sy
 void * zt_time(int n, struct time_result *result, void *(*test)(void *), void *data);
 
 void zt_time_print_result(struct time_result *tr, char *name, int n);
+
+void zt_time_calibrate(void);
 
 #define zt_copy_timeval(x, y) ((x)->tv_sec = (y)->tv_sec, (x)->tv_usec = (y)->tv_usec)
 

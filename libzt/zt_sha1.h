@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 BEGIN_C_DECLS
 

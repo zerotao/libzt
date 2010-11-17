@@ -22,7 +22,7 @@ zt_set_init(int (*match)(const void *key1,
 }
 
 static int
-_destroy(void *key, void *datum, void *param)
+_destroy(void *key UNUSED, void *datum, void *param)
 {
     void (*destroy)(void *) = ((zt_set *)param)->destroy;
 
@@ -68,7 +68,7 @@ struct _set_pair {
     zt_set * s2;
 };
 
-static int _union(void *key, void *datum, void *param)
+static int _union(void *key UNUSED, void *datum, void *param)
 {
     struct _set_pair * p;
 
@@ -89,7 +89,7 @@ int zt_set_union(zt_set *setu, const zt_set *set1, const zt_set *set2)
     return 0;
 }
 
-static int _intersect(void *key, void *datum, void *param)
+static int _intersect(void *key UNUSED, void *datum, void *param)
 {
     struct _set_pair * p;
 
@@ -111,7 +111,7 @@ int zt_set_intersection(zt_set *seti, const zt_set *set1, const zt_set *set2)
     return zt_table_for_each(set1->tbl, _intersect, &p);
 }
 
-static int _difference(void *key, void *datum, void *param)
+static int _difference(void *key UNUSED, void *datum, void *param)
 {
     struct _set_pair * p;
 
@@ -141,7 +141,7 @@ int zt_set_is_member(const zt_set *set, const void *data)
     return 0;
 }
 
-int _is_subset(void *key, void *datum, void *param)
+static int _is_subset(void *key UNUSED, void *datum, void *param)
 {
     struct _set_pair * p = (struct _set_pair *)param;
 
@@ -184,7 +184,7 @@ struct _iterator_data {
     void          * param;
 };
 
-static int _table_to_set_iterator(void *key, void *data, void *param)
+static int _table_to_set_iterator(void *key UNUSED, void *data, void *param)
 {
     struct _iterator_data * p = (struct _iterator_data *)param;
 

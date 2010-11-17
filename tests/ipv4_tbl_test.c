@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <libzt/zt_ipv4_tbl.h>
-#include <libzt/zt_unit.h>
+#include <zt_ipv4_tbl.h>
+#include <zt_unit.h>
 
 static struct _test_s {
     char    *addr;
@@ -76,7 +76,7 @@ char *tests_bad[] = {
 };
 
 static zt_ipv4_tbl *
-test_table_init(struct zt_unit_test *test, void *data)
+test_table_init(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_ipv4_tbl *table = NULL;
     int          i;
@@ -165,7 +165,7 @@ negative_tests(struct zt_unit_test *test, void *data)
 }
 
 static void
-helper_tests(struct zt_unit_test *test, void *data)
+helper_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)
 {
     return;
 }
