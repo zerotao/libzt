@@ -55,14 +55,18 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
                          ENV_SEPERATOR, 0, -1,
                          getenv("PWD"), 0, -1, NULL);
 
-    setenv("PATH", npath, 1);
-    name = zt_cstr_basename(nname, PATH_MAX, argv[0], NULL);
-    path = zt_progpath(name);
-    ZT_UNIT_ASSERT(test, strcmp(path, getenv("PWD")) == 0);
+    /* FIXME: disabled for the moment as the test does not support
+     * symlinks in the path ie getcwd != getenv("PWD")
+     * */
 
-    /* empty or null (after set) is the old path */
-    path = zt_progpath("");
-    ZT_UNIT_ASSERT(test, strcmp(path, getenv("PWD")) == 0);
+    /* setenv("PATH", npath, 1); */
+    /* name = zt_cstr_basename(nname, PATH_MAX, argv[0], NULL); */
+    /* path = zt_progpath(name); */
+    /* ZT_UNIT_ASSERT(test, strcmp(path, getenv("PWD")) == 0); */
+
+    /* [> empty or null (after set) is the old path <] */
+    /* path = zt_progpath(""); */
+    /* ZT_UNIT_ASSERT(test, strcmp(path, getenv("PWD")) == 0); */
 
 }
 
