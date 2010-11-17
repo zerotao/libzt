@@ -39,7 +39,6 @@ extern void _zt_assert_fail(char *condition, char *file,
 #else
 # define zt_assert(c) if (!(c)) {                               \
         _zt_assert_fail(# c, __FILE__, __LINE__, __FUNCTION__); \
-        TRY_THROW(zt_exception.assertion.failed);               \
 }
 # define zt_assert_nf(c) (((c) ? 1 : (_zt_assert_fail(# c, __FILE__, __LINE__, __FUNCTION__), 0)))
 #endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
