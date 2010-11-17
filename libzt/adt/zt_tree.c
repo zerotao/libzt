@@ -365,6 +365,29 @@ zt_rbt_find(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_no
     return NULL;
 }
 
+/* find first node greater than or equal to the search key */
+zt_rbt_node *
+zt_rbt_nfind(zt_rbt **head, zt_rbt_node *elm, int (*cmp)(zt_rbt_node *, zt_rbt_node *))
+{
+    zt_rbt_node *tmp = *head;
+    zt_rbt_node *res = NULL;
+    int          comp;
+
+    while (tmp) {
+        comp = cmp(elm, tmp);
+        if (comp < 0) {
+            res = tmp;
+            tmp = zt_rbt_left(tmp);
+        } else if (comp > 0) {
+            tmp = zt_rbt_right(tmp);
+        } else {
+            return tmp;
+        }
+    }
+
+    return res;
+}
+
 zt_rbt_node *
 zt_rbt_next(zt_rbt_node *elm)
 {

@@ -57,6 +57,7 @@ typedef zt_rbt zt_rbt_node;
 zt_rbt_node *zt_rbt_remove(zt_rbt **head, zt_rbt_node *elm);
 zt_rbt_node *zt_rbt_insert(zt_rbt * *head, zt_rbt_node * elm, int (*cmp)(zt_rbt_node *, zt_rbt_node *));
 zt_rbt_node *zt_rbt_find(zt_rbt * *head, zt_rbt_node * elm, int (*cmp)(zt_rbt_node *, zt_rbt_node *));
+zt_rbt_node *zt_rbt_nfind(zt_rbt * *head, zt_rbt_node * elm, int (*cmp)(zt_rbt_node *, zt_rbt_node *));
 zt_rbt_node *zt_rbt_next(zt_rbt_node *elm);
 zt_rbt_node *zt_rbt_minmax(zt_rbt **head, int val);
 
