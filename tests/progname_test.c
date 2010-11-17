@@ -24,7 +24,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char    * name = NULL;
     char    * path = NULL;
     char    * npath = NULL;
-    char      nname[PATH_MAX+1];
+    /* char      nname[PATH_MAX+1]; */
     char      cwd[PATH_MAX+1];
 
     name = zt_progname(argv[0], 0);
