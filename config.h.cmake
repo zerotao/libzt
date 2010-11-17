@@ -17,9 +17,6 @@
 #endif
 
 /********************* types *********************/
-#cmakedefine HAVE_LONG_DOUBLE
-#cmakedefine HAVE_LONG_LONG
-
 #cmakedefine HAVE_UINT64_T
 #cmakedefine HAVE_UINT32_T
 #cmakedefine HAVE_UINT16_T
