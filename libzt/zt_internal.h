@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <inttypes.h>
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -262,6 +263,13 @@ END_C_DECLS
 #  define xrealloc xrealloc_p
 #  define xfree    xfree_p
 #endif
+
+#if __WORDSIZE == 64
+#define PRIsize_t PRIu64
+#else
+#define PRIsize_t PRIu32
+#endif
+
 
 #include <zt_replace.h>
 #endif /*_ZT_INTERNAL_H_*/
