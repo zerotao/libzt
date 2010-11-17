@@ -26,7 +26,7 @@ example_thread_cb(void *_data) {
 
 
 void *
-example_init_cb(void *args) {
+example_init_cb(void *args UNUSED) {
     return (void *)"example init data";
 }
 
@@ -38,17 +38,17 @@ example_iput_work_cb(void *init_data, void *data) {
 }
 
 void *
-example_oput_work_cb(void *init_data, void *data) {
+example_oput_work_cb(void *init_data UNUSED, void *data) {
     printf("oput_worker: id = %lu data = %s\n",
            zt_threads_id(), (char *)data);
     return "sending to finalizer";
 }
 
-void example_finalizer(void *init_data, void *data) {
+void example_finalizer(void *init_data UNUSED, void *data) {
     printf("finalized: %s\n", (char *)data);
 }
 
-int main(int argc, char **argv) {
+int main(int argc UNUSED, char **argv UNUSED) {
     /* tell libzt to use pthreads */
     zt_threads_use_pthreads();
 

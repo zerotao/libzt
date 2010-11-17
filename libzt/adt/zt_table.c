@@ -6,12 +6,6 @@
  *
  * $Id$
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <string.h>
-
 #include "../zt_internal.h"
 #include "../zt_mem.h"
 #include "../zt_log.h"
@@ -20,10 +14,10 @@
 
 
 #define DEFAULT_BUCKETS 512
-static int
-nbits(unsigned long val)
+static uint8_t
+nbits(size_t val)
 {
-    int nbits;
+    uint8_t nbits;
 
     for (nbits = 1; (val = val >> 1); nbits++) {
         ;
@@ -55,9 +49,9 @@ struct zt_table {
     zt_table_compare_cb   cmp;
     zt_table_hash_func_cb func;
     void                * cdata;
-    int                   nbits;
+    uint8_t               nbits;
     int                   flags;
-    unsigned long         num_buckets;
+    size_t                num_buckets;
     unsigned int          filled;
     zt_mem_pool         * node_pool;
     zt_mem_heap         * table_heap;
@@ -82,7 +76,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
               void *cdata)
 {
     zt_table    * table;
-    int           nbuckets = 0;
+    size_t        nbuckets = 0;
     char          tname[1024];
     zt_mem_pool * table_mem_pool;
 
@@ -147,7 +141,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
 void
 zt_table_destroy(zt_table *h)
 {
-    unsigned long i;
+    size_t    i;
 
     for (i = 0; i < h->num_buckets; i++) {
         struct table_node *node = h->buckets[i];
@@ -301,7 +295,7 @@ zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 
 /* common hash functions */
 unsigned long
-zt_table_hash_int(const void *key, void *cdata)
+zt_table_hash_int(const void *key, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
     unsigned long   nkey = zt_hash32_buff(&skey, sizeof(int), ZT_HASH32_INIT);
@@ -310,7 +304,7 @@ zt_table_hash_int(const void *key, void *cdata)
 }
 
 int
-zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_int(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if ((void *)lhs == (void *)rhs) {
         return 1;
@@ -319,7 +313,7 @@ zt_table_compare_int(const void *lhs, const void *rhs, void *cdata)
 }
 
 unsigned long
-zt_table_hash_string(const void *key, void *cdata)
+zt_table_hash_string(const void *key, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
     unsigned long   nkey = zt_hash32_cstr(skey, ZT_HASH32_INIT);
@@ -328,7 +322,7 @@ zt_table_hash_string(const void *key, void *cdata)
 }
 
 int
-zt_table_compare_string(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if (strcmp((char *)lhs, (char *)rhs) == 0) {
         return 1;
@@ -337,7 +331,7 @@ zt_table_compare_string(const void *lhs, const void *rhs, void *cdata)
 }
 
 int
-zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata)
+zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata UNUSED)
 {
     if (strcasecmp((char *)lhs, (char *)rhs) == 0) {
         return 1;

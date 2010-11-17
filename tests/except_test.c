@@ -14,9 +14,9 @@
 
 /* because we test the EXCEPT_DESC below */
 #define EXCEPT_DEFINE
-#include <libzt/zt_internal.h>
-#include <libzt/zt_exceptions.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_exceptions.h>
+#include <zt_unit.h>
 
 
 char * Pass = "Pass";
@@ -40,29 +40,28 @@ static char *f1(int i)
     return Fail;
 }
 
-int foo(void *e, void* t, char *et, char *f, char *ff, int l)
+int foo(void *e UNUSED, void* t UNUSED, char *et UNUSED, char *f UNUSED, char *ff UNUSED, int l UNUSED)
 {
     test_count++;
     return 0;
 }
-int bar(void *e, void* t, char *et, char *f, char *ff, int l)
+int bar(void *e UNUSED, void* t UNUSED, char *et UNUSED, char *f UNUSED, char *ff UNUSED, int l UNUSED)
 {
     test_count++;
     return 1;
 }
-int newbar(void *e, void* t, char *et, char *f, char *ff, int l)
+int newbar(void *e UNUSED, void* t UNUSED, char *et UNUSED, char *f UNUSED, char *ff UNUSED, int l UNUSED)
 {
     test_count = 0xDEADBEEF;
     return 0;
 }
-int fooexit(void *e, void* t, char *et, char *f, char *ff, int l)
+int fooexit(void *e UNUSED, void* t UNUSED, char *et UNUSED, char *f UNUSED, char *ff UNUSED, int l UNUSED)
 {
     return -1;
 }
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
-{
+basic_tests(struct zt_unit_test *test, void *data UNUSED) {
     {
         char *do_try = Fail;
         DO_TRY

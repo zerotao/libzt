@@ -1,7 +1,7 @@
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_stack.h>
-#include <libzt/adt/zt_queue.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <adt/zt_stack.h>
+#include <adt/zt_queue.h>
 
 typedef struct stack_elt {
     zt_stack_t member;
@@ -14,10 +14,10 @@ typedef struct queue_elt {
 }queue_elt;
 
 static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-#define VALUES_MAX sizeof_array(values)
+#define VALUES_MAX (int)sizeof_array(values)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     stack_elt * se;
     queue_elt * qe;

@@ -43,7 +43,7 @@ zt_ptr_array_copy_data(zt_ptr_array *src, char **dstbuf) {
 
 int
 zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand) {
-    size_t size;
+    uint32_t size;
     char **ndata;
 
     if (array == NULL) {

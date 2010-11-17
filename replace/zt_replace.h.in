@@ -1,0 +1,8 @@
+#ifndef __ZT_REPLACE_H__
+#define __ZT_REPLACE_H__
+
+#ifndef HAVE_BASENAME
+extern char *basename (const char *path);
+#endif /* HAVE_BASENAME */
+
+#endif /* __ZT_REPLACE_H__ */

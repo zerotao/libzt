@@ -1,8 +1,13 @@
-#include <libzt/zt_int.h>
-#include <libzt/zt_unit.h>
+
+#ifdef HAVE_CONFIG_H
+# include <config.h> /* for zt_int.h */
+#endif /* HAVE_CONFIG_H */
+
+#include <zt_int.h>
+#include <zt_unit.h>
 
 static void
-test_case_signed_add(struct zt_unit_test *test, void *data)
+test_case_signed_add(struct zt_unit_test *test, void *data UNUSED)
 {
     /* CHAR pos common */
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_char_add(CHAR_MAX, 1));
@@ -69,7 +74,7 @@ test_case_signed_add(struct zt_unit_test *test, void *data)
 } /* test_case_signed_add */
 
 static void
-test_case_unsigned_add(struct zt_unit_test *test, void *data)
+test_case_unsigned_add(struct zt_unit_test *test, void *data UNUSED)
 {
     /* UCHAR pos common */
     ZT_UNIT_ASSERT_RAISES(test, zt_exception.math.overflow, zt_uchar_add(UCHAR_MAX, 1));
@@ -138,7 +143,7 @@ test_case_unsigned_add(struct zt_unit_test *test, void *data)
 } /* test_case_unsigned_add */
 
 static void
-test_case_signed_sub(struct zt_unit_test *test, void *data)
+test_case_signed_sub(struct zt_unit_test *test, void *data UNUSED)
 {
     /* subtraction overflow */
 
@@ -186,7 +191,7 @@ test_case_signed_sub(struct zt_unit_test *test, void *data)
 } /* test_case_signed_sub */
 
 static void
-test_case_unsigned_sub(struct zt_unit_test *test, void *data)
+test_case_unsigned_sub(struct zt_unit_test *test, void *data UNUSED)
 {
     /* unsigned subtraction */
     ZT_UNIT_ASSERT(test, zt_uchar_sub(UCHAR_MAX, 1) == UCHAR_MAX - 1);
@@ -235,7 +240,7 @@ test_case_unsigned_sub(struct zt_unit_test *test, void *data)
 } /* test_case_unsigned_sub */
 
 static void
-test_case_signed_mul(struct zt_unit_test *test, void *data)
+test_case_signed_mul(struct zt_unit_test *test, void *data UNUSED)
 {
     /* char */
     ZT_UNIT_ASSERT(test, zt_char_mul(1, CHAR_MAX) == CHAR_MAX);
@@ -315,7 +320,7 @@ test_case_signed_mul(struct zt_unit_test *test, void *data)
 } /* test_case_signed_mul */
 
 static void
-test_case_unsigned_mul(struct zt_unit_test *test, void *data)
+test_case_unsigned_mul(struct zt_unit_test *test, void *data UNUSED)
 {
     /* unsigned multiplication */
     /* char */
@@ -387,7 +392,7 @@ test_case_unsigned_mul(struct zt_unit_test *test, void *data)
 
 
 static void
-test_case_signed_div(struct zt_unit_test *test, void *data)
+test_case_signed_div(struct zt_unit_test *test, void *data UNUSED)
 {
     /* division */
     /* char */
@@ -466,7 +471,7 @@ test_case_signed_div(struct zt_unit_test *test, void *data)
 } /* test_case_signed_div */
 
 static void
-test_case_unsigned_div(struct zt_unit_test *test, void *data)
+test_case_unsigned_div(struct zt_unit_test *test, void *data UNUSED)
 {
     /* unsigned division */
     /* char */

@@ -1,13 +1,13 @@
 #include <string.h>
 
-#include <libzt/adt/zt_bstream.h>
-#include <libzt/adt/zt_array.h>
-#include <libzt/zt_unit.h>
+#include <adt/zt_bstream.h>
+#include <adt/zt_array.h>
+#include <zt_unit.h>
 
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_bstream_t bs, clone;
     char     * test_string = "this is a test string",
@@ -21,10 +21,10 @@ basic_tests(struct zt_unit_test *test, void *data)
     uint64_t   test_uint64 = 0xDEADBEEF,
                uint64_test = 0;
 
-    float  test_float = 1.0,
-           float_test = 0;
+    float  test_float = 1.0f,
+           float_test = 0.0f;
     double test_double = 2.0,
-           double_test = 0;
+           double_test = 0.0;
 
 
 

@@ -1,15 +1,16 @@
 #include <string.h>
 
-#include <libzt/adt/zt_array.h>
-#include <libzt/zt_unit.h>
+#include <adt/zt_array.h>
+#include <zt_unit.h>
 
 int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
-    int      i, n;
-    int    * pv;
+    size_t    n;
+    size_t    i;
+    int     * pv;
 
     zt_array_t array = zt_array_new(10, sizeof(int));
     zt_array_t array2;
@@ -29,16 +30,16 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     for (i = 0; i < n; i++) {
         pv = zt_array_get(array, i);
-        ZT_UNIT_ASSERT(test, *pv == i);
+        ZT_UNIT_ASSERT(test, *pv == (int)i);
     }
 
     {
-        int tt = 0;
-        int nn = zt_array_length(array);
+        size_t    tt = 0;
+        size_t    nn = zt_array_length(array);
 
         for (i = 0; i < nn; i++) {
             pv = zt_array_get(array, i);
-            if (*pv == i) {
+            if (*pv == (int)i) {
                 tt++;
             }
         }
@@ -54,11 +55,11 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test, zt_array_length(array) == zt_array_length(array2));
     ZT_UNIT_ASSERT(test, zt_array_size(array) == zt_array_size(array2));
     {
-        int tt = 0;
+        size_t    tt = 0;
 
         for (i = 0; i < n; i++) {
             pv = zt_array_get(array2, i);
-            if (*pv == i) {
+            if (*pv == (int)i) {
                 tt++;
             }
         }

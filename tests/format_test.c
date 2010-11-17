@@ -1,13 +1,13 @@
 #include <string.h>
-#include <libzt/zt_assert.h>
-#include <libzt/zt_format.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_assert.h>
+#include <zt_format.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
-static int
-cvt_S(int code, va_list app,
+static size_t
+cvt_S(int code UNUSED, va_list app,
       int put(int c, void *cl), void *cl,
-      unsigned char flags[], int width, int precision)
+      unsigned char flags[], ssize_t width, ssize_t precision)
 {
     char * str = va_arg(app, char *);
 
@@ -18,7 +18,7 @@ cvt_S(int code, va_list app,
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char   buf[256];
     char * str;

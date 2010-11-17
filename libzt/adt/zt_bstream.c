@@ -1,7 +1,7 @@
 #include "zt_bstream.h"
 #include "../zt_assert.h"
 
-size_t
+static size_t
 _array_put(zt_array_t array, char *s, size_t offt, size_t len, int flip)
 {
     if (flip) {
@@ -18,7 +18,7 @@ _array_put(zt_array_t array, char *s, size_t offt, size_t len, int flip)
     return offt;
 }
 
-size_t
+static size_t
 _array_get(zt_array_t array, char *s, size_t offt, size_t len, int flip)
 {
     char *c;
@@ -47,7 +47,7 @@ zt_bstream_is_empty(zt_bstream_t bs)
 }
 
 
-int
+size_t
 zt_bstream_truncate(zt_bstream_t bs)
 {
     zt_assert(bs);
@@ -73,10 +73,10 @@ zt_bstream_set_array(zt_bstream_t bs, zt_array_t array, size_t offt)
     bs->offt = offt;
 }
 
-int
+size_t
 zt_bstream_rewind(zt_bstream_t bs)
 {
-    int oofft;
+    size_t oofft;
 
     zt_assert(bs);
 
@@ -121,7 +121,7 @@ zt_bstream_free(zt_bstream_t *bs)
 }
 
 size_t
-zt_bstream_read(zt_bstream_t bs, char *buf, size_t len, char size, char tag)
+zt_bstream_read(zt_bstream_t bs, char *buf, size_t len, char size, char tag UNUSED)
 {
     zt_assert(bs);
     zt_assert(buf);
@@ -174,7 +174,7 @@ zt_bstream_read_double(zt_bstream_t bs, double * data)
 }
 
 size_t
-zt_bstream_write(zt_bstream_t bs, char *data, size_t len, char size, char tag)
+zt_bstream_write(zt_bstream_t bs, char *data, size_t len, char size, char tag UNUSED)
 {
     size_t tlen = len * size;
     size_t alen = 0;

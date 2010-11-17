@@ -6,8 +6,8 @@
 #ifndef _ZT_LLIST_H_
 #define _ZT_LLIST_H_
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_assert.h>
+#include <zt_internal.h>
+#include <zt_assert.h>
 BEGIN_C_DECLS
 
 typedef struct zt_pair zt_pair;

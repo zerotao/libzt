@@ -2,7 +2,7 @@
 #define _TEST_H_
 
 #include <stdio.h>
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 #ifdef __cplusplus
 extern "C" {

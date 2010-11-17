@@ -1,3 +1,0 @@
-CLEANFILES = *~ *.gcda *.gcno *.gcov
-DISTCLEANFILES = *.tar.gz 
-MAINTAINERCLEANFILES = Makefile.in 

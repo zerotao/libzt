@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
 
 #include "zt_internal.h"
 #include "adt/zt_list.h"
@@ -22,7 +21,6 @@ static zt_elist(sets);
 static int mem_atexit = 0;
 
 /* static long x_sys_page_size = 0; */
-
 typedef struct zt_mem_elt zt_mem_elt;
 struct zt_mem_elt {
     zt_elist_t           free_elt_list;
@@ -47,16 +45,16 @@ struct zt_mem_page {
 struct zt_mem_pool {
     zt_elist_t           pool_list;
     char               * name;
-    long                 rcache; /* requested elements in cache */
-    long                 ncache; /* actual elements in cache */
-    long                 pcache; /* pages in cache */
-    long                 nfree_pages; /* number of free pages */
-    long                 npages; /* total pages */
-    unsigned long        elts_per_page; /* elements per page */
+    size_t                 rcache; /* requested elements in cache */
+    size_t                 ncache; /* actual elements in cache */
+    size_t                 pcache; /* pages in cache */
+    size_t                 nfree_pages; /* number of free pages */
+    size_t                 npages; /* total pages */
+    size_t                 elts_per_page; /* elements per page */
     size_t               elt_size; /* element size */
     size_t               page_size; /* page size */
-    long                 page_allocs; /* number of page allocs */
-    long                 page_frees; /* number of page frees */
+    size_t                 page_allocs; /* number of page allocs */
+    size_t                 page_frees; /* number of page frees */
     zt_page_release_test release_test_cb;
     void               * release_test_cb_data;
     int                  flags;
@@ -66,7 +64,7 @@ struct zt_mem_pool {
 
 struct zt_mem_pool_group {
     zt_elist_t    group_list;
-    int           npools;
+    size_t        npools;
     zt_mem_pool **pools;
 };
 
@@ -88,7 +86,7 @@ static void zt_mem_page_display(int, zt_mem_page *);
 static int zt_mem_page_destroy(zt_mem_page *page);
 static zt_mem_page *zt_mem_page_alloc(zt_mem_pool *);
 static void zt_mem_elt_list_display(int offset, zt_elist_t *head);
-static int zt_default_release_test(int total_pages, int free_pages, int cache_size, int, void *cb_data);
+static int zt_default_release_test(size_t total_pages, size_t free_pages, size_t cache_size, int flags, void *cb_data);
 static void zt_mem_release(void * data);
 
 /* exported functions */
@@ -137,7 +135,7 @@ zt_mem_heap_get_name(zt_mem_heap *heap)
 }
 
 static int
-x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *npages)
+x_calculate_page_data(ssize_t elts, size_t size, size_t *page_size, size_t *epp, size_t *npages)
 {
     static size_t sys_page_size = 0;
     size_t        usable_page_size = 0;
@@ -159,7 +157,7 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
     if (size < (usable_page_size / 2)) {
         *epp = usable_page_size / (sizeof(zt_mem_elt) + size);
         *page_size = sys_page_size;
-        if (elts > *epp) {
+        if (elts > (ssize_t)*epp) {
             *npages = elts / *epp;
         } else {
             *npages = 1;
@@ -174,16 +172,16 @@ x_calculate_page_data(long elts, size_t size, long *page_size, long *epp, long *
 }
 
 zt_mem_pool*
-zt_mem_pool_init(char *name, long elts,
+zt_mem_pool_init(char *name, ssize_t elts,
                  size_t size, zt_page_release_test release_test,
                  void *cb_data, int flags)
 {
     zt_mem_pool * pool;
     zt_mem_page * page;
-    long          epp;
-    long          npage_size;
-    long          npages;
-    long          pcache;
+    size_t        epp;
+    size_t        npage_size;
+    size_t        npages;
+    size_t        pcache;
 
     x_calculate_page_data(elts ? elts : 1, size, &npage_size, &epp, &npages);
 
@@ -193,10 +191,10 @@ zt_mem_pool_init(char *name, long elts,
     }
 
     if (elts > 0) {
-        if (elts < epp) {
+        if (elts < (ssize_t)epp) {
             pcache = 1;
         } else {
-            long tmp = elts % epp;
+            ssize_t tmp = elts % epp;
             pcache = elts / epp;
             if (tmp > 0) {
                 pcache++;
@@ -482,7 +480,7 @@ zt_mem_pools_display(int offset, int flags)
 }
 
 static void
-zt_mem_release(void * data)
+zt_mem_release(void * data UNUSED)
 {
     zt_elist_t  * tmp;
     zt_elist_t  * tmp2;
@@ -497,8 +495,8 @@ zt_mem_release(void * data)
 void
 zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags)
 {
-    int len;
-    int i;
+    size_t len;
+    size_t i;
 
     len = group->npools;
 
@@ -513,7 +511,7 @@ zt_mem_pool_group_display(int offset, zt_mem_pool_group *group, int flags)
 zt_mem_pool *
 zt_mem_pool_get(char *name)
 {
-    int        nlen;
+    size_t       nlen;
     zt_elist_t * tmp;
 
     if (!name) {
@@ -524,7 +522,7 @@ zt_mem_pool_get(char *name)
 
     zt_elist_for_each(&pools, tmp) {
         zt_mem_pool * pool;
-        int           olen;
+        size_t        olen;
 
         pool = zt_elist_data(tmp, zt_mem_pool, pool_list);
         olen = strlen(pool->name);
@@ -538,10 +536,10 @@ zt_mem_pool_get(char *name)
 }
 
 zt_mem_pool_group *
-zt_mem_pool_group_init(zt_mem_pool_desc *group, int len)
+zt_mem_pool_group_init(zt_mem_pool_desc *group, size_t len)
 {
     zt_mem_pool_group * ngroup;
-    int                 i;
+    size_t              i;
 
     if ((ngroup = XCALLOC(zt_mem_pool_group, 1)) == NULL) {
         return 0;
@@ -574,8 +572,8 @@ zt_mem_pool_group_init(zt_mem_pool_desc *group, int len)
 void *
 zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 {
-    int len;
-    int i;
+    size_t    len;
+    size_t    i;
 
     len = group->npools;
 
@@ -592,8 +590,8 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
 int
 zt_mem_pool_group_destroy(zt_mem_pool_group * group)
 {
-    int len;
-    int i;
+    size_t len;
+    size_t i;
     int ret = 0;
 
     len = group->npools;
@@ -627,7 +625,7 @@ zt_mem_set_init(char *name)
 }
 
 int
-zt_mem_set_add(zt_mem_set *set, void *d)
+zt_mem_set_add(zt_mem_set *set UNUSED, void *d UNUSED)
 {
     /* struct zt_mem_set_elt    * elt; */
 
@@ -639,7 +637,7 @@ zt_mem_set_add(zt_mem_set *set, void *d)
 }
 
 int
-zt_mem_set_release(zt_mem_set *set)
+zt_mem_set_release(zt_mem_set *set UNUSED)
 {
     /*
      * release the elt and release the wrapper
@@ -656,7 +654,7 @@ zt_mem_strdup(char *str)
     char * tmp = "*unknown*";
 
     if (str) {
-        int len = strlen(str);
+        size_t len = strlen(str);
         tmp = GLOBAL_zmt.alloc(len + 1 * sizeof(char));
         memcpy(tmp, str, len);
         tmp[len] = '\0';
@@ -703,8 +701,8 @@ zt_mem_page_alloc(zt_mem_pool *pool)
     zt_mem_elt  * head;
     zt_mem_elt  * elt;
     size_t        size;
-    int           i;
-    int           epp;
+    size_t        i;
+    size_t        epp;
 
     size = sizeof(zt_mem_elt) + pool->elt_size;
     /* sizeof(zt_mem_page) + (pool->elts_per_page * size)) */
@@ -769,7 +767,7 @@ zt_mem_page_display(int offset, zt_mem_page *page)
 
 
 static int
-zt_default_release_test(int req_elts, int free_elts, int used_elts, int flags, void *cb_data)
+zt_default_release_test(size_t req_elts UNUSED, size_t free_elts UNUSED, size_t used_elts UNUSED, int flags, void *cb_data UNUSED)
 {
     if (flags & POOL_NEVER_FREE) {
         return 0;

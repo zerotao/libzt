@@ -11,9 +11,9 @@
  */
 #include <string.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_tree.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <adt/zt_tree.h>
 
 #define REMOVED 8
 #define REMOVED2 6
@@ -48,7 +48,7 @@ int int_compare( zt_rbt_node *x, zt_rbt_node  *x2)
 } while (0)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_rbt         * br_root = NULL;
     zt_rbt_node    * iter;
@@ -78,7 +78,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                 done = 1;
             }
         } while (!done);
-        node->i = n;
+        node->i = (int)n;
         zt_rbt_insert(&br_root, &(node->node), int_compare);
     }
 

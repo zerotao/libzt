@@ -20,8 +20,17 @@
 #include <strings.h>
 #endif
 
+#ifdef HAVE_LIBGEN_H
+#include <libgen.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef HAVE_CTYPE_H
 #include <ctype.h>
+#endif
 
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
@@ -38,7 +47,7 @@ struct {
     char        *desc;
 } zt_opts_usage_t[] = { { zt_opt_bool,   " [yes|no|true|false]" },
                         { zt_opt_flag,   NULL                   },
-                        { zt_opt_int,    " [integer]"           },
+                        { zt_opt_long,   " [integer]"           },
                         { zt_opt_string, " [string]"            },
                         { zt_opt_func,   NULL                   },
                         { zt_opt_ofunc,  NULL                   },
@@ -55,7 +64,7 @@ print_default(zt_opt_types type, void *value)
         case zt_opt_flag:
             fprintf(stderr, " (default %s)", *(int *)value ? "enabled" : "disabled");
             break;
-        case zt_opt_int:
+        case zt_opt_long:
             fprintf(stderr, " (default %d)", *(int *)value);
             break;
         case zt_opt_string:
@@ -199,7 +208,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 #endif
                 break;
 
-            case zt_opt_int:
+            case zt_opt_long:
             /* FALLTHRU */
             case zt_opt_string:
             /* FALLTHRU */
@@ -270,8 +279,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         *(int *)opts[i].val = !*(int *)opts[i].val;
                     }
                     break;
-                case zt_opt_int:
-                    *(int *)opts[i].val = strtol(optarg, NULL, 0);
+                case zt_opt_long:
+                    *(long *)opts[i].val = strtol(optarg, NULL, 0);
                     /* can only fail if passed a string
                      * that does not start with a number
                      */

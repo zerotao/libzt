@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <arpa/inet.h>
 #include "zt_internal.h"
 #include "zt_mem.h"
 #include "zt_ipv4_tbl.h"
@@ -34,11 +29,11 @@ zt_ipv4_tbl_destroy(zt_ipv4_tbl *tbl)
 }
 
 zt_ipv4_tbl    *
-zt_ipv4_tbl_init(size_t size)
+zt_ipv4_tbl_init(uint32_t size)
 {
-    zt_ipv4_tbl            *tbl;
-    size_t                  rsize = size ? size : 128;
-    static zt_mem_pool_desc pools[4];
+    zt_ipv4_tbl             * tbl;
+    uint32_t                  rsize = size ? size : 128;
+    static zt_mem_pool_desc   pools[4];
 
     memset(pools, 0, sizeof(pools));
 

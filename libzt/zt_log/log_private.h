@@ -16,7 +16,7 @@
 #define _LOG_PRIVATE_H_
 
 #include <stdlib.h>
-#include <libzt/zt_log.h>
+#include <zt_log.h>
 
 #ifdef __cplusplus
 extern "C" {

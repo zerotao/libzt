@@ -1,7 +1,7 @@
 #ifndef _ZT_IPV4_TBL_H_
 #define _ZT_IPV4_TBL_H_
 
-#include <libzt/zt_mem.h>
+#include <zt_mem.h>
 
 typedef struct zt_ipv4_node zt_ipv4_node;
 typedef struct zt_ipv4_tbl zt_ipv4_tbl;
@@ -32,7 +32,7 @@ struct zt_ipv4_tbl {
  * @param size the size of the hash
  * @return a zt_ipv4_tbl *
  */
-zt_ipv4_tbl    *zt_ipv4_tbl_init(size_t size);
+zt_ipv4_tbl    *zt_ipv4_tbl_init(uint32_t size);
 
 /**
  * Frees up all memory for a zt_ipv4_tbl hash

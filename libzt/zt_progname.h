@@ -14,7 +14,7 @@
 #ifndef _ZT_PROGNAME_H_
 #define _ZT_PROGNAME_H_
 
-#include <libzt/zt_internal.h>
+#include <zt_internal.h>
 
 #define STRIP_DIR 1
 

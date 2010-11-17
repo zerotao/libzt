@@ -64,7 +64,7 @@ zt_gc_protect(zt_gc_t *gc, void *value)
 }
 
 void
-zt_gc_unprotect(zt_gc_t *gc, void *value)
+zt_gc_unprotect(zt_gc_t *gc UNUSED, void *value)
 {
     zt_gc_collectable_t * mark;
 
@@ -265,7 +265,7 @@ zt_gc_register_root(zt_gc_t *gc, void *v)
 }
 
 void
-zt_gc_prepare_value(zt_gc_t *gc, void *v)
+zt_gc_prepare_value(zt_gc_t *gc UNUSED, void *v)
 {
     zt_gc_collectable_t * mark = (zt_gc_collectable_t *)v;
 
@@ -273,7 +273,7 @@ zt_gc_prepare_value(zt_gc_t *gc, void *v)
 }
 
 void
-zt_gc_unregister_value(zt_gc_t *gc, void *v)
+zt_gc_unregister_value(zt_gc_t *gc UNUSED, void *v)
 {
     zt_gc_collectable_t * mark = (zt_gc_collectable_t *)v;
 
@@ -302,7 +302,7 @@ zt_gc_register_value(zt_gc_t *gc, void *v)
     zt_elist_add_tail(gc->grey, &mark->list);
 }
 
-void
+static void
 zt_gc_free_white(zt_gc_t *gc)
 {
     zt_elist_t          * elt = NULL;
@@ -339,7 +339,7 @@ zt_gc_free_white(zt_gc_t *gc)
     /* printf("Done\n"); */
 }
 
-void
+static void
 zt_gc_switch(zt_gc_t *gc)
 {
     zt_elist_t * tmp_white;

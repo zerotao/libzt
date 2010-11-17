@@ -13,7 +13,7 @@
 #ifndef _ZT_ASSERT_H_
 #define _ZT_ASSERT_H_
 
-#include <libzt/zt_exceptions.h>
+#include <zt_exceptions.h>
 
 BEGIN_C_DECLS
 

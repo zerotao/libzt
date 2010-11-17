@@ -6,10 +6,11 @@
 #include <pthread.h>
 #include <sys/time.h>
 
+#include <zt.h>
 #include <zt_threads.h>
 
 zt_threads_mutex *
-zt_threads_pthreads_lock_alloc(int locktype) {
+zt_threads_pthreads_lock_alloc(int locktype UNUSED) {
     pthread_mutex_t *lock;
 
     if ((lock = calloc(sizeof(pthread_mutex_t), 1)) == NULL) {
@@ -25,7 +26,7 @@ zt_threads_pthreads_lock_alloc(int locktype) {
 }
 
 void
-zt_threads_pthreads_lock_free(zt_threads_mutex *_lock, int locktype) {
+zt_threads_pthreads_lock_free(zt_threads_mutex *_lock, int locktype UNUSED) {
     pthread_mutex_t *lock;
 
     lock = (pthread_mutex_t *)_lock;
@@ -48,7 +49,7 @@ zt_threads_pthreads_lock(int mode, zt_threads_mutex *_lock) {
 }
 
 int
-zt_threads_pthreads_unlock(int mode, zt_threads_mutex *_lock) {
+zt_threads_pthreads_unlock(int mode UNUSED, zt_threads_mutex *_lock) {
     pthread_mutex_t *lock;
 
     lock = (pthread_mutex_t *)_lock;
@@ -57,7 +58,7 @@ zt_threads_pthreads_unlock(int mode, zt_threads_mutex *_lock) {
 }
 
 zt_threads_cond *
-zt_threads_pthreads_cond_alloc(int condtype) {
+zt_threads_pthreads_cond_alloc(int condtype UNUSED) {
     pthread_cond_t *cond;
 
     if ((cond = calloc(sizeof(pthread_cond_t), 1)) == NULL) {
@@ -170,7 +171,7 @@ zt_threads_pthreads_kill(zt_threads_thread *_thread) {
 
 unsigned long int
 zt_threads_pthread_id(void) {
-    return (unsigned int)pthread_self();
+    return (unsigned long int)pthread_self();
 }
 
 int

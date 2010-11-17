@@ -17,13 +17,13 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_unit.h>
-#include <libzt/zt_sha1.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_sha1.h>
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     /* get rid of the log message for the moment */
     char      * tdata[] = { "abc",
@@ -40,7 +40,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     int         i;
     zt_sha1_ctx ctx;
 
-    for (i = 0; i < sizeof_array(tdata); i++) {
+    for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_sha1_data(tdata[i], strlen(tdata[i]), digest);
         zt_sha1_tostr(digest, sha1);
         ZT_UNIT_ASSERT(test, strncmp(results[i], sha1, 40) == 0);
