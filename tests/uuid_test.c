@@ -37,7 +37,7 @@ uuid4_tests(struct zt_unit_test *test, void *data UNUSED)
     zt_uuid_t uuid;
     int       i;
     int       fail_ver;
-    int       fail_variant;
+    int       volatile fail_variant;
 
     memset(&uuid, 0, sizeof(zt_uuid_t));
 
@@ -88,7 +88,7 @@ uuid5_tests(struct zt_unit_test *test, void *data UNUSED)
     int        i;
     int        x;
     int        fail_ver = 0;
-    int        fail_variant = 0;
+    int        volatile fail_variant = 0;
 
     for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_uuid5(tdata[i], strlen(tdata[i]), UUID_NS_OID, &uuid);
