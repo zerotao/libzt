@@ -5,16 +5,6 @@ set(PROJECT_VERSION 1.1.0)
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-  # set(CMAKE_BUILD_TYPE distribution)
-  # set(CMAKE_C_FLAGS_DISTRIBUTION "-Wall -Wextra -O2")
-  set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
-  if(APPLE)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32")
-  endif(APPLE)
-endif(CMAKE_COMPILER_IS_GNUCC)
-
-
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 message("MODULE_PATH ${CMAKE_MODULE_PATH}")
 
@@ -83,12 +73,12 @@ include(CheckTypeSize)
 include(CheckCSourceCompiles)
 # usage: CHECK_C_SOURCE_COMPILES(source variable)
 
-CHECK_C_SOURCE_COMPILES( "int main(int argc, char * argv) { long long ll; }" HAVE_LONG_LONG )
+CHECK_C_SOURCE_COMPILES( "int main() { long long ll = 1L; return 0; }" HAVE_LONG_LONG )
 if(HAVE_LONG_LONG)
     ADD_DEFINITIONS(-DHAVE_LONG_LONG)
 endif(HAVE_LONG_LONG)
 
-CHECK_C_SOURCE_COMPILES( "int main(int argc, char * argv) { long double ld; }" HAVE_LONG_DOUBLE )
+CHECK_C_SOURCE_COMPILES( "int main() { long double ld = 1.0; return 0; }" HAVE_LONG_DOUBLE )
 if(HAVE_LONG_DOUBLE)
     ADD_DEFINITIONS(-DHAVE_LONG_DOUBLE)
 endif(HAVE_LONG_DOUBLE)
@@ -98,6 +88,15 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/libzt
                     ${CMAKE_CURRENT_SOURCE_DIR}/libzt)
 
 configure_file(config.h.cmake libzt/config.h)
+
+if(CMAKE_COMPILER_IS_GNUCC)
+  # set(CMAKE_BUILD_TYPE distribution)
+  # set(CMAKE_C_FLAGS_DISTRIBUTION "-Wall -Wextra -O2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -O2 -Werror")
+  if(APPLE)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32")
+  endif(APPLE)
+endif(CMAKE_COMPILER_IS_GNUCC)
 
 # subdirectories
 add_subdirectory(tools)
