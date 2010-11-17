@@ -406,25 +406,25 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
 
     printf(BLANK "pool: \"%s\" [%p] {\n"
            BLANK "elements: {\n"
-           BLANK "elt cache requested: %ld elements\n"
-           BLANK "elt cache actual: %ld elements\n"
-           BLANK "total elts: %ld\n"
+           BLANK "elt cache requested: %" PRIsize_t " elements\n"
+           BLANK "elt cache actual: %" PRIsize_t " elements\n"
+           BLANK "total elts: %" PRIsize_t "\n"
            BLANK "free elts: %ld\n"
            BLANK "}\n"
            BLANK "pages: {\n"
-           BLANK "page cache: %ld page(s)\n"
-           BLANK "free pages: %ld\n"
-           BLANK "page size: %ld\n"
-           BLANK "pages in use: %ld\n"
-           BLANK "total pages: %ld\n"
-           BLANK "elements per page: %ld\n"
-           BLANK "page allocs: %ld\n"
-           BLANK "page frees: %ld\n"
+           BLANK "page cache: %" PRIsize_t " page(s)\n"
+           BLANK "free pages: %" PRIsize_t"\n"
+           BLANK "page size: %" PRIsize_t "\n"
+           BLANK "pages in use: %" PRIsize_t "\n"
+           BLANK "total pages: %" PRIsize_t "\n"
+           BLANK "elements per page: %" PRIsize_t "\n"
+           BLANK "page allocs: %" PRIsize_t "\n"
+           BLANK "page frees: %" PRIsize_t "\n"
            BLANK "}\n"
            BLANK "overall: {\n"
-           BLANK "element size: %ld bytes + overhead = %ld bytes \n"
-           BLANK "page usage (num elts * elt size): %ld bytes\n"
-           BLANK "page memory (page size * total pages): %ld bytes\n"
+           BLANK "element size: %" PRIsize_t " bytes + overhead = %" PRIsize_t " bytes \n"
+           BLANK "page usage (num elts * elt size): %" PRIsize_t" bytes\n"
+           BLANK "page memory (page size * total pages): %" PRIsize_t" bytes\n"
            BLANK "}\n",
            INDENT(offset), pool->name, (void *)pool,
            INDENT(offset + 1),
@@ -442,7 +442,7 @@ zt_mem_pool_display(int offset, zt_mem_pool *pool, int flags)
            INDENT(offset + 2), pool->page_allocs,
            INDENT(offset + 2), pool->page_frees,
            INDENT(offset + 1), INDENT(offset + 1),
-           INDENT(offset + 2), (long)pool->elt_size, (unsigned long)(sizeof(zt_mem_elt) + pool->elt_size),
+           INDENT(offset + 2), pool->elt_size, sizeof(zt_mem_elt) + pool->elt_size,
            INDENT(offset + 2), (sizeof(zt_mem_elt) + pool->elt_size) * pool->elts_per_page,
            INDENT(offset + 2), pool->page_size * pool->npages,
            INDENT(offset + 1));
