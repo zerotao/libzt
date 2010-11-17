@@ -212,7 +212,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 static void
 intlen_test(struct zt_unit_test *test, void *data UNUSED)
 {
-    int i;
+    int volatile i;
 
     for (i = 0; i < 10; i++) {
         ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 1);
