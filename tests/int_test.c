@@ -1,4 +1,8 @@
 
+#ifdef HAVE_CONFIG_H
+# include <config.h> /* for zt_int.h */
+#endif /* HAVE_CONFIG_H */
+
 #include <zt_int.h>
 #include <zt_unit.h>
 

@@ -306,7 +306,7 @@ static void
 zt_gc_free_white(zt_gc_t *gc)
 {
     zt_elist_t          * elt = NULL;
-    zt_elist_t          * volatile dont_use = NULL;
+    zt_elist_t          * dont_use = NULL;
     zt_gc_collectable_t * mark;
 
     if (zt_elist_empty(gc->white)) {

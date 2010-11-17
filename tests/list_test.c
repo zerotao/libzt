@@ -32,7 +32,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     list_elt * al2;
 
     zt_elist_t * tmp;
-    zt_elist_t * volatile tmp2;
+    zt_elist_t * tmp2;
 
     size_t       i;
 

@@ -61,7 +61,7 @@ xfree_p(void_p stale)
 char *
 xstrdup(const char *string)
 {
-    char * volatile   new_string = NULL;
+    char *new_string = NULL;
 
     if ( string ) {
         if (!(new_string = strdup(string))) {

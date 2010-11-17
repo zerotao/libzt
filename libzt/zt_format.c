@@ -188,9 +188,9 @@ char * zt_fmt_vstrprintf(const char *fmt, va_list ap)
 
 
 size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
-                      const char * volatile fmt, va_list ap)
+                      const char *fmt, va_list ap)
 {
-    size_t volatile tlen = 0;
+    size_t    tlen = 0;
 
     zt_assert(put);
     zt_assert(fmt);
@@ -201,9 +201,9 @@ size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
             (++fmt && (*fmt == '%' || *fmt == '~'))) {
             tlen += put((unsigned char)*fmt++, cl);
         } else {
-            unsigned char         c, flags[256];
-            ssize_t volatile      width = INT_MIN;
-            ssize_t volatile      precision = INT_MIN;
+            unsigned char c, flags[256];
+            ssize_t       width = INT_MIN;
+            ssize_t       precision = INT_MIN;
             memset(flags, '\0', sizeof(flags));
 
             if (zt_fmt_flags) {
@@ -215,7 +215,7 @@ size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
             }
 
             if (*fmt == '*' || isdigit(*fmt)) {
-                int volatile      n;
+                int n;
 
                 if (*fmt == '*') {
                     n = va_arg(ap, int);
@@ -233,7 +233,7 @@ size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
 
             if (*fmt == '.' &&
                 (*++fmt == '*' || isdigit(*fmt))) {
-                int volatile      n;
+                int n;
                 if (*fmt == '*') {
                     n = va_arg(ap, int);
                     zt_assert(n != INT_MIN);
@@ -279,10 +279,10 @@ size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
     } while (0)
 
 size_t
-zt_fmt_puts(const char * volatile str, size_t volatile len,
+zt_fmt_puts(const char *str, size_t len,
             zt_fmt_put_f put, void *cl,
             unsigned char flags[256],
-            ssize_t volatile width, ssize_t precision)
+            ssize_t width, ssize_t precision)
 {
     size_t    tlen = 0;
 
@@ -307,10 +307,10 @@ zt_fmt_puts(const char * volatile str, size_t volatile len,
 }
 
 size_t
-zt_fmt_putd(const char * volatile str, size_t volatile len,
+zt_fmt_putd(const char *str, size_t len,
             zt_fmt_put_f put, void *cl,
             unsigned char flags[256],
-            ssize_t volatile width, ssize_t volatile precision)
+            ssize_t width, ssize_t precision)
 {
     int       sign;
     size_t    tlen = 0;
@@ -458,7 +458,7 @@ static size_t
 cvt_f(int code, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
-      ssize_t width, ssize_t volatile precision)
+      ssize_t width, ssize_t precision)
 {
     char        buf[DBL_MAX_10_EXP + 1 + 1 + 99 + 1];
     static char fmt[] = "%.dd?";
@@ -524,10 +524,10 @@ static size_t
 cvt_s(int code UNUSED, va_list app,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
-      ssize_t volatile width, ssize_t precision)
+      ssize_t width, ssize_t precision)
 {
     size_t lstr;
-    char * volatile str = va_arg(app, char *);
+    char * str = va_arg(app, char *);
 
     zt_assert(str != NULL);
 

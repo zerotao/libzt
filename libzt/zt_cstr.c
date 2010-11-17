@@ -56,7 +56,7 @@
 /* #define IDXLEN(i, j) ((i) < (j) ? ((j) - (i)) + 1 : ((i) - (j)) + 1) */
 static INLINE size_t
 IDXLEN(ssize_t i, ssize_t j) {
-    ssize_t volatile      r;
+    ssize_t   r;
 
     if (i < j) {
         r = (j - i) + 1;
@@ -174,13 +174,13 @@ zt_cstr_cat(const char *s1, ssize_t i1, ssize_t j1,
  * return a newly allocated string containing s[i:j]s1[i1:j1]...sn[in:jn]
  */
 char *
-zt_cstr_catv(const char * volatile s, ...) {
-    char       * volatile new;
-    char       * volatile p;
+zt_cstr_catv(const char *s, ...) {
+    char       * new;
+    char       * p;
     const char * save = s;
-    ssize_t volatile     i;
-    ssize_t volatile     j;
-    size_t  volatile     len  = 0;
+    ssize_t      i;
+    ssize_t      j;
+    size_t       len  = 0;
     va_list      ap;
 
     va_start(ap, s);
@@ -569,7 +569,7 @@ zt_cstr_strip(char *str) {
 
 size_t
 zt_cstr_rspn(const char *s, const char *accept) {
-    size_t volatile   len = strlen(s);
+    size_t    len = strlen(s);
     ssize_t   i   = 0;
 
     zt_assert(s);
@@ -585,7 +585,7 @@ zt_cstr_rspn(const char *s, const char *accept) {
 
 size_t
 zt_cstr_rcspn(const char *s, const char *reject) {
-    size_t volatile   len = strlen(s);
+    size_t    len = strlen(s);
     ssize_t   i   = 0;
 
     zt_assert(s);

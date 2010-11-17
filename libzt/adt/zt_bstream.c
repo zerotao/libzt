@@ -121,7 +121,7 @@ zt_bstream_free(zt_bstream_t *bs)
 }
 
 size_t
-zt_bstream_read(zt_bstream_t bs, char * volatile buf, size_t len, char size, char tag UNUSED)
+zt_bstream_read(zt_bstream_t bs, char *buf, size_t len, char size, char tag UNUSED)
 {
     zt_assert(bs);
     zt_assert(buf);
@@ -174,7 +174,7 @@ zt_bstream_read_double(zt_bstream_t bs, double * data)
 }
 
 size_t
-zt_bstream_write(zt_bstream_t bs, char * volatile data, size_t len, char size, char tag UNUSED)
+zt_bstream_write(zt_bstream_t bs, char *data, size_t len, char size, char tag UNUSED)
 {
     size_t tlen = len * size;
     size_t alen = 0;
