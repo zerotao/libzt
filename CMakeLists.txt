@@ -84,7 +84,14 @@ include(CheckCSourceCompiles)
 # usage: CHECK_C_SOURCE_COMPILES(source variable)
 
 CHECK_C_SOURCE_COMPILES( "int main(int argc, char * argv) { long long ll; }" HAVE_LONG_LONG )
+if(HAVE_LONG_LONG)
+    ADD_DEFINITIONS(-DHAVE_LONG_LONG)
+endif(HAVE_LONG_LONG)
+
 CHECK_C_SOURCE_COMPILES( "int main(int argc, char * argv) { long double ld; }" HAVE_LONG_DOUBLE )
+if(HAVE_LONG_DOUBLE)
+    ADD_DEFINITIONS(-DHAVE_LONG_DOUBLE)
+endif(HAVE_LONG_DOUBLE)
 
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/libzt
