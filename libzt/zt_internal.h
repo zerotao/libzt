@@ -264,12 +264,9 @@ END_C_DECLS
 #  define xfree    xfree_p
 #endif
 
-#if __WORDSIZE == 64
-#define PRIsize_t PRIu64
-#else
-#define PRIsize_t PRIu32
+#ifndef PRIsize_t
+# define PRIsize_t "zu"
 #endif
-
 
 #include <zt_replace.h>
 #endif /*_ZT_INTERNAL_H_*/
