@@ -34,6 +34,8 @@ tests/log.err
 *.o
 *.lo
 *.la
+*.so
+*.dylib
 tags
 *.deps
 *.libs
