@@ -79,13 +79,20 @@ zt_daemonize( char *root, mode_t mask, int options UNUSED)
             exit(1);
         } else if (pid2 == 0) { /* second child */
             int fd;
+            int nil;
+
             if (root != NULL) {
-                chdir(root);
+                if(chdir(root) != 0) {
+                    zt_log_printf(zt_log_crit, "Could not chdir %s", root);
+                    exit(1);
+                }
             }
             umask(mask);
             fd = open("/dev/null", O_RDWR);    /* stdin */
-            dup(fd);    /* stdout */
-            dup(fd); /* stderr */
+
+            /* we don't care about the results as we have no open pids at this point */
+            nil = dup(fd); /* stdout */
+            nil = dup(fd); /* stderr */
         } else {                                           /* second parent */
             sleep(1);
             exit(0);

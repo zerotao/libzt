@@ -37,7 +37,9 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, (!strcmp(name, "foo")));
 
     /* test the progpath */
-    getcwd(cwd, PATH_MAX);
+    if(getcwd(cwd, PATH_MAX) == NULL) {
+        ZT_UNIT_ASSERT(test, 0==1);
+    }
 
     path = zt_progpath(NULL);
     ZT_UNIT_ASSERT(test, (!strcmp(path, "*UNKNOWN*")));

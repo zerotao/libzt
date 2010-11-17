@@ -96,8 +96,9 @@ zt_progpath(char *prog) {
              */
             char      cwd[PATH_MAX+1];
 
-            getcwd(cwd, PATH_MAX);
-            zt_cstr_copy(cwd, 0, -1, _progpath, PATH_MAX);
+            if(getcwd(cwd, PATH_MAX) != NULL) {
+                zt_cstr_copy(cwd, 0, -1, _progpath, PATH_MAX);
+            }
         }
     }
     return _progpath;
