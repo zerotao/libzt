@@ -19,7 +19,10 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <limits.h>
+
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>

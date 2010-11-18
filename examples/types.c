@@ -10,7 +10,10 @@
 # include <stdint.h>
 #endif
 
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
+#endif
+
 #include <zt_internal.h>
 #include "test.h"
 
