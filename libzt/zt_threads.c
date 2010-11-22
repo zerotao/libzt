@@ -8,6 +8,7 @@
 #endif
 
 #include <sys/queue.h>
+#include <unistd.h>
 
 #include <zt.h>
 #include <zt_threads.h>
@@ -383,7 +384,8 @@ _zt_threadpool_iput_loop(void *args) {
 int
 zt_threadpool_insert_iput(zt_threadpool *tpool, void *data) {
     zt_threadpool_entry *entry;
-    int                  i = 0;
+    int                  i   = 0;
+    int                  ret = 0;
 
     entry       = calloc(sizeof(zt_threadpool_entry), 1);
     entry->data = data;
@@ -394,18 +396,21 @@ zt_threadpool_insert_iput(zt_threadpool *tpool, void *data) {
         zt_threads_cond_signal(tpool->iput_cond, 0);
 
         if (tpool->iput_fd_sigs[1] >= 0) {
-            write(tpool->iput_fd_sigs[1], &i, 1);
+            if (write(tpool->iput_fd_sigs[1], &i, 1) < 0) {
+                ret = -1;
+            }
         }
     }
     zt_threads_unlock(0, tpool->iput_mutex);
 
-    return 0;
+    return ret;
 }
 
 int
 zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
     zt_threadpool_entry *entry;
-    int                  i = 0;
+    int                  i   = 0;
+    int                  ret = 0;
 
     entry       = calloc(sizeof(zt_threadpool_entry), 1);
     entry->data = data;
@@ -416,12 +421,14 @@ zt_threadpool_insert_oput(zt_threadpool *tpool, void *data) {
         zt_threads_cond_signal(tpool->oput_cond, 0);
 
         if (tpool->oput_fd_sigs[1] >= 0) {
-            write(tpool->oput_fd_sigs[1], &i, 1);
+            if (write(tpool->oput_fd_sigs[1], &i, 1) < 0) {
+                ret = -1;
+            }
         }
     }
     zt_threads_unlock(0, tpool->oput_mutex);
 
-    return 0;
+    return ret;
 }
 
 void *
@@ -498,7 +505,8 @@ zt_threadpool_oput_fd_writer(zt_threadpool *tpool) {
 int
 zt_threadpool_kill(zt_threadpool *tpool) {
     int i;
-    int k = 1;
+    int k   = 1;
+    int ret = 0;
 
     tpool->kill = 1;
 
@@ -517,24 +525,54 @@ zt_threadpool_kill(zt_threadpool *tpool) {
     }
 
     if (tpool->oput_fd_sigs[1] >= 0) {
-        write(tpool->oput_fd_sigs[1], &k, 1);
+        if (write(tpool->oput_fd_sigs[1], &k, 1) < 0) {
+            ret = -1;
+        }
     }
 
     if (tpool->iput_fd_sigs[1] >= 0) {
-        write(tpool->iput_fd_sigs[1], &i, 1);
+        if (write(tpool->iput_fd_sigs[1], &i, 1) < 0) {
+            ret = -1;
+        }
     }
 
-    return 0;
+    return ret;
 }
 
 zt_threadpool *
 zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_oput) {
     zt_threadpool *tpool;
 
+
     tpool               = calloc(sizeof(zt_threadpool), 1);
     tpool->min_threads  = min_threads;
     tpool->max_threads  = max_threads;
     tpool->thread_count = min_threads;
+
+    if (pipe_iput) {
+        if (pipe(tpool->iput_fd_sigs) < 0) {
+            free(tpool);
+            return NULL;
+        }
+    } else {
+        tpool->iput_fd_sigs[0] = -1;
+        tpool->iput_fd_sigs[1] = -1;
+    }
+
+    if (pipe_oput) {
+        if (pipe(tpool->oput_fd_sigs) < 0) {
+            if (pipe_iput) {
+                close(tpool->oput_fd_sigs[0]);
+                close(tpool->oput_fd_sigs[1]);
+            }
+
+            free(tpool);
+            return NULL;
+        }
+    } else {
+        tpool->oput_fd_sigs[0] = -1;
+        tpool->oput_fd_sigs[1] = -1;
+    }
 
     tpool->iput_threads = calloc(sizeof(zt_threads_thread *), min_threads);
     tpool->iput_mutex   = zt_threads_alloc_lock(0);
@@ -546,23 +584,9 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
         tpool->oput_threads = calloc(sizeof(zt_threads_thread *), min_threads);
     }
 
-    if (pipe_iput) {
-        pipe(tpool->iput_fd_sigs);
-    } else {
-        tpool->iput_fd_sigs[0] = -1;
-        tpool->iput_fd_sigs[1] = -1;
-    }
-
-    if (pipe_oput) {
-        pipe(tpool->oput_fd_sigs);
-    } else {
-        tpool->oput_fd_sigs[0] = -1;
-        tpool->oput_fd_sigs[1] = -1;
-    }
-
     TAILQ_INIT(&tpool->iput_queue);
     TAILQ_INIT(&tpool->oput_queue);
 
     return tpool;
-}
+} /* zt_threadpool_init */
 

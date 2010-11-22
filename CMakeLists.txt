@@ -12,6 +12,9 @@ message("MODULE_PATH ${CMAKE_MODULE_PATH}")
 
 ########## Check for System Packages known by CMAKE ##########
 find_package(Threads)
+if (CMAKE_USE_PTHREADS_INIT) 
+	SET(HAVE_PTHREAD 1)
+endif (CMAKE_USE_PTHREADS_INIT)
 
 ################## Check for System Headers ##################
 include(CheckDefIncludeFiles)
@@ -44,7 +47,6 @@ include(CheckDefFunctionExists)
 check_def_function_exists( openlog HAVE_SYSLOG )
 
 check_def_function_exists( basename HAVE_BASENAME )
-check_def_function_exists( pthread_create HAVE_PTHREAD )
 check_def_function_exists( break HAVE_BREAK )
 check_def_function_exists( bzero HAVE_BZERO )
 check_def_function_exists( calloc HAVE_CALLOC )
