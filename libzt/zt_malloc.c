@@ -12,17 +12,18 @@
 #include <string.h>
 
 #include "zt_internal.h"
+#include "zt_assert.h"
 #include "zt_log.h"
-#include "zt_exceptions.h"
 
 void_p
 xcalloc_p(size_t num, size_t size)
 {
     void_p mem = NULL;
 
-    if (!(mem = (void_p)calloc((num), (size)))) {
-        TRY_THROW(zt_exception.memory.no_mem);
-    }
+    mem = (void_p)calloc((num), (size));
+
+    zt_assert(mem);
+
     return mem;
 }
 
@@ -31,9 +32,9 @@ xmalloc_p(size_t num)
 {
     void_p mem = NULL;
 
-    if (!(mem = (void_p)malloc(num))) {
-        TRY_THROW(zt_exception.memory.no_mem);
-    }
+    mem = (void_p)malloc(num);
+    zt_assert(mem);
+
     return mem;
 }
 
@@ -42,18 +43,18 @@ xrealloc_p(void_p p, size_t num)
 {
     void_p mem = NULL;
 
-    if (!(mem = (void_p)realloc(p, num))) {
-        TRY_THROW(zt_exception.memory.no_mem);
-    }
+    mem = (void_p)realloc(p, num);
+
+    zt_assert(mem);
+
     return mem;
 }
 
 void
 xfree_p(void_p stale)
 {
-    if (!stale) {
-        TRY_THROW(zt_exception.memory.no_mem);
-    }
+
+    zt_assert(!stale);
 
     free(stale);
 }
@@ -63,12 +64,10 @@ xstrdup(const char *string)
 {
     char * volatile new_string = NULL;
 
-    if ( string ) {
-        if (!(new_string = strdup(string))) {
-            /* zt_log_printf( zt_log_emerg, "Could not xstrdup string."); */
-            TRY_THROW(zt_exception.memory.no_mem);
-        }
-    }
+    zt_assert(string);
+    new_string = strdup(string);
+    zt_assert(new_string);
+
     return new_string;
 }
 

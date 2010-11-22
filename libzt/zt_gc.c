@@ -10,8 +10,6 @@
 
 #include "zt_macros.h"
 #include "zt_assert.h"
-
-#define ZT_EXCEPT_GC_DEFINE
 #include "zt_gc.h"
 
 /*
@@ -140,9 +138,7 @@ void
 zt_gc_enable(zt_gc_t *gc)
 {
     gc->enabled++;
-    if (gc->enabled > 0) {
-        TRY_THROW(zt_exception.gc.unbalanced_enable);
-    }
+    zt_assert(gc->enabled <= 0);
 
     if (gc->enabled == 0 && gc->current_allocs >= gc->allocs_before_scan) {
         zt_gc_scan(gc, 0);

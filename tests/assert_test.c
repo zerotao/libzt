@@ -11,7 +11,6 @@
 /*
  * Description:
  */
-#include <zt_exceptions.h>
 #include <zt_log.h>
 
 #undef NDEBUG
@@ -29,8 +28,6 @@ basic_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)
     olog = zt_log_logger(log);
 
     zt_assert(1 == 1);
-
-    //ZT_UNIT_ASSERT_RAISES(test, zt_exception.assertion.failed, zt_assert(1 == 0));
 
     zt_log_logger(olog);
     zt_log_close(log);

@@ -6,8 +6,6 @@
 #include "adt/zt_list.h"
 #include "zt_opts.h"
 
-#define ZT_UNIT_EXCEPTION_DEFAULT "Unknown Error"
-char * zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
 
 #define yaml_dict(name, offt) \
     printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
@@ -215,30 +213,6 @@ test_passed(struct zt_unit_test *test)
     test->success = TRUE;
 }
 
-static void
-test_failed(struct zt_unit_test    * test,
-            char    * error,
-            char    * efile,
-            char    * efunc,
-            int eline)
-{
-    size_t    len;
-
-#   define MAX_STR_INT    43
-    zt_assert(test);
-    zt_assert(error);
-
-    test->success = FALSE;
-
-    len = strlen(error);
-    len += strlen(efile);
-    len += strlen(efunc);
-    len += MAX_STR_INT + 3 + 3;
-
-    test->error = XCALLOC(char, len + 1);
-    snprintf(test->error, len, "%s: %s[%s:%d]", error, efile, efunc, eline);
-}
-
 int
 zt_unit_run_test(struct zt_unit         * unit UNUSED,
                  struct zt_unit_suite   * suite,
@@ -250,27 +224,14 @@ zt_unit_run_test(struct zt_unit         * unit UNUSED,
 
     yaml_dict(test->name, 4);
 
-    TRY({
-            UNWIND_PROTECT({
-                               if (suite->setup_fn) {
-                                   suite->setup_fn(suite->data);
-                               }
-                               test->test_fn(test, suite->data);
-                               test_passed(test);
-                           }, {
-                               if (suite->teardown_fn) {
-                                   suite->teardown_fn(suite->data);
-                               }
-                           });
-        }, {
-            CATCH(zt_unit_exception,
-                  {
-                      test_failed(test, _except_Stack->etext, _except_Stack->efile, _except_Stack->efunc, _except_Stack->eline);
-                      zt_unit_exception = ZT_UNIT_EXCEPTION_DEFAULT;
-                  });
-        });
-
-
+    if (suite->setup_fn) {
+        suite->setup_fn(suite->data);
+    }
+    test->test_fn(test, suite->data);
+    test_passed(test);
+    if (suite->teardown_fn) {
+        suite->teardown_fn(suite->data);
+    }
     yaml_value("assertions", 6, "%ld", test->assertions);
     yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 

@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #include <zt_internal.h>
-#include <zt_exceptions.h>
+#include <zt_assert.h>
 
 BEGIN_C_DECLS
 
@@ -38,9 +38,7 @@ BEGIN_C_DECLS
     static INLINE ltype CONC3(zt_, sltype, _add) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
-        if (CONC(sutype, _MAX) - lhs < rhs) {                \
-            THROW(zt_exception.math.overflow);               \
-        }                                                    \
+        zt_assert(rhs <= (CONC(sutype, _MAX) - lhs));         \
         return lhs + rhs;                                    \
     }
 
@@ -57,15 +55,10 @@ ZT_INT_UNSIGNED_ADD(unsigned long, ulong, ULONG)
         if (rhs < 0)                                         \
         {                                                    \
             /* 2 negatives */                                \
-            if (lhs < CONC(sutype, _MIN) - rhs) {            \
-                THROW(zt_exception.math.overflow);           \
-            }                                                \
+            zt_assert(lhs >= CONC(sutype, _MIN) - rhs);       \
         } else {                                             \
             /* 2 positives */                                \
-            if (CONC(sutype, _MAX) - lhs < rhs)              \
-            {                                                \
-                THROW(zt_exception.math.overflow);           \
-            }                                                \
+            zt_assert(rhs <= CONC(sutype, _MAX) - lhs);       \
         }                                                    \
     }                                                        \
     return lhs + rhs;                                        \
@@ -83,9 +76,7 @@ ZT_INT_SIGNED_ADD(signed long, long, LONG)
     INLINE static ltype CONC3(zt_, sltype, _sub) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
-        if (lhs < rhs) {                                     \
-            THROW(zt_exception.math.overflow);               \
-        }                                                    \
+        zt_assert(lhs > rhs);                                \
         return lhs - rhs;                                    \
     }
 
@@ -102,15 +93,9 @@ ZT_INT_UNSIGNED_SUB(unsigned long, ulong, ULONG)
         {                                                    \
             if (lhs >= 0)                                    \
             {                                                \
-                if (lhs > CONC(sutype, _MAX) + rhs)          \
-                {                                            \
-                    THROW(zt_exception.math.overflow);       \
-                }                                            \
+                zt_assert(lhs <= CONC(sutype, _MAX) + rhs);   \
             } else {                                         \
-                if (lhs < CONC(sutype, _MIN + rhs))          \
-                {                                            \
-                    THROW(zt_exception.math.overflow);       \
-                }                                            \
+                zt_assert(lhs >= CONC(sutype, _MIN + rhs));   \
             }                                                \
         }                                                    \
         return (lhs - rhs);                                  \
@@ -130,9 +115,7 @@ ZT_INT_SIGNED_SUB(signed long, long, LONG)
                                                   ltype rhs) \
     {                                                        \
         cvtype _tmp = (cvtype)lhs * (cvtype)rhs;             \
-        if (((_tmp) >> (sizeof(ltype) * 8)) > 0) {           \
-            THROW(zt_exception.math.overflow);               \
-        }                                                    \
+        zt_assert(((_tmp) >> (sizeof(ltype) * 8)) <= 0);     \
         return (ltype)_tmp;                                  \
     }
 
@@ -146,92 +129,6 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
 # endif
 #endif
 
-/*
- * #ifdef HAVE_LONG_LONG
- * #define ZT_INT_CHECK_LONG_LONG                                                      \
- *     case 4:                                                                 \
- *                 if(ZT_INT_IS_SIGNED(rhs) ||                                         \
- *                    ZT_INT_IS_SIGNED(lhs))                                           \
- *                 {                                                                   \
- *                     if(((_tmp & 0xffffffff80000000LL) != 0) &&                      \
- *                        ((_tmp & 0xffffffff80000000LL) != 0xffffffff80000000LL)) {   \
- *                         THROW(zt_exception.math.overflow)                       \
- *                         }                                                           \
- *     } else {                                                            \
- *     if((_tmp & 0xffffffff00000000ULL)) {                            \
- *     THROW(zt_exception.math.overflow);                      \
- *     }                                                               \
- *     }                                                                   \
- *     break;
- * #else
- * #define ZT_INT_CHECK_LONG_LONG
- * #endif
- *     switch(sizeof(ltype)) {                                         \
- *             ZT_INT_CHECK_LONG_LONG                                      \
- *     case 2:                                                     \
- *     if(ZT_INT_IS_SIGNED(rhs) ||                             \
- *        ZT_INT_IS_SIGNED(lhs)) {                             \
- *     if(((_tmp & 0xffff8000) != 0) &&                    \
- *        ((_tmp & 0xffff8000) != 0xffff8000)) {           \
- *     THROW(zt_exception.math.overflow);              \
- *     }                                                   \
- *     } else {                                                \
- *     if ((_tmp & 0xffff0000)) {                          \
- *     THROW(zt_exception.math.overflow);              \
- *     }                                                   \
- *     }                                                       \
- *     break;                                                  \
- *     case 1:                                                     \
- *     if(ZT_INT_IS_SIGNED(rhs) ||                             \
- *        ZT_INT_IS_SIGNED(lhs))                               \
- *     {                                                       \
- *     if(((_tmp & 0xff80) != 0) &&                        \
- *        ((_tmp & 0xff80) != 0xff80)) {                   \
- *     THROW(zt_exception.math.overflow);              \
- *     }                                                   \
- *     } else {                                                \
- *     if(_tmp & 0xff00) {                                 \
- *     THROW(zt_exception.math.overflow);              \
- *     }                                                   \
- *     }                                                       \
- *     break;                                                  \
- *     default:                                                    \
- *     if((rhs ^ lhs) < 0)                                     \
- *     {                                                       \
- *     if(lhs > 0)                                         \
- *     {                                                   \
- *     if(CONC(sutype,_MAX)/lhs < rhs)                 \
- *     {                                               \
- *     THROW(zt_exception.math.overflow);          \
- *     }                                               \
- *     }                                                   \
- *     else                                                \
- *     {                                                   \
- *     if((lhs == CONC(sutype,_MIN)) ||                \
- *        (rhs == CONC(sutype,_MIN))) {                \
- *     THROW(zt_exception.math.overflow);          \
- *     }                                               \
- *     if(CONC(sutype,_MAX/-lhs < -rhs))               \
- *     {                                               \
- *     THROW(zt_exception.math.overflow);          \
- *     }                                               \
- *     }                                                   \
- *     } else {                                                \
- *     /\* mixed signs *\/                                 \
- *     if(lhs < 0) {                                       \
- *     if(lhs < CONC(sutype,_MIN)/rhs) {               \
- *     THROW(zt_exception.math.overflow);          \
- *     }                                               \
- *     } else {                                            \
- *     if(rhs < CONC(sutype,_MIN)/lhs) {               \
- *     THROW(zt_exception.math.overflow);          \
- *     }                                               \
- *     }                                                   \
- *     }                                                       \
- *     break;                                                  \
- *     }                                                               \
- */
-
 #define ZT_INT_SIGNED_MUL(ltype, sltype, sutype, cvtype)     \
     INLINE static ltype CONC3(zt_, sltype, _mul) (ltype lhs, \
                                                   ltype rhs) \
@@ -244,10 +141,8 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
             return rhs * lhs;                                \
         }                                                    \
         _tmp = (cvtype)lhs * (cvtype)rhs;                    \
-        if ((_tmp < CONC(sutype, _MIN)) ||                   \
-            (_tmp > CONC(sutype, _MAX))) {                   \
-            THROW(zt_exception.math.overflow);               \
-        }                                                    \
+        zt_assert((_tmp >= CONC(sutype, _MIN)) &&            \
+                (_tmp <= CONC(sutype, _MAX)));               \
         return (lhs * rhs);                                  \
     }
 
@@ -269,9 +164,7 @@ ZT_INT_SIGNED_MUL(signed long, long, LONG, signed long long)
     INLINE static ltype CONC3(zt_, sltype, _div) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
-        if (rhs == 0) {                                      \
-            THROW(zt_exception.math.divide_by_zero);         \
-        }                                                    \
+        zt_assert(rhs != 0);                                 \
         return lhs / rhs;                                    \
     }
 
@@ -291,21 +184,15 @@ ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
                                                   ltype rhs)  \
     {                                                         \
         cvtype _tmp;                                          \
-        if (rhs == 0) {                                       \
-            THROW(zt_exception.math.divide_by_zero);          \
-        }                                                     \
+        zt_assert(rhs != 0);                                  \
         if (ZT_INT_IS_SIGNED(lhs) && ZT_INT_IS_SIGNED(rhs)) { \
-            if (lhs == CONC(sutype, _MIN) && rhs == -1) {     \
-                THROW(zt_exception.math.overflow);            \
-            }                                                 \
+            zt_assert(lhs != CONC(sutype, _MIN) && rhs == -1);\
         }                                                     \
         if (ZT_INT_SAME_SIGN(lhs, rhs)) {                     \
             return lhs / rhs;                                 \
         }                                                     \
         _tmp = (cvtype)lhs / (cvtype)rhs;                     \
-        if (_tmp < CONC(sutype, _MIN)) {                      \
-            THROW(zt_exception.math.overflow);                \
-        }                                                     \
+        zt_assert(_tmp >= CONC(sutype, _MIN));                \
         return (ltype)_tmp;                                   \
     }
 

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "zt_internal.h"
+#include "zt_assert.h"
 #include "adt/zt_list.h"
 #include "zt_mem.h"
 #include "zt_atexit.h"
@@ -583,7 +584,8 @@ zt_mem_pool_group_alloc(zt_mem_pool_group *group, size_t size)
         }
     }
 
-    TRY_THROW(zt_exception.memory.pool.group.does_not_exist);
+    zt_assert(0);
+
     return NULL;                                           /* never reached if exceptions are enabled */
 }
 

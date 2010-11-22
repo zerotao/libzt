@@ -8,6 +8,7 @@
 
 #include <zt_internal.h>
 #include <zt_assert.h>
+#include <zt_assert.h>
 BEGIN_C_DECLS
 
 typedef struct zt_pair zt_pair;
@@ -16,8 +17,6 @@ struct zt_pair {
     struct  zt_pair * tail;
 };
 typedef zt_pair    *zt_llist;
-
-static char *zt_llist_too_short = "List is too short";
 
 #define zt_llist_head(_pair) \
     (_pair)->head
@@ -57,9 +56,7 @@ zt_llist_nth(zt_llist pair, int offt)
         pair = zt_llist_tail(pair);
     }
 
-    if (pair == NULL) {
-        THROW(zt_llist_too_short);
-    }
+    zt_assert(pair != NULL);
 
     return (zt_llist_head(pair));
 }
@@ -72,9 +69,7 @@ zt_llist_nthtail(zt_llist pair, int offt)
         pair = zt_llist_tail(pair);
     }
 
-    if (pair == NULL) {
-        THROW(zt_llist_too_short);
-    }
+    zt_assert(pair != NULL);
     return (zt_llist_tail(pair));
 }
 

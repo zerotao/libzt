@@ -37,5 +37,6 @@ _zt_assert_fail(char *s, char *file, unsigned int line,
     } else {
         zt_log_printf(zt_log_err, "Assertion \"%s\" failed: %s[%d]", s, bname, line);
     }
-    TRY_THROW(zt_exception.assertion.failed);
+
+    abort();
 }

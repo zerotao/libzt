@@ -1,10 +1,5 @@
 #include <zt_internal.h>
 
-#ifndef ZT_WITHOUT_EXCEPT
-#include <zt_except.h>
-#include <zt_exceptions.h>
-#endif /* ZT_WITHOUT_EXCEPT */
-
 #include <zt_atexit.h>
 #include <zt_daemon.h>
 #include <zt_log.h>

@@ -2,7 +2,6 @@
 
 #include "../zt_internal.h"
 #include "../zt_assert.h"
-#include "../zt_exceptions.h"
 #include "zt_array.h"
 
 static void

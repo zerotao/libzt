@@ -66,12 +66,7 @@ main(int argc UNUSED, char *argv[] UNUSED)
 
         elt2 = zt_mem_pool_group_alloc(group, sizeof(char));
 
-        DO_TRY {
-            elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
-        } ELSE_TRY {
-            CATCH(zt_exception.memory.pool.group, {});
-        } END_TRY;
-
+        elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
         zt_mem_pool_group_display(0, group, 0);
 
         zt_mem_pool_group_release(&elt);

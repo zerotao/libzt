@@ -3,7 +3,6 @@
 
 #include <zt_internal.h>
 #include <adt/zt_list.h>
-#include <zt_exceptions.h>
 
 BEGIN_C_DECLS
 

@@ -2,8 +2,8 @@
 #define _ZT_UNIT_H_
 
 #include <zt_internal.h>
+#include <zt_assert.h>
 #include <zt_macros.h>
-#include <zt_exceptions.h>
 #include <adt/zt_list.h>
 
 BEGIN_C_DECLS
@@ -45,12 +45,10 @@ struct zt_unit_test {
 };
 
 #define ZT_UNIT_ASSERT(test, expr)                          \
-    if (!(expr)) {                                          \
-        zt_unit_exception = "Assertion Failed: " STR(expr); \
-        TRY_THROW(zt_unit_exception);                       \
-    } else {                                                \
+    do {                                                    \
+        zt_assert((expr));                                  \
         zt_unit_test_add_assertion(test);                   \
-    }
+    } while(0)
 
 #define ZT_UNIT_ASSERT_EQUAL(test, expr1, expr2) \
     ZT_UNIT_ASSERT(test, (expr1 == expr2))
@@ -59,22 +57,7 @@ struct zt_unit_test {
     ZT_UNIT_ASSERT(test, (expr1 != expr2))
 
 
-
-#define ZT_UNIT_ASSERT_RAISES(test, excpt, expr)                                             \
-    {                                                                                        \
-        int success = 0;                                                                     \
-        TRY({                                                                                \
-                { expr; }                                                                    \
-            }, {                                                                             \
-                CATCH(excpt, success = 1; );                                                 \
-            });                                                                              \
-        if (success != 1) {                                                                  \
-            zt_unit_exception = "Assertion Failed: " STR(expr) " did not raise " STR(excpt); \
-            TRY_THROW(zt_unit_exception);                                                    \
-        }                                                                                    \
-        zt_unit_test_add_assertion(test);                                                    \
-    }
-
+/* #define ZT_UNIT_ASSERT_RAISES(test, excpt, expr) */
 
 
 struct zt_unit *

@@ -9,12 +9,12 @@ test_fn_1(struct zt_unit_test *test, void *data UNUSED)
 }
 
 void
-test_fn_2(struct zt_unit_test *test, void *data UNUSED)
+test_fn_2(struct zt_unit_test *test UNUSED, void *data UNUSED)
 {
-    char * abc = "123";
+    /* char * abc = "123"; */
 
-    ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc));
-    ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc));
+    /* ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc)); */
+    /* ZT_UNIT_ASSERT_RAISES(test, abc, TRY_THROW(abc)); */
 
     return;
 }
@@ -27,7 +27,6 @@ extern int register_bstream_suite(struct zt_unit *unit);
 extern int register_bytearray_suite(struct zt_unit *unit);
 extern int register_cfg_suite(struct zt_unit *unit);
 extern int register_cstr_suite(struct zt_unit *unit);
-extern int register_except_suite(struct zt_unit *unit);
 extern int register_format_suite(struct zt_unit *unit);
 extern int register_gc_suite(struct zt_unit *unit);
 extern int register_int_suite(struct zt_unit *unit);
@@ -69,7 +68,6 @@ main(int argc, char *argv[])
     register_table_suite(unit);
     register_bstream_suite(unit);
     register_cstr_suite(unit);
-    register_except_suite(unit);
     register_format_suite(unit);
     register_gc_suite(unit);
     register_int_suite(unit);

@@ -591,9 +591,10 @@ zt_fmt_insert(int c, void *cl)
 {
     struct zt_fmt_obuf * p = cl;
 
-    if (p->bp >= p->buf + p->size) {
-        TRY_THROW(zt_exception.format.overflow);
-    }
+    zt_assert(p->bp < p->buf + p->size);
+    /* if (p->bp >= p->buf + p->size) { */
+        /* TRY_THROW(zt_exception.format.overflow); */
+    /* } */
 
     *p->bp++ = c;
     return c;
