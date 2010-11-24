@@ -27,7 +27,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char * AHPLA = "ZYXWVUTSRQPONMLKJIHGFEDCBA";
     char * alpha = "abcdefghijklmnopqrstuvwxyz";
     char * path = "/home/jshiffer/config.foo";
-    char * interface = "Interface";
+    char * iface_str = "Interface";
     char * spain = "The rain in Spain";
     char   bname[PATH_MAX+1];
     char   dname[PATH_MAX+1];
@@ -117,16 +117,16 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     free(chomp_test);
 
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(interface, 5, 8), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(interface, 5, -1), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(interface, -4, 8), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(interface, -4, -1), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(interface, -4, -2), "fac") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, 8), "face") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, -1), "face") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, 8), "face") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -1), "face") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -2), "fac") == 0)); XFREE(free_me);
 
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_catv(interface, -4, -1, " plant", 0, -1, NULL), "face plant") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_catv(iface_str, -4, -1, " plant", 0, -1, NULL), "face plant") == 0)); XFREE(free_me);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_cat(interface, -4, -1, " plant", 0, -1), "face plant") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_cat(iface_str, -4, -1, " plant", 0, -1), "face plant") == 0)); XFREE(free_me);
 
     ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_map(ALPHA, 0, -1, ALPHA, alpha), alpha) == 0)); XFREE(free_me);
 
@@ -164,33 +164,33 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, zt_cstr_rany(spain, 0, -1, "zqbS") == 12);
     ZT_UNIT_ASSERT(test, zt_cstr_rany(spain, 0, -1, "zqb") == -1);
 
-    ZT_UNIT_ASSERT(test, strcmp(&interface[zt_cstr_pos(interface, -4)], "face") == 0);
+    ZT_UNIT_ASSERT(test, strcmp(&iface_str[zt_cstr_pos(iface_str, -4)], "face") == 0);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_len(interface, -4, -1) == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_len(iface_str, -4, -1) == 4);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, -4, -1, interface, 5, 8) == 0);
-    ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, 0, -1, interface, 0, -1) == 0);
-    ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, 0, -1, interface, 0, 4) == 1);
-    ZT_UNIT_ASSERT(test, zt_cstr_cmp(interface, 0, 4, interface, 0, -1) == -1);
+    ZT_UNIT_ASSERT(test, zt_cstr_cmp(iface_str, -4, -1, iface_str, 5, 8) == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_cmp(iface_str, 0, -1, iface_str, 0, -1) == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_cmp(iface_str, 0, -1, iface_str, 0, 4) == 1);
+    ZT_UNIT_ASSERT(test, zt_cstr_cmp(iface_str, 0, 4, iface_str, 0, -1) == -1);
 
     /* */
-    ZT_UNIT_ASSERT(test, zt_cstr_chr(interface, 0, -1, 'i') == 0);
-    ZT_UNIT_ASSERT(test, zt_cstr_rchr(interface, 0, -1, 'i') == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_chr(iface_str, 0, -1, 'i') == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_rchr(iface_str, 0, -1, 'i') == 0);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_chr(interface, 0, -1, 'e') == 3);
-    ZT_UNIT_ASSERT(test, zt_cstr_rchr(interface, 0, -1, 'e') == 8);
+    ZT_UNIT_ASSERT(test, zt_cstr_chr(iface_str, 0, -1, 'e') == 3);
+    ZT_UNIT_ASSERT(test, zt_cstr_rchr(iface_str, 0, -1, 'e') == 8);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_chr(interface, 0, -1, 'r') == 4);
-    ZT_UNIT_ASSERT(test, zt_cstr_rchr(interface, 0, -1, 'r') == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_chr(iface_str, 0, -1, 'r') == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_rchr(iface_str, 0, -1, 'r') == 4);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_upto(interface, 0, -1, "xyz") == -1);
-    ZT_UNIT_ASSERT(test, zt_cstr_upto(interface, 0, -1, "AIb") == 0);
-    ZT_UNIT_ASSERT(test, zt_cstr_upto(interface, 0, -1, "far") == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_upto(iface_str, 0, -1, "xyz") == -1);
+    ZT_UNIT_ASSERT(test, zt_cstr_upto(iface_str, 0, -1, "AIb") == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_upto(iface_str, 0, -1, "far") == 4);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_rupto(interface, 0, -1, "xyz") == -1);
-    ZT_UNIT_ASSERT(test, zt_cstr_rupto(interface, 0, -1, "AIb") == 0);
-    ZT_UNIT_ASSERT(test, zt_cstr_rupto(interface, 0, -1, "aeb") == 8);
-    ZT_UNIT_ASSERT(test, zt_cstr_rupto(interface, 0, -1, "ntr") == 4);
+    ZT_UNIT_ASSERT(test, zt_cstr_rupto(iface_str, 0, -1, "xyz") == -1);
+    ZT_UNIT_ASSERT(test, zt_cstr_rupto(iface_str, 0, -1, "AIb") == 0);
+    ZT_UNIT_ASSERT(test, zt_cstr_rupto(iface_str, 0, -1, "aeb") == 8);
+    ZT_UNIT_ASSERT(test, zt_cstr_rupto(iface_str, 0, -1, "ntr") == 4);
 
 
     ZT_UNIT_ASSERT(test, zt_hex_to_binary(hex, 40, NULL, 0) == 20);

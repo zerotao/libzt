@@ -42,10 +42,13 @@ else(WIN32)
         LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
     endif(NOT HAVE_SYSLOG)
 
-    if(NOT HAVE_PTHREAD)
+    if(NOT WITH_THREADS)
         LIST(REMOVE_ITEM zt_LIB_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
         LIST(REMOVE_ITEM zt_LIB_HDRS zt_threads.h)
-    endif(NOT HAVE_PTHREAD)
+        if(HAVE_PTHREADS)
+            LIST(REMOVE_ITEM zt_LIB_SRCS zt_threads/zt_threads_pthreads.c)
+        endif(HAVE_PTHREADS)
+    endif(NOT WITH_THREADS)
 
 endif(WIN32)
 
@@ -56,34 +59,27 @@ set(zt_unit_SRCS zt_unit.c zt_unit.h)
 set(zt_gc_SRCS zt_gc.c zt_gc.h)
 
 ################ library definitions ################
-add_library(zt SHARED ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
-set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
+add_library(zt ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
 target_link_libraries(zt replace)
+add_library(zt_gc ${zt_gc_SRCS})
+target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
+add_library(zt_unit ${zt_unit_SRCS})
+target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in shared libs
+
+if(BUILD_SHARED_LIBS)
+    set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
+    set_target_properties(zt_gc PROPERTIES VERSION 1.0.0 SOVERSION 1)
+    set_target_properties(zt_unit PROPERTIES VERSION 1.0.0 SOVERSION 1)
+endif(BUILD_SHARED_LIBS)
+
+
 if(WIN32)
     target_link_libraries(zt ws2_32)
 endif(WIN32)
 
-if(HAVE_PTHREAD)
+if(HAVE_PTHREADS)
     target_link_libraries(zt ${CMAKE_THREAD_LIBS_INIT})
-endif(HAVE_PTHREAD)
-
-# add_library(zt-static STATIC ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
-# set_target_properties(zt-static PROPERTIES VERSION 2.0.1 SOVERSION 1 OUTPUT_NAME "zt")
-# target_link_libraries(zt replace)
-
-add_library(zt_gc SHARED ${zt_gc_SRCS})
-set_target_properties(zt_gc PROPERTIES VERSION 1.0.0 SOVERSION 1)
-target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
-
-# add_library(zt_gc-static STATIC ${zt_gc_SRCS})
-# set_target_properties(zt_gc-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
-
-add_library(zt_unit SHARED ${zt_unit_SRCS})
-set_target_properties(zt_unit PROPERTIES VERSION 1.0.0 SOVERSION 1)
-target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in shared libs
-
-# add_library(zt_unit-static STATIC ${zt_unit_SRCS})
-# set_target_properties(zt_unit-static PROPERTIES VERSION 1.0.0 SOVERSION 1 OUTPUT_NAME "zt_gc")
+endif(HAVE_PTHREADS)
 
 #################### installation ####################
 install(TARGETS zt zt_gc zt_unit ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)

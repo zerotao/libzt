@@ -12,8 +12,12 @@ message("MODULE_PATH ${CMAKE_MODULE_PATH}")
 
 ########## Check for System Packages known by CMAKE ##########
 find_package(Threads)
-if (CMAKE_USE_PTHREADS_INIT) 
-	SET(HAVE_PTHREAD 1)
+if (CMAKE_USE_PTHREADS_INIT)
+    SET(HAVE_PTHREADS 1)
+    ADD_DEFINITIONS(-DHAVE_PTHREAD)
+
+    SET(WITH_THREADS 1)
+    ADD_DEFINITIONS(-DWITH_THREADS)
 endif (CMAKE_USE_PTHREADS_INIT)
 
 ################## Check for System Headers ##################

@@ -1,7 +1,12 @@
 #include <zt_internal.h>
 
 #include <zt_atexit.h>
-#include <zt_daemon.h>
+
+#ifndef WIN32
+# include <zt_daemon.h>
+# include <zt_opts.h>
+#endif
+
 #include <zt_log.h>
 #include <zt_progname.h>
 #include <zt_time.h>
@@ -9,14 +14,13 @@
 #include <zt_cfg.h>
 #include <zt_cstr.h>
 #include <zt_ez_mempool.h>
-#include <zt_opts.h>
 #include <zt_sha1.h>
 #include <zt_ipv4_tbl.h>
 #include <zt_mem.h>
 #include <zt_format.h>
 #include <zt_int.h>
 
-#ifndef ZT_WITHOUT_THREADS
+#ifdef WITH_THREADS
 #include <zt_threads.h>
 #endif
 

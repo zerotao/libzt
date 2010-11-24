@@ -41,4 +41,6 @@ long sysconf( int name );
   typedef long ssize_t;
 #endif
 
+char * strsep (char **stringp, const char *delim);
+
 #endif /* _ZT_WIN32_H_ */

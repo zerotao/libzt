@@ -79,7 +79,7 @@ static int
 str_iterator(void *key, void *datum, void *param)
 {
     ssize_t               d = (intptr_t)datum;
-    ssize_t               k = atoi((key + strlen(STR_TEST_PRE)));
+    ssize_t               k = atoi(((const char *)key + strlen(STR_TEST_PRE)));
     struct zt_unit_test * test = (struct zt_unit_test *)param;
 
     ZT_UNIT_ASSERT(test, (k + d == 9));

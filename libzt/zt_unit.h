@@ -3,7 +3,6 @@
 
 #include <zt_internal.h>
 #include <zt_assert.h>
-#include <zt_macros.h>
 #include <adt/zt_list.h>
 
 BEGIN_C_DECLS

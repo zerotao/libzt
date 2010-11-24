@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdint.h>
 #include <errno.h>
-#define _ZT_THREADS_HAVE_PTHREADS
 #include <zt.h>
 
 zt_threads_mutex *mutex;
