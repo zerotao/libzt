@@ -36,6 +36,7 @@ struct zt_threads_cntrl_callbacks {
     int               (*kill)(zt_threads_thread *thread);
     unsigned long int (*id)(void);
     int               (*join)(zt_threads_thread *thread, void **data);
+    int               (*detach)(zt_threads_thread *thread);
 };
 
 struct zt_threadpool_callbacks {
@@ -117,6 +118,7 @@ int   zt_threads_start(void *thread, void *attr, void * (*start_cb)(void *), voi
 void  zt_threads_end(void *args);
 int   zt_threads_kill(void *thread);
 int   zt_threads_join(void *thread, void **data);
+int  zt_threads_detach(void *thread);
 unsigned long int zt_threads_id(void);
 
 int zt_threads_use_pthreads(void);
