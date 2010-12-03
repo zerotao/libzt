@@ -28,7 +28,7 @@ zt_ptr_array_init(void *args, zt_ptr_array_free_cb free_cb) {
 
 int
 zt_ptr_array_copy_data(zt_ptr_array *src, char **dstbuf) {
-    uint32_t i;
+    int32_t i;
 
     if (src == NULL || dstbuf == NULL) {
         return -1;
@@ -42,9 +42,9 @@ zt_ptr_array_copy_data(zt_ptr_array *src, char **dstbuf) {
 }
 
 int
-zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand) {
-    uint32_t size;
-    char **ndata;
+zt_ptr_array_resize(zt_ptr_array *array, int32_t expand) {
+    int32_t size;
+    char  **ndata;
 
     if (array == NULL) {
         return -1;
@@ -80,7 +80,7 @@ zt_ptr_array_resize(zt_ptr_array *array, uint32_t expand) {
 }
 
 int
-zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, uint32_t src_idx, uint32_t dst_idx) {
+zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, int32_t src_idx, int32_t dst_idx) {
     if (src_idx > array->count) {
         return -1;
     }
@@ -96,7 +96,7 @@ zt_ptr_array_move_idx_to_idx(zt_ptr_array *array, uint32_t src_idx, uint32_t dst
 
 int
 zt_ptr_array_del(zt_ptr_array *array, void *data) {
-    uint32_t i;
+    int32_t i;
 
     if (array == NULL || data == NULL) {
         return -1;
@@ -118,7 +118,7 @@ zt_ptr_array_del(zt_ptr_array *array, void *data) {
 
 int
 zt_ptr_array_cat(zt_ptr_array *dst, zt_ptr_array *src) {
-    uint32_t i;
+    int32_t i;
 
     if (dst == NULL || src == NULL) {
         return -1;
@@ -153,7 +153,7 @@ zt_ptr_array_add(zt_ptr_array *array, void *data) {
 
 int
 zt_ptr_array_free(zt_ptr_array *array, int free_members) {
-    uint32_t i;
+    int32_t i;
 
     if (array == NULL) {
         return -1;
@@ -181,7 +181,12 @@ zt_ptr_array_free(zt_ptr_array *array, int free_members) {
 }
 
 void *
-zt_ptr_array_get_idx(zt_ptr_array *array, uint32_t idx) {
+zt_ptr_array_get_idx(zt_ptr_array *array, int32_t idx) {
+    if (idx == -1) {
+        /* return the last element */
+        return array->array[array->count - 1];
+    }
+
     if (idx >= array->count) {
         return NULL;
     }
