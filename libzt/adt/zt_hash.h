@@ -17,10 +17,13 @@
 
 #include <zt_internal.h>
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
 #define ZT_HASH64_INIT ((uint64_t)0xcbf29ce484222325ULL)
-
 #define ZT_HASH64_PRIME ((uint64_t)0x100000001b3ULL)
 
 uint64_t zt_hash64_buff(void *buf, size_t len, uint64_t init);
@@ -29,7 +32,6 @@ uint64_t zt_hash64_cstr(const uint8_t *buf, uint64_t init);
 #endif /* __STDC_VERSION__ */
 
 #define ZT_HASH32_INIT ((uint32_t)0x811c9dc5)
-
 #define ZT_HASH32_PRIME ((uint32_t)0x01000193U)
 
 
@@ -61,6 +63,7 @@ uint32_t zt_hash32_cstr(const uint8_t *buf, uint32_t init);
     }
 /* *INDENT-ON* */
 
+#ifdef __cplusplus
+}
+#endif
 #endif    /* _ZT_HASH_H_ */
-
-
