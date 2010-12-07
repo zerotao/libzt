@@ -25,7 +25,7 @@ struct zt_threads_cond_callbacks  _zt_threads_cond_cbs = {
 };
 
 struct zt_threads_cntrl_callbacks _zt_threads_cntrl_cbs = {
-    NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 struct zt_threadpool_callbacks    _zt_threadpool_cbs = {
@@ -195,6 +195,15 @@ zt_threads_id(void) {
     }
 
     return 0;
+}
+
+int 
+zt_threads_detach(zt_threads_thread *thread) {
+    if (_zt_threads_cntrl_cbs.detach) {
+	return _zt_threads_cntrl_cbs.detach(thread);
+    }
+
+    return -1;
 }
 
 /*****************************************************************
