@@ -40,6 +40,10 @@ srandomdev(void)
         rand_data = (uint32_t)time(NULL);
     }
 
+    if(fd >= 0) {
+        close(fd);
+    }
+
     srandom(rand_data);
 }
 #endif /* ifndef HAVE_SRANDOMDEV */
