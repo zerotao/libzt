@@ -163,4 +163,3 @@ zt_time_print_result(struct time_result *tr, char *name, int n)
         zt_log_printf(zt_log_info, "%d calls of %s took: %4.2fs user %4.2fs system %4.2fs total", n, name, usr, sys, total);
     }
 }
-

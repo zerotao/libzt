@@ -142,4 +142,3 @@ void * zt_threadpool_get_oput(zt_threadpool *tpool);
 int zt_threadpool_kill(zt_threadpool *tpool);
 
 #endif /* __ZT_THREADS_H__ */
-

@@ -614,4 +614,3 @@ zt_fmt_append(int c, void *cl)
     *p->bp++ = c;
     return c;
 }
-

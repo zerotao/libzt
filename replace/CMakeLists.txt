@@ -7,4 +7,4 @@ if (NOT HAVE_VSYSLOG AND NOT WIN32)
 endif(NOT HAVE_VSYSLOG AND NOT WIN32)
 
 add_library(replace STATIC dummy.c ${REPLACE_FILES})
-configure_file(zt_replace.h.in ${PROJECT_BINARY_DIR}/libzt/zt_replace.h)
+configure_file(zt_replace.h.in ${PROJECT_BINARY_DIR}/src/zt_replace.h)

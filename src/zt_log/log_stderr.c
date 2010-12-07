@@ -43,4 +43,3 @@ zt_log_stderr(unsigned int opts)
 {
     return zt_log_new(&vtbl, opts);
 }
-

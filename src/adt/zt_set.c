@@ -204,4 +204,3 @@ zt_set_for_each(zt_set *set, zt_set_iterator iterator, void *param)
 
     return zt_table_for_each(set->tbl, _table_to_set_iterator, &d);
 }
-

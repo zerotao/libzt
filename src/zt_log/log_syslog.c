@@ -84,4 +84,3 @@ zt_log_syslog2(int opt, int facility)
     openlog(name ? name : "Set name with progname call", sysopts, facility);
     return zt_log_new(&vtbl, 0);
 }
-

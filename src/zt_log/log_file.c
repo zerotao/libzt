@@ -73,4 +73,3 @@ zt_log_file(char *file, int fopts, int lopts)
 
     return result;
 }
-

@@ -428,4 +428,3 @@ zt_unit_main(struct zt_unit    * unit,
     }
     return result;
 } /* zt_unit_main */
-

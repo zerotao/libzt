@@ -197,10 +197,10 @@ zt_threads_id(void) {
     return 0;
 }
 
-int 
+int
 zt_threads_detach(zt_threads_thread *thread) {
     if (_zt_threads_cntrl_cbs.detach) {
-	return _zt_threads_cntrl_cbs.detach(thread);
+        return _zt_threads_cntrl_cbs.detach(thread);
     }
 
     return -1;
@@ -598,4 +598,3 @@ zt_threadpool_init(int min_threads, int max_threads, int pipe_iput, int pipe_opu
 
     return tpool;
 } /* zt_threadpool_init */
-

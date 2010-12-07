@@ -70,4 +70,3 @@ xstrdup(const char *string)
 
     return new_string;
 }
-

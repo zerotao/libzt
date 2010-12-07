@@ -936,6 +936,3 @@ size_t zt_cstr_int_display_len(int value)
 
     return result;
 }
-
-
-

@@ -210,7 +210,7 @@ zt_threads_use_pthreads(void) {
         zt_threads_pthreads_kill,
         zt_threads_pthread_id,
         zt_threads_pthread_join,
-	zt_threads_pthread_detach
+        zt_threads_pthread_detach
     };
 
     zt_threads_set_lock_callbacks(&cbs);
@@ -220,4 +220,3 @@ zt_threads_use_pthreads(void) {
 
     return 0;
 }
-

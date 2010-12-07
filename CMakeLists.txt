@@ -90,10 +90,10 @@ if(HAVE_LONG_DOUBLE)
 endif(HAVE_LONG_DOUBLE)
 
 add_definitions(-DHAVE_CONFIG_H)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/libzt
-                    ${CMAKE_CURRENT_SOURCE_DIR}/libzt)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/src
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-configure_file(config.h.cmake libzt/config.h)
+configure_file(config.h.cmake src/config.h)
 
 if(CMAKE_COMPILER_IS_GNUCC)
   # set(CMAKE_BUILD_TYPE distribution)
@@ -107,7 +107,7 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 # subdirectories
 add_subdirectory(tools)
 add_subdirectory(replace)
-add_subdirectory(libzt)
+add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(tests)
 add_subdirectory(doc)

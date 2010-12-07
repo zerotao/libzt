@@ -234,4 +234,3 @@ zt_bstream_write_double(zt_bstream_t bs, double data)
 {
     zt_bstream_write(bs, (char *)&data, 1, sizeof(double), 0);
 }
-
