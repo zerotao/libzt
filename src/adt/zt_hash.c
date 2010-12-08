@@ -11,7 +11,9 @@
  * Notes:
  *
  */
-#include "zt_internal.h"
+#include <stdint.h>
+#include <stddef.h>
+
 #include "zt_hash.h"
 
 /*
