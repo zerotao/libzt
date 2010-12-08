@@ -83,10 +83,10 @@ zt_progpath(char *prog) {
                 errno = 0;
                 if((stat(tpath, &sbuf) == 0)) {
                     zt_cstr_copy(tpath, 0, -1, _progpath, PATH_MAX);
-                    XFREE(tpath);
+                    zt_free(tpath);
                     return _progpath;
                 }
-                XFREE(tpath);
+                zt_free(tpath);
                 base = offt+1;
                 offt++;
             }

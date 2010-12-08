@@ -43,12 +43,12 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, list1.next == &list1);
 
     for (i = 0; i < sizeof_array(values); i++) {
-        al = XCALLOC(list_elt, 1);
+        al = zt_calloc(list_elt, 1);
         al->value = values[i];
 
         zt_elist_add(&list1, &al->list);
 
-        al = XCALLOC(list_elt, 1);
+        al = zt_calloc(list_elt, 1);
         al->value = (int)(VALUES_MAX - values[i]);
 
         zt_elist_add(&list2, &al->list);
@@ -67,12 +67,12 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
     zt_elist_for_each_safe(&list1, tmp, tmp2) {
         al = zt_elist_data(tmp, list_elt, list);
-        XFREE(al);
+        zt_free(al);
     }
 
     zt_elist_for_each_safe(&list2, tmp, tmp2) {
         al = zt_elist_data(tmp, list_elt, list);
-        XFREE(al);
+        zt_free(al);
     }
 }
 

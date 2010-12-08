@@ -66,7 +66,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         long n = 0;
         int  done = 0;
 
-        node = XCALLOC(struct int_set, 1);
+        node = zt_calloc(struct int_set, 1);
         zt_rbt_node_init(&(node->node));
         /* make sure that we only insert an individual data
          * item only once.
@@ -96,7 +96,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         ZT_UNIT_ASSERT(test, n->i == REMOVED);
 
         memset(n, 0, sizeof(struct int_set));
-        XFREE(n);
+        zt_free(n);
     }
 
     rem1.i = REMOVED2;
@@ -119,7 +119,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
         ordered_dataset[x->i] = 0;
         iter = zt_rbt_remove(&br_root, iter);
-        XFREE(x);
+        zt_free(x);
     }
 
 

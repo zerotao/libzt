@@ -29,7 +29,7 @@ static void destructor(zt_log_ty *log)
     zt_log_file_ty *this = (zt_log_file_ty *)log;
 
     fclose(this->file);
-    XFREE(this);
+    zt_free(this);
 }
 
 static void

@@ -91,7 +91,7 @@ zt_bstream_new(void)
 {
     zt_bstream_t bs;
 
-    bs = XCALLOC(struct zt_bstream, 1);
+    bs = zt_calloc(struct zt_bstream, 1);
     bs->data = zt_array_new(0, sizeof(char));
 
     return bs;
@@ -103,7 +103,7 @@ zt_bstream_clone(zt_bstream_t bs)
     zt_bstream_t clone;
 
     zt_assert(bs);
-    clone = XCALLOC(struct zt_bstream, 1);
+    clone = zt_calloc(struct zt_bstream, 1);
     clone->data = zt_array_copy(bs->data, zt_array_length(bs->data));
     clone->offt = bs->offt;
 
@@ -116,7 +116,7 @@ zt_bstream_free(zt_bstream_t *bs)
     zt_assert(bs);
 
     zt_array_free(&(*bs)->data);
-    XFREE(*bs);
+    zt_free(*bs);
     return;
 }
 

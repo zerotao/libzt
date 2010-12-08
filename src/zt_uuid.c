@@ -119,7 +119,7 @@ int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags)
     zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
 
     if (flags == zt_uuid_std_fmt) {
-        result = XCALLOC(char, UUID_STR_LEN + 1);
+        result = zt_calloc(char, UUID_STR_LEN + 1);
         i = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
                      uuids_hex,
                      &uuids_hex[8],
@@ -127,7 +127,7 @@ int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags)
                      &uuids_hex[16],
                      &uuids_hex[20]);
     } else if (flags == zt_uuid_short_fmt) {
-        result = XCALLOC(char, UUID_SHORT_STR_LEN + 1);
+        result = zt_calloc(char, UUID_SHORT_STR_LEN + 1);
         i = snprintf(result, UUID_STR_LEN + 1, "%8.8s%4.4s%4.4s%4.4s%12.12s",
                      uuids_hex,
                      &uuids_hex[8],

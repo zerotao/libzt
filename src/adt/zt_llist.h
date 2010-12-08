@@ -33,7 +33,7 @@ zt_llist_free(zt_pair *p)
         op = p;
         h = (zt_pair*) zt_llist_head(p);
         p = zt_llist_tail(p);
-        XFREE(op);
+        zt_free(op);
     }
 }
 
@@ -42,7 +42,7 @@ zt_llist_cons(void *head, zt_pair *tail)
 {
     zt_llist llist;
 
-    llist = XCALLOC(zt_pair, 1);
+    llist = zt_calloc(zt_pair, 1);
     zt_llist_head(llist) = head;
     zt_llist_tail(llist) = tail;
     return (llist);
@@ -98,7 +98,7 @@ zt_llist_pop(zt_llist *list)
         return (z);
     }
     item = zt_llist_head(z);
-    XFREE(z);
+    zt_free(z);
     return (item);
 }
 

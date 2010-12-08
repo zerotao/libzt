@@ -39,8 +39,8 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
 
     for (i = 0; i < VALUES_MAX; i++) {
-        se = XCALLOC(stack_elt, 1);
-        qe = XCALLOC(queue_elt, 1);
+        se = zt_calloc(stack_elt, 1);
+        qe = zt_calloc(queue_elt, 1);
 
         se->n = values[(VALUES_MAX-1) - i];
         qe->n = values[i];
@@ -68,8 +68,8 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         ZT_UNIT_ASSERT(test, se->n == values[i]);
         ZT_UNIT_ASSERT(test, qe->n == values[i]);
 
-        XFREE(se);
-        XFREE(qe);
+        zt_free(se);
+        zt_free(qe);
     }
 
     ZT_UNIT_ASSERT(test, zt_stack_empty(&stk));

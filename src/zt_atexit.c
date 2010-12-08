@@ -42,7 +42,7 @@ _atexit_call(void) {
         cb = zt_stack_data(se, struct zt_atexit_cb, member);
         if(cb && cb->fn) {
             cb->fn(cb->data);
-            XFREE(cb);
+            zt_free(cb);
         }
     }
 }
@@ -53,7 +53,7 @@ zt_atexit(void (*fn)(void * data), void * data) {
 
     zt_assert(fn);
 
-    cb = XCALLOC(struct zt_atexit_cb, 1);
+    cb = zt_calloc(struct zt_atexit_cb, 1);
 
     if(zt_stack_empty(&cb_stack)) {
         atexit(_atexit_call);

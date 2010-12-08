@@ -121,9 +121,9 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
     memset(table->buckets, 0, nbuckets * sizeof(struct table_node *));
 
     if (name) {
-        table->name = XSTRDUP(name);
+        table->name = zt_strdup(name);
     } else {
-        table->name = XSTRDUP("anonymous");
+        table->name = zt_strdup("anonymous");
     }
 
 
@@ -153,7 +153,7 @@ zt_table_destroy(zt_table *h)
     }
 
     if (h->name) {
-        XFREE(h->name);
+        zt_free(h->name);
     }
 
     zt_mem_pool_destroy(&h->node_pool);

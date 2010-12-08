@@ -179,11 +179,11 @@ char * zt_fmt_vstrprintf(const char *fmt, va_list ap)
 
     zt_assert(fmt);
     cl.size = 256;
-    cl.buf = cl.bp = XMALLOC(char, cl.size);
+    cl.buf = cl.bp = zt_malloc(char, cl.size);
     zt_fmt_vformat(zt_fmt_append, &cl, fmt, ap);
     zt_fmt_append(0, &cl);
 
-    return XREALLOC(char, cl.buf, cl.bp - cl.buf);
+    return zt_realloc(char, cl.buf, cl.bp - cl.buf);
 }
 
 
@@ -606,7 +606,7 @@ zt_fmt_append(int c, void *cl)
     struct zt_fmt_obuf * p = (struct zt_fmt_obuf *)cl;
 
     if (p->bp >= p->buf + p->size) {
-        p->buf = XREALLOC(char, p->buf, p->size * 2);
+        p->buf = zt_realloc(char, p->buf, p->size * 2);
         p->bp = p->buf + p->size;
         p->size *= 2;
     }

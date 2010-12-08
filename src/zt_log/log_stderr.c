@@ -19,7 +19,7 @@
 
 static void destructor(zt_log_ty *log)
 {
-    XFREE(log);
+    zt_free(log);
     return;
 }
 
@@ -28,7 +28,7 @@ static void print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
     char *nfmt = zt_log_gen_fmt( log, fmt, level, log->opts);
 
     vfprintf(stderr, nfmt, ap);
-    XFREE(nfmt);
+    zt_free(nfmt);
 }
 
 /* component data */

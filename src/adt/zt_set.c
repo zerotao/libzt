@@ -10,7 +10,7 @@ zt_set_init(int (*match)(const void *key1,
 {
     zt_set * set;
 
-    set = XMALLOC(zt_set, 1);
+    set = zt_malloc(zt_set, 1);
 
 
     set->tbl = zt_table_init(NULL, zt_table_hash_int, match, 128, 0, cdata);
@@ -41,7 +41,7 @@ zt_set_destroy(zt_set *set)
     zt_table_for_each(set->tbl, _destroy, set);
     zt_table_destroy(set->tbl);
 
-    XFREE(set);
+    zt_free(set);
 }
 
 

@@ -55,7 +55,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     for ( i = 9; i >= 0; i--) {
         char * b2 = NULL;
         sprintf(buf, "%s%zd", STR_TEST_PRE, i);
-        b2 = XSTRDUP(buf);
+        b2 = zt_strdup(buf);
         zt_table_set(table_str, b2, (void *)numbers[i]);
     }
 
@@ -71,7 +71,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 static int
 str_free(void *key, void *datum UNUSED, void *param UNUSED)
 {
-    XFREE(key);
+    zt_free(key);
     return 0;
 }
 

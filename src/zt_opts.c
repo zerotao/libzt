@@ -170,7 +170,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
     }
 
 #ifdef HAVE_GETOPT_LONG
-    longopts = XCALLOC(struct option, i + 1);
+    longopts = zt_calloc(struct option, i + 1);
     optstring[0] = '+';
     opt_index++;
 #endif
@@ -361,7 +361,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
 RETURN:
 #ifdef HAVE_GETOPT_LONG
-    XFREE(longopts);
+    zt_free(longopts);
 #endif
     return result;
 } /* zt_opts_process */

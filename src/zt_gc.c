@@ -94,12 +94,12 @@ static void
 resize_rootset(zt_gc_t *gc, int new_size)
 {
     if (gc->rootset == NULL) {
-        gc->rootset = XCALLOC(zt_elist_t *, new_size);
+        gc->rootset = zt_calloc(zt_elist_t *, new_size);
         gc->rootset_next = 0;
     } else {
         int diff = new_size - gc->rootset_size;
         int i;
-        gc->rootset = XREALLOC(zt_elist_t *, gc->rootset, new_size);
+        gc->rootset = zt_realloc(zt_elist_t *, gc->rootset, new_size);
         for ( i = diff; i < new_size; i++) {
             gc->rootset[i] = NULL;
         }
@@ -228,7 +228,7 @@ zt_gc_destroy(zt_gc_t *gc)
      * }
      */
 
-    XFREE(gc->rootset);
+    zt_free(gc->rootset);
     gc->rootset = NULL;
     gc->rootset_next = 0;
 

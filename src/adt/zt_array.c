@@ -23,11 +23,11 @@ zt_array_new(size_t len, size_t size)
 {
     zt_array_t array;
 
-    array = XMALLOC(struct zt_array, 1);
+    array = zt_malloc(struct zt_array, 1);
 
     if (len > 0) {
         arrayrep_init(array, len, size,
-                      XCALLOC(char, len * size));
+                      zt_calloc(char, len * size));
     } else {
         arrayrep_init(array, len, size, NULL);
     }
@@ -39,8 +39,8 @@ void
 zt_array_free(zt_array_t *array)
 {
     zt_assert(array && *array);
-    XFREE((*array)->data);
-    XFREE(*array);
+    zt_free((*array)->data);
+    zt_free(*array);
 }
 
 void
@@ -51,7 +51,7 @@ zt_array_set_data(zt_array_t array, char *data,
 
     if (copy) {
         arrayrep_init(array, len, size,
-                      XCALLOC(char, len * size));
+                      zt_calloc(char, len * size));
         memcpy(array->data, data, len * size);
     } else {
         arrayrep_init(array, len, size, data);
@@ -63,7 +63,7 @@ zt_array_with(char *data, size_t len, size_t size, int copy)
 {
     zt_array_t array;
 
-    array = XCALLOC(struct zt_array, 1);
+    array = zt_calloc(struct zt_array, 1);
 
     zt_array_set_data(array, data, len, size, copy);
 
@@ -83,16 +83,16 @@ zt_array_resize(zt_array_t array, size_t len)
     zt_assert(len > 0);
 
     if (array->length == 0) {
-        array->data = XCALLOC(char, len * array->size);
+        array->data = zt_calloc(char, len * array->size);
     } else if (len > 0) {
-        array->data = XREALLOC(char, array->data, len * array->size);
+        array->data = zt_realloc(char, array->data, len * array->size);
         /* lear the added space */
         if(len > array->length) {
             size_t   rlen = len - array->length;
             memset(&array->data[array->length*array->size], 0, rlen * array->size);
         }
     } else {
-        XFREE(array->data);
+        zt_free(array->data);
         array->data = NULL;
     }
 

@@ -232,26 +232,26 @@ typedef char* void_p;
 #endif
 
 extern char *memoryError;
-#define XCALLOCS(size, num)     (xcalloc ((num), (size)))
-#define XMALLOCS(size, num)     (xmalloc ((num) * (size)))
-#define XCALLOC(type, num)	((type *) xcalloc ((num), sizeof(type)))
-#define XMALLOC(type, num)	((type *) xmalloc ((num) * sizeof(type)))
-#define XREALLOC(type, p, num)	((type *) xrealloc (((void_p)p), (num) * sizeof(type)))
-#define XFREE(stale)   	  	       	  	   	 \
+#define zt_callocs(size, num)     (xcalloc ((num), (size)))
+#define zt_mallocs(size, num)     (xmalloc ((num) * (size)))
+#define zt_calloc(type, num)	((type *) xcalloc ((num), sizeof(type)))
+#define zt_malloc(type, num)	((type *) xmalloc ((num) * sizeof(type)))
+#define zt_realloc(type, p, num)	((type *) xrealloc (((void_p)p), (num) * sizeof(type)))
+#define zt_free(stale)   	  	       	  	   	 \
 do {							 \
    if (stale) { free ((void_p) stale);  stale = 0; }	 \
 } while(0)
-#define XSTRDUP xstrdup
+#define zt_strdup xstrdup
 
 BEGIN_C_DECLS
 
 /* These entry points to the API are guaranteed to be functions */
 
-extern void_p xcalloc_p	(size_t num, size_t size);
-extern void_p xmalloc_p	(size_t num);
-extern void_p xrealloc_p (void_p p, size_t num);
-extern void xfree_p (void_p stale);
-extern char *xstrdup (const char *string);
+extern void_p zt_calloc_p	(size_t num, size_t size);
+extern void_p zt_malloc_p	(size_t num);
+extern void_p zt_realloc_p (void_p p, size_t num);
+extern void zt_free_p (void_p stale);
+extern char *zt_strdup_p (const char *string);
 
 END_C_DECLS
 
@@ -261,11 +261,12 @@ END_C_DECLS
    (correctly) redefined to use the dmalloc library. */
 
 #ifndef WITH_DMALLOC
-#  define xcalloc  xcalloc_p
-#  define xmalloc  xmalloc_p
-#  define xrealloc xrealloc_p
-#  define xfree    xfree_p
+#  define xcalloc  zt_calloc_p
+#  define xmalloc  zt_malloc_p
+#  define xrealloc zt_realloc_p
+#  define xfree    zt_free_p
 #endif
+#define xstrdup zt_strdup_p
 
 #ifndef PRIsize_t
 # define PRIsize_t "zu"

@@ -18,7 +18,7 @@
 static void destructor(zt_log_ty *log)
 {
     closelog();
-    XFREE(log);
+    zt_free(log);
     return;
 }
 

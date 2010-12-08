@@ -29,7 +29,7 @@ zt_unit_test_add_assertion(struct zt_unit_test *test)
 struct zt_unit *
 zt_unit_init(void)
 {
-    struct zt_unit * unit = XCALLOC(struct zt_unit, 1);
+    struct zt_unit * unit = zt_calloc(struct zt_unit, 1);
 
     /* zt_log_ty    * log; */
 
@@ -54,7 +54,7 @@ zt_unit_release(struct zt_unit **unit)
         zt_unit_release_suite(&tsuite);
     }
 
-    XFREE(*unit);
+    zt_free(*unit);
     *unit = NULL;
 }
 
@@ -66,11 +66,11 @@ zt_unit_register_suite(struct zt_unit     * unit,
                        void     * data )
 {
     size_t                    len;
-    struct zt_unit_suite    * suite = XCALLOC(struct zt_unit_suite, 1);
+    struct zt_unit_suite    * suite = zt_calloc(struct zt_unit_suite, 1);
 
     zt_assert(name != NULL);
     len = strlen(name);
-    suite->name = XCALLOC(char, len + 1);
+    suite->name = zt_calloc(char, len + 1);
     strncpy(suite->name, name, len);
     suite->setup_fn = setup_fn;
     suite->teardown_fn = teardown_fn;
@@ -101,8 +101,8 @@ zt_unit_release_suite(struct zt_unit_suite **suite)
 
     zt_elist_remove(&(*suite)->suite);
 
-    XFREE((*suite)->name);
-    XFREE(*suite);
+    zt_free((*suite)->name);
+    zt_free(*suite);
     *suite = NULL;
 }
 
@@ -112,7 +112,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
                       char     * name,
                       zt_unit_test_fn test_fn)
 {
-    struct zt_unit_test * test = XCALLOC(struct zt_unit_test, 1);
+    struct zt_unit_test * test = zt_calloc(struct zt_unit_test, 1);
     size_t                len;
 
     zt_assert(suite);
@@ -120,7 +120,7 @@ zt_unit_register_test(struct zt_unit_suite    * suite,
 
     len = strlen(name);
 
-    test->name = XCALLOC(char, len + 1);
+    test->name = zt_calloc(char, len + 1);
     strncpy(test->name, name, len);
     test->success = -1;
     test->test_fn = test_fn;
@@ -139,13 +139,13 @@ zt_unit_release_test(struct zt_unit_test **test)
 
     zt_elist_remove(&(*test)->test);
 
-    XFREE((*test)->name);
+    zt_free((*test)->name);
 
     if ((*test)->error) {
-        XFREE((*test)->error);
+        zt_free((*test)->error);
     }
 
-    XFREE(*test);
+    zt_free(*test);
 }
 
 
@@ -290,7 +290,7 @@ char **str_split(char *str, char * delim, int *elts)
 
 void str_split_free(char ***argv)
 {
-    XFREE(*argv);
+    zt_free(*argv);
 }
 
 int

@@ -35,7 +35,7 @@ zt_cfg_new(zt_cfg_vtbl_ty *vptr)
 {
     zt_cfg_ty * result;
 
-    result = calloc(1, vptr->size);
+    result = zt_callocs(vptr->size, 1);
     result->vtbl = vptr;
     return result;
 }
@@ -86,7 +86,7 @@ add_block(struct zt_cfg_ty* cfg, char* name)
         new = get_block(head, name);
     }
     if (!new) {
-        new = XCALLOC(struct zt_cfg_block_ty, 1);
+        new = zt_calloc(struct zt_cfg_block_ty, 1);
         new->name = strdup(name);
         new->next = cfg->head;
         cfg->head = new;
@@ -117,7 +117,7 @@ add_variable(struct zt_cfg_block_ty* block, char *name)
         new = get_variable(head, name);
     }
     if (!new) {
-        new = XCALLOC(struct zt_cfg_value_ty, 1);
+        new = zt_calloc(struct zt_cfg_value_ty, 1);
         new->name = strdup(name);
         new->next = block->head;
         block->head = new;
@@ -189,7 +189,7 @@ cfg_insert_bvv(struct zt_cfg_ty* cfg, struct cfg_bvv_ty* bvv)
         if (((variable) && (*variable == '.'))) {
             struct zt_cfg_value_ty* v = NULL;
             struct zt_cfg_block_ty* b = NULL;
-            char                   *block = XCALLOC(char, strlen(value->v.s) + 1);
+            char                   *block = zt_calloc(char, strlen(value->v.s) + 1);
             strncpy(block, value->v.s, (variable - value->v.s));
             variable++;    /* move past the '.' */
             if ((b = get_block(cfg->head, block))) {
@@ -214,7 +214,7 @@ zt_cfg_priv_set(zt_cfg_ty *cfg, char *block_name,
 
     bvv.block = strdup(block_name);
     bvv.variable = strdup(variable_name);
-    bvv.value = XCALLOC(char, BUFMAX);
+    bvv.value = zt_calloc(char, BUFMAX);
 
     switch (type) {
         case zt_cfg_int:
@@ -308,24 +308,24 @@ zt_cfg_priv_destructor( zt_cfg_ty *cfg)
         while (value) {
             val_next = value->next;
             if (value->type == zt_cfg_string) {
-                XFREE(value->v.s); value->v.s = NULL;
+                zt_free(value->v.s); value->v.s = NULL;
             }
             if (value->name) {
-                XFREE(value->name); value->name = NULL;
+                zt_free(value->name); value->name = NULL;
             }
-            XFREE(value); value = NULL;
+            zt_free(value); value = NULL;
             value = val_next;
         }
         if (block->name) {
-            XFREE(block->name);  block->name = NULL;
+            zt_free(block->name);  block->name = NULL;
         }
-        XFREE(block);
+        zt_free(block);
         block = blk_next;
     }
     if (cfg->filename != NULL) {
-        XFREE(cfg->filename);
+        zt_free(cfg->filename);
     }
 
-    XFREE(cfg);
+    zt_free(cfg);
     return;
 }

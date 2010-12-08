@@ -46,25 +46,25 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test,
                    zt_cstr_cmp(str, 0, -1,
                                "this is a test: 34\n", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
     ZT_UNIT_ASSERT(test,
                    zt_cstr_cmp(str, 0, -1,
                                "\tthis is a test: 0x22~ % ~ %\n", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#0.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, "T", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#4.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, " ", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#30.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, "T", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 } /* basic_tests */
 
 int

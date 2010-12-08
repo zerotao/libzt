@@ -101,7 +101,7 @@ zt_cstr_sub(const char *s, ssize_t i, ssize_t j) {
 
     CONVERT(s, i, j);
 
-    new = XMALLOC(char, IDXLEN(i, j) + 1);
+    new = zt_malloc(char, IDXLEN(i, j) + 1);
 
     p   = new;
 
@@ -129,7 +129,7 @@ zt_cstr_dup(const char *s, ssize_t i, ssize_t j, ssize_t n) {
 
     CONVERT(s, i, j);
 
-    p = new = XMALLOC(char, (n * IDXLEN(i, j)) + 1);
+    p = new = zt_malloc(char, (n * IDXLEN(i, j)) + 1);
 
     if (IDXLEN(i, j) > 0) {
         while (n-- > 0) {
@@ -156,7 +156,7 @@ zt_cstr_cat(const char *s1, ssize_t i1, ssize_t j1,
     CONVERT(s1, i1, j1);
     CONVERT(s2, i2, j2);
 
-    p = new = XMALLOC(char, IDXLEN(i1, j1) + IDXLEN(i2, j2) + 1);
+    p = new = zt_malloc(char, IDXLEN(i1, j1) + IDXLEN(i2, j2) + 1);
 
     while (i1 <= j1) {
         *p++ = s1[i1++];
@@ -196,7 +196,7 @@ zt_cstr_catv(const char *s, ...) {
 
     va_end(ap);
 
-    p = new = XMALLOC(char, len + 1);
+    p = new = zt_malloc(char, len + 1);
     s = save;
     va_start(ap, s);
 
@@ -225,7 +225,7 @@ zt_cstr_reverse(const char *s, ssize_t i, ssize_t j) {
 
     CONVERT(s, i, j);
 
-    p = new = XMALLOC(char, IDXLEN(i, j) + 1);
+    p = new = zt_malloc(char, IDXLEN(i, j) + 1);
 
     while (i <= j) {
         *p++ = s[j--];
@@ -280,7 +280,7 @@ zt_cstr_map(const char *s, ssize_t i, ssize_t j,
         char * p;
 
         CONVERT(s, i, j);
-        p  = new = XMALLOC(char, IDXLEN(i, j) + 1);
+        p  = new = zt_malloc(char, IDXLEN(i, j) + 1);
         while (i <= j) {
             *p++ = map[(unsigned char)s[i++]];
         }

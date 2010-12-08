@@ -63,8 +63,8 @@ vsyslog(int severity, char *format, va_list ap)
     flen = len * 2;
     olen = flen * 3;
 
-    fbuf = XCALLOC(char, flen + 1);
-    obuf = XCALLOC(char, olen + 1);
+    fbuf = zt_calloc(char, flen + 1);
+    obuf = zt_calloc(char, olen + 1);
 
     if ((ftmp = percent_m(fbuf, flen, format)) == NULL) {
         return;

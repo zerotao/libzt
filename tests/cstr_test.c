@@ -104,9 +104,9 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     zt_cstr_dirname(bname, PATH_MAX, "/foo/bar/baz/");
     ZT_UNIT_ASSERT(test, (!strcmp(bname, "/foo/bar")));
 
-    ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "baz/"), "/foo/bar/baz/") == 0); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "baz/"), "/foo/bar/baz/") == 0); zt_free(free_me);
 
-    ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "/baz/"), "/foo/bar/baz/") == 0); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "/baz/"), "/foo/bar/baz/") == 0); zt_free(free_me);
 
 #else /* _WIN32 */
       /* reverse the mapping */
@@ -117,32 +117,32 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     free(chomp_test);
 
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, 8), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, -1), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, 8), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -1), "face") == 0)); XFREE(free_me);
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -2), "fac") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, 8), "face") == 0)); zt_free(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, -1), "face") == 0)); zt_free(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, 8), "face") == 0)); zt_free(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -1), "face") == 0)); zt_free(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, -4, -2), "fac") == 0)); zt_free(free_me);
 
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_catv(iface_str, -4, -1, " plant", 0, -1, NULL), "face plant") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_catv(iface_str, -4, -1, " plant", 0, -1, NULL), "face plant") == 0)); zt_free(free_me);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_cat(iface_str, -4, -1, " plant", 0, -1), "face plant") == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_cat(iface_str, -4, -1, " plant", 0, -1), "face plant") == 0)); zt_free(free_me);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_map(ALPHA, 0, -1, ALPHA, alpha), alpha) == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_map(ALPHA, 0, -1, ALPHA, alpha), alpha) == 0)); zt_free(free_me);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_map(ALPHA, 0, -1, NULL, NULL), ALPHA) == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_map(ALPHA, 0, -1, NULL, NULL), ALPHA) == 0)); zt_free(free_me);
 
     ZT_UNIT_ASSERT(test, zt_cstr_map(NULL, 0, -1, NULL, NULL) == NULL);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_reverse(ALPHA, 0, -1), AHPLA) == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_reverse(ALPHA, 0, -1), AHPLA) == 0)); zt_free(free_me);
 
-    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_dup(ALPHA, 0, -1, 1), ALPHA) == 0)); XFREE(free_me);
+    ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_dup(ALPHA, 0, -1, 1), ALPHA) == 0)); zt_free(free_me);
 
     free_me = zt_cstr_dup(ALPHA, 0, -1, 2);
     free_me2 = zt_cstr_cat(ALPHA, 0, -1, ALPHA, 0, -1);
     ZT_UNIT_ASSERT(test, strcmp(free_me, free_me2) == 0);
-    XFREE(free_me);
-    XFREE(free_me2);
+    zt_free(free_me);
+    zt_free(free_me2);
 
     ZT_UNIT_ASSERT(test, zt_cstr_find(spain, 0, -1, "") == -1);
     ZT_UNIT_ASSERT(test, zt_cstr_find(spain, 0, -1, "e") == 2);
@@ -202,7 +202,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, zt_binary_to_hex(digest, 20, hex2, 41) == 40);
     free_me = zt_cstr_map(hex, 0, -1, ALPHA, alpha);
     ZT_UNIT_ASSERT(test, memcmp(hex2, free_me, 40) == 0);
-    XFREE(free_me);
+    zt_free(free_me);
 
     ZT_UNIT_ASSERT(test, zt_hex_to_binary("AX", 2, digest, 1) == 0);
     ZT_UNIT_ASSERT(test, errno == EINVAL);

@@ -67,7 +67,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 #define ALLOCS_PER 1
 
 
-    root = XCALLOC(atom, 1);
+    root = zt_calloc(atom, 1);
 
     root->type = ATOM;
     root->value.atom = NULL;
@@ -77,7 +77,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
     /* zt_gc_print_heap(&gc); */
     for (i = RSTART; i <= REND; i++) {
-        atom * a = XCALLOC(atom, 1);
+        atom * a = zt_calloc(atom, 1);
 
         /* you can register a value immediatly but it must be setup
          * before you allocate another

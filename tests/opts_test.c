@@ -96,7 +96,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
         { 0,   0,      0,                0,           0,        0,    0    }
     };
 
-    argv = XCALLOC(char *, argc + 1);
+    argv = zt_calloc(char *, argc + 1);
     for (i = 0; i < argc; i++) {
         argv[i] = s_argv[i];
     }
@@ -120,10 +120,10 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, integer == 2);
     ZT_UNIT_ASSERT(test, argc == 0);
 
-    XFREE(argv);
+    zt_free(argv);
 
     if (str) {
-        XFREE(str);
+        zt_free(str);
     }
 } /* basic_opts_tests */
 

@@ -51,7 +51,7 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
 {
     zt_log_ty *result;
 
-    result = calloc(1, vptr->size);
+    result = zt_callocs(vptr->size, 1);
     if (!result) {
         fprintf(stderr, "Unable to calloc memory for log vtable\n");
         exit(1);
@@ -73,14 +73,14 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
     char    * buff = NULL;
 
     len = strlen(fmt) + 4;    /* format + seperator + "\n" + null */
-    buff = (char *)XCALLOC(char, len); /* mem_calloc(len, sizeof(char)); */
+    buff = (char *)zt_calloc(char, len); /* mem_calloc(len, sizeof(char)); */
 
     if (opts & ZT_LOG_WITH_DATE) {
         char      sbuf[255];
         time_t    tt = time(NULL);
 
         len += strftime(sbuf, 254, "%b %e %H:%M:%S ", localtime(&tt));
-        buff = XREALLOC(char, buff, len);
+        buff = zt_realloc(char, buff, len);
         sprintf(buff, "%s", sbuf);
     }
 
@@ -94,7 +94,7 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
             *t = '\0';
         }
         len += strlen(sbuf) + 1;    /* sbuf + space */
-        buff = XREALLOC(char, buff, len);
+        buff = zt_realloc(char, buff, len);
         strcat(buff, sbuf);
         if ((opts > ZT_LOG_WITH_SYSNAME)) {
             strcat(buff, " ");
@@ -103,7 +103,7 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
 
     if (opts & ZT_LOG_WITH_PROGNAME) {
         len += strlen(zt_progname(NULL, 0)); /* progname */
-        buff = XREALLOC(char, buff, len);
+        buff = zt_realloc(char, buff, len);
         strcat(buff, zt_progname(NULL, 0));
     }
 
@@ -113,14 +113,14 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
 
         sprintf(sbuf, "[%u]", pid);
         len += strlen(sbuf);
-        buff = XREALLOC(char, buff, len);
+        buff = zt_realloc(char, buff, len);
         strcat(buff, sbuf);
     }
 
     if (opts & ZT_LOG_WITH_LEVEL) {
         if ((level < zt_log_max) && ((int)level >= zt_log_emerg)) {
             len += strlen(zt_log_level_desc[level].desc) + 2; /* ': ' + level desc */
-            buff = XREALLOC(char, buff, len);
+            buff = zt_realloc(char, buff, len);
             if (opts != ZT_LOG_WITH_LEVEL) {
                 strcat(buff, ": ");
             }
@@ -138,12 +138,12 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         nlen += strlen(log->file);
         nlen += strlen(log->function);
         nlen += 10;    /* length of a int to str */
-        nbuff = XCALLOC(char, nlen); /* mem_calloc(nlen, sizeof(char)); */
+        nbuff = zt_calloc(char, nlen); /* mem_calloc(nlen, sizeof(char)); */
         sprintf(nbuff, ": in %s at (%s:%d)", log->function, log->file, log->line);
         len += nlen;
-        buff = XREALLOC(char, buff, len);
+        buff = zt_realloc(char, buff, len);
         strcat(buff, nbuff);
-        XFREE(nbuff);
+        zt_free(nbuff);
     }
     strcat(buff, "\n");
     return buff;

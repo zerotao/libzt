@@ -16,7 +16,7 @@
 #include "zt_log.h"
 
 void_p
-xcalloc_p(size_t num, size_t size)
+zt_calloc_p(size_t num, size_t size)
 {
     void_p mem = NULL;
 
@@ -28,7 +28,7 @@ xcalloc_p(size_t num, size_t size)
 }
 
 void_p
-xmalloc_p(size_t num)
+zt_malloc_p(size_t num)
 {
     void_p mem = NULL;
 
@@ -39,7 +39,7 @@ xmalloc_p(size_t num)
 }
 
 void_p
-xrealloc_p(void_p p, size_t num)
+zt_realloc_p(void_p p, size_t num)
 {
     void_p mem = NULL;
 
@@ -51,7 +51,7 @@ xrealloc_p(void_p p, size_t num)
 }
 
 void
-xfree_p(void_p stale)
+zt_free_p(void_p stale)
 {
 
     zt_assert(!stale);
@@ -60,7 +60,7 @@ xfree_p(void_p stale)
 }
 
 char *
-xstrdup(const char *string)
+zt_strdup_p(const char *string)
 {
     char * volatile new_string = NULL;
 

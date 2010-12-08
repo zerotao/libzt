@@ -294,8 +294,8 @@ zt_mem_pool_release(void **data)
     page = elt->parent_page;
 
     if (page == NULL) {
-        /* this element was allocated by XALLOC and should just be freed */
-        XFREE(*data);
+        /* this element was allocated by zt_alloc and should just be freed */
+        zt_free(*data);
         return;
     }
 
@@ -542,11 +542,11 @@ zt_mem_pool_group_init(zt_mem_pool_desc *group, size_t len)
     zt_mem_pool_group * ngroup;
     size_t              i;
 
-    if ((ngroup = XCALLOC(zt_mem_pool_group, 1)) == NULL) {
+    if ((ngroup = zt_calloc(zt_mem_pool_group, 1)) == NULL) {
         return 0;
     }
 
-    if ((ngroup->pools = XCALLOC(zt_mem_pool *, len)) == NULL) {
+    if ((ngroup->pools = zt_calloc(zt_mem_pool *, len)) == NULL) {
         return 0;
     }
     zt_elist_reset(&ngroup->group_list);
@@ -604,8 +604,8 @@ zt_mem_pool_group_destroy(zt_mem_pool_group * group)
         }
     }
 
-    XFREE(group->pools);
-    XFREE(group);
+    zt_free(group->pools);
+    zt_free(group);
     return ret;
 }
 
