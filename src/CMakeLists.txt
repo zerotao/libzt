@@ -83,7 +83,6 @@ endif(HAVE_PTHREADS)
 
 #################### installation ####################
 install(TARGETS zt zt_gc zt_unit ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
-install(FILES zt.h zt_unit.h zt_gc.h ${zt_LIB_HDRS} ${zt_gc_HDRS} ${zt_unit_HDRS} DESTINATION include/libzt)
-install(FILES ${adt_HDRS} DESTINATION include/libzt/adt)
+install(FILES zt.h zt_unit.h zt_gc.h ${zt_LIB_HDRS} ${zt_gc_HDRS} ${zt_unit_HDRS} ${adt_HDRS} DESTINATION include/libzt)
 install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
 install(FILES ${cfg_HDRS} DESTINATION include/libzt/zt_cfg)
