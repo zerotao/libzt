@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../zt_internal.h"
-#include "../zt_assert.h"
+#include "zt_internal.h" /* zt_malloc */
+#include "zt_assert.h"
 #include "zt_array.h"
 
 static void

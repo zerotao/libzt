@@ -1,9 +1,11 @@
 #ifndef _ZT_ARRAY_H_
 #define _ZT_ARRAY_H_
 
-#include <zt_internal.h>
-#include <zt_assert.h>
-BEGIN_C_DECLS
+#include <stddef.h> /* size_t */
+
+#ifdef __cplusplus__
+extern "C" {
+#endif
 
 typedef struct zt_array *zt_array_t;
 struct zt_array {
@@ -32,6 +34,8 @@ void *          zt_array_elem_copy(zt_array_t array, size_t offt, void *elem);
 extern void *   zt_array_get(zt_array_t array, size_t i); /* , void **elem); */
 extern void *   zt_array_put(zt_array_t array, size_t i, void *elem);
 
-END_C_DECLS
+#ifdef __cplusplus__
+}
+#endif
 
 #endif /* _ZT_ARRAY_H_ */
