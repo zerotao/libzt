@@ -6,8 +6,12 @@
 #ifndef _ZT_LIST_H_
 #define _ZT_LIST_H_
 
-#include <zt_internal.h>
-BEGIN_C_DECLS
+#include <zt_internal.h> /* INLINE */
+
+#ifdef __cplusplus__
+extern "C" {
+#endif
+
 /*
  *  elists are based on an article I read about linux kernel linked lists.
  *
@@ -99,5 +103,7 @@ zt_elist_join(zt_elist_t *head, zt_elist_t *list)
     at->prev = last;
 }
 
-END_C_DECLS
+#ifdef __cplusplus__
+}
+#endif
 #endif  /* _ZT_LIST_H_ */
