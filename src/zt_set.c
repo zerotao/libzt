@@ -1,5 +1,5 @@
 #include "zt_set.h"
-#include "../zt_assert.h"
+#include "zt_assert.h"
 
 
 zt_set *

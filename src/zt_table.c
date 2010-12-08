@@ -6,9 +6,9 @@
  *
  * $Id$
  */
-#include "../zt_internal.h"
-#include "../zt_mem.h"
-#include "../zt_log.h"
+#include "zt_internal.h"
+#include "zt_mem.h"
+#include "zt_log.h"
 #include "zt_hash.h"
 #include "zt_table.h"
 
