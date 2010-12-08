@@ -2,8 +2,7 @@
 
 #include "zt_unit.h"
 #include "zt_assert.h"
-#include "zt_log.h"
-#include "adt/zt_list.h"
+#include "zt_list.h"
 #include "zt_opts.h"
 
 
@@ -30,8 +29,6 @@ struct zt_unit *
 zt_unit_init(void)
 {
     struct zt_unit * unit = zt_calloc(struct zt_unit, 1);
-
-    /* zt_log_ty    * log; */
 
     zt_elist_reset(&unit->suites);
     unit->failures = 0;
@@ -227,8 +224,11 @@ zt_unit_run_test(struct zt_unit         * unit UNUSED,
     if (suite->setup_fn) {
         suite->setup_fn(suite->data);
     }
-    test->test_fn(test, suite->data);
-    test_passed(test);
+    if(setjmp(test->env) == 0) {
+        test->test_fn(test, suite->data);
+        test_passed(test);
+    }
+
     if (suite->teardown_fn) {
         suite->teardown_fn(suite->data);
     }

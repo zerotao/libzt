@@ -2,7 +2,7 @@
 #define _ZT_SET_H_
 
 #include <zt_internal.h>
-#include <adt/zt_table.h>
+#include <zt_table.h>
 
 BEGIN_C_DECLS
 typedef struct zt_set zt_set;

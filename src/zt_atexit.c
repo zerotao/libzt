@@ -18,7 +18,7 @@
 # include <stdlib.h>
 #endif
 
-#include "adt/zt_stack.h"
+#include "zt_stack.h"
 #include "zt_assert.h"
 #include "zt_atexit.h"
 

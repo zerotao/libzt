@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include <adt/zt_bstream.h>
-#include <adt/zt_array.h>
+#include <zt_bstream.h>
+#include <zt_array.h>
 #include <zt_unit.h>
 
 

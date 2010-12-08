@@ -4,7 +4,7 @@
 
 #include "zt_internal.h"
 #include "zt_assert.h"
-#include "adt/zt_list.h"
+#include "zt_list.h"
 #include "zt_mem.h"
 #include "zt_atexit.h"
 

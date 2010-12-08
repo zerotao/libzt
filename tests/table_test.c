@@ -12,7 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <zt_unit.h>
-#include <adt/zt_table.h>
+#include <zt_table.h>
 
 #define STR_TEST_PRE "strings "
 

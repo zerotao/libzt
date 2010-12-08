@@ -11,11 +11,11 @@ set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/zt_replace.h zt_assert.h
                 zt_uuid.h zt_ez_mempool.h zt_ipv4_tbl.h
                 zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h)
 
-set(adt_SRCS adt/zt_array.c adt/zt_bstream.c adt/zt_hash.c adt/zt_llist.c
-             adt/zt_ptr_array.c adt/zt_set.c adt/zt_table.c adt/zt_tree.c)
-set(adt_HDRS adt/zt_array.h adt/zt_bstream.h adt/zt_hash.h adt/zt_list.h
-             adt/zt_llist.h adt/zt_ptr_array.h adt/zt_queue.h adt/zt_set.h adt/zt_stack.h
-             adt/zt_table.h adt/zt_tree.h)
+set(adt_SRCS zt_array.c zt_bstream.c zt_hash.c zt_llist.c
+             zt_ptr_array.c zt_set.c zt_table.c zt_tree.c)
+set(adt_HDRS zt_array.h zt_bstream.h zt_hash.h zt_list.h
+             zt_llist.h zt_ptr_array.h zt_queue.h zt_set.h zt_stack.h
+             zt_table.h zt_tree.h)
 
 set(log_SRCS zt_log/log_file.c zt_log/log_private.c zt_log/log_stderr.c
              zt_log/log_syslog.c)

@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include <zt_internal.h>
-#include <adt/zt_set.h>
+#include <zt_set.h>
 #include <zt_unit.h>
 
 ssize_t values0_19[] = {

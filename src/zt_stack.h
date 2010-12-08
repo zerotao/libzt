@@ -2,7 +2,7 @@
 #define _ZT_STACK_H_
 
 #include <zt_internal.h>
-#include <adt/zt_list.h>
+#include <zt_list.h>
 
 BEGIN_C_DECLS
 

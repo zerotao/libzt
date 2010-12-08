@@ -26,7 +26,7 @@
 #include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
-#include "adt/zt_ptr_array.h"
+#include "zt_ptr_array.h"
 
 /*!
  * generate an index based on an index statement i, j and length len

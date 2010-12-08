@@ -13,7 +13,7 @@
 
 #include <zt_internal.h>
 #include <zt_unit.h>
-#include <adt/zt_tree.h>
+#include <zt_tree.h>
 
 #define REMOVED 8
 #define REMOVED2 6

@@ -25,17 +25,17 @@
 #endif
 
 #ifndef ZT_WITHOUT_ADT
-# include <adt/zt_array.h>
-# include <adt/zt_list.h>
-# include <adt/zt_queue.h>
-# include <adt/zt_table.h>
-# include <adt/zt_bstream.h>
-# include <adt/zt_llist.h>
-# include <adt/zt_set.h>
-# include <adt/zt_tree.h>
-# include <adt/zt_hash.h>
-# include <adt/zt_ptr_array.h>
-# include <adt/zt_stack.h>
+# include <zt_array.h>
+# include <zt_list.h>
+# include <zt_queue.h>
+# include <zt_table.h>
+# include <zt_bstream.h>
+# include <zt_llist.h>
+# include <zt_set.h>
+# include <zt_tree.h>
+# include <zt_hash.h>
+# include <zt_ptr_array.h>
+# include <zt_stack.h>
 #endif /* ZT_WITHOUT_ADT */
 
 #ifdef ZT_WITH_GC

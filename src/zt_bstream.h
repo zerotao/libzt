@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <zt_internal.h>
-#include <adt/zt_array.h>
+#include <zt_array.h>
 
 BEGIN_C_DECLS
 typedef struct zt_bstream *zt_bstream_t;

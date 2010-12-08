@@ -1,9 +1,10 @@
 #ifndef _ZT_UNIT_H_
 #define _ZT_UNIT_H_
 
-#include <zt_internal.h>
-#include <zt_assert.h>
-#include <adt/zt_list.h>
+#include <setjmp.h>
+#include <stdio.h>
+
+#include <zt_list.h>
 
 BEGIN_C_DECLS
 
@@ -41,12 +42,17 @@ struct zt_unit_test {
     int             success;
     char          * error;
     long            assertions;
+    jmp_buf             env;
 };
 
 #define ZT_UNIT_ASSERT(test, expr)                          \
     do {                                                    \
-        zt_assert((expr));                                  \
-        zt_unit_test_add_assertion(test);                   \
+        if((expr)) {                                        \
+            zt_unit_test_add_assertion(test);               \
+        } else {                                            \
+            asprintf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__); \
+            longjmp(test->env, 1);                          \
+        }                                                   \
     } while(0)
 
 #define ZT_UNIT_ASSERT_EQUAL(test, expr1, expr2) \
