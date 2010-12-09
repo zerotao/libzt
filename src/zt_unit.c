@@ -2,9 +2,6 @@
 
 #include "zt_unit.h"
 #include "zt_assert.h"
-#include "zt_list.h"
-#include "zt_opts.h"
-
 
 #define yaml_dict(name, offt) \
     printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
@@ -387,37 +384,36 @@ zt_unit_main(struct zt_unit    * unit,
              char    * argv[])
 {
     int                i;
-    int                do_list = FALSE;
-    int                run_tests = TRUE;
     int                result = 0;
 
-    struct zt_opt_args options[] = {
-        { 'h', "help", "This help text",       zt_opt_help, NULL,     NULL, NULL },
-        { 'l', "list", "list suites and test", zt_opt_flag, &do_list, NULL, NULL },
-        { 0, NULL, NULL, 0, NULL, NULL, NULL  }
-    };
+    char * msg = "[options] <suite | suite.test> ..."NL
+                ""NL
+                "Options:"NL
+                "     -h, --help               This help text"NL
+                "     -l, --list               list suites and test (default disabled)"NL;
 
-    if (zt_opts_process(&argc, &argv, options, "[options] <suite | suite.test> ...", TRUE, TRUE, NULL) != 0) {
-        exit(1);
+    for(i=1; i < argc; i++) {
+        if(strcmp(argv[i], "-h") == 0 ||
+           strcmp(argv[i], "--help") == 0) {
+            printf("%s %s", argv[0], msg);
+            return 0;
+        } else if(strcmp(argv[i], "-l") == 0 ||
+                  strcmp(argv[i], "--list") == 0) {
+            zt_unit_list(unit);
+            return 0;
+        }
     }
 
-    if (do_list != FALSE) {
-        zt_unit_list(unit);
-        run_tests = FALSE;
-    }
-
-    if (run_tests != FALSE) {
-        if (argc != 0) {
-            for (i = 0; i < argc; i++) {
-                if (zt_unit_run_by_name(unit, argv[i]) < 0) {
-                    printf("Suite or Test \"%s\" not found\n", argv[i]);
-                    result = -1;
-                }
+    if (argc > 1) {
+        for (i = 1; i < argc; i++) {
+            if (zt_unit_run_by_name(unit, argv[i]) < 0) {
+                printf("Suite or Test \"%s\" not found\n", argv[i]);
+                result = -1;
             }
-        } else {
-            if ((result = zt_unit_run(unit)) < 0) {
-                return result;
-            }
+        }
+    } else {
+        if ((result = zt_unit_run(unit)) < 0) {
+            return result;
         }
     }
 
