@@ -46,18 +46,9 @@ zt_realloc_p(void_p p, size_t num)
     mem = (void_p)realloc(p, num);
 
     zt_assert(mem);
-
     return mem;
 }
 
-void
-zt_free_p(void_p stale)
-{
-
-    zt_assert(!stale);
-
-    free(stale);
-}
 
 char *
 zt_strdup_p(const char *string)

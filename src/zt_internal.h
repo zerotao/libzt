@@ -232,16 +232,16 @@ typedef char* void_p;
 #endif
 
 extern char *memoryError;
-#define zt_callocs(size, num)     (xcalloc ((num), (size)))
-#define zt_mallocs(size, num)     (xmalloc ((num) * (size)))
-#define zt_calloc(type, num)	((type *) xcalloc ((num), sizeof(type)))
-#define zt_malloc(type, num)	((type *) xmalloc ((num) * sizeof(type)))
-#define zt_realloc(type, p, num)	((type *) xrealloc (((void_p)p), (num) * sizeof(type)))
+#define zt_callocs(size, num)     (zt_calloc_p ((num), (size)))
+#define zt_mallocs(size, num)     (zt_malloc_p ((num) * (size)))
+#define zt_calloc(type, num)	((type *) zt_calloc_p ((num), sizeof(type)))
+#define zt_malloc(type, num)	((type *) zt_malloc_p ((num) * sizeof(type)))
+#define zt_realloc(type, p, num)	((type *) zt_realloc_p (((void_p)p), (num) * sizeof(type)))
 #define zt_free(stale)   	  	       	  	   	 \
 do {							 \
    if (stale) { free ((void_p) stale);  stale = 0; }	 \
 } while(0)
-#define zt_strdup xstrdup
+#define zt_strdup zt_strdup_p
 
 BEGIN_C_DECLS
 
@@ -254,19 +254,6 @@ extern void zt_free_p (void_p stale);
 extern char *zt_strdup_p (const char *string);
 
 END_C_DECLS
-
-/* Let dmalloc provide mainstream `x' family mallocation API, or else
-   provide our own which points to the `f_' family above.  Note that
-   when using dmalloc, the functions wrapped by my `f_' API will be
-   (correctly) redefined to use the dmalloc library. */
-
-#ifndef WITH_DMALLOC
-#  define xcalloc  zt_calloc_p
-#  define xmalloc  zt_malloc_p
-#  define xrealloc zt_realloc_p
-#  define xfree    zt_free_p
-#endif
-#define xstrdup zt_strdup_p
 
 #ifndef PRIsize_t
 # define PRIsize_t "zu"

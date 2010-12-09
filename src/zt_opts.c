@@ -295,7 +295,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     }
                     break;
                 case zt_opt_string:
-                    *(char **)opts[i].val = xstrdup(optarg); /* Should never fail!!! */
+                    *(char **)opts[i].val = zt_strdup(optarg); /* Should never fail!!! */
                     if (opts[i].val == NULL) {
                         printf("Invalid value \"%s\" for %s (expecting a string).\n",
                                *argv[optind - 1], *argv[optind - 2] );

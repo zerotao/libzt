@@ -268,7 +268,7 @@ char **str_split(char *str, char * delim, int *elts)
      */
     memsize = (sizeof(char *) * (argc + 1)) + (sizeof(char) * (strlen(str) + 1));
 
-    argv = (char **)xmalloc(memsize);
+    argv = (char **)zt_malloc(char, memsize);
     memset(argv, '\0', memsize);
 
     tmp = (char *)argv + (sizeof(char *) * (argc + 1));
