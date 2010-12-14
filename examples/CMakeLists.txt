@@ -1,4 +1,7 @@
 
+add_executable(cpp_test cpp_test.cpp test.h)
+target_link_libraries(cpp_test zt)
+
 add_executable(mem_pools mem_pools.c test.h)
 target_link_libraries(mem_pools zt)
 

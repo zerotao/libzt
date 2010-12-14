@@ -12,13 +12,12 @@ BEGIN_C_DECLS
 #define UUID_VERSION_OFFT 6
 #define UUID_CLOCK_SEQ_OFFT 8
 
-typedef enum zt_uuid_flags_t zt_uuid_flags_t;
-enum zt_uuid_flags_t {
+enum zt_uuid_flags {
     zt_uuid_std_fmt = 0,
     zt_uuid_short_fmt,
 };
+typedef enum zt_uuid_flags zt_uuid_flags_t;
 
-typedef struct zt_uuid zt_uuid_t;
 struct zt_uuid {
     union {
         uint8_t bytes[UUID_ALEN];
@@ -32,19 +31,20 @@ struct zt_uuid {
         } field;
     } data;
 };
+typedef struct zt_uuid zt_uuid_t;
 
 extern zt_uuid_t NAMESPACE_DNS;
 extern zt_uuid_t NAMESPACE_URL;
 extern zt_uuid_t NAMESPACE_OID;
 extern zt_uuid_t NAMESPACE_X500;
 
-typedef enum zt_uuid_ns zt_uuid_ns;
 enum zt_uuid_ns {
     UUID_NS_DNS,
     UUID_NS_URL,
     UUID_NS_OID,
     UUID_NS_X500
 };
+typedef enum zt_uuid_ns zt_uuid_ns;
 
 
 #define UUID_VER_TIME           1

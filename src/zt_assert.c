@@ -25,7 +25,7 @@
 #include "zt_assert.h"
 
 void
-_zt_log_assertion(char *s, char *file, unsigned int line,
+_zt_log_assertion(const char *s, const char *file, unsigned int line,
                   const char *func)
 {
     char bname[PATH_MAX];
@@ -44,7 +44,7 @@ _zt_log_assertion(char *s, char *file, unsigned int line,
 }
 
 void
-_zt_log_abort(char *s, char *file, unsigned int line,
+_zt_log_abort(const char *s, const char *file, unsigned int line,
               const char *func)
 {
     char bname[PATH_MAX];

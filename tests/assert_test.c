@@ -23,11 +23,12 @@ basic_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)
     /* get rid of the log message for the moment */
     zt_log_ty * olog;
     zt_log_ty * log;
+    int         i = 1;
 
     log = zt_log_file("/dev/null", 0, 0);
     olog = zt_log_logger(log);
 
-    zt_assert(1 == 1);
+    zt_assert(1 == i);
 
     zt_log_logger(olog);
     zt_log_close(log);
