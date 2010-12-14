@@ -22,15 +22,15 @@ BEGIN_C_DECLS
  * Description: for an assertion
  * Notes: Don't call this directly, use assert instead
  */
-extern void _zt_log_assertion(const char *condition, const char *file,
-                              unsigned int line, const char *function);
+extern int _zt_log_assertion(const char *condition, const char *file,
+                              unsigned int line, const char *function, int _abort);
 
 /*!
  * Name: _zt_assert_fail
  * Description: for an assertion
  * Notes: Don't call this directly, use assert instead
  */
-extern void _zt_log_abort(const char *condition, const char *file,
+extern int _zt_log_abort(const char *condition, const char *file,
                           unsigned int line, const char *function);
 
 /*!
@@ -45,8 +45,8 @@ extern void _zt_log_abort(const char *condition, const char *file,
 # define zt_assert(c)
 # define zt_assert_nf(c)
 #else
-# define zt_assert(c) (((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort(), 0)))
-# define zt_assert_nf(c) (((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), 0)))
+# define zt_assert(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 1)))
+# define zt_assert_nf(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 0)))
 #endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
 
 /*!
