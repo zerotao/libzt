@@ -6,9 +6,9 @@ if (NOT HAVE_VSYSLOG AND NOT WIN32)
     LIST(APPEND REPLACE_FILES vsyslog.c)
 endif(NOT HAVE_VSYSLOG AND NOT WIN32)
 
-if (NOT HAVE_ASPRINTF AND NOT WIN32)
+if (NOT HAVE_ASPRINTF)
     LIST(APPEND REPLACE_FILES asprintf.c)
-endif(NOT HAVE_ASPRINTF AND NOT WIN32)
+endif(NOT HAVE_ASPRINTF)
 
 add_library(replace STATIC dummy.c ${REPLACE_FILES})
 configure_file(zt_replace.h.in ${PROJECT_BINARY_DIR}/src/zt_replace.h)

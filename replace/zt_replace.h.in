@@ -1,6 +1,8 @@
 #ifndef __ZT_REPLACE_H__
 #define __ZT_REPLACE_H__
 
+BEGIN_C_DECLS
+
 #ifndef HAVE_BASENAME
 extern char *basename (const char *path);
 #endif /* HAVE_BASENAME */
@@ -13,5 +15,7 @@ extern int asprintf(char **str, const char *fmt, ...);
 #include <stdarg.h>
 extern int vasprintf(char **str, const char *fmt, va_list ap);
 #endif /* HAVE_VASPRINTF */
+
+END_C_DECLS
 
 #endif /* __ZT_REPLACE_H__ */
