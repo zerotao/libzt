@@ -60,8 +60,10 @@ check_def_function_exists( strrchr HAVE_STRRCHR )
 check_def_function_exists( strdup HAVE_STRDUP )
 check_def_function_exists( vsyslog HAVE_VSYSLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
-check_def_function_exists( asprintf HAVE_ASPRINTF )
-check_def_function_exists( vasprintf HAVE_VASPRINTF )
+
+include(CheckDefSymbolExists)
+check_def_symbol_exists( asprintf stdio.h HAVE_ASPRINTF )
+check_def_symbol_exists( vasprintf stdio.h HAVE_VASPRINTF )
 
 ################## Check for System Symbols ##################
 include(CheckSymbolExists)

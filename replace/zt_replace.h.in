@@ -5,4 +5,13 @@
 extern char *basename (const char *path);
 #endif /* HAVE_BASENAME */
 
+#ifndef HAVE_ASPRINTF
+extern int asprintf(char **str, const char *fmt, ...);
+#endif /* HAVE_ASPRINTF */
+
+#ifndef HAVE_VASPRINTF
+#include <stdarg.h>
+extern int vasprintf(char **str, const char *fmt, va_list ap);
+#endif /* HAVE_VASPRINTF */
+
 #endif /* __ZT_REPLACE_H__ */

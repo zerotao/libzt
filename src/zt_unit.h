@@ -4,6 +4,7 @@
 #include <setjmp.h>
 #include <stdio.h>
 
+#include <zt.h>
 #include <zt_list.h>
 
 BEGIN_C_DECLS
