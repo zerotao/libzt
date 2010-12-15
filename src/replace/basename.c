@@ -51,4 +51,3 @@ basename( char *path )
 
     return basename ? ++basename : path;
 }
-

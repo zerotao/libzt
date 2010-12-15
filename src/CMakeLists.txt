@@ -1,3 +1,5 @@
+add_subdirectory(replace)
+
 # ZT setup
 set(zt_LIB_SRCS zt_assert.c zt_cfg.c zt_format.c
                 zt_log.c zt_malloc.c zt_mem.c zt_progname.c zt_cstr.c
@@ -58,9 +60,24 @@ set(zt_unit_SRCS zt_unit.c zt_unit.h)
 # GC setup
 set(zt_gc_SRCS zt_gc.c zt_gc.h)
 
+############## Replacements ###############
+if (NOT HAVE_BASENAME)
+    LIST(APPEND zt_REPLACE_SRCS replace/basename.c)
+endif(NOT HAVE_BASENAME)
+
+if (NOT HAVE_VSYSLOG AND NOT WIN32)
+    LIST(APPEND zt_REPLACE_SRCS replace/vsyslog.c)
+endif(NOT HAVE_VSYSLOG AND NOT WIN32)
+
+if (NOT HAVE_ASPRINTF)
+    LIST(APPEND zt_REPLACE_SRCS replace/asprintf.c)
+endif(NOT HAVE_ASPRINTF)
+
+configure_file(replace/zt_replace.h.in ${PROJECT_BINARY_DIR}/src/zt_replace.h)
+
 ################ library definitions ################
-add_library(zt ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
-target_link_libraries(zt replace)
+add_library(zt ${zt_REPLACE_SRCS} ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
+
 add_library(zt_gc ${zt_gc_SRCS})
 target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
 add_library(zt_unit ${zt_unit_SRCS})

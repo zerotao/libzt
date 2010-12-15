@@ -111,7 +111,6 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 # subdirectories
 add_subdirectory(tools)
-add_subdirectory(replace)
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(tests)
