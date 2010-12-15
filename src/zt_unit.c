@@ -54,7 +54,7 @@ zt_unit_release(struct zt_unit **unit)
 
 struct zt_unit_suite *
 zt_unit_register_suite(struct zt_unit     * unit,
-                       char     * name,
+                       const char * name,
                        zt_unit_setup_fn setup_fn,
                        zt_unit_teardown_fn teardown_fn,
                        void     * data )
@@ -103,7 +103,7 @@ zt_unit_release_suite(struct zt_unit_suite **suite)
 
 struct zt_unit_test *
 zt_unit_register_test(struct zt_unit_suite    * suite,
-                      char     * name,
+                      const char * name,
                       zt_unit_test_fn test_fn)
 {
     struct zt_unit_test * test = zt_calloc(struct zt_unit_test, 1);
