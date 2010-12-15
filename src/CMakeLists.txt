@@ -103,6 +103,22 @@ set(ZT_INSTALL_HEADERS zt.h zt_unit.h zt_gc.h ${zt_LIB_HDRS} ${zt_gc_HDRS} ${zt_
 set(ZT_INSTALL_TARGETS zt zt_gc zt_unit)
 
 if (WIN32)
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH "Windows install prefix" FORCE)
+    endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+    set(INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+
+    if (CMAKE_SIZEOF_VOIDP == 8)
+        set(INSTALL_PREFIX ${INSTALL_PREFIX}/x64)
+    endif()
+
+    if (BUILD_TYPE == Debug)
+        set(INSTALL_PREFIX ${INSTALL_PREFIX}/Debug)
+    else()
+        set(INSTALL_PREFIX ${INSTALL_PREFIX}/Release)
+    endif()
+
     install(TARGETS ${ZT_INSTALL_TARGETS}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}
             LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
