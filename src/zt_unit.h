@@ -43,7 +43,7 @@ struct zt_unit_test {
     int             success;
     char          * error;
     long            assertions;
-    jmp_buf             env;
+    jmp_buf         env;
 };
 
 #define ZT_UNIT_ASSERT(test, expr)                          \
@@ -51,7 +51,9 @@ struct zt_unit_test {
         if((expr)) {                                        \
             zt_unit_test_add_assertion(test);               \
         } else {                                            \
-            asprintf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__); \
+            if(asprintf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__) == 0)  { \
+                test->error = NULL;                         \
+            }                                               \
             longjmp(test->env, 1);                          \
         }                                                   \
     } while(0)

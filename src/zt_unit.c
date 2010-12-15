@@ -192,7 +192,7 @@ zt_unit_run_suite(struct zt_unit    * unit,
         zt_elist_for_each(&suite->tests, tmp) {
             unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
             if (unit_test->success != TRUE) {
-                yaml_value(unit_test->name, 4, "'%s'", unit_test->error);
+                yaml_value(unit_test->name, 4, "'%s'", unit_test->error ? unit_test->error : "No Error Text");
             }
         }
     }
