@@ -1,4 +1,4 @@
-install(PROGRAMS zt_mkc DESTINATION bin)
+install(PROGRAMS zt_mkc zt_hdr DESTINATION bin)
 
 if(NOT WIN32)
     configure_file(libzt.pc.cmake libzt.pc @ONLY)
