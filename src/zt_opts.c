@@ -8,39 +8,49 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
-#ifdef HAVE_STRINGS_H
-#include <strings.h>
+# include <string.h> /* memset, strdup */
 #endif
 
 #ifdef HAVE_LIBGEN_H
-#include <libgen.h>
+# include <libgen.h> /* basename */
 #endif
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#include <getopt.h> /* getopt, getopt_long */
 
-#ifdef HAVE_CTYPE_H
-#include <ctype.h>
-#endif
-
-#ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
-#endif
-
-#include "zt_internal.h"
 #include "zt_opts.h"
 
+/* duplicated from zt_macros.h to make
+ * the system stand alone */
+#ifndef INDENT
+# ifndef BLANK
+#  define BLANK "%*s"
+# endif /* BLANK */
 
-static INLINE int isoptchar(int x);
+# if defined(_WIN32)
+#  define NL "\r\n"
+# else
+#  define NL "\n"
+# endif /* defined(_WIN32) */
+
+# define INDENT(lvl) INDENT_PAD((lvl), 5, 0)
+# define INDENT_TO(tgt, step, start)          \
+     INDENT_PAD((((tgt) - (start)) / (step)), \
+                (step),                       \
+                (((tgt) - (start)) % (step)))
+
+# define INDENT_PAD(lvl, step, pad) ((int)(((lvl) * step) + (pad))), ""
+#endif /* INDENT */
+
+
+static int
+isoptchar(int x)
+{
+    return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
+}
 
 struct {
     zt_opt_types type;
@@ -170,7 +180,10 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
     }
 
 #ifdef HAVE_GETOPT_LONG
-    longopts = zt_calloc(struct option, i + 1);
+    if((longopts = (struct option *)calloc(i + 1, sizeof(struct option))) == NULL) {
+        fprintf(stderr, "Could not alloc memory for long opts\n");
+        return -1;
+    }
     optstring[0] = '+';
     opt_index++;
 #endif
@@ -295,17 +308,27 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     }
                     break;
                 case zt_opt_string:
-                    *(char **)opts[i].val = zt_strdup(optarg); /* Should never fail!!! */
-                    if (opts[i].val == NULL) {
-                        printf("Invalid value \"%s\" for %s (expecting a string).\n",
-                               *argv[optind - 1], *argv[optind - 2] );
-                        if (auto_usage) {
-                            zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+                    {
+                        char * arg;
+                        if((arg = strdup(optarg)) == NULL) {
+                            fprintf(stderr, "Could not duplicate arg %s\n", optarg);
+                            result = EXIT_FAILURE;
+                            goto RETURN;
                         }
-                        result = EXIT_FAILURE;
-                        goto RETURN;
+
+                        *(char **)opts[i].val = arg;
+
+                        if (opts[i].val == NULL) {
+                            printf("Invalid value \"%s\" for %s (expecting a string).\n",
+                                    *argv[optind - 1], *argv[optind - 2] );
+                            if (auto_usage) {
+                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+                            }
+                            result = EXIT_FAILURE;
+                            goto RETURN;
+                        }
+                        break;
                     }
-                    break;
                 case zt_opt_func:
                     if ( (((zt_opt_function)opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE) {
                         if (auto_usage) {
@@ -361,15 +384,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
 RETURN:
 #ifdef HAVE_GETOPT_LONG
-    zt_free(longopts);
+    free(longopts);
 #endif
     return result;
 } /* zt_opts_process */
-
-/*
- * local functions
- */
-static INLINE int isoptchar(int x)
-{
-    return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
-}
