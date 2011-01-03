@@ -62,6 +62,7 @@ check_def_function_exists( vsyslog HAVE_VSYSLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
 
 include(CheckDefSymbolExists)
+check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
 check_def_symbol_exists( asprintf stdio.h HAVE_ASPRINTF )
 check_def_symbol_exists( vasprintf stdio.h HAVE_VASPRINTF )
 
