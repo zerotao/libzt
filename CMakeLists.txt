@@ -64,6 +64,7 @@ check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
 include(CheckDefSymbolExists)
 check_def_symbol_exists( asprintf stdio.h HAVE_ASPRINTF )
 check_def_symbol_exists( vasprintf stdio.h HAVE_VASPRINTF )
+check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
 
 ################## Check for System Symbols ##################
 include(CheckSymbolExists)
