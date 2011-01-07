@@ -118,6 +118,15 @@ zt_ez_mempool_alloc(zt_ez_mempool *pool, size_t size, zt_ez_mempool_free_cb free
     return chunk->data;
 }
 
+char *
+zt_ez_mempool_strdup(zt_ez_mempool *pool, const char *s) {
+    char *ret = zt_strdup(s);
+
+    zt_ez_mempool_add_buffer(pool, (void *)ret, strlen(ret), free);
+
+    return ret;
+}
+
 int
 zt_ez_mempool_add_buffer(zt_ez_mempool *pool, void *data, size_t size,
                          zt_ez_mempool_free_cb free_cb) {
