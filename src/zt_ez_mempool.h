@@ -1,5 +1,8 @@
+#include <zt_internal.h>
+
 #ifndef _ZT_EZ_MEMPOOL_H_
 #define _ZT_EZ_MEMPOOL_H_
+
 
 typedef struct zt_ez_mempool zt_ez_mempool;
 typedef struct zt_ez_mempool_chunk zt_ez_mempool_chunk;
