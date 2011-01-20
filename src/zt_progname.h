@@ -21,5 +21,7 @@
 BEGIN_C_DECLS
 extern char *zt_progname(char *path, int flags);
 extern char *zt_progpath(char *prog);
+extern char *zt_os_progpath();
+
 END_C_DECLS
 #endif /* _ZT_PROGNAME_H_ */

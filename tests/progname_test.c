@@ -57,6 +57,8 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
                          ENV_SEPERATOR, 0, -1,
                          getenv("PWD"), 0, -1, NULL);
 
+    /* path = zt_os_progpath(); */
+
     /* FIXME: disabled for the moment as the test does not support
      * symlinks in the path ie getcwd != getenv("PWD")
      * */

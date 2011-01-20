@@ -27,6 +27,9 @@
 #include "zt_progname.h"
 #include "zt_log.h"
 
+#if defined(__APPLE__)
+# include <mach-o/dyld.h>
+#endif /* APPLE */
 #define UNKNOWN "*UNKNOWN*"
 static char _progname[PATH_MAX+1] = UNKNOWN;
 static char _progpath[PATH_MAX+1] = UNKNOWN;
@@ -45,10 +48,54 @@ zt_progname(char *name, int opts)
     return _progname;
 }
 
+static ssize_t
+_proc_get_path(char * result, size_t size) {
+    pid_t     pid;
+    char      path[PATH_MAX + 1];
+
+    pid = getpid();
+    /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
+
+#if defined(linux)
+    /* check proc */
+    snprintf(path, PATH_MAX, "/proc/%d/exe", pid);
+#elif defined(sun) && defined(svr4)
+    snprintf(path, PATH_MAX, "/proc/%d/path/a.out", pid);
+#elif defined(BSD)
+    snprintf(path, PATH_MAX, "/proc/%d/file", pid);
+#else
+    return -1;
+#endif /* defined linux */
+
+    return readlink(path, result, size);
+}
+
+char *
+zt_os_progpath() {
+    char    * result = NULL;
+
+    if ((result = calloc(sizeof(char), PATH_MAX+1)) == NULL) {
+        return NULL;
+    }
+
+    if(_proc_get_path(result, PATH_MAX) == -1) {
+#if defined(__APPLE__)
+        uint32_t     size = PATH_MAX;
+        _NSGetExecutablePath(result, &size);
+#endif /* __APPLE__ */
+    }
+
+    return result;
+}
+
 char *
 zt_progpath(char *prog) {
 
+    /* If prog is !NULL then try to calculate the correct path.
+     * Otherwise just return the current path setting.
+     */
     if(prog && *prog != '\0') {
+        /* if the passed in path is not NULL */
         memset(_progpath, '\0', PATH_MAX);
         zt_cstr_dirname(_progpath, PATH_MAX, prog);
 
@@ -61,10 +108,18 @@ zt_progpath(char *prog) {
             char        * tpath;
             struct stat   sbuf;
 
-
             path = getenv("PATH");
+
             if (!path) {
-                /* no way to determine the path */
+                /* try to use system specific methods to get the path */
+                char    * pp;
+
+                if ((pp = zt_os_progpath()) == NULL) {
+                    return _progpath;
+                }
+
+                zt_cstr_dirname(_progpath, PATH_MAX, pp);
+                zt_free(pp);
                 return _progpath;
             }
 
