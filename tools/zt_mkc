@@ -109,7 +109,9 @@ ${prefix}${cname}_new(${prefix}${cname}_vtbl * vptr)
 {
     ${prefix}${cname}    * result;
 
-    result = calloc(1, vptr->size);
+    if ((result = calloc(1, vptr->size)) == NULL) {
+        return NULL;
+    }
     result->vtbl = vptr;
     return(result);
 }
@@ -239,7 +241,10 @@ ${prefix}${cname} * ${prefix}${cname}_${sub}(void)
     ${prefix}${cname}               * result;
     struct ${prefix}${cname}_${sub} * ${sub};
 
-    result = ${prefix}${cname}_new(&vtbl);
+    if ((result = ${prefix}${cname}_new(&vtbl)) == NULL) {
+        return NULL;
+    }
+
     ${sub} = (struct ${prefix}${cname}_${sub} *)result;
 
     /* local setup here */
