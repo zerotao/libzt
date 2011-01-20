@@ -23,7 +23,7 @@
 
 int   integer = 0;
 char *str = 0;
-int   bool = 0;
+int   boolean = 0;
 int   flag = 0;
 
 int
@@ -77,7 +77,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
     struct zt_opt_args options[] = {
         { 'h',        "help",   "This help text",  zt_opt_help,   NULL,     NULL,  NULL                 },
         { 'i',        "int",    "integer test",    zt_opt_long,   &integer, NULL,  NULL                 },
-        { 'b',        "bool",   "boolean test",    zt_opt_bool,   &bool,    NULL,  NULL                 },
+        { 'b',        "bool",   "boolean test",    zt_opt_bool,   &boolean,    NULL,  NULL                 },
 #ifdef HAVE_GETOPT_LONG
         { ZT_OPT_NSO, "string", TEST_LONG_STRING,  zt_opt_string, &str,     NULL,  "-s \"Some String\"" },
 #endif /* HAVE_GETOPT_LONG */
@@ -105,7 +105,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
 
     zt_opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE, NULL);
     ZT_UNIT_ASSERT(test, integer == 1);
-    ZT_UNIT_ASSERT(test, bool == 1);
+    ZT_UNIT_ASSERT(test, boolean == 1);
 
 #ifdef HAVE_GETOPT_LONG
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
