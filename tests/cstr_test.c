@@ -116,6 +116,9 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     free(strip_test);
     free(chomp_test);
 
+    ZT_UNIT_ASSERT(test, zt_cstr_abspath("/tmp") == true);
+    ZT_UNIT_ASSERT(test, zt_cstr_abspath("./tmp") == true);
+    ZT_UNIT_ASSERT(test, zt_cstr_abspath("tmp") == false);
 
     ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, 8), "face") == 0)); zt_free(free_me);
     ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, -1), "face") == 0)); zt_free(free_me);

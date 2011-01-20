@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 #include <zt_internal.h>
 #include <zt_ptr_array.h>
@@ -60,6 +61,7 @@ extern size_t zt_cstr_rcspn( const char *s, const char *reject );
 extern char* zt_cstr_basename( char *, size_t, const char*, const char* );
 extern char* zt_cstr_dirname( char*, size_t, const char* );
 extern char* zt_cstr_path_append( const char *, const char * );
+extern bool  zt_cstr_abspath( const char * );
 
 extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
 extern size_t zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);

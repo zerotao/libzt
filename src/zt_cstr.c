@@ -682,6 +682,19 @@ zt_cstr_path_append(const char *path1, const char *path2) {
     return rpath;
 }
 
+bool
+zt_cstr_abspath(const char * path) {
+
+    int len = strlen(PATH_SEPERATOR);
+
+    if ((strncmp(path, PATH_SEPERATOR, len) == 0) ||
+        (path[0] == '.' && strncmp(&path[1], PATH_SEPERATOR, len) == 0)) {
+        return true;
+    }
+
+    return false;
+}
+
 /*!
  * converts binary data to a hex string it does not NULL terminate the
  * string
