@@ -54,8 +54,8 @@ _proc_get_path(char * result, size_t size) {
     char      path[PATH_MAX + 1];
 
     pid = getpid();
-    /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
 
+    /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
 #if defined(linux)
     /* check proc */
     snprintf(path, PATH_MAX, "/proc/%d/exe", pid);
@@ -77,6 +77,15 @@ zt_os_progpath() {
     if ((result = calloc(sizeof(char), PATH_MAX+1)) == NULL) {
         return NULL;
     }
+
+    /*
+     * OSX: _NSGetExecutablePath()
+     * Solaris: getexecname() or readlink /proc/<pid>/path/a.out
+     * Linux: readlink /proc/<pid>/exe
+     * FreeBSD:  sysctl CTL_KERN KERN_PROC KERN_PROC_PATHNAME -1
+     * BSD w/ Procfs: readlink /proc/curproc/file
+     * Windows:  GetModuleFileName() with hModule = NULL
+     */
 
     if(_proc_get_path(result, PATH_MAX) == -1) {
 #if defined(__APPLE__)
