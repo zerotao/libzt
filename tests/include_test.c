@@ -1,9 +1,9 @@
 #define ZT_WITH_UNIT
 
-#include <libzt/zt.h>
+#include <zt.h>
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     ZT_UNIT_ASSERT(test, 1); /* we compiled so we pass */
 }

@@ -19,10 +19,10 @@
 
 #include <math.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/zt_unit.h>
-#include <libzt/zt_uuid.h>
-#include <libzt/zt_time.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_uuid.h>
+#include <zt_time.h>
 
 /* void * */
 /* time_uuid4(void * data) { */
@@ -32,12 +32,12 @@
 /* } */
 
 static void
-uuid4_tests(struct zt_unit_test *test, void *data)
+uuid4_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_uuid_t uuid;
     int       i;
     int       fail_ver;
-    int       fail_variant;
+    int       volatile fail_variant;
 
     memset(&uuid, 0, sizeof(zt_uuid_t));
 
@@ -63,7 +63,7 @@ uuid4_tests(struct zt_unit_test *test, void *data)
 }
 
 static void
-uuid5_tests(struct zt_unit_test *test, void *data)
+uuid5_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     /* get rid of the log message for the moment */
     char     * tdata[] = { "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
@@ -88,23 +88,23 @@ uuid5_tests(struct zt_unit_test *test, void *data)
     int        i;
     int        x;
     int        fail_ver = 0;
-    int        fail_variant = 0;
+    int        volatile fail_variant = 0;
 
-    for (i = 0; i < sizeof_array(tdata); i++) {
+    for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_uuid5(tdata[i], strlen(tdata[i]), UUID_NS_OID, &uuid);
 
         zt_uuid_tostr(&uuid, &uuid_s, zt_uuid_std_fmt);
         ZT_UNIT_ASSERT(test, memcmp(uuid_s, rdata[i], 36) == 0);
-        XFREE(uuid_s);
+        zt_free(uuid_s);
 
         zt_uuid_tostr(&uuid, &uuid_s, zt_uuid_short_fmt);
         ZT_UNIT_ASSERT(test, memcmp(uuid_s, rdatas[i], 32) == 0);
-        XFREE(uuid_s);
+        zt_free(uuid_s);
     }
 
     fail_ver = 0;
     fail_variant = 0;
-    for (x = 0; x < sizeof_array(namespaces); x++) {
+    for (x = 0; x < (int)sizeof_array(namespaces); x++) {
         for (i = 0; i < 100; i++) {
             uint8_t y;
 
@@ -125,7 +125,7 @@ uuid5_tests(struct zt_unit_test *test, void *data)
 } /* uuid5_tests */
 
 static void
-uuid_generic_tests(struct zt_unit_test *test, void *data)
+uuid_generic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char    * uuids1;
     char    * uuids2;
@@ -140,19 +140,24 @@ uuid_generic_tests(struct zt_unit_test *test, void *data)
 
     ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
     ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids1, zt_uuid_std_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids2, zt_uuid_std_fmt) == 0);
 
-    XFREE(uuids1);
-    XFREE(uuids2);
+    zt_free(uuids1);
+    zt_free(uuids2);
 
     zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_short_fmt);
     zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_short_fmt);
     zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_short_fmt);
 
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids1, zt_uuid_short_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids2, zt_uuid_short_fmt) == 0);
+
     ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
     ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
 
-    XFREE(uuids1);
-    XFREE(uuids2);
+    zt_free(uuids1);
+    zt_free(uuids2);
 }
 
 int

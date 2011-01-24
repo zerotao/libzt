@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <errno.h>
-#define _ZT_THREADS_HAVE_PTHREADS
-#include <libzt/zt.h>
+#include <zt.h>
 
 zt_threads_mutex *mutex;
 
@@ -15,39 +14,40 @@ example_thread_cb(void *_data) {
     while (1) {
         /* lock the mutex */
         zt_threads_lock(0, mutex);
-        printf("id=%u data=%s\n", zt_threads_id(), data);
+        printf("id=%lu data=%s\n", zt_threads_id(), data);
         zt_threads_unlock(0, mutex);
         usleep(80000);
     }
 
     zt_threads_end(NULL);
+    return NULL;
 }
 
 
 void *
-example_init_cb(void *args) {
+example_init_cb(void *args UNUSED) {
     return (void *)"example init data";
 }
 
 void *
 example_iput_work_cb(void *init_data, void *data) {
-    printf("iput_worker: id = %u init_data = %s, data = %s\n",
+    printf("iput_worker: id = %lu init_data = %s, data = %s\n",
            zt_threads_id(), (char *)init_data, (char *)data);
     return "sending to oput";
 }
 
 void *
-example_oput_work_cb(void *init_data, void *data) {
-    printf("oput_worker: id = %u data = %s\n",
+example_oput_work_cb(void *init_data UNUSED, void *data) {
+    printf("oput_worker: id = %lu data = %s\n",
            zt_threads_id(), (char *)data);
     return "sending to finalizer";
 }
 
-void example_finalizer(void *init_data, void *data) {
+void example_finalizer(void *init_data UNUSED, void *data) {
     printf("finalized: %s\n", (char *)data);
 }
 
-int main(int argc, char **argv) {
+int main(int argc UNUSED, char **argv UNUSED) {
     /* tell libzt to use pthreads */
     zt_threads_use_pthreads();
 

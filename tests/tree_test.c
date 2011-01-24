@@ -11,9 +11,9 @@
  */
 #include <string.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_tree.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_tree.h>
 
 #define REMOVED 8
 #define REMOVED2 6
@@ -48,7 +48,7 @@ int int_compare( zt_rbt_node *x, zt_rbt_node  *x2)
 } while (0)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_rbt         * br_root = NULL;
     zt_rbt_node    * iter;
@@ -66,7 +66,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         long n = 0;
         int  done = 0;
 
-        node = XCALLOC(struct int_set, 1);
+        node = zt_calloc(struct int_set, 1);
         zt_rbt_node_init(&(node->node));
         /* make sure that we only insert an individual data
          * item only once.
@@ -78,7 +78,7 @@ basic_tests(struct zt_unit_test *test, void *data)
                 done = 1;
             }
         } while (!done);
-        node->i = n;
+        node->i = (int)n;
         zt_rbt_insert(&br_root, &(node->node), int_compare);
     }
 
@@ -96,7 +96,7 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, n->i == REMOVED);
 
         memset(n, 0, sizeof(struct int_set));
-        XFREE(n);
+        zt_free(n);
     }
 
     rem1.i = REMOVED2;
@@ -119,7 +119,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 
         ordered_dataset[x->i] = 0;
         iter = zt_rbt_remove(&br_root, iter);
-        XFREE(x);
+        zt_free(x);
     }
 
 

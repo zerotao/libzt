@@ -11,8 +11,8 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <libzt/adt/zt_table.h>
-#include <libzt/zt_unit.h>
+#include <zt_unit.h>
+#include <zt_table.h>
 
 #define STR_TEST_PRE "strings "
 
@@ -23,7 +23,7 @@ static int int_iterator(void *key, void *datum, void *param);
 static int str_free(void *key, void *datum, void *param);
 
 void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char       buf[1024];
     ssize_t    i;
@@ -55,7 +55,7 @@ basic_tests(struct zt_unit_test *test, void *data)
     for ( i = 9; i >= 0; i--) {
         char * b2 = NULL;
         sprintf(buf, "%s%zd", STR_TEST_PRE, i);
-        b2 = XSTRDUP(buf);
+        b2 = zt_strdup(buf);
         zt_table_set(table_str, b2, (void *)numbers[i]);
     }
 
@@ -69,9 +69,9 @@ basic_tests(struct zt_unit_test *test, void *data)
 } /* basic_tests */
 
 static int
-str_free(void *key, void *datum, void *param)
+str_free(void *key, void *datum UNUSED, void *param UNUSED)
 {
-    XFREE(key);
+    zt_free(key);
     return 0;
 }
 
@@ -79,7 +79,7 @@ static int
 str_iterator(void *key, void *datum, void *param)
 {
     ssize_t               d = (intptr_t)datum;
-    ssize_t               k = atoi((key + strlen(STR_TEST_PRE)));
+    ssize_t               k = atoi(((const char *)key + strlen(STR_TEST_PRE)));
     struct zt_unit_test * test = (struct zt_unit_test *)param;
 
     ZT_UNIT_ASSERT(test, (k + d == 9));

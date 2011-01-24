@@ -1,6 +1,6 @@
-#include <libzt/zt_internal.h>
-#include <libzt/zt_gc.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_gc.h>
+#include <zt_unit.h>
 
 #define DEBUG 0
 
@@ -21,7 +21,7 @@ static int ints_marked = 0;
 static int atoms_marked = 0;
 static int atoms_freed = 0;
 
-static void mark_atom(zt_gc_t *gc, void *pdata, void *v)
+static void mark_atom(zt_gc_t *gc, void *pdata UNUSED, void *v)
 {
     atom *a = (atom *)v;
 
@@ -41,7 +41,7 @@ static void mark_atom(zt_gc_t *gc, void *pdata, void *v)
 }
 
 static void
-release_atom(zt_gc_t *gc, void *pdata, void **v)
+release_atom(zt_gc_t *gc UNUSED, void *pdata UNUSED, void **v)
 {
     atom **a = (atom **)v;
 
@@ -53,7 +53,7 @@ release_atom(zt_gc_t *gc, void *pdata, void **v)
 }
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     zt_gc_t gc;
     atom  * root;
@@ -67,7 +67,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 #define ALLOCS_PER 1
 
 
-    root = XCALLOC(atom, 1);
+    root = zt_calloc(atom, 1);
 
     root->type = ATOM;
     root->value.atom = NULL;
@@ -77,7 +77,7 @@ basic_tests(struct zt_unit_test *test, void *data)
 
     /* zt_gc_print_heap(&gc); */
     for (i = RSTART; i <= REND; i++) {
-        atom * a = XCALLOC(atom, 1);
+        atom * a = zt_calloc(atom, 1);
 
         /* you can register a value immediatly but it must be setup
          * before you allocate another

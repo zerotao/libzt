@@ -1,13 +1,13 @@
 #include <string.h>
-#include <libzt/zt_assert.h>
-#include <libzt/zt_format.h>
-#include <libzt/zt_cstr.h>
-#include <libzt/zt_unit.h>
+#include <zt_assert.h>
+#include <zt_format.h>
+#include <zt_cstr.h>
+#include <zt_unit.h>
 
-static int
-cvt_S(int code, va_list app,
+static size_t
+cvt_S(int code UNUSED, va_list app,
       int put(int c, void *cl), void *cl,
-      unsigned char flags[], int width, int precision)
+      unsigned char flags[], ssize_t width, ssize_t precision)
 {
     char * str = va_arg(app, char *);
 
@@ -18,7 +18,7 @@ cvt_S(int code, va_list app,
 
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     char   buf[256];
     char * str;
@@ -46,25 +46,25 @@ basic_tests(struct zt_unit_test *test, void *data)
     ZT_UNIT_ASSERT(test,
                    zt_cstr_cmp(str, 0, -1,
                                "this is a test: 34\n", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("\t%s: 0x~x~~ %% %~ ~%\n", "this is a test", 34);
     ZT_UNIT_ASSERT(test,
                    zt_cstr_cmp(str, 0, -1,
                                "\tthis is a test: 0x22~ % ~ %\n", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#0.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, "T", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#4.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, " ", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 
     str = zt_fmt_strprintf("%#30.1s", "This is a test", 34);
     ZT_UNIT_ASSERT(test, zt_cstr_cmp(str, 0, -1, "T", 0, -1) == 0);
-    XFREE(str);
+    zt_free(str);
 } /* basic_tests */
 
 int

@@ -1,29 +1,29 @@
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_stack.h>
-#include <libzt/adt/zt_queue.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_unit.h>
+#include <zt_stack.h>
+#include <zt_queue.h>
 
 typedef struct stack_elt {
-    zt_stack member;
+    zt_stack_t member;
     int      n;
 }stack_elt;
 
 typedef struct queue_elt {
-    zt_queue member;
+    zt_queue_t member;
     int      n;
 }queue_elt;
 
 static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-#define VALUES_MAX sizeof_array(values)
+#define VALUES_MAX (int)sizeof_array(values)
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     stack_elt * se;
     queue_elt * qe;
 
-    zt_stack  * tse;
-    zt_queue  * tqe;
+    zt_stack_t  * tse;
+    zt_queue_t  * tqe;
 
     int         i;
 
@@ -39,8 +39,8 @@ basic_tests(struct zt_unit_test *test, void *data)
 
 
     for (i = 0; i < VALUES_MAX; i++) {
-        se = XCALLOC(stack_elt, 1);
-        qe = XCALLOC(queue_elt, 1);
+        se = zt_calloc(stack_elt, 1);
+        qe = zt_calloc(queue_elt, 1);
 
         se->n = values[(VALUES_MAX-1) - i];
         qe->n = values[i];
@@ -68,8 +68,8 @@ basic_tests(struct zt_unit_test *test, void *data)
         ZT_UNIT_ASSERT(test, se->n == values[i]);
         ZT_UNIT_ASSERT(test, qe->n == values[i]);
 
-        XFREE(se);
-        XFREE(qe);
+        zt_free(se);
+        zt_free(qe);
     }
 
     ZT_UNIT_ASSERT(test, zt_stack_empty(&stk));

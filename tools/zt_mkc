@@ -1,13 +1,26 @@
 #!/bin/sh
 AUTHOR='Jason L. Shiffer'
-EMAIL='<jshiffer@zerotao.org'
+EMAIL='<jshiffer@zerotao.org>'
 OWNER='Jason L. Shiffer'
 
 put_header() {
     out=$1
+    header=$2
     DN=`dirname $0`
 
-    $DN/hdr -A "$AUTHOR" -E "$EMAIL" -O "$OWNER" $out
+
+    if [ x"$header" != x"" -a -e $header ]; then
+        cat $header > $out
+    else
+        # check to see if you are using an explicit or implicit path
+        if [ -e $DN/zt_hdr ]; then
+            ZT_HDR="$DN/zt_hdr"
+        else
+            ZT_HDR="zt_hdr"
+        fi
+
+        $ZT_HDR -A "$AUTHOR" -E "$EMAIL" -O "$OWNER" $out
+    fi
 }
 
 put_component_c() {
@@ -17,7 +30,7 @@ put_component_c() {
     prefix=$4
     header=$5
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 #ifdef HAVE_CONFIG_H
@@ -45,7 +58,7 @@ put_component_h() {
     prefix=$4
     header=$5
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
 
@@ -80,7 +93,7 @@ put_private_c() {
     prefix=$4
     header=$5
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 #ifdef HAVE_CONFIG_H
@@ -96,7 +109,9 @@ ${prefix}${cname}_new(${prefix}${cname}_vtbl * vptr)
 {
     ${prefix}${cname}    * result;
 
-    result = calloc(1, vptr->size);
+    if ((result = calloc(1, vptr->size)) == NULL) {
+        return NULL;
+    }
     result->vtbl = vptr;
     return(result);
 }
@@ -112,7 +127,7 @@ put_private_h() {
 
     CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 /* Private interface to ${cname}
@@ -168,7 +183,7 @@ put_sub_h() {
     CFNAME=`echo ${cfname} | tr 'a-z' 'A-Z'`
     SUB=`echo ${sub} | tr 'a-z' 'A-Z'`
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 #ifndef _${CFNAME}_${SUB}_H_
@@ -198,7 +213,7 @@ put_sub_c() {
     header=$5
     sub=$6
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 #ifdef HAVE_CONFIG_H
@@ -217,7 +232,7 @@ struct ${prefix}${cname}_${sub} {
 };
 
 static ${prefix}${cname}_vtbl vtbl = {
-    sizeof(${prefix}${cname}_$sub),
+    sizeof(struct ${prefix}${cname}_$sub),
     destructor,
 };
 
@@ -226,7 +241,10 @@ ${prefix}${cname} * ${prefix}${cname}_${sub}(void)
     ${prefix}${cname}               * result;
     struct ${prefix}${cname}_${sub} * ${sub};
 
-    result = ${prefix}${cname}_new(&vtbl);
+    if ((result = ${prefix}${cname}_new(&vtbl)) == NULL) {
+        return NULL;
+    }
+
     ${sub} = (struct ${prefix}${cname}_${sub} *)result;
 
     /* local setup here */
@@ -258,7 +276,7 @@ put_interface_h() {
 
     shift 5
 
-    put_header "$file"
+    put_header "$file" "$header"
 
     cat >> ${file} <<EOF
 #ifndef _${CFNAME}_INTERFACE_H_
@@ -367,11 +385,11 @@ EOF
 base_dir="."
 gen_make=0
 overwrite=0
-header=0
+header=""
 prefix=""
 cfname=""
 
-while getopts "mohp:d:f:O:A:E:" flag
+while getopts "mohp:H:d:f:O:A:E:" flag
 do
     case "$flag" in
         m)
@@ -392,6 +410,9 @@ do
             ;;
         f)
             cfname=$OPTARG
+            ;;
+        H)
+            header=$OPTARG
             ;;
         O)
             OWNER=$OPTARG
@@ -468,4 +489,6 @@ for sub in $@; do
     put_sub_h "${base_dir}/${cfname}/${sub}.h" "${cfname}" "${cname}" "${prefix}" ${header} ${sub}
 done
 
-put_makefile_am "${base_dir}/${cfname}/Makefile.am" "${cfname}" "${cname}" $@
+if [ $gen_make == 1 ]; then
+    put_makefile_am "${base_dir}/${cfname}/Makefile.am" "${cfname}" "${cname}" $@
+fi

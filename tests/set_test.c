@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include <libzt/zt_internal.h>
-#include <libzt/adt/zt_set.h>
-#include <libzt/zt_unit.h>
+#include <zt_internal.h>
+#include <zt_set.h>
+#include <zt_unit.h>
 
 ssize_t values0_19[] = {
     0,  1,  2,  3,  4,  5,
@@ -11,7 +11,7 @@ ssize_t values0_19[] = {
     16, 17, 18, 19
 };
 
-#define MAX_LEN sizeof_array(values0_19)
+#define MAX_LEN (int)sizeof_array(values0_19)
 
 ssize_t values0_19_fill[MAX_LEN + 1];
 
@@ -56,7 +56,7 @@ static int difference_test(void *data, void *param)
 }
 
 static void
-basic_tests(struct zt_unit_test *test, void *data)
+basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     int      i;
     zt_set * result;

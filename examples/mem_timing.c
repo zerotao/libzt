@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <sys/time.h>    /* gettimeofday */
 #include <sys/resource.h>
-#include <libzt/zt_mem.h>
-#include <libzt/zt_time.h>
+#include <zt_mem.h>
+#include <zt_time.h>
 
 struct test_data_t {
     long                 size;
@@ -37,7 +37,7 @@ void *
 test_malloc(void *data)
 {
     struct test_data_t * td = data;
-    int                  size = td->size;
+    size_t               size = td->size;
     int                  i;
 
     for (i = 0; i < td->n; i++) {
@@ -72,7 +72,7 @@ test_pool(void *data)
 #define NPTEST 10000
 #define NPLOOP 500
 int
-main(int argc, char *argv[])
+main(int argc UNUSED, char *argv[] UNUSED)
 {
     struct test_data_t td_small;
     struct test_data_t td_large;
