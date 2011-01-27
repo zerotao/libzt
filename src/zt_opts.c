@@ -256,7 +256,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
             if (auto_usage) {
                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
             }
-            result = EXIT_FAILURE;
+            result = -1;
             goto RETURN;
         }
         for (i = 0; i < max_opts; i++) {
@@ -285,7 +285,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                             if (auto_usage) {
                                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                             }
-                            result = EXIT_FAILURE;
+                            result = -1;
                             goto RETURN;
                         }
                     } else {
@@ -303,7 +303,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        result = EXIT_FAILURE;
+                        result = -1;
                         goto RETURN;
                     }
                     break;
@@ -312,7 +312,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         char * arg;
                         if((arg = strdup(optarg)) == NULL) {
                             fprintf(stderr, "Could not duplicate arg %s\n", optarg);
-                            result = EXIT_FAILURE;
+                            result = -1;
                             goto RETURN;
                         }
 
@@ -324,35 +324,35 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                             if (auto_usage) {
                                 zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                             }
-                            result = EXIT_FAILURE;
+                            result = -1;
                             goto RETURN;
                         }
                         break;
                     }
                 case zt_opt_func:
-                    if ( (((zt_opt_function)opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE) {
+                    if ( (((zt_opt_function)opts[i].fn)(optarg, cb_data)) == -1) {
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        result = EXIT_FAILURE;
+                        result = -1;
                         goto RETURN;
                     }
                     break;
                 case zt_opt_ofunc:
-                    if ( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE) {
+                    if ( ((opts[i].fn)(optarg, cb_data)) == -1) {
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        result = EXIT_FAILURE;
+                        result = -1;
                         goto RETURN;
                     }
                     break;
                 case zt_opt_rfunc:
-                    if ( ((opts[i].fn)(optarg, cb_data)) == EXIT_FAILURE) {
+                    if ( ((opts[i].fn)(optarg, cb_data)) == -1) {
                         if (auto_usage) {
                             zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
                         }
-                        result = EXIT_FAILURE;
+                        result = -1;
                         goto RETURN;
                     }
                     break;
@@ -372,7 +372,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     break;
                 default:
                     printf("Unknown arg type %d\n", opts[i].opt);
-                    result = EXIT_FAILURE;
+                    result = -1;
                     goto RETURN;
             } /* switch */
         }
