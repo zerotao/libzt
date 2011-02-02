@@ -1,7 +1,7 @@
 #!/bin/sh
-AUTHOR='Jason L. Shiffer'
-EMAIL='<jshiffer@zerotao.org>'
-OWNER='Jason L. Shiffer'
+AUTHOR='Jason L. Shiffer || Mark Ellzey'
+EMAIL='<jshiffer@zerotao.org>, <ellzey@strcpy.net>'
+OWNER='Jason L. Shiffer || Mark Ellzey'
 
 put_header() {
     out=$1
