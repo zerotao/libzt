@@ -104,11 +104,7 @@ configure_file(config.h.cmake src/config.h)
 if(CMAKE_COMPILER_IS_GNUCC)
   # set(CMAKE_BUILD_TYPE distribution)
   # set(CMAKE_C_FLAGS_DISTRIBUTION "-Wall -Wextra -O2")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -O2") #  -Werror")
-
-  if(UNIX)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-  endif(UNIX)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall -Wextra -O2") #  -Werror")
 
   if(APPLE)
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32")
