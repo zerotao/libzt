@@ -1,8 +1,8 @@
 #!/bin/sh
 
-AUTHOR='Jason L. Shiffer'
-EMAIL='<jshiffer@zerotao.org>'
-OWNER='Jason L. Shiffer'
+AUTHOR='Jason L. Shiffer || Mark Ellzey'
+EMAIL='<ellzey@strcpy.net>, <jshiffer@zerotao.org>'
+OWNER='Jason L. Shiffer || Mark Ellzey'
 FNAME=''
 NOTES=''
 YEAR=`date +'%Y' | tr -d '\n'`
@@ -90,13 +90,13 @@ else
 fi
 
 header_clean=0
+F=`mktemp -t hdr`
 if [ x"$header" == x"" ]; then
-    header=`mktemp -t hdr`
+    header=$F
     echo "$HEADER" > $header
     header_clean=1
 fi
 
-F=`mktemp -t hdr`
 sed -e "s/@FILENAME@/${FNAME}/g" \
     -e "s/@NOTES@/${NOTES}/g" \
     -e "s/@DESC@/${DESC}/g" \
