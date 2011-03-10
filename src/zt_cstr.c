@@ -23,6 +23,8 @@
 #include <strings.h>
 #endif
 
+#include <ctype.h>
+
 #include "zt_cstr.h"
 #include "zt_assert.h"
 #include "zt_format.h"
@@ -694,6 +696,108 @@ zt_cstr_abspath(const char * path) {
 
     return false;
 }
+
+struct _str_state {
+    char    * c;
+    size_t    len;
+    size_t    offt;
+};
+
+static int _read_str(void * ctx) {
+    struct _str_state   * state = (struct _str_state *)ctx;
+    int    c = 0;
+
+    if (state->len == state->offt) {
+        return EOF;
+    }
+
+    c = *(state->c + state->offt);
+    state->offt += 1;
+    return c;
+}
+
+int
+zt_hexdump_default_printer(UNUSED void * ctx, size_t addr, char * hex, char * txt) {
+    size_t    offt;
+    size_t    base = 55;
+    char      buffer[100+1];
+
+    if (hex) {
+        if (addr < 65535) {
+            offt = snprintf(buffer, 100, "%.4lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+            base += 4;
+        } else if (addr < 4294967295) {
+            offt = snprintf(buffer, 100, "%.8lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+            base += 8;
+        } else {
+            offt = snprintf(buffer, 100, "%.16lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+            base += 16;
+        }
+
+        snprintf(buffer+offt, 100-offt, BLANK "| %s", INDENT_TO(base, 1, offt), txt);
+        printf("%s\n", buffer);
+    } else {
+        printf("\n");
+    }
+    return 0;
+}
+
+size_t
+zt_hexdump_str(char * data, size_t size, zt_hexdump_output output, void * odata) {
+    struct _str_state     state = { data, size, 0 };
+
+    return zt_hexdump(_read_str, &state, output, odata);
+}
+
+size_t
+zt_hexdump(int _getchar(void *), void * data, zt_hexdump_output output, void * odata) {
+    size_t    bytes = 0;
+    size_t    hpos = 0, cpos = 0;
+    int       c = 0;
+    uint32_t  addr = 0L;
+    size_t    _addr = 0L;
+    char      _txt[16+1];
+    char      _hex[(16*3)+3];
+
+    if (output == NULL) {
+        output = zt_hexdump_default_printer;
+    }
+
+    while ((c = _getchar(data)) != EOF) {
+
+        if (addr % 16 == 0) {
+            _addr = addr;
+            memset(_txt, 0, sizeof(_txt));
+            memset(_hex, 0, sizeof(_hex));
+            hpos = 0;
+            cpos = 0;
+        }
+
+        *(_hex+hpos++) = HEX_DIGITS[((c >> 4) & 0xF)];
+        *(_hex+hpos++) = HEX_DIGITS[(c  & 0xF)];
+        *(_hex+hpos++) = ' ';
+
+        *(_txt+cpos++) = isprint(c) ? c : '.';
+
+        if (addr % 16 == 15) {
+            if (output(odata, _addr, _hex, _txt) == -1) {
+                return -1;
+            }
+        }
+        addr++;
+        bytes++;
+    }
+
+    if ((addr % 16 != 15) && (addr % 16 != 0)) {
+        if (output(odata, _addr, _hex, _txt) == -1 ) {
+            return -1;
+        }
+    }
+
+    output(odata, 0, NULL, NULL);
+    return bytes;
+}
+
 
 /*!
  * converts binary data to a hex string it does not NULL terminate the

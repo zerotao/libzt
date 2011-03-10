@@ -63,6 +63,17 @@ extern char* zt_cstr_dirname( char*, size_t, const char* );
 extern char* zt_cstr_path_append( const char *, const char * );
 extern bool  zt_cstr_abspath( const char * );
 
+typedef int (*zt_hexdump_output)(void * ctx,
+                                 size_t _addr,
+                                 char * _hex,
+                                 char * _txt);
+
+int zt_hexdump_default_printer(UNUSED void * ctx, size_t addr, char * hex, char * txt);
+size_t zt_hexdump_str(char * data, size_t size,
+                      zt_hexdump_output output, void * odata);
+size_t zt_hexdump(int getchar(void *), void * data,
+                  zt_hexdump_output output, void * odata);
+
 extern size_t zt_binary_to_hex(void *data, size_t dlen, char *hex, size_t hlen);
 extern size_t zt_hex_to_binary(char *hex, size_t hlen, void *data, size_t dlen);
 extern size_t zt_cstr_copy(const char * from, ssize_t i, ssize_t j, char * to, size_t len);
