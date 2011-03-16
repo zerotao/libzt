@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #ifdef HAVE_STRING_H
 # include <string.h> /* memset, strdup */
@@ -58,6 +59,7 @@ struct {
 } zt_opts_usage_t[] = { { zt_opt_bool,   " [yes|no|true|false]" },
                         { zt_opt_flag,   NULL                   },
                         { zt_opt_long,   " [integer]"           },
+                        { zt_opt_int,    " [integer]"           },
                         { zt_opt_string, " [string]"            },
                         { zt_opt_func,   NULL                   },
                         { zt_opt_ofunc,  NULL                   },
@@ -75,6 +77,9 @@ print_default(zt_opt_types type, void *value)
             fprintf(stderr, " (default %s)", *(int *)value ? "enabled" : "disabled");
             break;
         case zt_opt_long:
+            fprintf(stderr, " (default %ld)", *(long *)value);
+            break;
+        case zt_opt_int:
             fprintf(stderr, " (default %d)", *(int *)value);
             break;
         case zt_opt_string:
@@ -223,6 +228,8 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
 
             case zt_opt_long:
             /* FALLTHRU */
+            case zt_opt_int:
+            /* FALLTHRU */
             case zt_opt_string:
             /* FALLTHRU */
             case zt_opt_rfunc:
@@ -297,7 +304,7 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                     /* can only fail if passed a string
                      * that does not start with a number
                      */
-                    if ((*(int *)opts[i].val == 0) && (optarg[0] != '0')) {
+                    if ((*(long *)opts[i].val == 0) && (optarg[0] != '0')) {
                         printf("Invalid value \"%s\" for %s (expecting an integer).\n",
                                *argv[optind - 1], *argv[optind - 2] );
                         if (auto_usage) {
@@ -307,6 +314,33 @@ zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *optio
                         goto RETURN;
                     }
                     break;
+                case zt_opt_int:
+                    {
+                        long val = strtol(optarg, NULL, 0);
+                        if (val > INT_MAX) {
+                            printf("Invalid value \"%s\" for %s (number too large).\n",
+                                    *argv[optind - 1], *argv[optind - 2] );
+                            if (auto_usage) {
+                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+                            }
+                            result = -1;
+                            goto RETURN;
+                        }
+                        *(int *)opts[i].val = (int)val;
+                        /* can only fail if passed a string
+                         * that does not start with a number
+                         */
+                        if ((*(int *)opts[i].val == 0) && (optarg[0] != '0')) {
+                            printf("Invalid value \"%s\" for %s (expecting an integer).\n",
+                                    *argv[optind - 1], *argv[optind - 2] );
+                            if (auto_usage) {
+                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
+                            }
+                            result = -1;
+                            goto RETURN;
+                        }
+                        break;
+                    }
                 case zt_opt_string:
                     {
                         char * arg;

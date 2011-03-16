@@ -22,6 +22,7 @@
 #include <zt_unit.h>
 
 int   integer = 0;
+long  long_integer = 0;
 char *str = 0;
 int   boolean = 0;
 int   flag = 0;
@@ -50,6 +51,7 @@ rfunc(char * arg, void * data UNUSED)
 #ifdef HAVE_GETOPT_LONG
 static char *s_argv[] = { "unit_test",
                           "--int", "1",
+                          "--long", "1",
                           "--bool=t",
                           "--string", "hello",
                           "--flag",
@@ -59,6 +61,7 @@ static char *s_argv[] = { "unit_test",
 #else
 static char *s_argv[] = { "unit_test",
                           "-i", "1",
+                          "-l", "1",
                           "-b", "t",
                           "test_command",
                           "-i", "2",
@@ -66,33 +69,33 @@ static char *s_argv[] = { "unit_test",
 #endif
 
 static void
-basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
-{
-    int                argc = sizeof_array(s_argv) - 1; /* -1 for NULL */
-    char             **argv;
-    char             **pargv;
-    int                i;
+basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
+    int    argc = sizeof_array(s_argv) - 1;             /* -1 for NULL */
+    char **argv;
+    char **pargv;
+    int    i;
 
 #define TEST_LONG_STRING "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times."
     struct zt_opt_args options[] = {
-        { 'h',        "help",   "This help text",  zt_opt_help,   NULL,     NULL,  NULL                 },
-        { 'i',        "int",    "integer test",    zt_opt_long,   &integer, NULL,  NULL                 },
-        { 'b',        "bool",   "boolean test",    zt_opt_bool,   &boolean,    NULL,  NULL                 },
+        { 'h',        "help",   "This help text",    zt_opt_help,   NULL,          NULL,  NULL                 },
+        { 'l',        "long",   "long integer test", zt_opt_long,   &long_integer, NULL,  NULL                 },
+        { 'i',        "int",    "integer test",      zt_opt_int,    &integer,      NULL,  NULL                 },
+        { 'b',        "bool",   "boolean test",      zt_opt_bool,   &boolean,      NULL,  NULL                 },
 #ifdef HAVE_GETOPT_LONG
-        { ZT_OPT_NSO, "string", TEST_LONG_STRING,  zt_opt_string, &str,     NULL,  "-s \"Some String\"" },
+        { ZT_OPT_NSO, "string", TEST_LONG_STRING,    zt_opt_string, &str,          NULL,  "-s \"Some String\"" },
 #endif /* HAVE_GETOPT_LONG */
-        { 'f',        "func",   "func test",       zt_opt_func,   NULL,     func,  NULL                 },
-        { 'o',        "ofunc",  "ofunc test",      zt_opt_ofunc,  NULL,     ofunc, NULL                 },
-        { 'r',        "rfunc",  "rfunc test",      zt_opt_rfunc,  NULL,     rfunc, NULL                 },
+        { 'f',        "func",   "func test",         zt_opt_func,   NULL,          func,  NULL                 },
+        { 'o',        "ofunc",  "ofunc test",        zt_opt_ofunc,  NULL,          ofunc, NULL                 },
+        { 'r',        "rfunc",  "rfunc test",        zt_opt_rfunc,  NULL,          rfunc, NULL                 },
 #ifdef HAVE_GETOPT_LONG
-        { ZT_OPT_NSO, "flag",   "flag test",       zt_opt_flag,   &flag,    NULL,  NULL                 },
+        { ZT_OPT_NSO, "flag",   "flag test",         zt_opt_flag,   &flag,         NULL,  NULL                 },
 #endif /* HAVE_GETOPT_LONG */
-        { 0,          0,        0,                 0,             0,        0,     0                    }
+        { 0,          0,        0,                   0,             0,             0,     0                    }
     };
 
     struct zt_opt_args options2[] = {
         { 'h', "help", "This help text", zt_opt_help, NULL,     NULL, NULL },
-        { 'i', "int",  "integer test",   zt_opt_long,  &integer, NULL, NULL },
+        { 'i', "int",  "integer test",   zt_opt_int,  &integer, NULL, NULL },
         { 0,   0,      0,                0,           0,        0,    0    }
     };
 
@@ -105,6 +108,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED)
 
     zt_opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE, NULL);
     ZT_UNIT_ASSERT(test, integer == 1);
+    ZT_UNIT_ASSERT(test, long_integer == 1);
     ZT_UNIT_ASSERT(test, boolean == 1);
 
 #ifdef HAVE_GETOPT_LONG

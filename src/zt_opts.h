@@ -26,6 +26,7 @@ enum zt_opt_types {
     zt_opt_bool = 0,
     zt_opt_flag,
     zt_opt_long,
+    zt_opt_int,
     zt_opt_string,
     zt_opt_func,  /* any arg */
     zt_opt_ofunc, /* optional arg */
