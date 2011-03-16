@@ -122,6 +122,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
 
     zt_opts_process(&argc, &pargv, options2, "[options]", TRUE, TRUE, NULL);
     ZT_UNIT_ASSERT(test, integer == 2);
+    ZT_UNIT_ASSERT(test, long_integer == 1);
     ZT_UNIT_ASSERT(test, argc == 0);
 
     zt_free(argv);
