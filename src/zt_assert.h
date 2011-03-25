@@ -42,8 +42,8 @@ extern int _zt_log_abort(const char *condition, const char *file,
  *      zt_assert(foo == 1);
  */
 #if defined(NDEBUG) || defined(NO_ASSERT)
-# define zt_assert(c)
-# define zt_assert_nf(c)
+# define zt_assert(c) ((void)0)
+# define zt_assert_nf(c) ((void)0)
 #else
 # define zt_assert(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 1)))
 # define zt_assert_nf(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 0)))
