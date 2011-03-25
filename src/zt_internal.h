@@ -17,6 +17,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+
+#ifdef HAVE_STDBOOL_H
+  #include <stdbool.h>
+#else
+  #define __bool_true_false_are_defined 1
+  #define	bool	_Bool
+  #if (!defined(__GNUC__)) || (__STDC_VERSION__ < 199901L && __GNUC__ < 3)
+    typedef	int	_Bool;
+  #endif /* !__GCC__ || < C99 */
+  #define	false	(bool)0
+  #define	true	(bool)1
+#endif /* HAVE_STDBOOL_H */
+
 #include <sys/types.h>
 #include <limits.h>
 

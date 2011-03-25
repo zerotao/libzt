@@ -16,7 +16,6 @@
 
 #include <stdint.h>
 #include <stdarg.h>
-#include <stdbool.h>
 
 #include <zt_internal.h>
 #include <zt_ptr_array.h>
