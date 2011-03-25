@@ -73,12 +73,14 @@ BEGIN_C_DECLS
 #define endof_array(a) ((a) + sizeof_array(a))
 
 /*!
- * Name: offsetof
+ * Name: zt_offsetof
  * Description: get the offset into a structure by name
  */
 #ifndef offsetof
-#define offsetof(type, member) \
+#define zt_offsetof(type, member) \
     ((size_t)(&((type *)0)->member))
+#else
+#define zt_offsetof(type, member) offsetof(type,member)
 #endif    /* offset_of*/
 
 /*!
@@ -87,7 +89,7 @@ BEGIN_C_DECLS
  */
 #ifndef containerof
 #define containerof(ptr, type, member) \
-    ((type *)((char *)(ptr) - offsetof(type, member)))
+    ((type *)((char *)(ptr) - zt_offsetof(type, member)))
 #endif    /* container_of */
 
 /*!
