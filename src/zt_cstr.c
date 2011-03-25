@@ -724,13 +724,13 @@ zt_hexdump_default_printer(UNUSED void * ctx, size_t addr, char * hex, char * tx
 
     if (hex) {
         if (addr < 65535) {
-            offt = snprintf(buffer, 100, "%.4lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+            offt = snprintf(buffer, 100, "%.4zX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
             base += 4;
-        } else if (addr < 4294967295) {
-            offt = snprintf(buffer, 100, "%.8lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+        } else if (addr < 4294967295UL) {
+            offt = snprintf(buffer, 100, "%.8zX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
             base += 8;
         } else {
-            offt = snprintf(buffer, 100, "%.16lX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
+            offt = snprintf(buffer, 100, "%.16zX   %.12s %.12s %.12s %.12s", addr, hex, hex+(4*3), hex+(8*3), hex+(12*3));
             base += 16;
         }
 
