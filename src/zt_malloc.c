@@ -22,7 +22,7 @@ zt_calloc_p(size_t num, size_t size)
 
     mem = (void_p)calloc((num), (size));
 
-    zt_assert(mem);
+    zt_assert_always(mem);
 
     return mem;
 }
@@ -33,7 +33,7 @@ zt_malloc_p(size_t num)
     void_p mem = NULL;
 
     mem = (void_p)malloc(num);
-    zt_assert(mem);
+    zt_assert_always(mem);
 
     return mem;
 }
@@ -45,7 +45,7 @@ zt_realloc_p(void_p p, size_t num)
 
     mem = (void_p)realloc(p, num);
 
-    zt_assert(mem);
+    zt_assert_always(mem);
     return mem;
 }
 
@@ -55,9 +55,9 @@ zt_strdup_p(const char *string)
 {
     char * volatile new_string = NULL;
 
-    zt_assert(string);
+    zt_assert_always(string);
     new_string = strdup(string);
-    zt_assert(new_string);
+    zt_assert_always(new_string);
 
     return new_string;
 }
