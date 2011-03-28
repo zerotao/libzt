@@ -21,13 +21,18 @@
 #ifdef HAVE_STDBOOL_H
   #include <stdbool.h>
 #else
-  #define __bool_true_false_are_defined 1
-  #define	bool	_Bool
-  #if (!defined(__GNUC__)) || (__STDC_VERSION__ < 199901L && __GNUC__ < 3)
-    typedef	int	_Bool;
-  #endif /* !__GCC__ || < C99 */
-  #define	false	(bool)0
-  #define	true	(bool)1
+  #ifndef __bool_true_false_are_defined
+    #define _STDBOOL_H_ /* pretend */
+    #define __bool_true_false_are_defined 1
+    #ifndef __cplusplus
+        #define	bool	_Bool
+        #if (!defined(__GNUC__)) || (__STDC_VERSION__ < 199901L && __GNUC__ < 3)
+            typedef	int	_Bool;
+        #endif /* !__GCC__ || < C99 */
+        #define	false	(bool)0
+        #define	true	(bool)1
+    #endif /* !__cplusplus */
+  #endif /* !__bool_true_false_are_defined */
 #endif /* HAVE_STDBOOL_H */
 
 #include <sys/types.h>
