@@ -27,22 +27,30 @@ struct time_result {
     struct timeval usr_time;
 };
 
-struct timeval * zt_add_time(struct timeval *at, struct timeval *t1, struct timeval *t2);
-
-struct timeval * zt_sub_time(struct timeval *st, struct timeval *t1, struct timeval *t2);
-
-struct timeval * zt_diff_time(struct timeval *dt, struct timeval *t1, struct timeval *t2);
-
-long zt_cmp_time(struct timeval *t1, struct timeval *t2);
-
-void zt_time_result_to_elapsed(struct time_result *result, float *usr, float *sys, float *total);
-
-void * zt_time(int n, struct time_result *result, void *(*test)(void *), void *data);
-
-void zt_time_print_result(struct time_result *tr, char *name, int n);
-
-void zt_time_calibrate(void);
+struct timeval * zt_add_time(struct timeval * at, struct timeval * t1, struct timeval * t2);
+struct timeval * zt_sub_time(struct timeval * st, struct timeval * t1, struct timeval * t2);
+struct timeval * zt_diff_time(struct timeval * dt, struct timeval * t1, struct timeval * t2);
+long             zt_cmp_time(struct timeval * t1, struct timeval * t2);
+void             zt_time_result_to_elapsed(struct time_result * result, float * usr, float * sys, float * total);
+void           * zt_time(int n, struct time_result * result, void *(*test)(void *), void * data);
+void             zt_time_print_result(struct time_result * tr, char * name, int n);
+void             zt_time_calibrate(void);
 
 #define zt_copy_timeval(x, y) ((x)->tv_sec = (y)->tv_sec, (x)->tv_usec = (y)->tv_usec)
+
+#if (!defined(_BSD_SOURCE) || !defined(_XOPEN_SOURCE) >= 500)
+#define usleep(msec)          do {            \
+    struct timespec req = { 0 };              \
+    time_t          sec = (int)(msec / 1000); \
+                                              \
+    msec        = msec - (sec * 1000);        \
+    req.tv_sec  = sec;                        \
+    req.tv_nsec = msec * 1000000L;            \
+                                              \
+    while (nanosleep(&req, &req) == -1) {     \
+        continue;                             \
+    }                                         \
+} while (0)
+#endif
 
 #endif /* _ZT_TIME_H_ */
