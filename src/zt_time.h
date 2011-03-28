@@ -39,12 +39,13 @@ void             zt_time_calibrate(void);
 #define zt_copy_timeval(x, y) ((x)->tv_sec = (y)->tv_sec, (x)->tv_usec = (y)->tv_usec)
 
 #if (!defined(_BSD_SOURCE) || !defined(_XOPEN_SOURCE) >= 500)
-#include <time.h>
+#if defined _POSIX_C_SOURCE >= 199309L
 #define usleep(msec)          do {                 \
     unsigned long   millisec = msec;               \
-    struct timespec req      = { 0 };              \
     time_t          sec      = (int)(msec / 1000); \
+    struct timespec req;                           \
                                                    \
+    memset(&req, 0, sizeof(struct timespec));      \
     millisec    = msec - (sec * 1000);             \
     req.tv_sec  = sec;                             \
     req.tv_nsec = msec * 1000000L;                 \
@@ -53,6 +54,17 @@ void             zt_time_calibrate(void);
         continue;                                  \
     }                                              \
 } while (0)
+#else
+#define usleep(msec)          do {       \
+    long           usec = msec;          \
+    struct timeval delay;                \
+                                         \
+    delay.tv_sec  = msec / 1000000L;     \
+    delay.tv_usec = usec % 1000000L;     \
+                                         \
+    select(0, NULL, NULL, NULL, &delay); \
+} while (0)
+#endif
 #endif
 
 #endif /* _ZT_TIME_H_ */
