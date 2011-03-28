@@ -39,17 +39,19 @@ void             zt_time_calibrate(void);
 #define zt_copy_timeval(x, y) ((x)->tv_sec = (y)->tv_sec, (x)->tv_usec = (y)->tv_usec)
 
 #if (!defined(_BSD_SOURCE) || !defined(_XOPEN_SOURCE) >= 500)
-#define usleep(msec)          do {            \
-    struct timespec req = { 0 };              \
-    time_t          sec = (int)(msec / 1000); \
-                                              \
-    msec        = msec - (sec * 1000);        \
-    req.tv_sec  = sec;                        \
-    req.tv_nsec = msec * 1000000L;            \
-                                              \
-    while (nanosleep(&req, &req) == -1) {     \
-        continue;                             \
-    }                                         \
+#include <time.h>
+#define usleep(msec)          do {                 \
+    unsigned long   millisec = msec;               \
+    struct timespec req      = { 0 };              \
+    time_t          sec      = (int)(msec / 1000); \
+                                                   \
+    millisec    = msec - (sec * 1000);             \
+    req.tv_sec  = sec;                             \
+    req.tv_nsec = msec * 1000000L;                 \
+                                                   \
+    while (nanosleep(&req, &req) == -1) {          \
+        continue;                                  \
+    }                                              \
 } while (0)
 #endif
 
