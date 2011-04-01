@@ -17,6 +17,9 @@ target_link_libraries(abort zt)
 add_executable(hexdump hexdump.c)
 target_link_libraries(hexdump zt)
 
+add_executable(bcast bcast.c)
+target_link_libraries(bcast zt)
+
 if(HAVE_PTHREADS)
 add_executable(threads threads.c test.h)
 target_link_libraries(threads zt)

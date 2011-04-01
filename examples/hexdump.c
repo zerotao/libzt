@@ -1,7 +1,7 @@
 #include <zt.h>
 
 int
-main(int argc, char * argv[]) {
+main(int argc UNUSED, char * argv[] UNUSED) {
     char    * ALPHA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     char    * ALPHA2 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
