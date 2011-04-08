@@ -4,8 +4,8 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include <zt_internal.h>
-#include <zt_assert.h>
+#include <zt.h>
+#include <zt_internal.h> /* INLINE */
 
 BEGIN_C_DECLS
 

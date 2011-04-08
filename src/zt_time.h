@@ -20,7 +20,7 @@
 #endif
 
 
-#include <zt_internal.h>
+#include <zt.h>
 
 struct time_result {
     struct timeval sys_time;

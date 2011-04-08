@@ -11,10 +11,8 @@
  */
 
 #include <string.h>
-#define DEBUG
-#include <zt_log.h>
-#include <zt_progname.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)

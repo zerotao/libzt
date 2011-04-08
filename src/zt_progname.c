@@ -22,10 +22,11 @@
 #include <limits.h>
 #include <string.h>
 
+#include "zt.h"
 #include "zt_internal.h"
-#include "zt_cstr.h"
-#include "zt_progname.h"
-#include "zt_log.h"
+/* #include "zt_cstr.h" */
+/* #include "zt_progname.h" */
+/* #include "zt_log.h" */
 
 #if defined(__APPLE__)
 # include <mach-o/dyld.h>

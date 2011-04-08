@@ -11,8 +11,9 @@
  */
 #include <stdio.h>
 #include <string.h>
+
+#include <zt.h>
 #include <zt_internal.h>
-#include <zt_mem.h>
 
 struct pool_test {
     int one;

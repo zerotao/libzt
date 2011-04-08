@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 
 void

@@ -3,6 +3,7 @@
 #include <float.h>
 #include <string.h>
 
+#include "zt.h"
 #include "zt_format.h"
 #include "zt_assert.h"
 

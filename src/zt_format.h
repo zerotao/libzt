@@ -16,7 +16,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include <zt_internal.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_fmt_put_f)(int c, void *cl);

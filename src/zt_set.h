@@ -1,8 +1,7 @@
 #ifndef _ZT_SET_H_
 #define _ZT_SET_H_
 
-#include <zt_internal.h>
-#include <zt_table.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 typedef struct zt_set zt_set;

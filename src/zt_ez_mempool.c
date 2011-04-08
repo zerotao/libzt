@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "zt_ez_mempool.h"
+
+#include "zt.h"
+#include "zt_internal.h"
 
 static void
 chunk_append(zt_ez_mempool_chunk **head,

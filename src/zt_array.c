@@ -1,8 +1,6 @@
 #include <string.h>
 
-#include "zt_internal.h" /* zt_malloc */
-#include "zt_assert.h"
-#include "zt_array.h"
+#include "zt.h"
 
 static void
 arrayrep_init(zt_array_t array, size_t len, size_t size, void *ary)

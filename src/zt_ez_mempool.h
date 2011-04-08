@@ -1,4 +1,4 @@
-#include <zt_internal.h>
+#include <zt.h>
 
 #ifndef _ZT_EZ_MEMPOOL_H_
 #define _ZT_EZ_MEMPOOL_H_

@@ -11,9 +11,8 @@
  */
 #include <string.h>
 
-#include <zt_internal.h>
-#include <zt_unit.h>
-#include <zt_tree.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 #define REMOVED 8
 #define REMOVED2 6

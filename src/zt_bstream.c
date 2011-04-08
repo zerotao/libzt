@@ -1,5 +1,4 @@
-#include "zt_bstream.h"
-#include "zt_assert.h"
+#include "zt.h"
 
 static size_t
 _array_put(zt_array_t array, char *s, size_t offt, size_t len, int flip)

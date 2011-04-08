@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <zt_list.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 #define VALUES_MAX sizeof_array(values) - 1

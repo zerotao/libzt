@@ -35,7 +35,7 @@
 
 #include <stdlib.h>
 
-#include <zt_internal.h>
+#include <zt.h>
 
 #define POOL_NEVER_FREE    1
 

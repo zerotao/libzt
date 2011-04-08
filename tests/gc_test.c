@@ -1,8 +1,6 @@
-#include <zt_internal.h>
-#include <zt_gc.h>
-#include <zt_unit.h>
-
-#define DEBUG 0
+#define ZT_WITH_UNIT
+#define ZT_WITH_GC
+#include <zt.h>
 
 #define INT  1
 #define ATOM 2

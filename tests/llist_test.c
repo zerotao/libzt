@@ -1,6 +1,7 @@
 #include <string.h>
-#include <zt_unit.h>
-#include <zt_llist.h>
+
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)

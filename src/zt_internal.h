@@ -1,6 +1,6 @@
 /*
- * Filename: zt.h
- * Description: main header for libzt
+ * Filename: zt_interal.h
+ * Description: internal definitions and support SHOULD NOT BE EXPORTED!!
  *
  * Author: Jason L. Shiffer <jshiffer@zerotao.org>
  * Copyright: Copyright (C) 2000-2010, Jason L. Shiffer
@@ -64,13 +64,6 @@
 # include <dmalloc.h>
 #endif /* WITH_DMALLOC */
 
-#ifdef __cplusplus
-# define BEGIN_C_DECLS      extern "C" {
-# define END_C_DECLS      }
-#else
-# define BEGIN_C_DECLS
-# define END_C_DECLS
-#endif
 
 #ifdef __GNUC__
 #  ifndef const
@@ -249,29 +242,6 @@ typedef char* void_p;
 # include <errno.h>
 #endif
 
-extern char *memoryError;
-#define zt_callocs(size, num)     (zt_calloc_p ((num), (size)))
-#define zt_mallocs(size, num)     (zt_malloc_p ((num) * (size)))
-#define zt_calloc(type, num)	((type *) zt_calloc_p ((num), sizeof(type)))
-#define zt_malloc(type, num)	((type *) zt_malloc_p ((num) * sizeof(type)))
-#define zt_realloc(type, p, num)	((type *) zt_realloc_p (((void_p)p), (num) * sizeof(type)))
-#define zt_free(stale)   	  	       	  	   	 \
-do {							 \
-   if (stale) { free ((void_p) stale);  stale = 0; }	 \
-} while(0)
-#define zt_strdup zt_strdup_p
-
-BEGIN_C_DECLS
-
-/* These entry points to the API are guaranteed to be functions */
-
-extern void_p zt_calloc_p	(size_t num, size_t size);
-extern void_p zt_malloc_p	(size_t num);
-extern void_p zt_realloc_p (void_p p, size_t num);
-extern void zt_free_p (void_p stale);
-extern char *zt_strdup_p (const char *string);
-
-END_C_DECLS
 
 #ifndef PRIsize_t
 # define PRIsize_t "zu"
