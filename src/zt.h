@@ -3,6 +3,8 @@
 
 #ifndef WIN32
 #include <stdbool.h>
+#else
+# define _GNU_SOURCE
 #endif /* WIN32 */
 
 
