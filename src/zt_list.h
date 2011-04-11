@@ -7,7 +7,6 @@
 #define _ZT_LIST_H_
 
 #include <zt.h>
-#include <zt_internal.h> /* INLINE */
 
 #ifdef __cplusplus__
 extern "C" {

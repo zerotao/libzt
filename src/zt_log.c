@@ -18,6 +18,9 @@
 # include <string.h>
 #endif
 
+#include "zt.h"
+#include "zt_internal.h"
+
 #include "zt_log.h"
 #include "zt_log/log_private.h"
 #include "zt_atexit.h"

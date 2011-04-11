@@ -18,23 +18,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifdef HAVE_STDBOOL_H
-  #include <stdbool.h>
-#else
-  #ifndef __bool_true_false_are_defined
-    #define _STDBOOL_H_ /* pretend */
-    #define __bool_true_false_are_defined 1
-    #ifndef __cplusplus
-        #define	bool	_Bool
-        #if (!defined(__GNUC__)) || (__STDC_VERSION__ < 199901L && __GNUC__ < 3)
-            typedef	int	_Bool;
-        #endif /* !__GCC__ || < C99 */
-        #define	false	(bool)0
-        #define	true	(bool)1
-    #endif /* !__cplusplus */
-  #endif /* !__bool_true_false_are_defined */
-#endif /* HAVE_STDBOOL_H */
-
 #include <sys/types.h>
 #include <limits.h>
 
@@ -84,22 +67,6 @@
 #  endif
 #endif /* ifdef __GNUC__ */
 
-#if defined(WIN32)
-# define STR(x)    #x
-# define CONC(x, y)    x##y
-# define CONC3(x, y, z)   x##y##z
-typedef void* void_p;
-#elif defined(__STDC__) || defined(__STDC_HOSTED__)
-# define STR(x)    # x
-# define CONC(x, y)    x ## y
-# define CONC3(x, y, z)   x ## y ## z
-typedef void* void_p;
-#else
-# define STR(x)    "x"
-# define CONC(x, y)    x /**/ y
-# define CONC3(x, y, z)    x /**/ y /**/ z
-typedef char* void_p;
-#endif /* if defined(__STDC__) || defined(__STDC_HOSTED__) */
 
 #ifndef EXIT_SUCCESS
 #  define EXIT_SUCCESS  0
@@ -112,71 +79,9 @@ typedef char* void_p;
 
 /************ Convienience Definitions  ************/
 
-#ifndef NULL
-# define NULL ((void *)0)
-#endif
-
-#ifndef FALSE
-# define FALSE (0)
-#endif
-
-#ifndef TRUE
-# define TRUE (!FALSE)
-#endif
-
-#ifndef WHITESPACE
-# define WHITESPACE " \t"
-#endif
-
-#ifdef _WIN32
-# ifndef PATH_SEPERATOR
-#  define PATH_SEPERATOR "\\"
-# endif
-# ifndef ENV_SEPERATOR
-#  define ENV_SEPERATOR ";"
-# endif
-#else /* _WIN32 */
-/* Unix Path */
-# ifndef PATH_SEPERATOR
-#  define PATH_SEPERATOR "/"
-# endif
-# ifndef ENV_SEPERATOR
-#  define ENV_SEPERATOR ":"
-# endif
-#endif /* _WIN32 else */
-
 #ifndef HEX_DIGITS
 # define HEX_DIGITS "0123456789abcdef"
 #endif
-
-
-/* Cover the cases where I am not using a GNU compiler */
-#if (__GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)) && (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0)
-# define NORETURN  __attribute__((noreturn))
-# define CONST     __attribute__((const))
-# define UNUSED    __attribute__((unused))
-# define FORMAT(x) __attribute__((format x))
-#else
-# define NORETURN
-#ifndef WIN32
-# define CONST
-#endif
-# define UNUSED
-# define FORMAT(x)
-#endif /* if (__GNUC__ > 2 || ( __GNUC__ == 2 && __GNUC__MINOR__ > 4)) && (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0) */
-
-#if (__GNUC__ == 4 && __GNUC_MINOR__ >= 3 && defined(__GNUC_STDC_INLINE__) && !defined(C99_INLINE)) || \
-    (__APPLE_CC__ > 5400 && !defined(C99_INLINE) && __STDC_VERSION__ >= 199901L)
-# define C99_INLINE 1
-#endif
-
-#if C99_INLINE || __GNUC_GNU_INLINE__
-# define INLINE     inline
-# define HAS_ININE  1
-#else
-# define INLINE                                            /* no inline */
-#endif
-
 
 #if defined (_WIN32)
 # if defined libzt_EXPORTS

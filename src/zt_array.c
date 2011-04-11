@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "zt.h"
+#include "zt_internal.h"
 
 static void
 arrayrep_init(zt_array_t array, size_t len, size_t size, void *ary)

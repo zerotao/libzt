@@ -16,6 +16,7 @@
 #ifdef WIN32
 #include <WinSock2.h>
 #else
+#include <unistd.h>
 #include <sys/time.h>
 #endif
 

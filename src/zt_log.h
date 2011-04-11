@@ -15,7 +15,6 @@
 
 #include <stdarg.h>
 #include <zt.h>
-#include <zt_internal.h> /* FORMAT */
 
 #define ZT_LOG_RAW           0
 #define ZT_LOG_WITH_DATE     1

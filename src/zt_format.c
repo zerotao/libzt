@@ -4,8 +4,7 @@
 #include <string.h>
 
 #include "zt.h"
-#include "zt_format.h"
-#include "zt_assert.h"
+#include "zt_internal.h"
 
 struct zt_fmt_obuf {
     char    * buf;
