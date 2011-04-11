@@ -137,10 +137,6 @@
 #include <zt_macros.h>
 
 
-#ifndef PATH_MAX
-# define PATH_MAX FILENAME_MAX
-#endif
-
 #if defined(WIN32)
 # include <windows.h>
 #else

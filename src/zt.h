@@ -7,6 +7,9 @@
 # define _GNU_SOURCE
 #endif /* WIN32 */
 
+#ifndef PATH_MAX
+# define PATH_MAX FILENAME_MAX
+#endif
 
 /* local defines */
 #ifndef BEGIN_C_DECLS
