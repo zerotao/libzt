@@ -13,8 +13,8 @@
 #include <stdlib.h>
 #include <sys/time.h>    /* gettimeofday */
 #include <sys/resource.h>
-#include <zt_mem.h>
-#include <zt_time.h>
+
+#include <zt.h>
 
 struct test_data_t {
     long                 size;

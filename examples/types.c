@@ -14,6 +14,7 @@
 #include <inttypes.h>
 #endif
 
+#include <zt.h>
 #include <zt_internal.h>
 #include "test.h"
 

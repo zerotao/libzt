@@ -10,8 +10,8 @@
  * Description:
  */
 
-#include <zt_internal.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)

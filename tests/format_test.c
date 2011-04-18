@@ -1,8 +1,6 @@
 #include <string.h>
-#include <zt_assert.h>
-#include <zt_format.h>
-#include <zt_cstr.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static size_t
 cvt_S(int code UNUSED, va_list app,

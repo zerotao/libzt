@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 
-#include "zt_macros.h"
-#include "zt_assert.h"
-#include "zt_gc.h"
+#define ZT_WITH_GC
+#include "zt.h"
+#include "zt_internal.h"
 
 /*
  * Implements a form of Baker's treadmill with 'write protection'

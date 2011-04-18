@@ -6,11 +6,8 @@
  *
  * $Id$
  */
+#include "zt.h"
 #include "zt_internal.h"
-#include "zt_mem.h"
-#include "zt_log.h"
-#include "zt_hash.h"
-#include "zt_table.h"
 
 
 #define DEFAULT_BUCKETS 512
@@ -170,7 +167,7 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
     struct table_node * nn;
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
-    ZT_LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey);
+    /* ZT_LOG_XDEBUG("for key %d hash key is: %d", (int)key, nkey); */
 
     nn = h->buckets[nkey];
 

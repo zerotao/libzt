@@ -11,11 +11,9 @@
 /*
  * Description:
  */
-#include <zt_log.h>
-
 #undef NDEBUG
-#include <zt_unit.h>
-#include <zt_assert.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static void
 basic_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)

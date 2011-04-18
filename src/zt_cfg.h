@@ -13,8 +13,7 @@
 #ifndef _ZT_CFG_H_
 #define _ZT_CFG_H_
 
-#include <zt_internal.h>
-#include <zt_log.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 

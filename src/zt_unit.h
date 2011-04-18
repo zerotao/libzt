@@ -1,6 +1,7 @@
 #ifndef _ZT_UNIT_H_
 #define _ZT_UNIT_H_
 
+#define _GNU_SOURCE /* for asprintf if available */
 #include <setjmp.h>
 #include <stdio.h>
 

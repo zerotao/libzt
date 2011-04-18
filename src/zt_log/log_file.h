@@ -10,8 +10,7 @@
 #ifndef _LOG_FILE_H_
 #define _LOG_FILE_H_
 
-#include <zt_internal.h>
-#include <zt_log.h>
+#include <zt.h>
 
 #define ZT_LOG_FILE_OVERWRITE 0
 #define ZT_LOG_FILE_APPEND    1

@@ -1,8 +1,7 @@
 #include <string.h>
 
-#include <zt_internal.h>
-#include <zt_set.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 ssize_t values0_19[] = {
     0,  1,  2,  3,  4,  5,

@@ -1,7 +1,8 @@
 #include <string.h>
 
-#include "zt_unit.h"
-#include "zt_assert.h"
+#define ZT_WITH_UNIT
+#include "zt.h"
+#include "zt_internal.h"
 
 #define yaml_dict(name, offt) \
     printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)

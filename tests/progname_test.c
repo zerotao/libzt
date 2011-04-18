@@ -12,9 +12,8 @@
 
 #include <string.h>
 
-#include <zt_progname.h>
-#include <zt_cstr.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 static char * argv[] = { "test_app", NULL };
 
