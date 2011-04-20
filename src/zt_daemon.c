@@ -106,3 +106,57 @@ zt_daemonize( char *root, mode_t mask, int options UNUSED)
     /* At this point we are in the second child properly forked and closed off */
     return 0;
 } /* zt_daemonize */
+
+
+int 
+zt_writepid(const char* pidF)
+{
+	int oVal = -1;
+	int fd = -1;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+    
+	if (!pidF)
+	{
+		zt_log_strerror(zt_log_err, errno, "NULL pid file path.");
+		return -1;
+	}
+	
+	fd = creat(pidF, mode);
+	
+	if (fd != -1)
+	{
+		const int bSize = 64;
+		char buf[bSize];
+		pid_t pid = getpid();
+	
+		int sz = snprintf(buf, bSize, "%i\n", (int)pid);
+	   	if (sz > 0 && sz < bSize)
+	   	{
+		   	ssize_t nBytes = write(fd, buf, sz);
+		   	while (nBytes == -1 && errno == EINTR)
+				nBytes = write(fd, buf, sz);
+		   	if (nBytes == sz)
+			   	oVal = 0;
+		   	else
+			   	zt_log_strerror(zt_log_err, errno, "Cannot write to pid file '%s'.", pidF);
+	   	}
+		else
+			zt_log_strerror(zt_log_err, errno, "Cannot format to pid file '%s'.", pidF);
+	
+		int v = close(fd);
+	   	while (v == -1 && errno == EINTR)
+			v = close(fd);
+			
+		if (!v)
+			fd = -1;
+		else
+	   	{
+			oVal = -1;
+			zt_log_strerror(zt_log_err, errno, "Cannot close pid fd '%s'.", pidF);
+	   	}
+	}
+	else
+		zt_log_strerror(zt_log_err, errno, "Cannot open pid file '%s' for writing.", pidF);
+	
+	return oVal;
+}
