@@ -20,6 +20,7 @@
 BEGIN_C_DECLS
 
 extern int zt_daemonize( char *root, mode_t umask, int options);
+extern int zt_writepid(const char* pidF);
 
 END_C_DECLS
 #endif /*_ZT_DAEMON_H_*/
