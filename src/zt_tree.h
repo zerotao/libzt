@@ -46,7 +46,7 @@ typedef zt_rbt zt_rbt_node;
 #define zt_rbt(n) zt_rbt n = { NULL, NULL, NULL }
 
 #define zt_rbt_data(ptr, type, elt) \
-    containerof(ptr, type, elt)
+    zt_containerof(ptr, type, elt)
 
 #define zt_rbt_left(e) ((e)->left)
 #define zt_rbt_right(e) ((e)->right)

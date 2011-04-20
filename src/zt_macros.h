@@ -84,12 +84,14 @@ BEGIN_C_DECLS
 #endif    /* offset_of*/
 
 /*!
- * Name: containerof
+ * Name: zt_containerof
  * Description: get the head of a structure containing member X
  */
 #ifndef containerof
-#define containerof(ptr, type, member) \
+#define zt_containerof(ptr, type, member) \
     ((type *)((char *)(ptr) - zt_offsetof(type, member)))
+#else
+#define zt_containerof(ptr, type, member) containerof(ptr, type, member)
 #endif    /* container_of */
 
 /*!
