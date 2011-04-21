@@ -17,6 +17,16 @@
         printf(BLANK ": " value_fmt "\n", INDENT_TO(30, 2, offt), value); \
     } while (0)
 
+int zt_unit_printf(char **strp, const char *fmt, ...) {
+    va_list   ap;
+    int       result;
+
+    va_start(ap, fmt);
+    result = vasprintf(strp, fmt, ap);
+    va_end(ap);
+    return result;
+}
+
 void
 zt_unit_test_add_assertion(struct zt_unit_test *test)
 {
