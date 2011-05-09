@@ -19,6 +19,10 @@
 
 static void destructor(zt_log_ty *log)
 {
+#ifdef WITH_THREADS
+    pthread_mutex_destroy(&log->mutex);
+#endif /* WITH_THREADS */
+
     zt_free(log);
     return;
 }
@@ -27,7 +31,15 @@ static void print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
 {
     char *nfmt = zt_log_gen_fmt( log, fmt, level, log->opts);
 
+#ifdef WITH_THREADS
+    pthread_mutex_lock(&log->mutex);
+#endif /* WITH_THREADS */
+
     vfprintf(stderr, nfmt, ap);
+
+#ifdef WITH_THREADS
+    pthread_mutex_unlock(&log->mutex);
+#endif /* WITH_THREADS */
     zt_free(nfmt);
 }
 
@@ -41,5 +53,13 @@ static zt_log_vtbl_ty vtbl = {
 zt_log_ty *
 zt_log_stderr(unsigned int opts)
 {
-    return zt_log_new(&vtbl, opts);
+    zt_log_ty   * log;
+
+    log = zt_log_new(&vtbl, opts);
+
+#ifdef WITH_THREADS
+    pthread_mutex_init(&log->mutex, NULL);
+#endif /* WITH_THREADS */
+
+    return log;
 }
