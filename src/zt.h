@@ -7,6 +7,7 @@
 # define _GNU_SOURCE
 #endif /* WIN32 */
 
+#include <stdio.h>
 #ifndef PATH_MAX
 # define PATH_MAX FILENAME_MAX
 #endif
