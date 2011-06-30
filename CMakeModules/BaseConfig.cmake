@@ -1,6 +1,6 @@
 if(CMAKE_COMPILER_IS_GNUCC)
-    SET(RSN_BASE_C_FLAGS "-std=c99 -Wall") # -Wextra")   #-pedantic
-    SET(RSN_BASE_CXX_FLAGS "-Wall") # -Wextra")
+    SET(RSN_BASE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wno-unused-parameter")
+    SET(RSN_BASE_CXX_FLAGS "-Wall")
 
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${RSN_BASE_C_FLAGS} -DLUA_USE_MKSTEMP")
     SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${RSN_BASE_C_FLAGS}")
