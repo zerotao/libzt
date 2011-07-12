@@ -17,9 +17,8 @@
 # include <string.h>
 #endif /* HAVE_STRING_H */
 
-#include <zt_internal.h>
-#include <zt_opts.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 int   integer = 0;
 long  long_integer = 0;

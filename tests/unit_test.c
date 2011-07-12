@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 
 void
@@ -45,6 +46,7 @@ extern int register_sha1_suite(struct zt_unit *unit);
 extern int register_uuid_suite(struct zt_unit *unit);
 extern int register_ipv4_tbl_suite(struct zt_unit *unit);
 extern int register_include_suite(struct zt_unit *unit);
+extern int register_daemon_suite(struct zt_unit *unit);
 
 
 int
@@ -86,6 +88,7 @@ main(int argc, char *argv[])
     register_include_suite(unit);
     /* register_ipv4_tbl_suite(unit); */
     register_include_suite(unit);
+    register_daemon_suite(unit);
 
     /*
      * register_adt_suite(unit);

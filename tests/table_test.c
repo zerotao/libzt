@@ -11,8 +11,8 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <zt_unit.h>
-#include <zt_table.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 #define STR_TEST_PRE "strings "
 

@@ -1,7 +1,8 @@
 #include <string.h>
 
-#include "zt_unit.h"
-#include "zt_assert.h"
+#define ZT_WITH_UNIT
+#include "zt.h"
+#include "zt_internal.h"
 
 #define yaml_dict(name, offt) \
     printf(BLANK "%s:\n", INDENT_TO(offt, 2, 0), name)
@@ -15,6 +16,16 @@
         offt = printf(BLANK "%s", INDENT_TO(offt_1, 2, 0), name);         \
         printf(BLANK ": " value_fmt "\n", INDENT_TO(30, 2, offt), value); \
     } while (0)
+
+int zt_unit_printf(char **strp, const char *fmt, ...) {
+    va_list   ap;
+    int       result;
+
+    va_start(ap, fmt);
+    result = vasprintf(strp, fmt, ap);
+    va_end(ap);
+    return result;
+}
 
 void
 zt_unit_test_add_assertion(struct zt_unit_test *test)

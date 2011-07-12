@@ -13,9 +13,9 @@
 #ifndef _ZT_OPTS_H_
 #define _ZT_OPTS_H_
 
-#ifdef __cplusplus__
- extern "C" {
-#endif /* __cplusplus__ */
+#include <zt.h>
+
+BEGIN_C_DECLS
 
 #define ZT_OPT_NSO -1
 #define ZT_OPT_NLO NULL
@@ -49,7 +49,5 @@ struct zt_opt_args {
 extern int  zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * data);
 extern void zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int max_opts, int show_defaults);
 
-#ifdef __cplusplus__
-}
-#endif /* __cplusplus__ */
+END_C_DECLS
 #endif /*_ZT_OPTS_H_*/

@@ -1,5 +1,4 @@
 #define ZT_WITH_UNIT
-
 #include <zt.h>
 
 static void

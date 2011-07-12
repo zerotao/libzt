@@ -18,9 +18,8 @@
 # include <stdlib.h>
 #endif
 
-#include "zt_stack.h"
-#include "zt_assert.h"
-#include "zt_atexit.h"
+#include "zt.h"
+#include "zt_internal.h"
 
 typedef struct zt_atexit_cb zt_atexit_cb;
 struct zt_atexit_cb {

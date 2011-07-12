@@ -11,6 +11,9 @@
  *
  */
 
+#include "zt.h"
+#include "zt_internal.h"
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -24,11 +27,6 @@
 #endif
 
 #include <ctype.h>
-
-#include "zt_cstr.h"
-#include "zt_assert.h"
-#include "zt_format.h"
-#include "zt_ptr_array.h"
 
 /*!
  * generate an index based on an index statement i, j and length len

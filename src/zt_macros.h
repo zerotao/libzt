@@ -14,7 +14,7 @@
 #ifndef _ZT_MACROS_H_
 #define _ZT_MACROS_H_
 
-#include <zt_internal.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 
@@ -73,21 +73,25 @@ BEGIN_C_DECLS
 #define endof_array(a) ((a) + sizeof_array(a))
 
 /*!
- * Name: offsetof
+ * Name: zt_offsetof
  * Description: get the offset into a structure by name
  */
 #ifndef offsetof
-#define offsetof(type, member) \
+#define zt_offsetof(type, member) \
     ((size_t)(&((type *)0)->member))
+#else
+#define zt_offsetof(type, member) offsetof(type,member)
 #endif    /* offset_of*/
 
 /*!
- * Name: containerof
+ * Name: zt_containerof
  * Description: get the head of a structure containing member X
  */
 #ifndef containerof
-#define containerof(ptr, type, member) \
-    ((type *)((char *)(ptr) - offsetof(type, member)))
+#define zt_containerof(ptr, type, member) \
+    ((type *)((char *)(ptr) - zt_offsetof(type, member)))
+#else
+#define zt_containerof(ptr, type, member) containerof(ptr, type, member)
 #endif    /* container_of */
 
 /*!

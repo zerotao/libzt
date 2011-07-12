@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include <zt_array.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#include <zt.h>
 
 int values[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 

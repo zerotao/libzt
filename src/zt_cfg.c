@@ -14,6 +14,7 @@
 #include <config.h>
 #endif
 
+#include "zt.h"
 #include "zt_cfg.h"
 #include "zt_cfg/cfg_private.h"
 

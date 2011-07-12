@@ -13,7 +13,7 @@
 #ifndef _ZT_ASSERT_H_
 #define _ZT_ASSERT_H_
 
-#include <zt_internal.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include <zt_internal.h>
+#include <zt.h>
 BEGIN_C_DECLS
 
 #define UUID_STR_LEN 36

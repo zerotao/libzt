@@ -18,6 +18,10 @@
 #include <stdlib.h>
 #include <zt_log.h>
 
+#ifdef WITH_THREADS
+#include <pthread.h>
+#endif /* WITH_THREADS */
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -38,6 +42,9 @@ struct zt_log_ty {
     char                  * file;
     char                  * function;
     int                     line;
+#ifdef WITH_THREADS
+    pthread_mutex_t         mutex;
+#endif /* WITH_THREADS */
     /* rest of opts */
 };
 

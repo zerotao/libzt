@@ -3,8 +3,8 @@
 #include <float.h>
 #include <string.h>
 
-#include "zt_format.h"
-#include "zt_assert.h"
+#include "zt.h"
+#include "zt_internal.h"
 
 struct zt_fmt_obuf {
     char    * buf;
@@ -24,42 +24,42 @@ struct zt_fmt_obuf {
 char * zt_fmt_flags = "+- 0#";
 
 
-static size_t cvt_c(int code, va_list app,
+static size_t cvt_c(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_d(int code, va_list app,
+static size_t cvt_d(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_f(int code, va_list app,
+static size_t cvt_f(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_o(int code, va_list app,
+static size_t cvt_o(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_p(int code, va_list app,
+static size_t cvt_p(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_s(int code, va_list app,
+static size_t cvt_s(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_u(int code, va_list app,
+static size_t cvt_u(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
 
-static size_t cvt_x(int code, va_list app,
+static size_t cvt_x(int code, void * value,
                     zt_fmt_put_f put, void * cl,
                     unsigned char flags[],
                     ssize_t width, ssize_t precision);
@@ -68,23 +68,35 @@ static int zt_fmt_outc(int c, void *cl);
 static int zt_fmt_insert(int c, void *cl);
 static int zt_fmt_append(int c, void *cl);
 
-static zt_fmt_ty cvt[256] = {
-    0,     0, 0, 0,     0,     0,     0,     0,            /*   0 -   7 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*   8 -  15 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  16 -  23 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  24 -  31 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  32 -  39 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  40 -  47 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  48 -  55 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  56 -  63 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  64 -  71 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  72 -  79 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  80 -  87 */
-    0,     0, 0, 0,     0,     0,     0,     0,            /*  88 -  95 */
-    0,     0, 0, cvt_c, cvt_d, cvt_f, cvt_f, cvt_f, /*  96 - 103 */
-    0,     0, 0, 0,     0,     0,     0,     cvt_o, /* 104 - 111 */
-    cvt_p, 0, 0, cvt_s, 0,     cvt_u, 0,     0,            /* 112 - 119 */
-    cvt_x, 0, 0, 0,     0,     0,     0,     0,            /* 120 - 127 */
+/* conversion codes define what type is read (va_arg) from the argument list for this formatter
+ * i   int
+ * u   unsigned int
+ * d   double
+ * p   void *
+ * s   char *
+ * c   char
+ * C   unsigned char
+ * */
+struct _format_control {
+    zt_fmt_ty f;
+    char      t;
+} cvt[256] = {
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*   0 -   7 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*   8 -  15 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  16 -  23 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  24 -  31 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  32 -  39 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  40 -  47 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  48 -  55 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  56 -  63 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  64 -  71 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  72 -  79 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  80 -  87 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /*  88 -  95 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { cvt_c, 'i' }, { cvt_d, 'i' }, { cvt_f, 'd' }, { cvt_f, 'd' }, { cvt_f, 'd' },   /*  96 - 103 */
+    { 0,     0   }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { cvt_o, 'u' },   /* 104 - 111 */
+    { cvt_p, 'p' }, { 0, 0 }, { 0, 0 }, { cvt_s, 's' }, { 0,     0   }, { cvt_u, 'u' }, { 0,     0   }, { 0,     0   },   /* 112 - 119 */
+    { cvt_x, 'u' }, { 0, 0 }, { 0, 0 }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   }, { 0,     0   },   /* 120 - 127 */
 };
 
 /* exported functions */
@@ -249,8 +261,44 @@ size_t zt_fmt_vformat(zt_fmt_put_f put, void *cl,
             }
 
             c = *fmt++;
-            zt_assert(cvt[c]);
-            tlen += (*cvt[c])(c, ap, put, cl, flags, width, precision);
+            zt_assert(cvt[c].f && cvt[c].t);
+            {
+                union {
+                    int             i;
+                    unsigned int    u;
+                    double          d;
+                    void *          p;
+                    char *          s;
+                } value;
+
+                void * vp = NULL;
+
+                switch (cvt[c].t) {
+                    case 'i':
+                        value.i = va_arg(ap, int);
+                        vp = &value.i;
+                        break;
+                    case 'u':
+                        value.u = va_arg(ap, unsigned int);
+                        vp = &value.u;
+                        break;
+                    case 'd':
+                        value.d = va_arg(ap, double);
+                        vp = &value.d;
+                        break;
+                    case 'p':
+                        value.p = va_arg(ap, void *);
+                        vp = &value.p;
+                        break;
+                    case 's':
+                        value.s = va_arg(ap, char *);
+                        vp = &value.s;
+                        break;
+                    default:
+                        break;
+                }
+                tlen += (*cvt[c].f)(c, vp, put, cl, flags, width, precision);
+            }
         }
     }
     return tlen;
@@ -380,14 +428,15 @@ zt_fmt_putd(const char *str, size_t len,
 
 
 zt_fmt_ty
-zt_fmt_register(int code, zt_fmt_ty newcvt)
+zt_fmt_register(int code, zt_fmt_ty newcvt, unsigned char type)
 {
     zt_fmt_ty old;
 
     zt_assert(0 < code && code < (int)sizeof_array(cvt));
-    old = cvt[code];
+    old = cvt[code].f;
+    cvt[code].t = type;
 
-    cvt[code] = newcvt;
+    cvt[code].f = newcvt;
     return old;
 }
 
@@ -403,19 +452,20 @@ zt_fmt_outc(int c, void *cl)
 }
 
 static size_t
-cvt_c(int code UNUSED, va_list app,
+cvt_c(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision UNUSED)
 {
     size_t tlen = 0;
+    char    c = *(unsigned int *)value;
 
     NORMALIZE_WIDTH(width, flags);
 
     if (!flags['-']) {
         pad(width - 1, ' ', tlen);
     }
-    tlen += put((unsigned char)va_arg(app, int), cl);
+    tlen += put(c, cl);
     if (flags['-']) {
         pad(width - 1, ' ', tlen);
     }
@@ -424,18 +474,18 @@ cvt_c(int code UNUSED, va_list app,
 
 
 static size_t
-cvt_d(int code UNUSED, va_list app,
+cvt_d(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
-    int          val = va_arg(app, int);
+    int          val = *(int *)value;
     unsigned int m;
     char         buf[43];
     char       * p = buf + sizeof(buf);
 
     if (val == INT_MAX) {
-        m = INT_MAX + 1U;
+        m = INT_MAX + 1U; /* -1 */
     } else if (val < 0) {
         m = -val;
     } else {
@@ -455,7 +505,7 @@ cvt_d(int code UNUSED, va_list app,
 
 
 static size_t
-cvt_f(int code, va_list app,
+cvt_f(int code, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
@@ -476,19 +526,19 @@ cvt_f(int code, va_list app,
     fmt[3] = precision % 10 + '0';
     fmt[2] = (precision / 10) % 10 + '0';
 
-    sprintf(buf, fmt, va_arg(app, double));
+    sprintf(buf, fmt, *(double *)value);
 
     return zt_fmt_putd(buf, strlen(buf), put, cl,
                        flags, width, precision);
 }
 
 static size_t
-cvt_o(int code UNUSED, va_list app,
+cvt_o(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
-    unsigned int m = va_arg(app, unsigned int);
+    unsigned int m = *(unsigned int *)value;
     char         buf[43];
     char       * p = buf + sizeof(buf);
 
@@ -500,13 +550,13 @@ cvt_o(int code UNUSED, va_list app,
 }
 
 static size_t
-cvt_p(int code UNUSED, va_list app,
+cvt_p(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
-    unsigned long m = (unsigned long)va_arg(app, void *);
-    char          buf[43];
+    size_t m = (size_t)*(void **)value;
+    char          buf[64];
     char        * p = buf + sizeof(buf);
 
     precision = INT_MIN;
@@ -521,13 +571,13 @@ cvt_p(int code UNUSED, va_list app,
 
 
 static size_t
-cvt_s(int code UNUSED, va_list app,
+cvt_s(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
     size_t lstr;
-    char * str = va_arg(app, char *);
+    char * str = *(char **) value;
 
     zt_assert(str != NULL);
 
@@ -551,12 +601,12 @@ cvt_s(int code UNUSED, va_list app,
 }
 
 static size_t
-cvt_u(int code UNUSED, va_list app,
+cvt_u(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
-    unsigned int m = va_arg(app, unsigned int);
+    unsigned int m = *(unsigned int *)value;
     char         buf[43];
     char       * p = buf + sizeof(buf);
 
@@ -569,12 +619,12 @@ cvt_u(int code UNUSED, va_list app,
 }
 
 static size_t
-cvt_x(int code UNUSED, va_list app,
+cvt_x(int code UNUSED, void * value,
       zt_fmt_put_f put, void * cl,
       unsigned char flags[],
       ssize_t width, ssize_t precision)
 {
-    unsigned int m = va_arg(app, unsigned int);
+    unsigned int m = *(unsigned int *)value;
     char         buf[43];
     char       * p = buf + sizeof(buf);
 

@@ -1,8 +1,7 @@
 #ifndef _ZT_STACK_H_
 #define _ZT_STACK_H_
 
-#include <zt_internal.h>
-#include <zt_list.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 

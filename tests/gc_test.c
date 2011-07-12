@@ -1,8 +1,8 @@
-#include <zt_internal.h>
-#include <zt_gc.h>
-#include <zt_unit.h>
+#define ZT_WITH_UNIT
+#define ZT_WITH_GC
+#include <zt.h>
 
-#define DEBUG 0
+#undef DEBUG_GC
 
 #define INT  1
 #define ATOM 2
@@ -116,7 +116,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         int int_seen_base = ((REND * 3) - 6);              /* root->value.a, protected, last_object need to be subtracted out */
 
         /* for the last object placed on the scan queue */
-#if DEBUG
+#if DEBUG_GC
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
         printf("First seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
 #endif
@@ -130,7 +130,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         int_seen_base += 3;                                /* root->value.a + protected + last_alloc */
         mark_base += 1;                                    /* root->value.a */
         free_base += 1;
-#if DEBUG
+#if DEBUG_GC
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
         printf("Second seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
 #endif
@@ -144,7 +144,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         int_seen_base += 2;                                /* protected + root->value.a */
         mark_base += 1;                                    /* root->value.a */
         free_base += 1;
-#if DEBUG
+#if DEBUG_GC
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
         printf("Third seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
 #endif
@@ -159,7 +159,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         int_seen_base += 2;
         mark_base += 1;                                    /* root->value.a */
         free_base += 3;                                    /* root, root->value.a, protected */
-#if DEBUG
+#if DEBUG_GC
         printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
         printf("Final seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
 #endif

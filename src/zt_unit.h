@@ -2,8 +2,6 @@
 #define _ZT_UNIT_H_
 
 #include <setjmp.h>
-#include <stdio.h>
-
 #include <zt.h>
 #include <zt_list.h>
 
@@ -46,12 +44,14 @@ struct zt_unit_test {
     jmp_buf         env;
 };
 
+int zt_unit_printf(char **strp, const char *fmt, ...);
+
 #define ZT_UNIT_ASSERT(test, expr)                          \
     do {                                                    \
         if((expr)) {                                        \
             zt_unit_test_add_assertion(test);               \
         } else {                                            \
-            if(asprintf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__) == 0)  { \
+            if(zt_unit_printf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__) == 0)  { \
                 test->error = NULL;                         \
             }                                               \
             longjmp(test->env, 1);                          \

@@ -16,11 +16,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include <zt_internal.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_fmt_put_f)(int c, void *cl);
-typedef size_t (*zt_fmt_ty)(int code, va_list app,
+typedef size_t (*zt_fmt_ty)(int code, void * value,
                             zt_fmt_put_f put, void *cl,
                             unsigned char flags[256],
                             ssize_t width,
@@ -44,7 +44,7 @@ extern char *zt_fmt_strprintf(const char *fmt, ...);
 extern char *zt_fmt_vstrprintf(const char *fmt, va_list ap);
 
 
-extern zt_fmt_ty zt_fmt_register(int code, zt_fmt_ty newcvt);
+extern zt_fmt_ty zt_fmt_register(int code, zt_fmt_ty newcvt, unsigned char type);
 
 extern size_t zt_fmt_putd(const char *str, size_t len,
                           zt_fmt_put_f put, void *cl,

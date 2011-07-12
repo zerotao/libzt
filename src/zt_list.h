@@ -6,7 +6,7 @@
 #ifndef _ZT_LIST_H_
 #define _ZT_LIST_H_
 
-#include <zt_internal.h> /* INLINE */
+#include <zt.h>
 
 #ifdef __cplusplus__
 extern "C" {
@@ -38,7 +38,7 @@ typedef zt_elist_t zt_elist_elt;
 #define zt_elist_get_prev(P) ((P)->prev)
 
 #define zt_elist_data(PTR, TYPE, ELT) \
-    containerof(PTR, TYPE, ELT)
+    zt_containerof(PTR, TYPE, ELT)
 
 #define zt_elist_for_each(h, p)       \
     for ((p) = (h)->next; (p) != (h); \

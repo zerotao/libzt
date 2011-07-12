@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "zt.h"
 #include "zt_internal.h"
 #include "zt_assert.h"
 #include "zt_list.h"

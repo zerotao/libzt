@@ -16,11 +16,12 @@
 #ifdef WIN32
 #include <WinSock2.h>
 #else
+#include <unistd.h>
 #include <sys/time.h>
 #endif
 
 
-#include <zt_internal.h>
+#include <zt.h>
 
 struct time_result {
     struct timeval sys_time;

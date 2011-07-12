@@ -13,8 +13,7 @@
 #ifndef _ZT_TABLE_H_
 #define _ZT_TABLE_H_
 
-#include <zt_internal.h>
-#include <zt_mem.h>
+#include <zt.h>
 
 BEGIN_C_DECLS
 typedef int (*zt_table_compare_cb)(const void *lhs, const void *rhs, void *cdata);

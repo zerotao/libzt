@@ -120,7 +120,7 @@ zt_sha1_update(zt_sha1_ctx *ctx, uint8_t *data, size_t len)
     uint32_t      llen;
 
     /* FIXME: 64bit (or better unbounded) sha1_update */
-    zt_assert(len <= UINT_MAX);
+    zt_assert(len <= UINT_MAX-1);
     llen = (uint32_t)len;
 
     j = (ctx->count[0] >> 3) & 63;

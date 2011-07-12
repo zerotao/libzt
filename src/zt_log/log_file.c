@@ -28,7 +28,18 @@ static void destructor(zt_log_ty *log)
 {
     zt_log_file_ty *this = (zt_log_file_ty *)log;
 
+#ifdef WITH_THREADS
+    pthread_mutex_lock(&log->mutex);
+#endif /* WITH_THREADS */
+
+    fflush(this->file);
     fclose(this->file);
+
+#ifdef WITH_THREADS
+    pthread_mutex_unlock(&log->mutex);
+    pthread_mutex_destroy(&log->mutex);
+#endif /* WITH_THREADS */
+
     zt_free(this);
 }
 
@@ -40,8 +51,17 @@ print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
     zt_log_file_ty *this = (zt_log_file_ty *)log;
 
     nfmt = zt_log_gen_fmt(log, fmt, level, log->opts);
+
+#ifdef WITH_THREADS
+    pthread_mutex_lock(&log->mutex);
+#endif /* WITH_THREADS */
+
     vfprintf(this->file, nfmt, ap);
-    fflush(this->file);
+
+#ifdef WITH_THREADS
+    pthread_mutex_unlock(&log->mutex);
+#endif /* WITH_THREADS */
+
     free(nfmt);
 }
 
@@ -70,6 +90,10 @@ zt_log_file(char *file, int fopts, int lopts)
         fprintf(stderr, "Could not open file %s: %s\n", file, strerror(errno));
         return NULL;
     }
+
+#ifdef WITH_THREADS
+    pthread_mutex_init(&result->mutex, NULL);
+#endif /* WITH_THREADS */
 
     return result;
 }

@@ -18,6 +18,9 @@
 # include <string.h>
 #endif
 
+#include "zt.h"
+#include "zt_internal.h"
+
 #include "zt_log.h"
 #include "zt_log/log_private.h"
 #include "zt_atexit.h"
@@ -33,26 +36,76 @@ log_atexit(void * data) {
     }
 }
 
+#ifdef WITH_THREADS
+static pthread_key_t log_key;
+static pthread_once_t log_key_once = PTHREAD_ONCE_INIT;
+
+static void
+make_logger_key()
+{
+    (void) pthread_key_create(&log_key, NULL);
+}
+
+/* this function expects the traditional "If you allocated free it, if
+ * you didn't allocate it leave it the fsck alone" model */
 zt_log_ty *
 zt_log_logger(zt_log_ty *log)
 {
-    static zt_log_ty    * log_log_ptr = NULL;
+    zt_log_ty    * last = NULL;
+
+    /* get our key */
+    (void) pthread_once(&log_key_once, make_logger_key);
+
+    if (!log) {
+        /* caller wants the current/default logger */
+        if ((log = pthread_getspecific(log_key)) == NULL) {
+            /* allocate a default logger */
+            if ((log = zt_log_stderr( ZT_LOG_WITH_LEVEL )) == NULL) {
+                /* don't try to use logging */
+                fprintf(stderr, "Could not allocate stderr for logging\n");
+                exit(1);
+            }
+            pthread_setspecific(log_key, log);
+            zt_atexit(log_atexit, log);
+        }
+        return log;
+    }
+
+    /* ELSE: they want to set the logger to something else */
+    last = pthread_getspecific(log_key);
+    pthread_setspecific(log_key, log);
+    return last;
+}
+
+#else /* WITH_THREADS */
+
+/* this function expects the traditional "If you allocated free it, if
+ * you didn't allocate it leave it the fsck alone" model */
+zt_log_ty *
+zt_log_logger(zt_log_ty *log)
+{
+    static zt_log_ty    * log_log_ty = NULL;
     zt_log_ty           * last = NULL;
 
     if (!log) {
-        /* caller wants the current logger */
-        if(!log_log_ptr) {
+        /* caller wants the current/default logger */
+        if (log_log_ty == NULL) {
             /* allocate a default logger */
-            log_log_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
-            zt_atexit(log_atexit, log_log_ptr);
+            if ((log_log_ty = zt_log_stderr( ZT_LOG_WITH_LEVEL )) == NULL) {
+                /* don't try to use logging */
+                fprintf(stderr, "Could not allocate stderr for logging\n");
+                exit(1);
+            }
+            zt_atexit(log_atexit, log_log_ty);
         }
-        return log_log_ptr;
+        return log_log_ty;
     }
-
-    last = log_log_ptr;
-    log_log_ptr = log;
+    /* ELSE: they want to set the logger to something else */
+    last = log_log_ty;
+    log_log_ty = log;
     return last;
 }
+#endif /* WITH_THREADS */
 
 zt_log_ty *
 zt_log_debug_logger(zt_log_ty *log)
@@ -230,12 +283,8 @@ _zt_log_vdebug(char *fmt, va_list ap)
     zt_log_level level = zt_log_debug;
     zt_log_ty   *log = zt_log_debug_logger(NULL);
 
-    if (level > log->level) {
-        return;
-    }
-    if (log->vtbl->print) {
-        log->vtbl->print(log, level, fmt, ap);
-    }
+    zt_log_lvprintf(log, level, fmt, ap);
+
     zt_log_set_debug_info(log, NULL, -1, NULL);
 }
 
