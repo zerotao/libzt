@@ -84,7 +84,7 @@ add_library(zt_unit ${zt_unit_SRCS})
 target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in shared libs
 
 if(BUILD_SHARED_LIBS)
-    set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
+    set_target_properties(zt PROPERTIES VERSION 2.1.1 SOVERSION 2)
     set_target_properties(zt_gc PROPERTIES VERSION 1.0.0 SOVERSION 1)
     set_target_properties(zt_unit PROPERTIES VERSION 1.0.0 SOVERSION 1)
 endif(BUILD_SHARED_LIBS)
