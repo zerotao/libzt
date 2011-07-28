@@ -29,8 +29,6 @@ static void
 log_atexit(void * data) {
     zt_log_ty   * logp = data;
 
-    logp = zt_log_logger(NULL);
-
     if(logp) {
         zt_log_close(logp);
     }
