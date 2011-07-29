@@ -16,12 +16,17 @@ if(CMAKE_COMPILER_IS_GNUCC)
 
     # set(CMAKE_BUILD_TYPE distribution)
     # set(CMAKE_C_FLAGS_DISTRIBUTION "-Wall -Wextra -O2")
-    if(APPLE)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32 -D_BSD_SOURCE")
-    endif(APPLE)
     if (UNIX)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -D_BSD_SOURCE")
+        if(APPLE)
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32 -D_BSD_SOURCE")
+        endif(APPLE)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     endif(UNIX)
+
+    if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG -g3")
+    ENDIF(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -30,7 +35,3 @@ IF(NOT CMAKE_BUILD_TYPE)
       # "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
       # FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
-
-if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG -g3")
-ENDIF(${CMAKE_BUILD_TYPE} STREQUAL Debug)
