@@ -1,7 +1,7 @@
 /*
  * opts.c        option parsing routines
  *
- * Copyright (C) 2000-2004, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
+ * Copyright (C) 2000-2011, Jason L. Shiffer <jshiffer@zerotao.com>.  All Rights Reserved.
  * See file COPYING for details.
  *
  * $Id: opts.c,v 1.7 2003/11/26 17:37:16 jshiffer Exp $
@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <errno.h>
 
 #ifdef HAVE_STRING_H
 # include <string.h> /* memset, strdup */
@@ -20,405 +21,347 @@
 # include <libgen.h> /* basename */
 #endif
 
-#include <getopt.h> /* getopt, getopt_long */
+#include <inttypes.h>
+/* #include <getopt.h> [> getopt, getopt_long <] */
 
 #include "zt_opts.h"
 
-/* duplicated from zt_macros.h to make
- * the system stand alone */
-#ifndef INDENT
-# ifndef BLANK
-#  define BLANK "%*s"
-# endif /* BLANK */
+char *
+zt_opt_error_str(int code, char * fmt, ...) {
+    char    * ret;
+    va_list   ap;
 
-# if defined(_WIN32)
-#  define NL "\r\n"
-# else
-#  define NL "\n"
-# endif /* defined(_WIN32) */
-
-# define INDENT(lvl) INDENT_PAD((lvl), 5, 0)
-# define INDENT_TO(tgt, step, start)          \
-     INDENT_PAD((((tgt) - (start)) / (step)), \
-                (step),                       \
-                (((tgt) - (start)) % (step)))
-
-# define INDENT_PAD(lvl, step, pad) ((int)(((lvl) * step) + (pad))), ""
-#endif /* INDENT */
-
-
-static int
-isoptchar(int x)
-{
-    return (x >= 'A' && x <= 'Z') || (x >= 'a' && x <= 'z') || (x >= '0' && x <= '9');
+    va_start(ap, fmt);
+    ret = zt_opt_verror_str(code, fmt, ap);
+    va_end(ap);
+    return ret;
 }
 
-struct {
-    zt_opt_types type;
-    char        *desc;
-} zt_opts_usage_t[] = { { zt_opt_bool,   " [yes|no|true|false]" },
-                        { zt_opt_flag,   NULL                   },
-                        { zt_opt_long,   " [integer]"           },
-                        { zt_opt_int,    " [integer]"           },
-                        { zt_opt_string, " [string]"            },
-                        { zt_opt_func,   NULL                   },
-                        { zt_opt_ofunc,  NULL                   },
-                        { zt_opt_rfunc,  NULL                   },
-                        { zt_opt_help,   NULL                   },};
+char *
+zt_opt_verror_str(int code, char * fmt, va_list ap) {
+    char    * msg = NULL;
+    char    * user_message = NULL;
+    char    * final = NULL;
 
-static void
-print_default(zt_opt_types type, void *value)
-{
-    switch (type) {
-        case zt_opt_bool:
-            fprintf(stderr, " (default %s)", *(int *)value ? "true" : "false");
-            break;
-        case zt_opt_flag:
-            fprintf(stderr, " (default %s)", *(int *)value ? "enabled" : "disabled");
-            break;
-        case zt_opt_long:
-            fprintf(stderr, " (default %ld)", *(long *)value);
-            break;
-        case zt_opt_int:
-            fprintf(stderr, " (default %d)", *(int *)value);
-            break;
-        case zt_opt_string:
-        {
-            char * c = *(char **)value;
-            if (c != NULL) {
-                fprintf(stderr, " (default \"%s\")", c);
-            }
+    asprintf(&msg, "error: { code: %d, string: \"%s", code, code?strerror(code):"");
+    if (fmt) {
+        vasprintf(&user_message, fmt, ap);
+    }
+    asprintf(&final, "%s: %s\" }", msg, user_message);
+
+    zt_free(user_message);
+    zt_free(msg);
+    return final;
+}
+
+int
+zt_opt_verror_default(int code, char * fmt, va_list ap) {
+    char    * msg = NULL;
+
+    if (!code && !fmt) {
+        fprintf(stderr, "Invalid call to %s: must set code or format\n", __FUNCTION__);
+        return EINVAL;
+    }
+
+    msg = zt_opt_verror_str(code, fmt, ap);
+    fprintf(stderr, "%s\n", msg);
+    zt_free(msg);
+    return code;
+}
+int
+zt_opt_error_default(int code, char * fmt, ...) {
+    int       ret;
+    va_list   ap;
+
+    va_start(ap, fmt);
+    ret = zt_opt_verror_default(code, fmt, ap);
+    va_end(ap);
+
+    return ret;
+}
+
+char *
+zt_opt_get_value(int argn, char **argv, zt_opt_error error) {
+    char    * p = argv[argn];
+    char    * result = argv[argn+1];
+
+    do {
+        if (*p == '=') {
+            result = ++p;
         }
-        break;
-        case zt_opt_func:
-        /* FALLTHRU */
-        case zt_opt_ofunc:
-        /* FALLTHRU */
-        case zt_opt_rfunc:
-        /* FALLTHRU */
-        case zt_opt_help:
-            break;
-    } /* switch */
+    } while(*p++);
+
+    if (!result) {
+        error(EINVAL, "while processing arg '%s'", argv[argn]);
+    }
+
+    return result;
+}
+
+int
+zt_opt_null(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) { return 0; }
+
+int
+zt_opt_intmax(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+
+    intmax_t      result;
+    char        * end = NULL;
+    char        * arg = zt_opt_get_value(argn, argv, error);
+
+    errno = 0;
+    result = strtoimax(arg, &end, 0);
+
+    if(errno) {
+        /* check errno */
+        error(errno, "invalid number '%s'", arg);
+    }
+
+    if(end && *end) {
+        /* invalid character */
+        error(EINVAL, "'%s' is not a number", arg);
+    }
+
+    if(def[defn].cb_data) {
+        *(intmax_t *)def[defn].cb_data = result;
+    }
+
+    return 1;
+}
+
+int
+zt_opt_long(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+
+    long          result;
+    char        * end = NULL;
+    char        * arg = zt_opt_get_value(argn, argv, error);
+
+    errno = 0;
+    result = strtol(arg, &end, 0);
+
+    if(errno) {
+        /* check errno */
+        error(errno, "invalid number '%s'", arg);
+    }
+
+    if(end && *end) {
+        /* invalid character */
+        error(EINVAL, "'%s' is not a number", arg);
+    }
+
+    if(def[defn].cb_data) {
+        *(long *)def[defn].cb_data = result;
+    }
+
+    return 1;
+}
+
+int
+zt_opt_bool_int(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+
+    int           result;
+    size_t        len;
+    char        * arg = zt_opt_get_value(argn, argv, error);
+
+    len = strlen(arg);
+
+    if (len == 1) {
+        switch (*arg) {
+            case 't':
+            case 'T':
+            case 'y':
+            case 'Y':
+                result = 1;
+                break;
+            case 'f':
+            case 'F':
+            case 'n':
+            case 'N':
+                result = 0;
+                break;
+            default:
+                error(EINVAL, "'%s' is not a boolean expression", argv[argn]);
+                break;
+        }
+    } else {
+        if (strcasecmp(arg, "true") == 0 ||
+            strcasecmp(arg, "yes") == 0) {
+            result = 1;
+        } else if(strcasecmp(arg, "false") == 0 ||
+                  strcasecmp(arg, "no") == 0) {
+            result = 0;
+        } else {
+            error(EINVAL, "'%s' is not a boolean expression", argv[argn]);
+        }
+    }
+
+    if(def[defn].cb_data) {
+        *(int *)def[defn].cb_data = result;
+    }
+
+    return 1;
+}
+
+int
+zt_opt_flag_int(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+
+    if(def[defn].cb_data) {
+        *(int *)def[defn].cb_data += 1;
+    }
+
+    return 0;
+}
+
+int
+zt_opt_string(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+    char    * arg = zt_opt_get_value(argn, argv, error);
+
+    if (arg) {
+        *(char **)def[defn].cb_data = (void *)strdup(arg);
+    }
+
+    return 1;
+}
+
+
+int
+zt_opt_help_stdout(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
+    int       i;
+    char    * help = def[defn].cb_data;
+
+    printf("usage: %s %s\nOptions:\n", argv[0], help ? help : "");
+
+    for(i=0; def[i].cb; i++) {
+        char      sopt = def[i].sopt;
+        char    * lopt = def[i].lopt;
+
+        if (sopt != ZT_OPT_NSO || lopt != ZT_OPT_NLO) {
+            int   depth = 0;
+
+            depth = printf("   %c%c%c %s%s", sopt != ZT_OPT_NSO ? '-' : ' ',
+                                             sopt != ZT_OPT_NSO ? sopt : ' ',
+                                             sopt != ZT_OPT_NSO && lopt != ZT_OPT_NLO ? ',' : ' ',
+                                             lopt != ZT_OPT_NLO ? "--" : "  ",
+                                             lopt != ZT_OPT_NLO ? lopt : "");
+
+            printf(BLANK "%s\n", INDENT_TO(25, 1, depth), def[i].help);
+        } else {
+            error(0, "Programmer Error: must have a short or long opt at least", NULL);
+            return -1;
+        }
+    }
+
+    return 0;
 }
 
 void
-zt_opts_usage(char *argv[], struct zt_opt_args *opts, char *option_string, int max_opts, int show_defaults)
-{
-    int i = 0;
+zt_opt_validate_default(zt_opt_def_t * args, zt_opt_error error) {
+    int   i;
+    int   x;
 
-    fprintf(stderr, "usage: %s %s" NL, basename(argv[0]), option_string);
-
-    if (max_opts > 0) {
-        fprintf(stderr, NL "Options:" NL);
-    }
-
-    for (i = 0; i < max_opts; i++) {
-        int offt = 0;
-        if (opts[i].description != NULL) {
-            if (isoptchar(opts[i].opt)) {
-                offt = fprintf(stderr, BLANK "-%c", INDENT(1), opts[i].opt);
-            }
-#ifdef HAVE_GETOPT_LONG
-            if (opts[i].long_opt) {
-                if (isoptchar(opts[i].opt)) {
-                    offt += fprintf(stderr, ", --%s", opts[i].long_opt);
-                } else {
-                    offt += fprintf(stderr, BLANK "    --%s", INDENT(1), opts[i].long_opt);
-                }
-            }
-#endif /* ifdef HAVE_GETOPT_LONG */
-            offt += fprintf(stderr, BLANK "%s", INDENT_TO(30, 5, offt), opts[i].description ? opts[i].description : "");
-
-            if (show_defaults) {
-                print_default(opts[i].type, opts[i].val);
-            }
-
-            if (opts[i].usage) {
-                fprintf(stderr, BLANK ": %s" NL, INDENT(1), opts[i].usage);
-            } else
-            if (zt_opts_usage_t[opts[i].type].desc) {
-                if (isoptchar(opts[i].opt)) {
-                    fprintf(stderr,
-                            BLANK ": eg. -%c %s" NL,
-                            INDENT(1),
-                            opts[i].opt,
-                            zt_opts_usage_t[opts[i].type].desc ? zt_opts_usage_t[opts[i].type].desc : "");
-                } else {
-                    fprintf(stderr,
-                            BLANK ": eg. --%s %s" NL,
-                            INDENT(1),
-                            opts[i].long_opt,
-                            zt_opts_usage_t[opts[i].type].desc ? zt_opts_usage_t[opts[i].type].desc : "");
-                }
-            } else {
-                fprintf(stderr, NL);
-            }
-        }
-    }
-} /* zt_opts_usage */
-
-int
-zt_opts_process( int *argc, char **argv[], struct zt_opt_args *opts, char *option_string, int auto_usage, int show_defaults, void * cb_data)
-{
-#define OPT_MAX 512
-    int  i = 0;
-    char optstring[OPT_MAX];
-    int  opt_index = 0;
-    int  max_opts = 0;
-    int  nopt_chars = -2;
-    int  result = 0;
-
-#ifdef HAVE_GETOPT_LONG
-    struct option *longopts = NULL;
-#endif
-
-    /* opterr = 0; */ /* turn off the default error message */
-    if (!opts) {
-        return -1;
-    }
-    memset(optstring, '\0', OPT_MAX);
-
-    for (i = 0; (opts[i].description != NULL); i++) {
-        if (opts[i].opt <= 0) {
-            opts[i].opt = nopt_chars--;
-        }
-    }
-
-#ifdef HAVE_GETOPT_LONG
-    if((longopts = (struct option *)calloc(i + 1, sizeof(struct option))) == NULL) {
-        fprintf(stderr, "Could not alloc memory for long opts\n");
-        return -1;
-    }
-    optstring[0] = '+';
-    opt_index++;
-#endif
-
-    for (i = 0; ((opts[i].description != NULL) || (opts[i].type != 0) || (opts[i].val != 0)) && opt_index < OPT_MAX; i++) {
-        if (isoptchar(opts[i].opt)) {
-            optstring[opt_index++] = opts[i].opt;
+    for(i=0; args[i].cb; i++) {
+        if (args[i].sopt == ZT_OPT_NSO && args[i].lopt == ZT_OPT_NLO) {
+            error(EINVAL, "Invalid argdef initialization #%d (must include at least one of short opt or long opt)", i);
         }
 
-#ifdef HAVE_GETOPT_LONG
-        longopts[i].name = opts[i].long_opt;
-        longopts[i].has_arg = no_argument;
-        /* FIXME: I need to do something here to handle longopts without short opts */
-        longopts[i].flag = NULL;
-        longopts[i].val = opts[i].opt;
-#endif /* ifdef HAVE_GETOPT_LONG */
-
-        switch (opts[i].type) {
-            case zt_opt_help:
-            /* FALLTHRU */
-            case zt_opt_flag:
-            /* FALLTHRU */
-            case zt_opt_func:
-                break;
-
-            case zt_opt_bool:
-            /* FALLTHRU */
-            case zt_opt_ofunc:
-                if (isoptchar(opts[i].opt)) {
-                    optstring[opt_index++] = ':'; /* '::' means argument optional */
-                }
-
-#ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = optional_argument;
-#endif
-                break;
-
-            case zt_opt_long:
-            /* FALLTHRU */
-            case zt_opt_int:
-            /* FALLTHRU */
-            case zt_opt_string:
-            /* FALLTHRU */
-            case zt_opt_rfunc:
-                if (isoptchar(opts[i].opt)) {
-                    optstring[opt_index++] = ':'; /* argument required */
-                }
-
-#ifdef HAVE_GETOPT_LONG
-                longopts[i].has_arg = required_argument;
-#endif
-                break;
-        } /* switch */
-    }
-#ifdef HAVE_GETOPT_LONG
-    longopts[i].name = 0;
-    longopts[i].has_arg = 0;
-    longopts[i].flag = NULL;
-    longopts[i].val = 0;
-#endif
-    max_opts = i;
-    while (1) {
-#ifdef HAVE_GETOPT_LONG
-        int c = getopt_long( *argc, *argv, optstring, longopts, 0 );
-#else
-        int c = getopt( *argc, *argv, optstring );
-#endif
-        int i = 0;
-        if ( c == -1 ) {
-            break;
-        } else if ( c == '?' ) { /* unknown option */
-            if (auto_usage) {
-                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-            }
-            result = -1;
-            goto RETURN;
+        if (!args[i].help) {
+            error(EINVAL, "Invalid argdef initialization #%d (must include help definition)", i);
         }
-        for (i = 0; i < max_opts; i++) {
-            if (c != opts[i].opt) {
+
+        if (args[i].sopt != ZT_OPT_NSO &&
+            ((args[i].sopt < '0' || args[i].sopt > '9') &&   /* 0x30-0x39 */
+             (args[i].sopt < 'A' || args[i].sopt > 'Z') &&   /* 0x41-0x5A */
+             (args[i].sopt < 'a' || args[i].sopt > 'z'))) {  /* 0x61-0x7A */
+            error(EINVAL, "Invalid short option definition #%d (char must be [0-9A-Za-z] not '0x%x')", i, args[i].sopt);
+        }
+
+        /* slow and does extra work but functional */
+        for(x=0; args[x].cb; x++) {
+            if (x == i) {
                 continue;
             }
-            /* else */
-            switch (opts[i].type) {
-                case zt_opt_bool: /* set an int */
-                    if (optarg) {
-                        int offset = 0;
-                        if (optarg[0] == '=') {
-                            offset = 1;
-                        }
-                        if ((!(strcasecmp("true", &optarg[offset])))
-                            || (!(strcasecmp("yes", &optarg[offset])))
-                            || (!(strcasecmp("t", &optarg[offset])))) {
-                            *(int *)opts[i].val = 1;
-                        } else if ((!(strcasecmp("false", &optarg[offset])))
-                                   || (!(strcasecmp("no", &optarg[offset])))
-                                   || (!(strcasecmp("f", &optarg[offset])))) {
-                            *(int *)opts[i].val = 0;
-                        } else {
-                            printf("Invalid value \"%s\" for %s (expecting [t|f|yes|no|true|false]).\n",
-                                   *argv[optind - 1], *argv[optind - 2] );
-                            if (auto_usage) {
-                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                            }
-                            result = -1;
-                            goto RETURN;
-                        }
-                    } else {
-                        *(int *)opts[i].val = !*(int *)opts[i].val;
-                    }
-                    break;
-                case zt_opt_long:
-                    *(long *)opts[i].val = strtol(optarg, NULL, 0);
-                    /* can only fail if passed a string
-                     * that does not start with a number
-                     */
-                    if ((*(long *)opts[i].val == 0) && (optarg[0] != '0')) {
-                        printf("Invalid value \"%s\" for %s (expecting an integer).\n",
-                               *argv[optind - 1], *argv[optind - 2] );
-                        if (auto_usage) {
-                            zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                        }
-                        result = -1;
-                        goto RETURN;
-                    }
-                    break;
-                case zt_opt_int:
-                    {
-                        long val = strtol(optarg, NULL, 0);
-                        if (val > INT_MAX) {
-                            printf("Invalid value \"%s\" for %s (number too large).\n",
-                                    *argv[optind - 1], *argv[optind - 2] );
-                            if (auto_usage) {
-                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                            }
-                            result = -1;
-                            goto RETURN;
-                        }
-                        *(int *)opts[i].val = (int)val;
-                        /* can only fail if passed a string
-                         * that does not start with a number
-                         */
-                        if ((*(int *)opts[i].val == 0) && (optarg[0] != '0')) {
-                            printf("Invalid value \"%s\" for %s (expecting an integer).\n",
-                                    *argv[optind - 1], *argv[optind - 2] );
-                            if (auto_usage) {
-                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                            }
-                            result = -1;
-                            goto RETURN;
-                        }
-                        break;
-                    }
-                case zt_opt_string:
-                    {
-                        char * arg;
-                        if((arg = strdup(optarg)) == NULL) {
-                            fprintf(stderr, "Could not duplicate arg %s\n", optarg);
-                            result = -1;
-                            goto RETURN;
-                        }
 
-                        *(char **)opts[i].val = arg;
+            if (args[x].sopt != ZT_OPT_NSO && args[x].sopt == args[i].sopt) {
+                error(EINVAL, "Duplicate short options: #%d and #%d", i, x);
+            }
 
-                        if (opts[i].val == NULL) {
-                            printf("Invalid value \"%s\" for %s (expecting a string).\n",
-                                    *argv[optind - 1], *argv[optind - 2] );
-                            if (auto_usage) {
-                                zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                            }
-                            result = -1;
-                            goto RETURN;
-                        }
-                        break;
-                    }
-                case zt_opt_func:
-                    if ( (((zt_opt_function)opts[i].fn)(optarg, cb_data)) == -1) {
-                        if (auto_usage) {
-                            zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                        }
-                        result = -1;
-                        goto RETURN;
-                    }
-                    break;
-                case zt_opt_ofunc:
-                    if ( ((opts[i].fn)(optarg, cb_data)) == -1) {
-                        if (auto_usage) {
-                            zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                        }
-                        result = -1;
-                        goto RETURN;
-                    }
-                    break;
-                case zt_opt_rfunc:
-                    if ( ((opts[i].fn)(optarg, cb_data)) == -1) {
-                        if (auto_usage) {
-                            zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                        }
-                        result = -1;
-                        goto RETURN;
-                    }
-                    break;
-                case zt_opt_flag:
-                    if (*(int *)opts[i].val > 0) {
-                        *(int *)opts[i].val = 0;
-                    } else {
-                        *(int *)opts[i].val = 1;
-                    }
-                    break;
-                case zt_opt_help:
-                    if (auto_usage) {
-                        zt_opts_usage(*argv, opts, option_string, max_opts, show_defaults);
-                    }
-                    result = -1;
-                    goto RETURN;
-                    break;
-                default:
-                    printf("Unknown arg type %d\n", opts[i].opt);
-                    result = -1;
-                    goto RETURN;
-            } /* switch */
+            if (args[x].lopt != ZT_OPT_NLO && (strcmp(args[x].lopt, args[i].lopt) == 0)) {
+                error(EINVAL, "Duplicate long options: #%d and #%d", i, x);
+            }
         }
     }
-    *argc -= optind;
-    *argv += optind;
+}
 
-    optind = 1;
+static int
+_zt_opt_error_wrapper(int code, char * fmt, ...) {
+    int       ret;
+    va_list   ap;
 
-RETURN:
-#ifdef HAVE_GETOPT_LONG
-    free(longopts);
-#endif
-    return result;
-} /* zt_opts_process */
+    va_start(ap, fmt);
+    ret = zt_opt_error_default(code, fmt, ap);
+    if (ret != 0) {
+        exit(ret);
+    }
+    va_end(ap);
+
+    return ret;
+}
+
+int
+zt_opt_process_args(int * argc, char **argv, zt_opt_def_t * args, zt_opt_validate validate, zt_opt_error error) {
+    int       i;
+
+    error = error ? error : _zt_opt_error_wrapper;
+    validate = validate ? validate : zt_opt_validate_default;
+
+    validate(args, error);
+
+    for(i=1; i<*argc; i++) {
+        if(argv[i][0] == '-') {
+            unsigned int      x;
+            size_t            len = 0;
+            char            * p = &argv[i][1];
+            int               combined_opt = 0;
+            int               found = 0;
+
+            if(*p == '-') { /* long opt */
+                ++p;
+                for(len=0; p[len] != '\0' && p[len] != '='; len++);
+
+                if (p[len] == '=') {
+                    combined_opt = 1;
+                }
+            }
+
+            for(x=0; args[x].cb; x++) {
+                if ((len == 0 && args[x].sopt != ZT_OPT_NSO && *p == args[x].sopt) || /* short opt */
+                    /* long opt */
+                    (args[x].lopt != ZT_OPT_NLO && strlen(args[x].lopt) == len &&
+                     strncmp(p, args[x].lopt, len) == 0)) {
+                    int   ret = 0;
+
+                    found = 1;
+                    if((ret = args[x].cb(i, x, argc, argv, args, error)) < 0) {
+                        /* error */
+                        return ret;
+                    }
+
+                    if (!combined_opt) {
+                        i += ret;
+                    }
+                    break;
+                }
+            }
+
+            if(!found) {
+                error(EINVAL, "'%.*s'", len?len:1, p);
+            }
+
+        } else {
+            break;
+        }
+    }
+
+    *argc = i;
+
+    return 0;
+}

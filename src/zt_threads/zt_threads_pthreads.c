@@ -152,7 +152,7 @@ zt_threads_pthreads_start(zt_threads_thread *_thread, zt_threads_attr *_attr,
 
 void
 zt_threads_pthreads_end(void *args) {
-    return pthread_exit(args);
+    pthread_exit(args);
 }
 
 zt_threads_thread *

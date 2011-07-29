@@ -18,9 +18,9 @@
 
 static int count = 0;
 
-static int str_iterator(void *key, void *datum, void *param);
-static int int_iterator(void *key, void *datum, void *param);
-static int str_free(void *key, void *datum, void *param);
+static int str_iterator(void *key, size_t key_len, void *datum, size_t datum_len, void *param);
+static int int_iterator(void *key, size_t key_len, void *datum, size_t datum_len, void *param);
+static int str_free(void *key, size_t key_len, void *datum, size_t datum_len, void *param);
 
 void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)
@@ -37,14 +37,14 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
                               zt_table_compare_string, 10, 0, NULL);
 
     for ( i = 9; i >= 0; i--) {
-        zt_table_set(table_int, (void *)i, (void *)numbers[i]);
+        zt_table_set(table_int, (void *)i, sizeof(ssize_t), (void *)numbers[i], sizeof(ssize_t));
     }
 
     zt_table_for_each(table_int, int_iterator, test);
 
     ZT_UNIT_ASSERT(test, count == 10);
 
-    nn = (ssize_t)zt_table_get( table_int, (void *)5 );
+    nn = (ssize_t)zt_table_get( table_int, (void *)5, sizeof(ssize_t));
     ZT_UNIT_ASSERT(test, nn == 4);
 
     /* string test */
@@ -56,7 +56,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         char * b2 = NULL;
         sprintf(buf, "%s%zd", STR_TEST_PRE, i);
         b2 = zt_strdup(buf);
-        zt_table_set(table_str, b2, (void *)numbers[i]);
+        zt_table_set(table_str, b2, strlen(b2), (void *)numbers[i], sizeof(ssize_t));
     }
 
     zt_table_for_each(table_str, str_iterator, test);
@@ -69,14 +69,14 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 } /* basic_tests */
 
 static int
-str_free(void *key, void *datum UNUSED, void *param UNUSED)
+str_free(void *key, size_t key_len, void *datum UNUSED, size_t datum_len, void *param UNUSED)
 {
     zt_free(key);
     return 0;
 }
 
 static int
-str_iterator(void *key, void *datum, void *param)
+str_iterator(void *key, size_t key_len, void *datum, size_t datum_len, void *param)
 {
     ssize_t               d = (intptr_t)datum;
     ssize_t               k = atoi(((const char *)key + strlen(STR_TEST_PRE)));
@@ -89,7 +89,7 @@ str_iterator(void *key, void *datum, void *param)
 }
 
 static int
-int_iterator(void *key, void *datum, void *param)
+int_iterator(void *key, size_t key_len, void *datum, size_t datum_len, void *param)
 {
     ssize_t               d = (intptr_t)datum;
     ssize_t               k = (intptr_t)key;
