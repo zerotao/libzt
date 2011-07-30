@@ -1,3 +1,10 @@
+IF(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+  # SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+      # "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      # FORCE)
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
 if(CMAKE_COMPILER_IS_GNUCC)
     SET(RSN_BASE_C_FLAGS "-std=c99 -Wall") # -Wextra")   #-pedantic
     SET(RSN_BASE_CXX_FLAGS "-Wall") # -Wextra")
@@ -28,10 +35,3 @@ if(CMAKE_COMPILER_IS_GNUCC)
     ENDIF(${CMAKE_BUILD_TYPE} STREQUAL Debug)
 
 endif(CMAKE_COMPILER_IS_GNUCC)
-
-IF(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-  # SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      # "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      # FORCE)
-ENDIF(NOT CMAKE_BUILD_TYPE)
