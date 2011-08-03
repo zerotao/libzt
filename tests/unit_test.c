@@ -87,7 +87,6 @@ main(int argc, char *argv[])
     register_uuid_suite(unit);
     register_include_suite(unit);
     /* register_ipv4_tbl_suite(unit); */
-    register_include_suite(unit);
     register_daemon_suite(unit);
 
     /*

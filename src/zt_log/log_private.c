@@ -79,7 +79,8 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         char      sbuf[255];
         time_t    tt = time(NULL);
 
-        len += strftime(sbuf, 254, "%b %e %H:%M:%S ", localtime(&tt));
+        len += strftime(sbuf, 254, "%b %d %H:%M:%S ", localtime(&tt));
+
         buff = zt_realloc(char, buff, len);
         sprintf(buff, "%s", sbuf);
     }
@@ -88,7 +89,9 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         char      sbuf[255];
         char    * t = NULL;
 
-        gethostname(sbuf, 254);
+        if(gethostname(sbuf, 254) == -1) {
+            sprintf(sbuf, "*hostname*");
+        }
         t = strchr(sbuf, '.');
         if (t) {
             *t = '\0';

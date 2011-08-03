@@ -19,10 +19,11 @@
 
 #define ZT_WITH_UNIT
 #include <zt.h>
+#include <zt_opts.h>
 
 long  long_integer = 0;
 char *str = 0;
-int   boolean = 0;
+int   bool_type = 0;
 int   flag = 0;
 int   local_data = 0;
 
@@ -63,10 +64,11 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
     int               nargc = argc;
     char            **pargv;
     int               ret;
+    char            * err;
 
     struct zt_opt_def options[] = {
         { 'h',        "help",   zt_opt_help_stdout, "[options]",   "This help text"    },
-        { 'b',        "bool",   zt_opt_bool_int,    &boolean,      "boolean_test"      },
+        { 'b',        "bool",   zt_opt_bool_int,    &bool_type,      "boolean_test"      },
         { ZT_OPT_NSO, "string", zt_opt_string,      &str,          TEST_LONG_STRING    },
         { 'f',        "func",   local_func,         &local_data,   "generic func test" },
         { 'l',        "long",   zt_opt_long,        &long_integer, "long integer test" },
@@ -76,7 +78,9 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
 
     pargv = s_argv;
 
-    char * err = zt_opt_error_str(22, "test");
+
+    err = zt_opt_error_str(22, "test");
+
     /* printf("%s\n", err); */
     ZT_UNIT_ASSERT(test, strcmp("error: { code: 22, string: \"Invalid argument: test\" }", err) == 0);
 
@@ -89,7 +93,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
     ZT_UNIT_ASSERT(test, strcmp(pargv[nargc], "test_command") == 0);
 
     ZT_UNIT_ASSERT(test, long_integer == 1);
-    ZT_UNIT_ASSERT(test, boolean == 1);
+    ZT_UNIT_ASSERT(test, bool_type == 1);
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
     ZT_UNIT_ASSERT(test, flag == 1);
 
@@ -102,7 +106,7 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
     ZT_UNIT_ASSERT(test, ret == 0);
     ZT_UNIT_ASSERT(test, nargc == 3);
     ZT_UNIT_ASSERT(test, long_integer == 2);
-    ZT_UNIT_ASSERT(test, boolean == 1);
+    ZT_UNIT_ASSERT(test, bool_type == 1);
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
     ZT_UNIT_ASSERT(test, flag == 1);
 

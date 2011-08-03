@@ -11,8 +11,11 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>    /* gettimeofday */
-#include <sys/resource.h>
+
+#if !defined(WIN32)
+# include <sys/time.h>    /* gettimeofday */
+# include <sys/resource.h>
+#endif
 
 #include <zt.h>
 

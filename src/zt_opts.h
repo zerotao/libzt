@@ -34,7 +34,10 @@ typedef void (*zt_opt_validate)(zt_opt_def_t * args, zt_opt_error error);
 
 int zt_opt_null(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error);
 
+#ifdef HAVE_INTTYPES_H
 int zt_opt_intmax(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error);
+#endif /* HAVE_INTTYPES_H */
+
 int zt_opt_int(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error);
 int zt_opt_long(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error);
 int zt_opt_flag_int(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error);

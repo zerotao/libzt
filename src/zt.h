@@ -2,9 +2,10 @@
 #define _ZT_H_
 
 #ifndef WIN32
-#include <stdbool.h>
+# include <stdbool.h>
 #else
 # define _GNU_SOURCE
+#include <zt_win32.h>
 #endif /* WIN32 */
 
 #include <stdio.h>

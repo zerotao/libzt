@@ -51,24 +51,28 @@ zt_progname(char *name, int opts)
 
 static ssize_t
 _proc_get_path(char * result, size_t size) {
+#if !defined(WIN32)
     pid_t     pid;
     char      path[PATH_MAX + 1];
 
     pid = getpid();
 
     /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
-#if defined(linux)
+# if defined(linux)
     /* check proc */
     snprintf(path, PATH_MAX, "/proc/%d/exe", pid);
-#elif defined(sun) && defined(svr4)
+# elif defined(sun) && defined(svr4)
     snprintf(path, PATH_MAX, "/proc/%d/path/a.out", pid);
-#elif defined(BSD)
+# elif defined(BSD)
     snprintf(path, PATH_MAX, "/proc/%d/file", pid);
-#else
+# else
     return -1;
-#endif /* defined linux */
-
+# endif /* defined linux */
     return readlink(path, result, size);
+#else /* WIN32*/
+    return (size_t)GetModuleFileName(NULL, result, size);
+#endif /* WIN32 */
+
 }
 
 char *

@@ -42,7 +42,9 @@ main(int argc UNUSED, char *argv[] UNUSED) {
     printf("c32  0x%X\n", c32);
     printf("l32  0x%lX\n", l32);
 
+#if HAVE_INTTYPES_H
     printf("c64  0x%"PRIu64"\n", c64);
+#endif
     printf("ll64 0x%llX\n", ll64);
 
 

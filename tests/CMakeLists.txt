@@ -5,7 +5,7 @@ set(unit_SRCS array_test.c assert_test.c bstream_test.c cfg_test.c cstr_test.c
     uuid_test.c daemon_test.c)
 
 # if(WIN32)
-    # LIST(REMOVE_ITEM unit_SRCS )
+#    LIST(REMOVE_ITEM unit_SRCS daemon_test.c time_test.c)
 # endif(WIN32)
 
 add_executable(unit_test ${unit_SRCS})

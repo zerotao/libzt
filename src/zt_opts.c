@@ -21,9 +21,12 @@
 # include <libgen.h> /* basename */
 #endif
 
-#include <inttypes.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
 /* #include <getopt.h> [> getopt, getopt_long <] */
 
+#include "zt.h"
 #include "zt_opts.h"
 
 char *
@@ -101,6 +104,7 @@ zt_opt_get_value(int argn, char **argv, zt_opt_error error) {
 int
 zt_opt_null(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) { return 0; }
 
+#ifdef HAVE_INTTYPES_H
 int
 zt_opt_intmax(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
 
@@ -127,6 +131,7 @@ zt_opt_intmax(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, z
 
     return 1;
 }
+#endif /* HAVE_INTTYPES_H */
 
 int
 zt_opt_long(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {

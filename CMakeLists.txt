@@ -73,7 +73,10 @@ check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
 include(CheckSymbolExists)
 # usage: CHECK_SYMBOL_EXISTS(symbol headers variable)
 
-################## Check for System Types ##################
+################## Check for System Attributes ##################
+include(TestBigEndian)
+test_big_endian(HOST_BIGENDIAN)
+
 include(CheckTypeSize)
 # SET(CMAKE_EXTRA_INCLUDE_FILES header)
 # CHECK_TYPE_SIZE(type variable)

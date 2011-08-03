@@ -54,7 +54,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
     for ( i = 9; i >= 0; i--) {
         char * b2 = NULL;
-        sprintf(buf, "%s%zd", STR_TEST_PRE, i);
+        sprintf(buf, "%s%ld", STR_TEST_PRE, i);
         b2 = zt_strdup(buf);
         zt_table_set(table_str, b2, strlen(b2), (void *)numbers[i], sizeof(ssize_t));
     }
