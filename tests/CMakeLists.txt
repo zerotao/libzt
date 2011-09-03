@@ -2,7 +2,7 @@ set(unit_SRCS array_test.c assert_test.c bstream_test.c cfg_test.c cstr_test.c
     format_test.c gc_test.c include_test.c int_test.c ipv4_tbl_test.c list_test.c
     llist_test.c log_test.c macros_test.c opts_test.c progname_test.c set_test.c
     sha1_test.c stack_test.c table_test.c time_test.c tree_test.c unit_test.c
-    uuid_test.c daemon_test.c)
+    uuid_test.c daemon_test.c path_test.c)
 
 # if(WIN32)
 #    LIST(REMOVE_ITEM unit_SRCS daemon_test.c time_test.c)

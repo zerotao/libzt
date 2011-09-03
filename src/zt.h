@@ -173,6 +173,7 @@ extern char *zt_strdup_p (const char *string);
 #include <zt_ipv4_tbl.h> /* needs zt_table.h */
 
 #include <zt_macros.h>
+#include <zt_path.h>
 
 #ifdef ZT_WITH_GC
 #include <zt_gc.h>
