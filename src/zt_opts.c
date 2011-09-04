@@ -302,7 +302,7 @@ _zt_opt_error_wrapper(int code, char * fmt, ...) {
     va_list   ap;
 
     va_start(ap, fmt);
-    ret = zt_opt_error_default(code, fmt, ap);
+    ret = zt_opt_verror_default(code, fmt, ap);
     if (ret != 0) {
         exit(ret);
     }
