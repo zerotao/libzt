@@ -13,6 +13,8 @@
 
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
+# else
+  typedef unsigned int mode_t;
 #endif /* HAVE_SYS_STAT_H */
 
 #include <zt.h>
