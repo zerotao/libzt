@@ -21,6 +21,10 @@
 
 #include <zt.h>
 
+#ifdef WIN32
+  typedef unsigned int mode_t;
+#endif
+
 BEGIN_C_DECLS
 
 typedef enum {
