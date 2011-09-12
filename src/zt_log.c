@@ -29,8 +29,6 @@ static void
 log_atexit(void * data) {
     zt_log_ty   * logp = data;
 
-    logp = zt_log_logger(NULL);
-
     if(logp) {
         zt_log_close(logp);
     }
@@ -41,7 +39,7 @@ static pthread_key_t log_key;
 static pthread_once_t log_key_once = PTHREAD_ONCE_INIT;
 
 static void
-make_logger_key()
+make_logger_key(void)
 {
     (void) pthread_key_create(&log_key, NULL);
 }

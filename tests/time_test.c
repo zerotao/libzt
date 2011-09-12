@@ -5,6 +5,7 @@
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
+#ifndef WIN32
     struct timeval tv1;
     struct timeval tv2;
     struct timeval tv_zero = { 0, 0 }; /* 0 second diff time */
@@ -39,6 +40,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
      *    zt_time_print_result(&tr, "test_fn", 1);
      *    }
      */
+#endif /* WIN32 */
 }
 
 int

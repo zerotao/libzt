@@ -658,7 +658,9 @@ zt_mem_strdup(char *str)
 
     if (str) {
         size_t len = strlen(str);
-        tmp = GLOBAL_zmt.alloc(len + 1 * sizeof(char));
+        if((tmp = GLOBAL_zmt.alloc(len + 1 * sizeof(char))) == NULL) {
+            return NULL;
+        }
         memcpy(tmp, str, len);
         tmp[len] = '\0';
     }

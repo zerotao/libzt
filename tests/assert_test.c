@@ -15,6 +15,8 @@
 #define ZT_WITH_UNIT
 #include <zt.h>
 
+#define DUMMY_LOG "dummy.log"
+
 static void
 basic_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)
 {
@@ -23,13 +25,17 @@ basic_tests(struct zt_unit_test *test UNUSED, void *data UNUSED)
     zt_log_ty * log;
     int         i = 1;
 
-    log = zt_log_file("/dev/null", 0, 0);
+    log = zt_log_file(DUMMY_LOG, 0, 0);
     olog = zt_log_logger(log);
 
     zt_assert(1 == i);
 
     zt_log_logger(olog);
     zt_log_close(log);
+
+#if !defined(WIN32)
+    unlink(DUMMY_LOG);
+#endif
 }
 
 int

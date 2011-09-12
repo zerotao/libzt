@@ -114,7 +114,7 @@ zt_threads_pthreads_cond_wait(zt_threads_cond *_cond, zt_threads_mutex *_lock, s
 
         /* timeradd(tvp, uvp, vvp) timeradd((tvp), (uvp), (vvp)) */
         gettimeofday(&now, NULL);
-        timeradd(&now, tv, &abstime);
+        zt_add_time(&now, tv, &abstime);
         ts.tv_sec  = abstime.tv_sec;
         ts.tv_nsec = abstime.tv_usec * 1000;
 
@@ -152,7 +152,7 @@ zt_threads_pthreads_start(zt_threads_thread *_thread, zt_threads_attr *_attr,
 
 void
 zt_threads_pthreads_end(void *args) {
-    return pthread_exit(args);
+    pthread_exit(args);
 }
 
 zt_threads_thread *

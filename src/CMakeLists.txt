@@ -5,13 +5,13 @@ set(zt_LIB_SRCS zt_assert.c zt_cfg.c zt_format.c
                 zt_log.c zt_malloc.c zt_mem.c zt_progname.c zt_cstr.c
                 zt_time.c zt_sha1.c zt_uuid.c zt_ipv4_tbl.c
                 zt_ez_mempool.c zt_atexit.c zt_daemon.c zt_threads.c
-                zt_threads/zt_threads_pthreads.c zt_opts.c zt_bcast.c)
+                zt_threads/zt_threads_pthreads.c zt_opts.c zt_path.c)
 
 set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/zt_replace.h zt_assert.h zt_cfg.h
                 zt_format.h zt_log.h zt_mem.h zt_progname.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_ez_mempool.h zt_ipv4_tbl.h
-                zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h zt_bcast.h)
+                zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h zt_path.h)
 
 set(adt_SRCS zt_array.c zt_bstream.c zt_hash.c zt_llist.c
              zt_ptr_array.c zt_set.c zt_table.c zt_tree.c)
@@ -30,8 +30,8 @@ set(cfg_HDRS zt_cfg/cfg_ini.h zt_cfg/cfg_interface.h zt_cfg/cfg_private.h)
 if(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_win32.h)
     LIST(APPEND zt_LIB_SRCS zt_win32.c)
-    LIST(REMOVE_ITEM zt_LIB_SRCS zt_daemon.c zt_threads.c zt_threads/zt_threads_pthreads.c zt_opts.c)
-    LIST(REMOVE_ITEM zt_LIB_HDRS zt_daemon.h zt_threads.h zt_opts.h)
+    LIST(REMOVE_ITEM zt_LIB_SRCS zt_daemon.c zt_threads.c zt_threads/zt_threads_pthreads.c)
+    LIST(REMOVE_ITEM zt_LIB_HDRS zt_daemon.h zt_threads.h)
 
     LIST(REMOVE_ITEM log_SRCS zt_log/log_syslog.c)
     LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
@@ -84,7 +84,7 @@ add_library(zt_unit ${zt_unit_SRCS})
 target_link_libraries(zt_unit zt) # needed to resolve undefined symbols in shared libs
 
 if(BUILD_SHARED_LIBS)
-    set_target_properties(zt PROPERTIES VERSION 2.0.1 SOVERSION 2)
+    set_target_properties(zt PROPERTIES VERSION 2.1.1 SOVERSION 2)
     set_target_properties(zt_gc PROPERTIES VERSION 1.0.0 SOVERSION 1)
     set_target_properties(zt_unit PROPERTIES VERSION 1.0.0 SOVERSION 1)
 endif(BUILD_SHARED_LIBS)

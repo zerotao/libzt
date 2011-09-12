@@ -29,11 +29,11 @@ union CHAR64LONG16 {
 
 static void _sha1_transform(uint32_t state[5], uint8_t buffer[64]);
 
-#ifdef LITTLE_ENDIAN
-#define blk0(i) (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) \
-                               | (rol(block->l[i], 8) & 0x00FF00FF))
+#if HOST_BIGENDIAN
+# define blk0(i) block->l[i]
 #else
-#define blk0(i) block->l[i]
+# define blk0(i) (block->l[i] = (rol(block->l[i], 24) & 0xFF00FF00) \
+                                | (rol(block->l[i], 8) & 0x00FF00FF))
 #endif
 
 #define blk(i) (block->l[i & 15] = rol(block->l[(i + 13) & 15] ^ block->l[(i + 8) & 15] \

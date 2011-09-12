@@ -9,6 +9,12 @@
 #include <tchar.h>
 #include <io.h>
 
+#ifndef __cplusplus
+  typedef int bool;
+  #define true 1
+  #define false 0
+#endif /* __cplusplus */
+
 /* 4996 = The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _*. See online help for details. */
 #pragma warning( disable : 4996 )
 

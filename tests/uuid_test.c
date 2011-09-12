@@ -144,9 +144,16 @@ uuid_generic_tests(struct zt_unit_test *test, void *data UNUSED)
     zt_free(uuids1);
     zt_free(uuids2);
 
+    uuids1=0;
+    uuids2=0;
+
     zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_short_fmt);
+    ZT_UNIT_ASSERT(test, uuids1 != NULL);
+
     zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_short_fmt);
+
     zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_short_fmt);
+    ZT_UNIT_ASSERT(test, uuids2 != NULL);
 
     ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids1, zt_uuid_short_fmt) == 0);
     ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids2, zt_uuid_short_fmt) == 0);

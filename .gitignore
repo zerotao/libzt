@@ -19,6 +19,16 @@ tests/unit_test
 tools/libzt.pc
 tools/project.spec
 tests/log.err
+project.list
+cmake_install.cmake
+tools/libzt_gc.pc
+tools/libzt_unit.pc
+
+# CMAKE cruft
+CMakeFiles
+CMakeCache.txt
+
+# UNIX cruft
 *.o
 *.lo
 *.la
@@ -27,9 +37,10 @@ tests/log.err
 tags
 *.deps
 *.libs
-project.list
-CMakeFiles
-CMakeCache.txt
-cmake_install.cmake
-tools/libzt_gc.pc
-tools/libzt_unit.pc
+
+# windows cruft
+*.exe
+*.exe.*
+*.ilk
+*.pdb
+*.suo
