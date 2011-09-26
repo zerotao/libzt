@@ -6,8 +6,6 @@ set(PROJECT_VERSION 1.1.0)
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
-message("MODULE_PATH ${CMAKE_MODULE_PATH}")
-
 ############################################################
 
 ########## Check for System Packages known by CMAKE ##########
@@ -106,6 +104,12 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/src/adt
                     ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+
+if(WIN32)
+    # try to find requirements in the install directory as well
+    include_directories(${CMAKE_INSTALL_PREFIX}/include
+                        ${CMAKE_INSTALL_PREFIX})
+endif(WIN32)
 
 configure_file(config.h.cmake src/config.h)
 
