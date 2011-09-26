@@ -21,27 +21,25 @@
 #include <zt.h>
 #include <zt_opts.h>
 
-long  long_integer = 0;
-char *str = 0;
-int   bool_type = 0;
-int   flag = 0;
-int   local_data = 0;
+long          long_integer = 0;
+char        * str          = 0;
+int           bool_type    = 0;
+int           flag         = 0;
+int           local_data   = 0;
 
-static char *s_argv[] = {
+static char * s_argv[]     = {
     "unit_test",
-    "--long", "1",
+    "--long",      "1",
     "--bool=t",
     "--flag",
-    "--string", "hello",
+    "--string",    "hello",
     "test_command",
-    "--long", "2",
+    "--long",      "2",
     NULL
 };
 
 static int
-local_func(int argn, int defn, int * argc, char **argv, zt_opt_def_t * def, zt_opt_error error) {
-
-
+local_func(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
     return 0; /* return # of args consumed */
 }
 
@@ -56,24 +54,23 @@ local_error(int code, char * fmt, ...) {
     return 0;
 }
 
-
 #define TEST_LONG_STRING "This is a really long string intended to overflow the screen and make things look all wack"
 static void
-basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
-    int               argc = sizeof_array(s_argv) - 1; /* -1 for NULL */
+basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
+    int               argc  = sizeof_array(s_argv) - 1; /* -1 for NULL */
     int               nargc = argc;
-    char            **pargv;
+    char           ** pargv;
     int               ret;
     char            * err;
 
     struct zt_opt_def options[] = {
         { 'h',        "help",   zt_opt_help_stdout, "[options]",   "This help text"    },
-        { 'b',        "bool",   zt_opt_bool_int,    &bool_type,      "boolean_test"      },
+        { 'b',        "bool",   zt_opt_bool_int,    &bool_type,    "boolean_test"      },
         { ZT_OPT_NSO, "string", zt_opt_string,      &str,          TEST_LONG_STRING    },
         { 'f',        "func",   local_func,         &local_data,   "generic func test" },
         { 'l',        "long",   zt_opt_long,        &long_integer, "long integer test" },
         { ZT_OPT_NSO, "flag",   zt_opt_flag_int,    &flag,         "flag test"         },
-        { 0,          0,        0,                  0,             0                   }
+        { ZT_OPT_END() }
     };
 
     pargv = s_argv;
@@ -113,15 +110,14 @@ basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
     if (str) {
         zt_free(str);
     }
-}
-
+} /* basic_opts_tests */
 
 int
-register_opts_suite(struct zt_unit *unit)
-{
+register_opts_suite(struct zt_unit * unit) {
     struct zt_unit_suite * suite;
 
     suite = zt_unit_register_suite(unit, "option parsing tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_opts_tests);
     return 0;
 }
+
