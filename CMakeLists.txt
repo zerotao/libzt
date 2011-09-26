@@ -102,7 +102,8 @@ endif(HAVE_LONG_DOUBLE)
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/src
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/adt)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/adt
+                    ${CMAKE_CURRENT_SOURCE_DIR}/compat)
 
 if(WIN32)
     # try to find requirements in the install directory as well
