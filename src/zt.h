@@ -149,7 +149,6 @@ extern char *zt_strdup_p (const char *string);
 #include <zt_mem.h>
 #include <zt_format.h>
 #include <zt_int.h>
-#include <zt_bcast.h>
 
 #ifdef WITH_THREADS
 #include <zt_threads.h>
