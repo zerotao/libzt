@@ -48,6 +48,7 @@ extern int register_ipv4_tbl_suite(struct zt_unit *unit);
 extern int register_include_suite(struct zt_unit *unit);
 extern int register_daemon_suite(struct zt_unit *unit);
 extern int register_path_suite(struct zt_unit *unit);
+extern int register_base_suite(struct zt_unit *unit);
 
 
 int
@@ -90,6 +91,7 @@ main(int argc, char *argv[])
     /* register_ipv4_tbl_suite(unit); */
     register_daemon_suite(unit);
     register_path_suite(unit);
+    register_base_suite(unit);
 
     /*
      * register_adt_suite(unit);
