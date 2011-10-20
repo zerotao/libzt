@@ -9,7 +9,7 @@ put_header() {
     DN=`dirname $0`
 
 
-    if [ x"$header" != x"" -a -e $header ]; then
+    if [ x"$header" != x"" -a -e "$header" ]; then
         cat $header > $out
     else
         # check to see if you are using an explicit or implicit path
