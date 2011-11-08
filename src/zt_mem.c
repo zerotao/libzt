@@ -760,7 +760,6 @@ zt_mem_elt_list_display(int offset, zt_elist_t *head)
     }
 }
 
-/* static void */
 static void
 zt_mem_page_display(int offset, zt_mem_page *page)
 {
