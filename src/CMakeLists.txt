@@ -6,14 +6,14 @@ set(zt_LIB_SRCS zt_assert.c zt_cfg.c zt_format.c
                 zt_time.c zt_sha1.c zt_uuid.c zt_ipv4_tbl.c
                 zt_ez_mempool.c zt_atexit.c zt_daemon.c zt_threads.c
                 zt_threads/zt_threads_pthreads.c zt_opts.c zt_path.c
-                zt_base.c)
+                zt_base.c zt_buf.c)
 
 set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/zt_replace.h zt_assert.h zt_cfg.h
                 zt_format.h zt_log.h zt_mem.h zt_progname.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_ez_mempool.h zt_ipv4_tbl.h
                 zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h zt_path.h
-                zt_base.h)
+                zt_base.h zt_buf.h)
 
 set(adt_SRCS zt_array.c zt_bstream.c zt_hash.c zt_llist.c
              zt_ptr_array.c zt_set.c zt_table.c zt_tree.c)

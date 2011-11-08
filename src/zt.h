@@ -134,6 +134,7 @@ extern char *zt_strdup_p (const char *string);
 
 #include <zt_assert.h>
 #include <zt_atexit.h>
+#include <zt_buf.h>
 
 #ifndef WIN32
 # include <zt_daemon.h>
