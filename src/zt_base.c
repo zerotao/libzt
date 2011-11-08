@@ -269,7 +269,7 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
 }
 
 /*
- * decodes the base64 encoded data from void * in and writes the output to
+ * decodes the encoded data from void * in and writes the output to
  * the void ** out pointer. If *out is NULL and *out_bytes is 0, *out is
  * malloc'd and must be free()'d by the user.
 */
