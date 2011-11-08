@@ -49,7 +49,7 @@ zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void *out, 
 #define zt_base16_encode(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base16_encode_rfc, in, in_bytes, out, out_bytes)
 
-int zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out, size_t *out_bytes);
+int zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void **out, size_t *out_bytes);
 
 #define zt_base64_decode(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base64_rfc, in, in_bytes, out, out_bytes)

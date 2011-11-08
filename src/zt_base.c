@@ -268,12 +268,20 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
     return 0;
 }
 
+/*
+ * decodes the base64 encoded data from void * in and writes the output to
+ * the void ** out pointer. If *out is NULL and *out_bytes is 0, *out is
+ * malloc'd and must be free()'d by the user.
+*/
 int
-zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out, size_t *out_bytes) {
-    const unsigned char *inp = (unsigned char *)in;
-    unsigned char *outp = (unsigned char *)out;
-
-    int oval = 0;
+zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** out, size_t * out_bytes) {
+    const unsigned char * inp;
+    unsigned char       * outp;
+    unsigned char       * outp_top;
+    int                   oval   = 0;
+    size_t                used   = 0;
+    size_t                avail  = 0;
+    bool                  heaped = false;
 
     if (!_valid_dictionary_p(def)) {
         return -1;
@@ -288,35 +296,69 @@ zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
         return 0;
     }
 
-    if (!out || *out_bytes < in_bytes) {
+    if (out == NULL) {
         *out_bytes = in_bytes;
-        return !out ? 0 : -2;
+
+        return 0;
     }
+
+    if (*out != NULL && *out_bytes < in_bytes) {
+        *out_bytes = in_bytes;
+
+        return -2;
+    }
+
+    outp = *((unsigned char **)out);
+    inp  = (unsigned char *)in;
+
+    if ((outp == NULL && *out_bytes == 0)) {
+        /* dynamically allocate the buffer */
+        avail = in_bytes;
+
+        if (!(outp = zt_malloc(unsigned char, avail))) {
+            return -1;
+        }
+
+        heaped = true;
+    } else {
+        avail = *out_bytes;
+    }
+
+    outp_top = outp;
 
     /* perform decodeing */
     {
-        size_t        x;
-        size_t        i;
-        size_t        byte_count = 0;
-        uint8_t       ibits = (def->obits * def->ogroups) / def->igroups;
-        uint8_t       mask = MAKE_MASK(ibits);
-        _bits_t       bits = 0;
+        size_t  x;
+        size_t  i;
+        size_t  byte_count = 0;
+        uint8_t ibits      = (def->obits * def->ogroups) / def->igroups;
+        uint8_t mask       = MAKE_MASK(ibits);
+        _bits_t bits       = 0;
 
         *out_bytes = 0;
 
-        for(i=0; i < in_bytes; i++) {
+        for (i = 0; i < in_bytes; i++) {
             const ssize_t v = def->dictionary[*inp++];
 
             if (v >= 0) {
                 bits = bits << def->obits | v;
                 byte_count++;
                 /* if we have enough bytes to output */
-                if(byte_count == def->ogroups) {
-                    for(x=def->igroups; x > 0; x--) {
-                        outp[x-1] = bits & mask, bits >>= ibits;
-                        *out_bytes = *out_bytes + 1;
+                if (byte_count == def->ogroups) {
+                    for (x = def->igroups; x > 0; x--) {
+                        outp[x - 1] = bits & mask, bits >>= ibits;
+                        *out_bytes  = *out_bytes + 1;
+
+                        if (++used >= avail) {
+                            if (heaped == false) {
+                                return -2;
+                            }
+
+                            avail += 64;
+                            outp   = realloc(outp, avail);
+                        }
                     }
-                    outp += def->igroups;
+                    outp      += def->igroups;
                     byte_count = 0;
                 }
             } else if (v == -1) {
@@ -330,23 +372,34 @@ zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
         }
 
         if (!oval && byte_count > 0) {
-            for(x=byte_count; x < def->ogroups; x++) {
+            for (x = byte_count; x < def->ogroups; x++) {
                 bits = bits << def->obits;
                 byte_count++;
             }
 
-            for(x=def->igroups; x > 0; x--) {
+            for (x = def->igroups; x > 0; x--) {
                 if (bits & mask) {
-                    outp[x-1] = bits & mask;
-                    *out_bytes = *out_bytes + 1;
+                    outp[x - 1] = bits & mask;
+                    *out_bytes  = *out_bytes + 1;
+
+                    if (++used >= avail) {
+                        if (heaped == false) {
+                            return -2;
+                        }
+
+                        avail += 64;
+                        outp   = realloc(outp, avail);
+                    }
                 }
                 bits >>= ibits;
             }
+
             outp += def->igroups;
         }
     }
 
-    return oval;
-}
+    *out = (void *)outp_top;
 
+    return oval;
+} /* zt_base_decode */
 
