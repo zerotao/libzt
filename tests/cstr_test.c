@@ -111,6 +111,9 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
     ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "/baz/"), "/foo/bar/baz/") == 0); zt_free(free_me);
 
+    zt_cstr_dirname(dname, PATH_MAX, "foo");
+    ZT_UNIT_ASSERT(test, (!strcmp(dname, ".")));
+
 #else /* _WIN32 */
       /* reverse the mapping */
 

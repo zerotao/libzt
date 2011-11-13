@@ -646,7 +646,9 @@ zt_cstr_dirname(char *npath, size_t len, const char *path) {
     }
 
     if ((end = zt_cstr_rfind(path, 0, end, PATH_SEPERATOR)) == -1) {
-        end = -1;
+        /* there is no path seperator */
+        zt_cstr_copy(".", 0, -1, npath, len);
+        return npath;
     } else {
         end = end - 1;
     }
