@@ -16,6 +16,10 @@
 #include <zt.h>
 
 static char * argv[] = { "test_app", NULL };
+static char * argv_direct[] = { "./test_app", NULL };
+static char * argv_direct2[] = { "./bar/test_app", NULL };
+static char * argv_direct3[] = { "/foo/bar/test_app", NULL };
+static char * argv_relative[] = { "../foo/bar/test_app", NULL };
 
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)
@@ -25,6 +29,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char    * npath = NULL;
     /* char      nname[PATH_MAX+1]; */
     char      cwd[PATH_MAX+1];
+    char      dname[PATH_MAX+1];
 
     name = zt_progname(argv[0], 0);
     ZT_UNIT_ASSERT(test, (!strcmp(name, argv[0])));
@@ -43,7 +48,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     path = zt_progpath(NULL);
     ZT_UNIT_ASSERT(test, (!strcmp(path, "*UNKNOWN*")));
 
-    /* us the path that is already available */
+    /* use the path that is already available */
     path = zt_progpath(argv[0]);
     ZT_UNIT_ASSERT(test, strcmp(path, cwd) == 0);
 
@@ -71,6 +76,40 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     /* path = zt_progpath(""); */
     /* ZT_UNIT_ASSERT(test, strcmp(path, getenv("PWD")) == 0); */
 
+    /* test direct */
+    path = zt_progpath(argv_direct[0]);
+    ZT_UNIT_ASSERT(test, strcmp(path, cwd) == 0);
+
+    {
+        /* test ./ prefix paths */
+        npath = zt_cstr_path_append(cwd, &argv_direct2[0][2]);
+        zt_cstr_dirname(dname, PATH_MAX, npath);
+
+        path = zt_progpath(argv_direct2[0]);
+
+        ZT_UNIT_ASSERT(test, strcmp(path, dname) == 0);
+        zt_free(npath);
+    }
+
+    {
+        /* test / prefixed paths */
+        zt_cstr_dirname(dname, PATH_MAX, argv_direct3[0]);
+
+        path = zt_progpath(argv_direct3[0]);
+
+        ZT_UNIT_ASSERT(test, strcmp(path, dname) == 0);
+    }
+
+    {
+        /* test .. relative paths */
+        npath = zt_cstr_path_append(cwd, argv_relative[0]);
+        zt_cstr_dirname(dname, PATH_MAX, npath);
+
+        path = zt_progpath(argv_relative[0]);
+
+        ZT_UNIT_ASSERT(test, strcmp(path, dname) == 0);
+        zt_free(npath);
+    }
 }
 
 int
