@@ -59,20 +59,20 @@ local_error(int code, char * fmt, ...) {
 #define TEST_LONG_STRING "This is a really long string intended to overflow the screen and make things look all wack"
 static void
 basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
-    int               argc  = sizeof_array(s_argv) - 1; /* -1 for NULL */
+    int               argc = sizeof_array(s_argv) - 1;  /* -1 for NULL */
     int               nargc = argc;
     char           ** pargv;
     int               ret;
     char            * err;
 
     struct zt_opt_def options[] = {
-        { 'h',        "help",   zt_opt_help_stdout, "[options]",   "This help text"    },
-        { 'b',        "bool",   zt_opt_bool_int,    &bool_type,    "boolean_test"      },
-        { ZT_OPT_NSO, "string", zt_opt_string,      &str,          TEST_LONG_STRING    },
-        { 'f',        "func",   local_func,         &local_data,   "generic func test" },
-        { 'l',        "long",   zt_opt_long,        &long_integer, "long integer test" },
-        { ZT_OPT_NSO, "flag",   zt_opt_flag_int,    &flag,         "flag test"         },
-        { 'q',        "quite", zt_opt_flag_int,     &flag2,        "flag2 test"        },
+        { 'h',        "help",     zt_opt_help_stdout, "[options]",   "This help text"    },
+        { 'b',        "bool",     zt_opt_bool_int,    &bool_type,    "boolean_test"      },
+        { ZT_OPT_NSO, "string",   zt_opt_string,      &str,          TEST_LONG_STRING    },
+        { 'f',        "func",     local_func,         &local_data,   "generic func test" },
+        { 'l',        "long",     zt_opt_long,        &long_integer, "long integer test" },
+        { ZT_OPT_NSO, "flag",     zt_opt_flag_int,    &flag,         "flag test"         },
+        { 'q',        ZT_OPT_NLO, zt_opt_flag_int,    &flag2,        "flag2 test"        },
         { ZT_OPT_END() }
     };
 

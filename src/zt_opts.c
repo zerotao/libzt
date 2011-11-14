@@ -313,7 +313,8 @@ zt_opt_validate_default(zt_opt_def_t * args, zt_opt_error error) {
                 error(EINVAL, "Duplicate short options: #%d and #%d", i, x);
             }
 
-            if (args[x].lopt != ZT_OPT_NLO && (strcmp(args[x].lopt, args[i].lopt) == 0)) {
+            if (args[x].lopt != ZT_OPT_NLO && args[i].lopt != ZT_OPT_NLO &&
+                    (strcmp(args[x].lopt, args[i].lopt) == 0)) {
                 error(EINVAL, "Duplicate long options: #%d and #%d", i, x);
             }
         }
