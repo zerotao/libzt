@@ -49,8 +49,6 @@ include(CheckFunctionExists)
 
 include(CheckDefFunctionExists)
 
-check_def_function_exists( openlog HAVE_SYSLOG )
-
 check_def_function_exists( basename HAVE_BASENAME )
 check_def_function_exists( break HAVE_BREAK )
 check_def_function_exists( bzero HAVE_BZERO )
@@ -60,7 +58,12 @@ check_def_function_exists( strchr HAVE_STRCHR )
 check_def_function_exists( strrchr HAVE_STRRCHR )
 check_def_function_exists( strdup HAVE_STRDUP )
 check_def_function_exists( vsyslog HAVE_VSYSLOG )
+check_def_function_exists( openlog HAVE_OPENLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
+
+if(HAVE_VSYSLOG AND HAVE_OPENLOG)
+    add_definitions(-DHAVE_SYSLOG)
+endif()
 
 include(CheckDefSymbolExists)
 check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )

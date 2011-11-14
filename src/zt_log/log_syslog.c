@@ -12,9 +12,14 @@
  * Description:
  */
 
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
+
 #include "log_private.h"
 #include "log_syslog.h"
 
+#if HAVE_SYSLOG
 static void destructor(zt_log_ty *log)
 {
     closelog();
@@ -55,6 +60,7 @@ static void print(zt_log_ty *log UNUSED, zt_log_level level, char *fmt, va_list 
             syslog_level = LOG_ERR;
             break;
     } /* switch */
+
     vsyslog(syslog_level, fmt, ap);
 }
 
@@ -64,6 +70,7 @@ static zt_log_vtbl_ty vtbl = {
     destructor,
     print,
 };
+#endif /* HAVE_SYSLOG */
 
 zt_log_ty *
 zt_log_syslog(void)
@@ -74,13 +81,19 @@ zt_log_syslog(void)
 zt_log_ty *
 zt_log_syslog2(int opt, int facility)
 {
+#if HAVE_SYSLOG
     char *name = zt_progname(0, 0);
     int   sysopts = 0;
 
     if (opt & ZT_LOG_WITH_PID) {
         sysopts |= LOG_PID;
     }
-
     openlog(name ? name : "Set name with progname call", sysopts, facility);
     return zt_log_new(&vtbl, 0);
+#else
+    zt_log_ty * logger = zt_log_stderr(ZT_LOG_EMU_SYSLOG);
+
+    zt_log_printf(zt_log_crit, "Syslog not supported on this platform: falling back to zt_log_stderr");
+    return logger;
+#endif /* HAVE_SYSLOG */
 }
