@@ -351,8 +351,10 @@ zt_opt_process_args(int * argc, char ** argv, zt_opt_def_t * args, zt_opt_valida
             char       * p            = &argv[i][1];
             int          combined_opt = 0;
             int          found        = 0;
+            int          long_opt     = 0;
 
             if (*p == '-') { /* long opt */
+                long_opt = 1;
                 ++p;
                 for (len = 0; p[len] != '\0' && p[len] != '='; len++) {
                     ;
@@ -363,6 +365,8 @@ zt_opt_process_args(int * argc, char ** argv, zt_opt_def_t * args, zt_opt_valida
                 }
             }
 
+
+AGAIN:
             for (x = 0; args[x].cb; x++) {
                 if ((len == 0 && args[x].sopt != ZT_OPT_NSO && *p == args[x].sopt) || /* short opt */
                     /* long opt */
@@ -379,6 +383,15 @@ zt_opt_process_args(int * argc, char ** argv, zt_opt_def_t * args, zt_opt_valida
                     if (!combined_opt) {
                         i += ret;
                     }
+
+                    if(!ret && !long_opt && *(++p)) {
+                        /* if we did not consume extra args AND
+                         * we are a short option AND
+                         * there are more short options to consume
+                         */
+                        goto AGAIN;
+                    }
+
                     break;
                 }
             }

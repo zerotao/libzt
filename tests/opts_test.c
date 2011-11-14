@@ -25,6 +25,7 @@ long          long_integer = 0;
 char        * str          = 0;
 int           bool_type    = 0;
 int           flag         = 0;
+int           flag2        = 0;
 int           local_data   = 0;
 
 static char * s_argv[]     = {
@@ -33,6 +34,7 @@ static char * s_argv[]     = {
     "--bool=t",
     "--flag",
     "--string",    "hello",
+    "-qqq",
     "test_command",
     "--long",      "2",
     NULL
@@ -70,6 +72,7 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
         { 'f',        "func",   local_func,         &local_data,   "generic func test" },
         { 'l',        "long",   zt_opt_long,        &long_integer, "long integer test" },
         { ZT_OPT_NSO, "flag",   zt_opt_flag_int,    &flag,         "flag test"         },
+        { 'q',        "quite", zt_opt_flag_int,     &flag2,        "flag2 test"        },
         { ZT_OPT_END() }
     };
 
@@ -85,7 +88,8 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
 
     ZT_UNIT_ASSERT(test, ret == 0);
     ZT_UNIT_ASSERT(test, nargc < argc); /* stopped on "test_command" */
-    ZT_UNIT_ASSERT(test, nargc == 7);
+
+    ZT_UNIT_ASSERT(test, nargc == 8);
     ZT_UNIT_ASSERT(test, pargv[nargc] != NULL);
     ZT_UNIT_ASSERT(test, strcmp(pargv[nargc], "test_command") == 0);
 
@@ -93,6 +97,8 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
     ZT_UNIT_ASSERT(test, bool_type == 1);
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
     ZT_UNIT_ASSERT(test, flag == 1);
+
+    ZT_UNIT_ASSERT(test, flag2 == 3);
 
     /* reset for next argv */
     pargv = &pargv[nargc];
