@@ -41,11 +41,6 @@ if(WIN32)
 else(WIN32)
     LIST(APPEND zt_LIB_HDRS zt_unix.h)
 
-    if(NOT HAVE_SYSLOG)
-        LIST(REMOVE_ITEM log_SRCS zt_log/log_syslog.c)
-        LIST(REMOVE_ITEM log_HDRS zt_log/log_syslog.h)
-    endif(NOT HAVE_SYSLOG)
-
     if(NOT WITH_THREADS)
         LIST(REMOVE_ITEM zt_LIB_SRCS zt_threads.c zt_threads/zt_threads_pthreads.c)
         LIST(REMOVE_ITEM zt_LIB_HDRS zt_threads.h)
