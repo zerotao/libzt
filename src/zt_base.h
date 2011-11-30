@@ -32,7 +32,7 @@ extern zt_base_definition_t * zt_base32_hex; /* rfc 4648 HEX definition */
 
 extern zt_base_definition_t * zt_base16_rfc; /* rfc 3548/4648 definition */
 int
-zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void *out, size_t *out_bytes);
+zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void **out, size_t *out_bytes);
 
 #define zt_base64_encode(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base64_rfc, in, in_bytes, out, out_bytes)

@@ -175,13 +175,13 @@ _valid_dictionary_p(zt_base_definition_t * def) {
 
 #define MAKE_MASK(x) ((1<<x)-1)
 int
-zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out, size_t *out_bytes) {
+zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void **out, size_t *out_bytes) {
     size_t                ocount;
     size_t                lcount;
     size_t                mod;
     size_t                olen;
     const unsigned char * inp = in;
-    unsigned char       * outp = out;
+    unsigned char       * outp = out ? *(unsigned char **)out : NULL;
 
     if (! _valid_dictionary_p(def)) {
         return -1;
@@ -211,7 +211,11 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
         }
     }
 
-    //printf("%s\t(lcount:%ld mod:%ld ocount:%ld, pp:%ld)\n", inp, lcount, mod, ocount, mod ? (8 * mod) / def->obits : 0);
+    if (out && outp == NULL && *out_bytes == 0) {
+        outp = zt_calloc(unsigned char, ocount);
+        *out = (void *)outp;
+        *out_bytes = ocount;
+    }
 
     olen = *out_bytes;
     *out_bytes = ocount;
@@ -222,7 +226,7 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void *out
     }
 
     /* if there is no output then return just the size */
-    if (!out) {
+    if (!out || !outp) {
         return 0;
     }
 
