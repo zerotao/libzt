@@ -2,28 +2,30 @@
 #include <zt.h>
 
 #include <string.h>
+#include <ctype.h>
 #include <zt_base.h>
 
 #define test_encoding(_base, _data, _len, _result1, _result2)     \
     do { unsigned char * cdata = (unsigned char *)_data;          \
-         char            result[20];                              \
+         char          * result = malloc(20);                     \
          int             ret;                                     \
          size_t          len;                                     \
-         memset(result, 0, sizeof(result));                       \
-         len = sizeof(result);                                    \
+         void          **rptr = (void **)&result;                 \
+         memset(result, 0, 20);                                   \
+         len = 20;                                                \
          ZT_BIT_UNSET(_base->flags, zt_base_encode_with_padding); \
-         ret = zt_base_encode(_base, cdata, _len, result, &len);  \
+         ret = zt_base_encode(_base, cdata, _len, rptr, &len);  \
          ZT_UNIT_ASSERT(test, !ret);                              \
          ZT_UNIT_ASSERT(test, strcmp(result, _result1) == 0);     \
          ZT_UNIT_ASSERT(test, strlen(result) == len);             \
          ZT_BIT_SET(_base->flags, zt_base_encode_with_padding);   \
                                                                   \
-         memset(result, 0, sizeof(result));                       \
-         len = sizeof(result);                                    \
-         ret = zt_base_encode(_base, cdata, _len, result, &len);  \
+         memset(result, 0, 20);                                   \
+         len = 20;                                                \
+         ret = zt_base_encode(_base, cdata, _len, rptr, &len);    \
          ZT_UNIT_ASSERT(test, !ret);                              \
          ZT_UNIT_ASSERT(test, strcmp(result, _result2) == 0);     \
-         ZT_UNIT_ASSERT(test, strlen(result) == len); } while (0)
+         ZT_UNIT_ASSERT(test, strlen(result) == len); zt_free(result);} while (0)
 
 #define test_decoding(_base, _data, _len, _result1, _result2)                                  \
     do { char  * result = malloc(20);                                                          \
@@ -42,7 +44,7 @@
          ret = zt_base_decode(_base, _result2, strlen(_result2), rptr, &len);                  \
          ZT_UNIT_ASSERT(test, !ret);                                                           \
          ZT_UNIT_ASSERT(test, strcmp(result, (char *)_data) == 0);                             \
-         ZT_UNIT_ASSERT(test, strlen(result) == len); } while (0)
+         ZT_UNIT_ASSERT(test, strlen(result) == len); zt_free(result);} while (0)
 
 static void
 encoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
@@ -54,12 +56,12 @@ encoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     int    ret;
 
     memset(result, 0, 20);
-
+    void **rptr = (void **)&result;
     /* base 64 tests */
 
     /* check bad param, no out_len */
     data = "wee";
-    ret  = zt_base_encode(zt_base64_rfc, data, strlen(data), result, NULL);
+    ret  = zt_base_encode(zt_base64_rfc, data, strlen(data), rptr, NULL);
     ZT_UNIT_ASSERT(test, ret == -1);
 
     /* check null buff but valid bufsize */
@@ -69,19 +71,19 @@ encoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
 
     /* check insufficient output space */
     len  = 2;
-    ret  = zt_base_encode(zt_base64_rfc, data, strlen(data), result, &len);
+    ret  = zt_base_encode(zt_base64_rfc, data, strlen(data), rptr, &len);
     ZT_UNIT_ASSERT(test, ret == -2);
     ZT_UNIT_ASSERT(test, len == 4);
 
     /* check missing input */
     len  = OLEN;
-    ret  = zt_base_encode(zt_base64_rfc, NULL, 0, result, &len);
+    ret  = zt_base_encode(zt_base64_rfc, NULL, 0, rptr, &len);
     ZT_UNIT_ASSERT(test, ret == 0);
     ZT_UNIT_ASSERT(test, len == 0);
 
     /* check empty input */
     len  = OLEN;
-    ret  = zt_base_encode(zt_base64_rfc, "", 0, result, &len);
+    ret  = zt_base_encode(zt_base64_rfc, "", 0, rptr, &len);
     ZT_UNIT_ASSERT(test, ret == 0);
     ZT_UNIT_ASSERT(test, len == 0);
 
@@ -258,13 +260,45 @@ decoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     test_decoding(zt_base16_rfc, "foob", 4, "666F6F62", "666F6F62");
     test_decoding(zt_base16_rfc, "fooba", 5, "666F6F6261", "666F6F6261");
     test_decoding(zt_base16_rfc, "foobar", 6, "666F6F626172", "666F6F626172");
+
+    {
+        size_t    i;
+        char    * in = NULL;
+        size_t    len = 0;
+        char    * out = NULL;
+        size_t    olen = 0;
+        char    * enc = NULL;
+        size_t    elen = 0;
+
+        srandomdev();
+        while((len = random() % 1024) < 20);
+
+        in = zt_calloc(char, len);
+        /* out = zt_calloc(char, len); */
+
+        for(i=0; i < len; i++) {
+            char      k;
+
+            while((k = random()) && !isprint(k));
+
+            in[i] = k;
+        }
+
+        zt_base_encode(zt_base64_rfc, in, len, (void **)&enc, &elen);
+        zt_base_decode(zt_base64_rfc, enc, elen, (void **)&out, &olen);
+
+        if(len != olen ||
+           strcmp(in, out) != 0) {
+            ZT_UNIT_FAIL(test, "%s failed to encode/decode correctly %s:%d", in, __FILE__, __LINE__);
+        }
+    }
 } /* decoding_tests */
 
 int
 register_base_suite(struct zt_unit * unit) {
     struct zt_unit_suite * suite;
 
-    suite = zt_unit_register_suite(unit, "baseN encoding tests", NULL, NULL, NULL);
+    suite = zt_unit_register_suite(unit, "baseN enc/dec tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "encoding", encoding_tests);
     zt_unit_register_test(suite, "decoding", decoding_tests);
 
