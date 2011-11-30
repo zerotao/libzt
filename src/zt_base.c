@@ -355,7 +355,7 @@ zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** o
                             }
 
                             avail += 64;
-                            outp   = realloc(outp, avail);
+                            outp   = zt_realloc(unsigned char, outp, avail);
                         }
                     }
                     outp      += def->igroups;
@@ -388,7 +388,7 @@ zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** o
                         }
 
                         avail += 64;
-                        outp   = realloc(outp, avail);
+                        outp   = zt_realloc(unsigned char, outp, avail);
                     }
                 }
                 bits >>= ibits;
