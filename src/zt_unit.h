@@ -64,8 +64,16 @@ int zt_unit_printf(char **strp, const char *fmt, ...);
 #define ZT_UNIT_ASSERT_NOT_EQUAL(test, expr1, expr2) \
     ZT_UNIT_ASSERT(test, (expr1 != expr2))
 
-
 /* #define ZT_UNIT_ASSERT_RAISES(test, excpt, expr) */
+
+#define ZT_UNIT_SET_ERROR(test, fmt, ...) \
+    zt_unit_printf(&test->error, fmt, __VA_ARGS__)
+
+#define ZT_UNIT_FAIL(test, fmt, ...) \
+    ZT_UNIT_SET_ERROR(test, fmt, __VA_ARGS__), ZT_UNIT_EXIT(test)
+
+#define ZT_UNIT_EXIT(test) \
+    longjmp(test->env, 1)
 
 
 struct zt_unit *
