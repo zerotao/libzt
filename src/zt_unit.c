@@ -232,11 +232,19 @@ zt_unit_run_test(struct zt_unit         * unit UNUSED,
     if (suite->setup_fn) {
         suite->setup_fn(suite->data);
     }
+#ifdef __cplusplus
+    try {
+#else
     if(setjmp(test->env) == 0) {
+#endif
         test->test_fn(test, suite->data);
         test_passed(test);
     }
-
+#ifdef __cplusplus
+    catch (int i) {
+        /* ignore */
+    }
+#endif
     if (suite->teardown_fn) {
         suite->teardown_fn(suite->data);
     }

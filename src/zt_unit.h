@@ -46,6 +46,14 @@ struct zt_unit_test {
 
 int zt_unit_printf(char **strp, const char *fmt, ...);
 
+#ifdef __cplusplus
+# define ZT_UNIT_EXIT(test) \
+    throw (int)1
+#else
+# define ZT_UNIT_EXIT(test) \
+    longjmp(test->env, 1)
+#endif /* __cplusplus */
+
 #define ZT_UNIT_ASSERT(test, expr)                          \
     do {                                                    \
         if((expr)) {                                        \
@@ -54,7 +62,7 @@ int zt_unit_printf(char **strp, const char *fmt, ...);
             if(zt_unit_printf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__) == 0)  { \
                 test->error = NULL;                         \
             }                                               \
-            longjmp(test->env, 1);                          \
+            ZT_UNIT_EXIT(test);                             \
         }                                                   \
     } while(0)
 
@@ -71,9 +79,6 @@ int zt_unit_printf(char **strp, const char *fmt, ...);
 
 #define ZT_UNIT_FAIL(test, fmt, ...) \
     ZT_UNIT_SET_ERROR(test, fmt, __VA_ARGS__), ZT_UNIT_EXIT(test)
-
-#define ZT_UNIT_EXIT(test) \
-    longjmp(test->env, 1)
 
 
 struct zt_unit *
