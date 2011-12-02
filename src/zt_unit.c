@@ -64,11 +64,12 @@ zt_unit_release(struct zt_unit **unit)
 }
 
 struct zt_unit_suite *
-zt_unit_register_suite(struct zt_unit     * unit,
+zt_unit_register_suite_(struct zt_unit     * unit,
                        const char * name,
                        zt_unit_setup_fn setup_fn,
                        zt_unit_teardown_fn teardown_fn,
-                       void     * data )
+                       void     * data,
+                       zt_unit_try_fn try_fn)
 {
     size_t                    len;
     struct zt_unit_suite    * suite = zt_calloc(struct zt_unit_suite, 1);
@@ -78,6 +79,7 @@ zt_unit_register_suite(struct zt_unit     * unit,
     suite->name = zt_calloc(char, len + 1);
     strncpy(suite->name, name, len);
     suite->setup_fn = setup_fn;
+    suite->try_fn = try_fn;
     suite->teardown_fn = teardown_fn;
     suite->data = data;
     suite->succeeded = 0;
@@ -219,6 +221,16 @@ test_passed(struct zt_unit_test *test)
 }
 
 int
+zt_unit_try_c(struct zt_unit_suite * suite,
+                   struct zt_unit_test  * test) {
+    if (setjmp(test->env) == 0) {
+        test->test_fn(test, suite->data);
+        return 1;
+    }
+    return 0;
+}
+
+int
 zt_unit_run_test(struct zt_unit         * unit UNUSED,
                  struct zt_unit_suite   * suite,
                  struct zt_unit_test    * test)
@@ -232,19 +244,11 @@ zt_unit_run_test(struct zt_unit         * unit UNUSED,
     if (suite->setup_fn) {
         suite->setup_fn(suite->data);
     }
-#ifdef __cplusplus
-    try {
-#else
-    if(setjmp(test->env) == 0) {
-#endif
-        test->test_fn(test, suite->data);
+
+    if(suite->try_fn(suite, test)) {
         test_passed(test);
     }
-#ifdef __cplusplus
-    catch (int i) {
-        /* ignore */
-    }
-#endif
+
     if (suite->teardown_fn) {
         suite->teardown_fn(suite->data);
     }

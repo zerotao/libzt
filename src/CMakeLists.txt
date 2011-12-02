@@ -52,7 +52,7 @@ else(WIN32)
 endif(WIN32)
 
 # UNIT setup
-set(zt_unit_SRCS zt_unit.c zt_unit.h)
+set(zt_unit_SRCS zt_unit.c zt_unit.h zt_unit_cpp.cpp)
 
 # GC setup
 set(zt_gc_SRCS zt_gc.c zt_gc.h)
