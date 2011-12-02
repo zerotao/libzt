@@ -179,7 +179,7 @@ uuid_generic_tests(struct zt_unit_test * test, void * data UNUSED) {
 
     {
         int          i;
-        const char * cmp[] = {
+        char       * cmp[] = {
             "611e34722c264145a936a854984ea10c", "8kXjP4L7XohewIBQdYqnog",
             "e8a29b34d94a43288a380d795da3a277", "jYjjP0AIK5qbRJEaJQtHvh",
             "e40c0b36c5af463e8286a94686634e03", "jzT7BxJwiLAbcMN0MZJKi7",
