@@ -21,14 +21,15 @@
 #include <zt.h>
 #include <zt_opts.h>
 
-long          long_integer = 0;
-char        * str          = 0;
-int           bool_type    = 0;
-int           flag         = 0;
-int           flag2        = 0;
-int           local_data   = 0;
+long   long_integer  = 0;
+long   long_integer2 = 0;
+char * str           = 0;
+int    bool_type     = 0;
+int    flag          = 0;
+int    flag2         = 0;
+int    local_data    = 0;
 
-static char * s_argv[]     = {
+static char * s_argv[] = {
     "unit_test",
     "--long",      "1",
     "--bool=t",
@@ -36,7 +37,9 @@ static char * s_argv[]     = {
     "--string",    "hello",
     "-qqq",
     "test_command",
-    "--long",      "2",
+    "-l2",
+    "-L=4",
+    "-b",          "f",
     NULL
 };
 
@@ -66,13 +69,14 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
     char            * err;
 
     struct zt_opt_def options[] = {
-        { 'h',        "help",     zt_opt_help_stdout, "[options]",   "This help text"    },
-        { 'b',        "bool",     zt_opt_bool_int,    &bool_type,    "boolean_test"      },
-        { ZT_OPT_NSO, "string",   zt_opt_string,      &str,          TEST_LONG_STRING    },
-        { 'f',        "func",     local_func,         &local_data,   "generic func test" },
-        { 'l',        "long",     zt_opt_long,        &long_integer, "long integer test" },
-        { ZT_OPT_NSO, "flag",     zt_opt_flag_int,    &flag,         "flag test"         },
-        { 'q',        ZT_OPT_NLO, zt_opt_flag_int,    &flag2,        "flag2 test"        },
+        { 'h',        "help",     zt_opt_help_stdout, "[options]",    "This help text"     },
+        { 'b',        "bool",     zt_opt_bool_int,    &bool_type,     "boolean_test"       },
+        { ZT_OPT_NSO, "string",   zt_opt_string,      &str,           TEST_LONG_STRING     },
+        { 'f',        "func",     local_func,         &local_data,    "generic func test"  },
+        { 'l',        "long",     zt_opt_long,        &long_integer,  "long integer test"  },
+        { 'L',        "long2",    zt_opt_long,        &long_integer2, "long integer2 test" },
+        { ZT_OPT_NSO, "flag",     zt_opt_flag_int,    &flag,          "flag test"          },
+        { 'q',        ZT_OPT_NLO, zt_opt_flag_int,    &flag2,         "flag2 test"         },
         { ZT_OPT_END() }
     };
 
@@ -103,13 +107,15 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
     /* reset for next argv */
     pargv = &pargv[nargc];
     nargc = argc - nargc;
-    ZT_UNIT_ASSERT(test, nargc == 3);
+
+    ZT_UNIT_ASSERT(test, nargc == 5);
 
     ret = zt_opt_process_args(&nargc, pargv, options, NULL, NULL);
     ZT_UNIT_ASSERT(test, ret == 0);
-    ZT_UNIT_ASSERT(test, nargc == 3);
+    ZT_UNIT_ASSERT(test, nargc == 5);
     ZT_UNIT_ASSERT(test, long_integer == 2);
-    ZT_UNIT_ASSERT(test, bool_type == 1);
+    ZT_UNIT_ASSERT(test, long_integer2 == 4);
+    ZT_UNIT_ASSERT(test, bool_type == 0);
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
     ZT_UNIT_ASSERT(test, flag == 1);
 

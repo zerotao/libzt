@@ -85,15 +85,44 @@ zt_opt_error_default(int code, char * fmt, ...) {
 }
 
 char *
-zt_opt_get_value(int argn, char ** argv, zt_opt_error error) {
+zt_opt_get_value(int argn, int defn, char ** argv, zt_opt_def_t * def, int *args_consumed, zt_opt_error error) {
     char * p      = argv[argn];
-    char * result = argv[argn + 1];
+    char * pp     = NULL;
+    char * result = NULL;
+    char * lopt   = def[defn].lopt;
 
+    *args_consumed = 0;
+
+    /* skip past any leading '-' */
+    while(*p == '-') { p++; }
+
+    pp = p;
     do {
-        if (*p == '=') {
-            result = ++p;
+        if (*pp == '=') {
+            result = ++pp;
+            break;
         }
-    } while (*p++);
+    } while (*pp++);
+
+    if (!result) {
+        pp = p;
+        /* there was no '=' embedded
+         * try matching the long opt name
+         */
+        if (strcmp(lopt, pp) == 0) {
+            result = argv[argn + 1]; /* default to the next option */
+            *args_consumed = 1;
+        } else {
+            /* short opt */
+            pp++;
+            if(*pp) {
+                result = pp;
+            } else {
+                result = argv[argn + 1];
+                *args_consumed = 1;
+            }
+        }
+    }
 
     if (!result) {
         error(EINVAL, "while processing arg '%s'", argv[argn]);
@@ -112,7 +141,8 @@ int
 zt_opt_intmax(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
     intmax_t result;
     char   * end = NULL;
-    char   * arg = zt_opt_get_value(argn, argv, error);
+    int      args_consumed = 0;
+    char   * arg = zt_opt_get_value(argn, defn, argv, def, &args_consumed, error);
 
     errno  = 0;
     result = strtoimax(arg, &end, 0);
@@ -131,7 +161,7 @@ zt_opt_intmax(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, 
         *(intmax_t *)def[defn].cb_data = result;
     }
 
-    return 1;
+    return args_consumed;
 }
 
 #endif /* HAVE_INTTYPES_H */
@@ -140,7 +170,8 @@ int
 zt_opt_long(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
     long   result;
     char * end = NULL;
-    char * arg = zt_opt_get_value(argn, argv, error);
+    int    args_consumed = 0;
+    char * arg = zt_opt_get_value(argn, defn, argv, def, &args_consumed, error);
 
     errno  = 0;
     result = strtol(arg, &end, 0);
@@ -159,14 +190,15 @@ zt_opt_long(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt
         *(long *)def[defn].cb_data = result;
     }
 
-    return 1;
+    return args_consumed;
 }
 
 int
 zt_opt_bool_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
     int    result;
     size_t len;
-    char * arg = zt_opt_get_value(argn, argv, error);
+    int    args_consumed = 0;
+    char * arg = zt_opt_get_value(argn, defn, argv, def, &args_consumed, error);
 
     len = strlen(arg);
 
@@ -204,7 +236,7 @@ zt_opt_bool_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def
         *(int *)def[defn].cb_data = result;
     }
 
-    return 1;
+    return args_consumed;
 } /* zt_opt_bool_int */
 
 int
@@ -218,13 +250,14 @@ zt_opt_flag_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def
 
 int
 zt_opt_string(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
-    char * arg = zt_opt_get_value(argn, argv, error);
+    int    args_consumed = 0;
+    char * arg = zt_opt_get_value(argn, defn, argv, def, &args_consumed, error);
 
     if (arg) {
         *(char **)def[defn].cb_data = (void *)strdup(arg);
     }
 
-    return 1;
+    return args_consumed;
 }
 
 static int

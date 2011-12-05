@@ -48,7 +48,7 @@ int    zt_opt_string(int argn, int defn, int * argc, char ** argv, zt_opt_def_t 
 int    zt_opt_help_stdout(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
 int    zt_opt_usage(const char * name, const char * help, zt_opt_def_t * opts);
 
-char * zt_opt_get_value(int argn, char ** argv, zt_opt_error error);
+char * zt_opt_get_value(int argn, int defn, char ** argv, zt_opt_def_t * def, int * args_consumed, zt_opt_error error);
 
 void   zt_opt_validate_default(zt_opt_def_t * args, zt_opt_error error);
 char * zt_opt_error_str(int code, char * fmt, ...);
