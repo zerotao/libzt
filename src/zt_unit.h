@@ -43,14 +43,16 @@ struct zt_unit_test {
     int             success;
     char          * error;
     long            assertions;
+    long            exceptions;
     jmp_buf         env;
 };
 
 int zt_unit_printf(char **strp, const char *fmt, ...);
 
 #ifdef __cplusplus
+class zt_unit_exceptT {};
 # define ZT_UNIT_EXIT(test) \
-    throw (int)1
+    throw zt_unit_exceptT()
 #else
 # define ZT_UNIT_EXIT(test) \
     longjmp(test->env, 1)
@@ -140,6 +142,9 @@ int
 zt_unit_main(struct zt_unit    * unit,
              int argc,
              char    * argv[]);
+
+void
+zt_unit_test_add_exception(struct zt_unit_test *test);
 
 void
 zt_unit_test_add_assertion(struct zt_unit_test *test);

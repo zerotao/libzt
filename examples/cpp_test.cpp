@@ -3,21 +3,29 @@
 #include <iostream>
 
 extern void
-test_fn(struct zt_unit_test *test, void * data UNUSED) {
-    ZT_UNIT_ASSERT(test, 1 == 2);
+test_fn(struct zt_unit_test * test, void * data UNUSED) {
+    ZT_UNIT_ASSERT(test, 1 == 1); /* will pass */
+    throw("Hi there!");
+    ZT_UNIT_ASSERT(test, 1 == 1); /* will pass */
+}
+
+extern void
+test2_fn(struct zt_unit_test * test, void * data UNUSED) {
+    ZT_UNIT_ASSERT(test, 1 == 1); /* will pass */
 }
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char ** argv) {
     struct zt_unit       * unit;
     struct zt_unit_suite * suite;
     struct zt_unit_test  * test;
+    struct zt_unit_test  * test2;
     int                    result;
 
-    unit = zt_unit_init();
-    suite = zt_unit_register_suite(unit, "unit test suite", NULL, NULL, NULL);
-    test = zt_unit_register_test(suite, "unit test", test_fn);
+    unit   = zt_unit_init();
+    suite  = zt_unit_register_suite(unit, "cpp test suite", NULL, NULL, NULL);
+    test   = zt_unit_register_test(suite, "cpp test 1", test_fn);
+    test2  = zt_unit_register_test(suite, "cpp test 2", test2_fn);
 
     result = zt_unit_main(unit, argc, argv);
     zt_unit_release(&unit);

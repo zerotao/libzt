@@ -28,6 +28,11 @@ int zt_unit_printf(char **strp, const char *fmt, ...) {
 }
 
 void
+zt_unit_test_add_exception(struct zt_unit_test *test) {
+    test->exceptions++;
+}
+
+void
 zt_unit_test_add_assertion(struct zt_unit_test *test)
 {
     test->assertions++;
@@ -252,7 +257,12 @@ zt_unit_run_test(struct zt_unit         * unit UNUSED,
     if (suite->teardown_fn) {
         suite->teardown_fn(suite->data);
     }
+
     yaml_value("assertions", 6, "%ld", test->assertions);
+    if (test->exceptions) {
+        yaml_value("unhandled_exceptions", 6, "%ld", test->exceptions);
+    }
+
     yaml_value("result", 6, "%s", test->success == TRUE ? "success" : "failure");
 
     return test->success;
