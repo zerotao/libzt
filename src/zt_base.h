@@ -52,19 +52,19 @@ zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void **out,
 int zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void **out, size_t *out_bytes);
 
 #define zt_base64_decode(in, in_bytes, out, out_bytes) \
-    zt_base_encode(zt_base64_rfc, in, in_bytes, out, out_bytes)
+    zt_base_decode(zt_base64_rfc, in, in_bytes, out, out_bytes)
 
 #define zt_base64_decode_uri(in, in_bytes, out, out_bytes) \
-    zt_base_encode(zt_base64_encode_uri, in, in_bytes, out, out_bytes)
+    zt_base_decode(zt_base64_encode_uri, in, in_bytes, out, out_bytes)
 
 #define zt_base32_decode(in, in_bytes, out, out_bytes) \
-    zt_base_encode(zt_base32_encode_rfc, in, in_bytes, out, out_bytes)
+    zt_base_decode(zt_base32_encode_rfc, in, in_bytes, out, out_bytes)
 
 #define zt_base32_decode_hex(in, in_bytes, out, out_bytes) \
-    zt_base_encode(zt_base32_encode_hex, in, in_bytes, out, out_bytes)
+    zt_base_decode(zt_base32_encode_hex, in, in_bytes, out, out_bytes)
 
 #define zt_base16_decode(in, in_bytes, out, out_bytes) \
-    zt_base_encode(zt_base16_encode_rfc, in, in_bytes, out, out_bytes)
+    zt_base_decode(zt_base16_encode_rfc, in, in_bytes, out, out_bytes)
 
 
 END_C_DECLS

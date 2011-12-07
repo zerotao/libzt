@@ -235,37 +235,57 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void **ou
         _bits_t               bits;
         uint8_t               mask = MAKE_MASK(def->obits);
         size_t                i;
+        const char *          alphabet = def->alphabet;
+        uint8_t               igroups = def->igroups;
+        uint8_t               ogroups = def->ogroups;
+        uint8_t               obits = def->obits;
 
         for (i=0; i < lcount; i++) {
-            size_t                x;
 
-            bits = inp[0];
-            for(x=1; x < def->igroups; x++) {
-                bits = bits << 8 | inp[x];
+            bits = *inp++;
+            switch(igroups) {
+                case 8:  bits = bits << 8 | *inp++;
+                case 7:  bits = bits << 8 | *inp++;
+                case 6:  bits = bits << 8 | *inp++;
+                case 5:  bits = bits << 8 | *inp++;
+                case 4:  bits = bits << 8 | *inp++;
+                case 3:  bits = bits << 8 | *inp++;
+                case 2:  bits = bits << 8 | *inp++;
+                         break;
+                case 1: /* there is no spoon */
+                         break;
+                default: /* error */
+                         break;
             }
 
-            for (x=def->ogroups; x > 0; x--) {
-                outp[x-1] = def->alphabet[ bits & mask ], bits >>= def->obits;
+            switch(ogroups) {
+                case 8: outp[7] = alphabet[bits & mask], bits >>= obits;
+                case 7: outp[6] = alphabet[bits & mask], bits >>= obits;
+                case 6: outp[5] = alphabet[bits & mask], bits >>= obits;
+                case 5: outp[4] = alphabet[bits & mask], bits >>= obits;
+                case 4: outp[3] = alphabet[bits & mask], bits >>= obits;
+                case 3: outp[2] = alphabet[bits & mask], bits >>= obits;
+                case 2: outp[1] = alphabet[bits & mask], bits >>= obits;
+                case 1: outp[0] = alphabet[bits & mask];
+                        break;
             }
-
-            inp += def->igroups;
-            outp += def->ogroups;
+            outp += ogroups;
         }
 
         if (mod > 0) {
             bits = inp[0];
-            for(i=1; i < def->igroups; i++) {
+            for(i=1; i < igroups; i++) {
                 bits = bits << 8 | ((mod > i) ? inp[i] : 0);
             }
-            for (i=def->ogroups; i > 0; i--) {
+            for (i=ogroups; i > 0; i--) {
                 if (mod >= i-1) {
-                    outp[i-1] = def->alphabet[ bits & mask ];
+                    outp[i-1] = alphabet[ bits & mask ];
                 } else {
                     if (ZT_BIT_ISSET(def->flags, zt_base_encode_with_padding)) {
                         outp[i-1] = def->pad;
                     }
                 }
-                bits >>= def->obits;
+                bits >>= obits;
             }
         }
     }
@@ -275,17 +295,19 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void **ou
 /*
  * decodes the encoded data from void * in and writes the output to
  * the void ** out pointer. If *out is NULL and *out_bytes is 0, *out is
- * malloc'd and must be free()'d by the user.
+ * calloc'd and must be free()'d by the user.
 */
 int
 zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** out, size_t * out_bytes) {
     const unsigned char * inp;
     unsigned char       * outp;
-    unsigned char       * outp_top;
     int                   oval   = 0;
-    size_t                used   = 0;
-    size_t                avail  = 0;
-    bool                  heaped = false;
+    /* size_t                used   = 0; */
+    /* size_t                avail  = 0; */
+    /* bool                  heaped = false; */
+    size_t                lcount = 0;
+    size_t                ocount = 0;
+    size_t                mod = 0;
 
     if (!_valid_dictionary_p(def)) {
         return -1;
@@ -300,109 +322,115 @@ zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** o
         return 0;
     }
 
-    if (out == NULL) {
-        *out_bytes = in_bytes;
+    inp  = (unsigned char *)in;
 
+    ssize_t i;
+    /* strip any follow on pad chars */
+    for (i=in_bytes-1; i > 0; i--) {
+        if (inp[i] != def->pad) {
+            i = in_bytes - 1 - i;
+            break;
+        }
+    }
+    lcount = (in_bytes-i) / def->ogroups; /* number of whole input groups */
+    mod = ((in_bytes-i) % def->ogroups); /* partial inputs */
+    ocount = (lcount * def->igroups) + mod; /* total output bytes */
+
+    if (out == NULL) {
+        *out_bytes = ocount;
         return 0;
     }
 
-    if (*out != NULL && *out_bytes < in_bytes) {
-        *out_bytes = in_bytes;
-
+    if (*out != NULL && *out_bytes < ocount) {
+        *out_bytes = ocount;
         return -2;
     }
 
     outp = *((unsigned char **)out);
-    inp  = (unsigned char *)in;
 
     if ((outp == NULL && *out_bytes == 0)) {
         /* dynamically allocate the buffer */
-        avail = in_bytes;
-
-        if (!(outp = zt_malloc(unsigned char, avail))) {
+        if (!(outp = zt_calloc(unsigned char, ocount+1))) {
             return -1;
         }
 
-        heaped = true;
-    } else {
-        avail = *out_bytes;
+        *out = outp;
+        *out_bytes = ocount;
     }
 
-    outp_top = outp;
-
-    /* perform decodeing */
     {
-        size_t  x;
-        size_t  i;
-        size_t  byte_count = 0;
-        uint8_t ibits      = (def->obits * def->ogroups) / def->igroups;
-        uint8_t mask       = MAKE_MASK(ibits);
-        _bits_t bits       = 0;
+        /* perform decoding */
+        size_t        i;
+        _bits_t       bits;
+        const char  * dictionary = def->dictionary;
+        uint8_t       obits = def->obits;
+        uint8_t       ogroups = def->ogroups;
+        uint8_t       igroups = def->igroups;
+        uint8_t       ibits = (obits * ogroups) / igroups;
+        uint8_t       mask = MAKE_MASK(ibits);
+        size_t        bytes = 0;
+        uint8_t       fault_on_error = !ZT_BIT_ISSET(def->flags, zt_base_ignore_non_encoded_data);
 
-        *out_bytes = 0;
+        for (i=0; i < lcount; i++) {
 
-        for (i = 0; i < in_bytes; i++) {
-            const ssize_t v = def->dictionary[*inp++];
+            /* bits = dictionary[*inp++]; */
+            /* for(i=1; i < ogroups; i++) { */
+                /* bits = bits << obits | dictionary[*inp++]; */
+            /* } */
 
-            if (v >= 0) {
-                bits = bits << def->obits | v;
-                byte_count++;
-                /* if we have enough bytes to output */
-                if (byte_count == def->ogroups) {
-                    for (x = def->igroups; x > 0; x--) {
-                        outp[x - 1] = bits & mask, bits >>= ibits;
-                        *out_bytes  = *out_bytes + 1;
-
-                        if (++used >= avail) {
-                            if (heaped == false) {
-                                return -2;
-                            }
-
-                            avail += 64;
-                            outp   = zt_realloc(unsigned char, outp, avail);
-                        }
-                    }
-                    outp      += def->igroups;
-                    byte_count = 0;
-                }
-            } else if (v == -1) {
-                /* invalid byte */
-                if (!ZT_BIT_ISSET(def->flags, zt_base_ignore_non_encoded_data)) {
-                    return -1;
-                }
-            } else {
-                /* ignored byte */
+            ssize_t  v;
+            v = dictionary[*inp++]; if (v >= 0) { bits = v; } else if(fault_on_error) { return -1; }
+            switch(ogroups) {
+                case 8: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 7: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 6: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 5: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 4: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 3: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                case 2: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
+                        break;
+                case 1: /* there is no spoon */
+                        break;
             }
+
+            switch(igroups) {
+                case 8: outp[7] = bits & mask, bits >>= ibits;
+                case 7: outp[6] = bits & mask, bits >>= ibits;
+                case 6: outp[5] = bits & mask, bits >>= ibits;
+                case 5: outp[4] = bits & mask, bits >>= ibits;
+                case 4: outp[3] = bits & mask, bits >>= ibits;
+                case 3: outp[2] = bits & mask, bits >>= ibits;
+                case 2: outp[1] = bits & mask, bits >>= ibits;
+                case 1: outp[0] = bits & mask;
+                        break;
+            }
+            outp += igroups;
+            bytes += igroups;
+            /* *out_bytes += igroups; */
         }
 
-        if (!oval && byte_count > 0) {
-            for (x = byte_count; x < def->ogroups; x++) {
-                bits = bits << def->obits;
-                byte_count++;
+
+        /* now handle partials */
+        if (mod > 0) {
+            bits = dictionary[*inp++];
+            for(i=1; i < ogroups; i++) {
+                bits = bits << obits | ((mod > i) ? dictionary[*inp++] : 0);
             }
 
-            for (x = def->igroups; x > 0; x--) {
-                if (bits & mask) {
-                    outp[x - 1] = bits & mask;
-                    *out_bytes  = *out_bytes + 1;
-
-                    if (++used >= avail) {
-                        if (heaped == false) {
-                            return -2;
-                        }
-
-                        avail += 64;
-                        outp   = zt_realloc(unsigned char, outp, avail);
+            for(i=igroups; i > 0; i--) {
+                if (mod >= i-1) {
+                    if (bits & mask) {
+                        outp[i-1] = bits & mask;
+                        bytes += 1;
                     }
+                } else {
+                    outp[i-1] = 0;
                 }
                 bits >>= ibits;
             }
-
-            outp += def->igroups;
         }
+        *out_bytes = bytes;
     }
-
-    *out = (void *)outp_top;
 
     return oval;
 } /* zt_base_decode */
