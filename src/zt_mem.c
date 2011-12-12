@@ -658,7 +658,9 @@ zt_mem_strdup(char *str)
 
     if (str) {
         size_t len = strlen(str);
-        tmp = GLOBAL_zmt.alloc(len + 1 * sizeof(char));
+        if((tmp = GLOBAL_zmt.alloc(len + 1 * sizeof(char))) == NULL) {
+            return NULL;
+        }
         memcpy(tmp, str, len);
         tmp[len] = '\0';
     }
@@ -758,7 +760,6 @@ zt_mem_elt_list_display(int offset, zt_elist_t *head)
     }
 }
 
-/* static void */
 static void
 zt_mem_page_display(int offset, zt_mem_page *page)
 {

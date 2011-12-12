@@ -133,7 +133,7 @@ zt_threads_cond_alloc(int type) {
 void
 zt_threads_cond_free(zt_threads_cond *cond) {
     if (_zt_threads_cond_cbs.free) {
-        return _zt_threads_cond_cbs.free(cond);
+        _zt_threads_cond_cbs.free(cond);
     }
 }
 
@@ -167,7 +167,7 @@ zt_threads_start(zt_threads_thread *thread, zt_threads_cond *attr, void * (*cb)(
 void
 zt_threads_end(void *args) {
     if (_zt_threads_cntrl_cbs.end) {
-        return _zt_threads_cntrl_cbs.end(args);
+        _zt_threads_cntrl_cbs.end(args);
     }
 }
 

@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(libzt)
-set(PROJECT_VERSION 1.1.0)
+set(PROJECT_VERSION 1.3.0)
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
-message("MODULE_PATH ${CMAKE_MODULE_PATH}")
-
 ############################################################
 
 ########## Check for System Packages known by CMAKE ##########
@@ -43,14 +41,13 @@ check_def_include_files( sys/wait.h HAVE_SYS_WAIT_H )
 check_def_include_files( unistd.h HAVE_UNISTD_H )
 check_def_include_files( libgen.h HAVE_LIBGEN_H )
 check_def_include_files( ctype.h HAVE_CTYPE_H )
+check_def_include_files( errno.h HAVE_ERRNO_H )
 
 ################## Check for System Functions ##################
 include(CheckFunctionExists)
 # usage: CHECK_FUNCTION_EXISTS(function variable)
 
 include(CheckDefFunctionExists)
-
-check_def_function_exists( openlog HAVE_SYSLOG )
 
 check_def_function_exists( basename HAVE_BASENAME )
 check_def_function_exists( break HAVE_BREAK )
@@ -61,7 +58,12 @@ check_def_function_exists( strchr HAVE_STRCHR )
 check_def_function_exists( strrchr HAVE_STRRCHR )
 check_def_function_exists( strdup HAVE_STRDUP )
 check_def_function_exists( vsyslog HAVE_VSYSLOG )
+check_def_function_exists( openlog HAVE_OPENLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
+
+if(HAVE_VSYSLOG AND HAVE_OPENLOG)
+    add_definitions(-DHAVE_SYSLOG)
+endif()
 
 include(CheckDefSymbolExists)
 check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
@@ -73,7 +75,10 @@ check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
 include(CheckSymbolExists)
 # usage: CHECK_SYMBOL_EXISTS(symbol headers variable)
 
-################## Check for System Types ##################
+################## Check for System Attributes ##################
+include(TestBigEndian)
+test_big_endian(HOST_BIGENDIAN)
+
 include(CheckTypeSize)
 # SET(CMAKE_EXTRA_INCLUDE_FILES header)
 # CHECK_TYPE_SIZE(type variable)
@@ -100,7 +105,14 @@ endif(HAVE_LONG_DOUBLE)
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src
                     ${CMAKE_CURRENT_SOURCE_DIR}/src
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/adt)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/adt
+                    ${CMAKE_CURRENT_SOURCE_DIR}/compat)
+
+if(WIN32)
+    # try to find requirements in the install directory as well
+    include_directories(${CMAKE_INSTALL_PREFIX}/include
+                        ${CMAKE_INSTALL_PREFIX})
+endif(WIN32)
 
 configure_file(config.h.cmake src/config.h)
 

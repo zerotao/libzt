@@ -6,8 +6,8 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    SET(RSN_BASE_C_FLAGS "-std=c99 -Wall") # -Wextra")   #-pedantic
-    SET(RSN_BASE_CXX_FLAGS "-Wall") # -Wextra")
+    SET(RSN_BASE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wno-unused-parameter")
+    SET(RSN_BASE_CXX_FLAGS "-Wall")
 
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${RSN_BASE_C_FLAGS} -DLUA_USE_MKSTEMP")
     SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${RSN_BASE_C_FLAGS}")
@@ -27,7 +27,12 @@ if(CMAKE_COMPILER_IS_GNUCC)
         if(APPLE)
             set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wshorten-64-to-32 -D_BSD_SOURCE")
         endif(APPLE)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+
+        if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GNU_SOURCE")
+        endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     endif(UNIX)
 
     if (${CMAKE_BUILD_TYPE} STREQUAL Debug)

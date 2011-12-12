@@ -19,125 +19,117 @@
 
 #define ZT_WITH_UNIT
 #include <zt.h>
+#include <zt_opts.h>
 
-int   integer = 0;
-long  long_integer = 0;
-char *str = 0;
-int   boolean = 0;
-int   flag = 0;
+long   long_integer  = 0;
+long   long_integer2 = 0;
+char * str           = 0;
+int    bool_type     = 0;
+int    flag          = 0;
+int    flag2         = 0;
+int    local_data    = 0;
 
-int
-func(char *arg UNUSED, void * data UNUSED)
-{
-    printf("func\n");
-    return EXIT_SUCCESS;
+static char * s_argv[] = {
+    "unit_test",
+    "--long",      "1",
+    "--bool=t",
+    "--flag",
+    "--string",    "hello",
+    "-qqq",
+    "test_command",
+    "-l2",
+    "-L=4",
+    "-b",          "f",
+    NULL
+};
+
+static int
+local_func(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
+    return 0; /* return # of args consumed */
 }
 
 int
-ofunc(char *arg, void * data UNUSED)
-{
-    printf("ofunc %s\n", arg);
-    return EXIT_SUCCESS;
+local_error(int code, char * fmt, ...) {
+    /* we could capture any errors here
+     * instead we will fail explicitly if
+     * we get any.
+     */
+
+    /* ZT_UNIT_ASSERT(test, 0 == 1); */
+    return 0;
 }
 
-int
-rfunc(char * arg, void * data UNUSED)
-{
-    printf("rfunc %s\n", arg);
-    return EXIT_SUCCESS;
-}
-
-#ifdef HAVE_GETOPT_LONG
-static char *s_argv[] = { "unit_test",
-                          "--int", "1",
-                          "--long", "1",
-                          "--bool=t",
-                          "--string", "hello",
-                          "--flag",
-                          "test_command",
-                          "--int", "2",
-                          NULL };
-#else
-static char *s_argv[] = { "unit_test",
-                          "-i", "1",
-                          "-l", "1",
-                          "-b", "t",
-                          "test_command",
-                          "-i", "2",
-                          NULL };
-#endif
-
+#define TEST_LONG_STRING "This is a really long string intended to overflow the screen and make things look all wack"
 static void
-basic_opts_tests(struct zt_unit_test *test, void *data UNUSED) {
-    int    argc = sizeof_array(s_argv) - 1;             /* -1 for NULL */
-    char **argv;
-    char **pargv;
-    int    i;
+basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
+    int               argc = sizeof_array(s_argv) - 1;  /* -1 for NULL */
+    int               nargc = argc;
+    char           ** pargv;
+    int               ret;
+    char            * err;
 
-#define TEST_LONG_STRING "This is a test of a very long string\n\t\tIt is intended to wrap around a\n\t\tcouple of times."
-    struct zt_opt_args options[] = {
-        { 'h',        "help",   "This help text",    zt_opt_help,   NULL,          NULL,  NULL                 },
-        { 'l',        "long",   "long integer test", zt_opt_long,   &long_integer, NULL,  NULL                 },
-        { 'i',        "int",    "integer test",      zt_opt_int,    &integer,      NULL,  NULL                 },
-        { 'b',        "bool",   "boolean test",      zt_opt_bool,   &boolean,      NULL,  NULL                 },
-#ifdef HAVE_GETOPT_LONG
-        { ZT_OPT_NSO, "string", TEST_LONG_STRING,    zt_opt_string, &str,          NULL,  "-s \"Some String\"" },
-#endif /* HAVE_GETOPT_LONG */
-        { 'f',        "func",   "func test",         zt_opt_func,   NULL,          func,  NULL                 },
-        { 'o',        "ofunc",  "ofunc test",        zt_opt_ofunc,  NULL,          ofunc, NULL                 },
-        { 'r',        "rfunc",  "rfunc test",        zt_opt_rfunc,  NULL,          rfunc, NULL                 },
-#ifdef HAVE_GETOPT_LONG
-        { ZT_OPT_NSO, "flag",   "flag test",         zt_opt_flag,   &flag,         NULL,  NULL                 },
-#endif /* HAVE_GETOPT_LONG */
-        { 0,          0,        0,                   0,             0,             0,     0                    }
+    struct zt_opt_def options[] = {
+        { 'h',        "help",     zt_opt_help_stdout, "[options]",    "This help text"     },
+        { 'b',        "bool",     zt_opt_bool_int,    &bool_type,     "boolean_test"       },
+        { ZT_OPT_NSO, "string",   zt_opt_string,      &str,           TEST_LONG_STRING     },
+        { 'f',        "func",     local_func,         &local_data,    "generic func test"  },
+        { 'l',        "long",     zt_opt_long,        &long_integer,  "long integer test"  },
+        { 'L',        "long2",    zt_opt_long,        &long_integer2, "long integer2 test" },
+        { ZT_OPT_NSO, "flag",     zt_opt_flag_int,    &flag,          "flag test"          },
+        { 'q',        ZT_OPT_NLO, zt_opt_flag_int,    &flag2,         "flag2 test"         },
+        { ZT_OPT_END() }
     };
 
-    struct zt_opt_args options2[] = {
-        { 'h', "help", "This help text", zt_opt_help, NULL,     NULL, NULL },
-        { 'i', "int",  "integer test",   zt_opt_int,  &integer, NULL, NULL },
-        { 0,   0,      0,                0,           0,        0,    0    }
-    };
+    pargv = s_argv;
 
-    argv = zt_calloc(char *, argc + 1);
-    for (i = 0; i < argc; i++) {
-        argv[i] = s_argv[i];
-    }
 
-    pargv = argv;
+    err = zt_opt_error_str(22, "test");
 
-    zt_opts_process(&argc, &pargv, options, "[options]", TRUE, TRUE, NULL);
-    ZT_UNIT_ASSERT(test, integer == 1);
+    /* printf("%s\n", err); */
+    ZT_UNIT_ASSERT(test, strcmp("error: { code: 22, string: \"Invalid argument: test\" }", err) == 0);
+
+    ret = zt_opt_process_args(&nargc, pargv, options, NULL, local_error);
+
+    ZT_UNIT_ASSERT(test, ret == 0);
+    ZT_UNIT_ASSERT(test, nargc < argc); /* stopped on "test_command" */
+
+    ZT_UNIT_ASSERT(test, nargc == 8);
+    ZT_UNIT_ASSERT(test, pargv[nargc] != NULL);
+    ZT_UNIT_ASSERT(test, strcmp(pargv[nargc], "test_command") == 0);
+
     ZT_UNIT_ASSERT(test, long_integer == 1);
-    ZT_UNIT_ASSERT(test, boolean == 1);
-
-#ifdef HAVE_GETOPT_LONG
+    ZT_UNIT_ASSERT(test, bool_type == 1);
     ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
     ZT_UNIT_ASSERT(test, flag == 1);
-#endif
 
-    ZT_UNIT_ASSERT(test, argc == 3);
-    ZT_UNIT_ASSERT(test, pargv[0] != NULL);
-    ZT_UNIT_ASSERT(test, strcmp(pargv[0], "test_command") == 0);
+    ZT_UNIT_ASSERT(test, flag2 == 3);
 
-    zt_opts_process(&argc, &pargv, options2, "[options]", TRUE, TRUE, NULL);
-    ZT_UNIT_ASSERT(test, integer == 2);
-    ZT_UNIT_ASSERT(test, long_integer == 1);
-    ZT_UNIT_ASSERT(test, argc == 0);
+    /* reset for next argv */
+    pargv = &pargv[nargc];
+    nargc = argc - nargc;
 
-    zt_free(argv);
+    ZT_UNIT_ASSERT(test, nargc == 5);
+
+    ret = zt_opt_process_args(&nargc, pargv, options, NULL, NULL);
+    ZT_UNIT_ASSERT(test, ret == 0);
+    ZT_UNIT_ASSERT(test, nargc == 5);
+    ZT_UNIT_ASSERT(test, long_integer == 2);
+    ZT_UNIT_ASSERT(test, long_integer2 == 4);
+    ZT_UNIT_ASSERT(test, bool_type == 0);
+    ZT_UNIT_ASSERT(test, str != 0 && strcmp(str, "hello") == 0);
+    ZT_UNIT_ASSERT(test, flag == 1);
 
     if (str) {
         zt_free(str);
     }
 } /* basic_opts_tests */
 
-
 int
-register_opts_suite(struct zt_unit *unit)
-{
+register_opts_suite(struct zt_unit * unit) {
     struct zt_unit_suite * suite;
 
     suite = zt_unit_register_suite(unit, "option parsing tests", NULL, NULL, NULL);
     zt_unit_register_test(suite, "basic", basic_opts_tests);
     return 0;
 }
+

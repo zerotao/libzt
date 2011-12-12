@@ -3,18 +3,7 @@
 
 #cmakedefine LIBZT_COVERAGE_TESTING /* undefined */
 #cmakedefine PTHREAD_CREATE_JOINABLE /* undefined */
-
-#if !defined(__APPLE__)
 #cmakedefine01 HOST_BIGENDIAN
-#else
-#  if defined(__BIG_ENDIAN__)
-#    define HOST_BIGENDIAN 1
-#  elif  defined (__LITTLE_ENDIAN__)
-#    define HOST_BIGENDIAN 0
-#  else
-#    error "Unknown HOST_BIGENDIAN!"
-#  endif
-#endif
 
 /********************* types *********************/
 #cmakedefine HAVE_UINT64_T

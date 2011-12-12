@@ -15,10 +15,6 @@
 #ifndef _LOG_SYSLOG_H_
 #define _LOG_SYSLOG_H_
 
-#ifdef HAVE_SYSLOG_H
-#include <syslog.h>
-#endif
-
 #include <zt_log.h>
 
 #ifdef __cplusplus

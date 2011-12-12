@@ -2,9 +2,10 @@
 #define _ZT_H_
 
 #ifndef WIN32
-#include <stdbool.h>
+# include <stdbool.h>
 #else
 # define _GNU_SOURCE
+#include <zt_win32.h>
 #endif /* WIN32 */
 
 #include <stdio.h>
@@ -133,6 +134,7 @@ extern char *zt_strdup_p (const char *string);
 
 #include <zt_assert.h>
 #include <zt_atexit.h>
+#include <zt_buf.h>
 
 #ifndef WIN32
 # include <zt_daemon.h>
@@ -148,6 +150,7 @@ extern char *zt_strdup_p (const char *string);
 #include <zt_mem.h>
 #include <zt_format.h>
 #include <zt_int.h>
+#include <zt_base.h>
 
 #ifdef WITH_THREADS
 #include <zt_threads.h>
@@ -172,6 +175,7 @@ extern char *zt_strdup_p (const char *string);
 #include <zt_ipv4_tbl.h> /* needs zt_table.h */
 
 #include <zt_macros.h>
+#include <zt_path.h>
 
 #ifdef ZT_WITH_GC
 #include <zt_gc.h>

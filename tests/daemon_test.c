@@ -25,6 +25,7 @@
 static void
 makepid_tests(struct zt_unit_test *test, void* data UNUSED)
 {
+#ifndef WIN32
 	const char* pidF = "/tmp/zt_unit_makepid.pid";
 	
 	int v = zt_writepid(pidF);
@@ -53,6 +54,7 @@ makepid_tests(struct zt_unit_test *test, void* data UNUSED)
 	
 	mode_t tMode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 	ZT_UNIT_ASSERT(test, (s.st_mode & ~S_IFMT) == tMode);	
+#endif /* WIN32 */
 }
 
 int

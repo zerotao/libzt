@@ -6,6 +6,7 @@
  *
  * $Id$
  */
+#include <errno.h>
 #include "zt.h"
 #include "zt_internal.h"
 
@@ -36,7 +37,9 @@ unsigned long powers_of_2[] = { 2,            4,         8,
 
 struct table_node {
     void              * datum;
+    size_t              datum_len;
     void              * key;
+    size_t              key_len;
     unsigned long       hash_key;
     struct table_node * next;
 };
@@ -159,9 +162,9 @@ zt_table_destroy(zt_table *h)
 }
 
 int
-zt_table_set(zt_table *h, const void *key, const void *datum)
+zt_table_set(zt_table *h, const void *key, size_t key_len, const void *datum, size_t datum_len)
 {
-    unsigned long       nkey = h->func(key, h->cdata);
+    unsigned long       nkey = h->func(key, key_len, h->cdata);
     unsigned long       skey = nkey;
     struct table_node * node;
     struct table_node * nn;
@@ -174,7 +177,7 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
     if (!(h->flags & ZT_TABLE_ALLOW_DUP_KEYS)) {
         while (nn) {
             if (nn->hash_key == skey) {
-                if (h->cmp((void *)nn->key, key, h->cdata)) {
+                if (h->cmp((void *)nn->key, nn->key_len, key, key_len, h->cdata)) {
                     return 1;
                 }
             }
@@ -188,19 +191,21 @@ zt_table_set(zt_table *h, const void *key, const void *datum)
     node->hash_key = skey;
     h->buckets[nkey] = node;
     node->key = (void *)key;
+    node->key_len = key_len;
     node->datum = (void *)datum;
+    node->datum_len = datum_len;
 
     return 0;
 }
 
 void *
-zt_table_get(zt_table *h, const void *key)
+zt_table_get(zt_table *h, const void *key, size_t key_len)
 {
     struct table_node *node;
     unsigned long      nkey;
     unsigned long      skey;
 
-    nkey = h->func(key, h->cdata);
+    nkey = h->func(key, key_len, h->cdata);
     skey = nkey;
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
@@ -208,21 +213,23 @@ zt_table_get(zt_table *h, const void *key)
 
     while (node) {
         if (node->hash_key == skey) {
-            if (h->cmp((void *)node->key, key, h->cdata)) {
+            if (h->cmp((void *)node->key, node->key_len, key, key_len, h->cdata)) {
                 return node->datum;
             }
         }
         node = node->next;
     }
+
+    errno = ENOENT;
     return NULL;
 }
 
 void *
-zt_table_del(zt_table *h, const void *key)
+zt_table_del(zt_table *h, const void *key, size_t key_len)
 {
     struct table_node * node;
     struct table_node * prev;
-    unsigned long       nkey = h->func(key, h->cdata);
+    unsigned long       nkey = h->func(key, key_len, h->cdata);
     unsigned long       skey = nkey;
 
     ZT_HASH_SUB32_MASK(nkey, h->nbits);
@@ -231,7 +238,7 @@ zt_table_del(zt_table *h, const void *key)
 
     while (node) {
         if (node->hash_key == skey) {
-            if (h->cmp((void *)node->key, key, h->cdata)) {
+            if (h->cmp((void *)node->key, node->key_len, key, key_len, h->cdata)) {
                 void * datum = node->datum;
 
                 if (prev == node) {
@@ -247,6 +254,7 @@ zt_table_del(zt_table *h, const void *key)
 
         node = node->next;
     }
+    errno = ENOENT;
     return NULL;
 }
 
@@ -261,7 +269,7 @@ zt_table_copy(zt_table *t1, zt_table *t2)
         while (node) {
             any = 1;
             /* if(!table_get(t2, node->key)) { */
-            zt_table_set(t2, node->key, node->datum);
+            zt_table_set(t2, node->key, node->key_len, node->datum, node->datum_len);
             node = node->next;
         }
     }
@@ -280,7 +288,7 @@ zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
         tn = h->buckets[i];
         while (tn) {
             struct table_node *next = tn->next;
-            if ((res = iterator(tn->key, tn->datum, param)) != 0) {
+            if ((res = iterator(tn->key, tn->key_len, tn->datum, tn->datum_len, param)) != 0) {
                 return res;
             }
 
@@ -292,25 +300,27 @@ zt_table_for_each(zt_table *h, zt_table_iterator_cb iterator, void *param)
 
 /* common hash functions */
 unsigned long
-zt_table_hash_int(const void *key, void *cdata UNUSED)
+zt_table_hash_int(const void *key, size_t key_len, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
-    unsigned long   nkey = zt_hash32_buff(&skey, sizeof(int), ZT_HASH32_INIT);
+    unsigned long   nkey = zt_hash32_buff(&skey, key_len, ZT_HASH32_INIT);
 
     return nkey;
 }
 
 int
-zt_table_compare_int(const void *lhs, const void *rhs, void *cdata UNUSED)
+zt_table_compare_int(const void *lhs, size_t lhs_len, const void *rhs, size_t rhs_len, void *cdata UNUSED)
 {
-    if ((void *)lhs == (void *)rhs) {
-        return 1;
+    if (lhs_len == rhs_len) {
+        if (memcmp(&lhs, &rhs, lhs_len) == 0) {
+            return 1;
+        }
     }
     return 0;
 }
 
 unsigned long
-zt_table_hash_string(const void *key, void *cdata UNUSED)
+zt_table_hash_string(const void *key, size_t key_len UNUSED, void *cdata UNUSED)
 {
     unsigned char * skey = (unsigned char *)key;
     unsigned long   nkey = zt_hash32_cstr(skey, ZT_HASH32_INIT);
@@ -319,19 +329,41 @@ zt_table_hash_string(const void *key, void *cdata UNUSED)
 }
 
 int
-zt_table_compare_string(const void *lhs, const void *rhs, void *cdata UNUSED)
+zt_table_compare_string(const void *lhs, size_t lhs_len, const void *rhs, size_t rhs_len, void *cdata UNUSED)
 {
-    if (strcmp((char *)lhs, (char *)rhs) == 0) {
-        return 1;
+    if(lhs_len == rhs_len) {
+        if (strncmp((char *)lhs, (char *)rhs, lhs_len) == 0) {
+            return 1;
+        }
     }
     return 0;
 }
 
 int
-zt_table_compare_string_case(const void *lhs, const void *rhs, void *cdata UNUSED)
+zt_table_compare_string_case(const void *lhs, size_t lhs_len, const void *rhs, size_t rhs_len, void *cdata UNUSED)
 {
     if (strcasecmp((char *)lhs, (char *)rhs) == 0) {
         return 1;
+    }
+    return 0;
+}
+
+unsigned long
+zt_table_hash_buff(const void *key, size_t key_len, void *cdata UNUSED)
+{
+    unsigned char * skey = (unsigned char *)key;
+    unsigned long   nkey = zt_hash32_buff(skey, key_len, ZT_HASH32_INIT);
+
+    return nkey;
+}
+
+int
+zt_table_compare_buff(const void *lhs, size_t lhs_len, const void *rhs, size_t rhs_len, void *cdata UNUSED)
+{
+    if(lhs_len == rhs_len) {
+        if (strncmp((char *)lhs, (char *)rhs, lhs_len) == 0) {
+            return 1;
+        }
     }
     return 0;
 }

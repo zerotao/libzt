@@ -25,12 +25,10 @@ typedef zt_pair    *zt_llist;
 static INLINE void
 zt_llist_free(zt_pair *p)
 {
-    zt_pair * h;
     zt_pair * op;
 
     while(p != NULL) {
         op = p;
-        h = (zt_pair*) zt_llist_head(p);
         p = zt_llist_tail(p);
         zt_free(op);
     }

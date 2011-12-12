@@ -6,15 +6,17 @@
 #include <zt.h>
 BEGIN_C_DECLS
 
-#define UUID_STR_LEN 36
-#define UUID_SHORT_STR_LEN 32
-#define UUID_ALEN 16
-#define UUID_VERSION_OFFT 6
+#define UUID_STR_LEN        36
+#define UUID_SHORT_STR_LEN  32
+#define UUID_BASE62_STR_LEN 22
+#define UUID_ALEN           16
+#define UUID_VERSION_OFFT   6
 #define UUID_CLOCK_SEQ_OFFT 8
 
 enum zt_uuid_flags {
     zt_uuid_std_fmt = 0,
     zt_uuid_short_fmt,
+    zt_uuid_base62_fmt,
 };
 typedef enum zt_uuid_flags zt_uuid_flags_t;
 
@@ -31,7 +33,7 @@ struct zt_uuid {
         } field;
     } data;
 };
-typedef struct zt_uuid zt_uuid_t;
+typedef struct zt_uuid     zt_uuid_t;
 
 extern zt_uuid_t NAMESPACE_DNS;
 extern zt_uuid_t NAMESPACE_URL;
@@ -44,7 +46,7 @@ enum zt_uuid_ns {
     UUID_NS_OID,
     UUID_NS_X500
 };
-typedef enum zt_uuid_ns zt_uuid_ns;
+typedef enum zt_uuid_ns    zt_uuid_ns;
 
 
 #define UUID_VER_TIME           1
@@ -53,12 +55,12 @@ typedef enum zt_uuid_ns zt_uuid_ns;
 #define UUID_VER_PSEUDORANDOM   4
 #define UUID_VER_NAMESPACE_SHA1 5
 
-int zt_uuid4(zt_uuid_t *uuid);
-int zt_uuid5(char *value, size_t vlen, zt_uuid_ns type, zt_uuid_t *uuid);
-int zt_uuid_tostr(zt_uuid_t *uuid, char **uuids, zt_uuid_flags_t flags);
-int zt_uuid_fromstr(char *value, zt_uuid_t *uuid, zt_uuid_flags_t flags);
-int zt_uuid_cmp(zt_uuid_t *uuid, zt_uuid_t *uuid2);
-int zt_uuid_isvalid(char *uuid, zt_uuid_flags_t flags);
+int zt_uuid4(zt_uuid_t * uuid);
+int zt_uuid5(char * value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid);
+int zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags);
+int zt_uuid_fromstr(char * value, zt_uuid_t * uuid, zt_uuid_flags_t flags);
+int zt_uuid_cmp(zt_uuid_t * uuid, zt_uuid_t * uuid2);
+int zt_uuid_isvalid(char * uuid, zt_uuid_flags_t flags);
 
 END_C_DECLS
 #endif    /* _ZT_UUID_H_ */

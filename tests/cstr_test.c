@@ -30,8 +30,6 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char * path = "/home/jshiffer/config.foo";
     char * iface_str = "Interface";
     char * spain = "The rain in Spain";
-    char   bname[PATH_MAX+1];
-    char   dname[PATH_MAX+1];
     char * free_me;
     char * free_me2;
     char * hex = "34aa973cd4c4daa4f61FFB2BDBAD27316534016FXXX";
@@ -40,6 +38,10 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     char *split_test = "/a/b/c/d/";
     zt_ptr_array *split_array;
     zt_ptr_array *cut_array;
+#if !defined(_WIN32)
+    char   bname[PATH_MAX+1];
+    char   dname[PATH_MAX+1];
+#endif
 
 
     zt_cstr_chomp(chomp_test);
@@ -109,6 +111,9 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 
     ZT_UNIT_ASSERT(test, strcmp(free_me = zt_cstr_path_append("/foo/bar", "/baz/"), "/foo/bar/baz/") == 0); zt_free(free_me);
 
+    zt_cstr_dirname(dname, PATH_MAX, "foo");
+    ZT_UNIT_ASSERT(test, (!strcmp(dname, ".")));
+
 #else /* _WIN32 */
       /* reverse the mapping */
 
@@ -117,8 +122,8 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     free(strip_test);
     free(chomp_test);
 
-    ZT_UNIT_ASSERT(test, zt_cstr_abspath("/tmp") == true);
-    ZT_UNIT_ASSERT(test, zt_cstr_abspath("./tmp") == true);
+    ZT_UNIT_ASSERT(test, zt_cstr_abspath(PATH_SEPERATOR"tmp") == true);
+    ZT_UNIT_ASSERT(test, zt_cstr_abspath("."PATH_SEPERATOR"tmp") == true);
     ZT_UNIT_ASSERT(test, zt_cstr_abspath("tmp") == false);
 
     ZT_UNIT_ASSERT(test, (strcmp(free_me = zt_cstr_sub(iface_str, 5, 8), "face") == 0)); zt_free(free_me);

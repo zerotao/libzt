@@ -51,24 +51,28 @@ zt_progname(char *name, int opts)
 
 static ssize_t
 _proc_get_path(char * result, size_t size) {
+#if !defined(WIN32)
     pid_t     pid;
     char      path[PATH_MAX + 1];
 
     pid = getpid();
 
     /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
-#if defined(linux)
+# if defined(linux)
     /* check proc */
     snprintf(path, PATH_MAX, "/proc/%d/exe", pid);
-#elif defined(sun) && defined(svr4)
+# elif defined(sun) && defined(svr4)
     snprintf(path, PATH_MAX, "/proc/%d/path/a.out", pid);
-#elif defined(BSD)
+# elif defined(BSD)
     snprintf(path, PATH_MAX, "/proc/%d/file", pid);
-#else
+# else
     return -1;
-#endif /* defined linux */
-
+# endif /* defined linux */
     return readlink(path, result, size);
+#else /* WIN32*/
+    return (size_t)GetModuleFileName(NULL, result, size);
+#endif /* WIN32 */
+
 }
 
 char *
@@ -109,8 +113,8 @@ zt_progpath(char *prog) {
         memset(_progpath, '\0', PATH_MAX);
         zt_cstr_dirname(_progpath, PATH_MAX, prog);
 
-        if(_progpath[0] == '\0') {
-            /* the passed in path did not include a path */
+        if(_progpath[0] == '\0' || strcmp(_progpath, ".") == 0) {
+            /* the passed in prog did not include a path */
             char        * path;
             size_t        offt = 0;
             ssize_t       base = 0;
@@ -147,13 +151,22 @@ zt_progpath(char *prog) {
 
                 errno = 0;
                 if((stat(tpath, &sbuf) == 0)) {
-                    zt_cstr_copy(tpath, 0, -1, _progpath, PATH_MAX);
+                    zt_cstr_dirname(_progpath, PATH_MAX, tpath);
                     zt_free(tpath);
                     return _progpath;
                 }
                 zt_free(tpath);
                 base = offt+1;
                 offt++;
+            }
+
+            /* if still no path */
+            if (strcmp(_progpath, ".") == 0) {
+                /* just return the cwd */
+                char      cwd[PATH_MAX+1];
+                if (getcwd(cwd, PATH_MAX) != NULL) {
+                    zt_cstr_copy(cwd, 0, -1, _progpath, PATH_MAX);
+                }
             }
         } else {
             /* the passed in path did include a path
@@ -162,7 +175,20 @@ zt_progpath(char *prog) {
             char      cwd[PATH_MAX+1];
 
             if(getcwd(cwd, PATH_MAX) != NULL) {
-                zt_cstr_copy(cwd, 0, -1, _progpath, PATH_MAX);
+                if (_progpath[0] != '/') {
+                    /* path is relative append and remove prog */
+                    char      * tpath;
+                    char      * pp = _progpath;
+
+                    if(_progpath[0] == '.' &&  _progpath[1] == '/') {
+                        /* if it starts with ./ then remove it */
+                        pp += 2;
+                    }
+
+                    tpath = zt_cstr_path_append(cwd, pp);
+                    zt_cstr_copy(tpath, 0, -1, _progpath, PATH_MAX);
+                    zt_free(tpath);
+                }
             }
         }
     }
