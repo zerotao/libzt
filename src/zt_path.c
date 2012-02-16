@@ -59,3 +59,57 @@ AGAIN:
 
     return 0;
 } /* zt_mkdir */
+
+/* simple utility to remove the need for the local function to
+ * allocate a stat struct when existance is the only thing that matters
+ */
+int
+zt_path_exists(const char * path) {
+    struct stat sbuf;
+
+    errno = 0;
+    if (stat(path, &sbuf) == 0) {
+        return 0;
+    }
+    return -1;
+}
+
+/* find the longest matching directory containing a specific file or directory.
+ * eg. the path /home/jshiffer/test/env and the trigger .ssh
+ * would return /home/jshiffer unless there was a .ssh in a higher directory (env or test).
+ */
+char *zt_find_basedir(const char * path, const char * trigger) {
+    struct stat sbuf;
+    size_t      len;
+    ssize_t     offt;
+    char      * result = NULL;
+    char        cpath[PATH_MAX + 1];
+    char        lpath[PATH_MAX + 1];
+
+    len = strlen(path);
+    memset(lpath, 0, sizeof(lpath));
+    memcpy(lpath, path, MIN(len, sizeof(cpath)));
+
+    do {
+        memset(cpath, 0, sizeof(cpath));
+        snprintf(cpath, sizeof(cpath), "%s%s%s", lpath, PATH_SEPERATOR, trigger);
+        errno = 0;
+        if (stat(cpath, &sbuf) == 0) {
+            /* found it */
+            len    = strlen(lpath) + strlen(PATH_SEPERATOR) + 1;
+            result = zt_callocs(sizeof(char), len);
+            snprintf(result, len, "%s%s", lpath, PATH_SEPERATOR);
+            break;
+        }
+
+        if ((strlen(lpath) == 0) ||
+            (offt = zt_cstr_rfind(lpath, 0, -1, PATH_SEPERATOR)) == -1) {
+            break;
+        }
+        lpath[offt] = '\0';
+    } while (1);
+
+    return result;
+} /* zt_find_basedir */
+
+
