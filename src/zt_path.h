@@ -32,8 +32,8 @@ typedef enum {
 }zt_mkdir_flags;
 
 int zt_mkdir(char * path, mode_t mode, zt_mkdir_flags flags);
-
-
+int zt_path_exists(const char * path);
+char *zt_find_basedir(const char * path, const char * trigger);
 END_C_DECLS
 
 #endif /* _ZT_PATH_ */

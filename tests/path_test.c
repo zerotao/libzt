@@ -19,10 +19,14 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
     struct stat       stat_buf;
 
+    ZT_UNIT_ASSERT(test, zt_path_exists("foo/bar/baz") == -1);
     ZT_UNIT_ASSERT(test, zt_mkdir("foo/bar/baz", 0777, zt_mkdir_create_parent) == 0);
     ZT_UNIT_ASSERT(test, stat("foo/bar/baz", &stat_buf) == 0);
-
+    ZT_UNIT_ASSERT(test, zt_path_exists("foo/bar/baz") == 0);
     ZT_UNIT_ASSERT(test, zt_mkdir("foo/bar/baz", 0777, zt_mkdir_create_parent) == 0);
+
+    ZT_UNIT_ASSERT(test, strcmp(zt_find_basedir("foo/bar/baz/spin", "baz"), "foo/bar/") == 0);
+    ZT_UNIT_ASSERT(test, zt_find_basedir("foo/bar/baz/spin", ".baz") == NULL);
 
     rmdir("foo/bar/baz");
     rmdir("foo/bar");

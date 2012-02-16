@@ -10,10 +10,14 @@ test_base64_speed(void) {
     const size_t kBufSz = 4096;
     unsigned char iBuf[kBufSz];
     const size_t n = kBufSz;
+    size_t       i;
 
     const long long kIterations = 2621440;
-
     const long long nGigs = (kIterations * kBufSz) / (1024 * 1024 * 1024);
+
+    for (i=0; i<n; ++i) {
+        iBuf[i] = rand() % 256;
+    }
 
     {
         time_t s = time(NULL);
