@@ -34,37 +34,38 @@ log_atexit(void * data) {
     }
 }
 
+static zt_log_ty    * log_default_ptr = NULL;
+static zt_log_ty    * log_debug_ptr = NULL;
+
 /* this function expects the traditional "If you allocated free it, if
  * you didn't allocate it leave it the fsck alone" model */
 zt_log_ty *
 zt_log_logger(zt_log_ty *log)
 {
-    static zt_log_ty    * log_log_ty = NULL;
     zt_log_ty           * last = NULL;
 
     if (!log) {
         /* caller wants the current/default logger */
-        if (log_log_ty == NULL) {
+        if (log_default_ptr == NULL) {
             /* allocate a default logger */
-            if ((log_log_ty = zt_log_stderr( ZT_LOG_WITH_LEVEL )) == NULL) {
+            if ((log_default_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL )) == NULL) {
                 /* don't try to use logging */
                 fprintf(stderr, "Could not allocate stderr for logging\n");
                 exit(1);
             }
-            zt_atexit(log_atexit, log_log_ty);
+            zt_atexit(log_atexit, log_default_ptr);
         }
-        return log_log_ty;
+        return log_default_ptr;
     }
     /* ELSE: they want to set the logger to something else */
-    last = log_log_ty;
-    log_log_ty = log;
+    last = log_default_ptr;
+    log_default_ptr = log;
     return last;
 }
 
 zt_log_ty *
 zt_log_debug_logger(zt_log_ty *log)
 {
-    static zt_log_ty *log_debug_ptr = NULL;
     static int        forced = 0;
 
     if (((!log) && (!log_debug_ptr))) {
