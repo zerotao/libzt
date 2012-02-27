@@ -247,7 +247,15 @@ void
 zt_log_close(zt_log_ty *log)
 {
     if (!log) {
-        log = zt_log_logger(NULL);
+        return;
+    }
+
+    if (log == log_default_ptr) {
+        log_default_ptr = NULL;
+    }
+
+    if (log == log_debug_ptr) {
+        log_debug_ptr = NULL;
     }
 
     if (log->vtbl->destructor) {
