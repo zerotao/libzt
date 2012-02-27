@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(libzt)
-set(PROJECT_VERSION 1.3.0)
+set(PROJECT_VERSION 1.1.0)
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -11,8 +11,9 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeModules)
 ########## Check for System Packages known by CMAKE ##########
 find_package(Threads)
 if (CMAKE_USE_PTHREADS_INIT)
+    # FIXME: require pthreads
     SET(HAVE_PTHREADS 1)
-    ADD_DEFINITIONS(-DHAVE_PTHREAD)
+    ADD_DEFINITIONS(-DHAVE_PTHREADS)
 
     SET(WITH_THREADS 1)
     ADD_DEFINITIONS(-DWITH_THREADS)

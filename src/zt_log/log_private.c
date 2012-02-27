@@ -57,9 +57,6 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
         exit(1);
     }
     result->vtbl = vptr;
-    result->file = NULL;
-    result->function = NULL;
-    result->line = 0;
     result->opts = opts;
     result->level = zt_log_max;
 
@@ -67,7 +64,7 @@ zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
 }
 
 char*
-zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
+zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts)
 {
     size_t    len = 0;
     char    * buff = NULL;
@@ -134,15 +131,15 @@ zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts)
         strcat(buff, ": ");
     }
     strcat(buff, fmt);
-    if (((log->file) && (log->line > -1) && (log->function))) {
+    if (((file) && (line > -1) && (function))) {
         char    * nbuff = NULL;
         size_t    nlen = 13;  /* ': in  at (:)' + null */
 
-        nlen += strlen(log->file);
-        nlen += strlen(log->function);
+        nlen += strlen(file);
+        nlen += strlen(function);
         nlen += 10;    /* length of a int to str */
         nbuff = zt_calloc(char, nlen); /* mem_calloc(nlen, sizeof(char)); */
-        sprintf(nbuff, ": in %s at (%s:%d)", log->function, log->file, log->line);
+        sprintf(nbuff, ": in %s at (%s:%d)", function, file, line);
         len += nlen;
         buff = zt_realloc(char, buff, len);
         strcat(buff, nbuff);

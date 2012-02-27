@@ -34,53 +34,115 @@ log_atexit(void * data) {
     }
 }
 
-static zt_log_ty    * log_default_ptr = NULL;
-static zt_log_ty    * log_debug_ptr = NULL;
+/* #undef HAVE_PTHREADS */
+#ifdef HAVE_PTHREADS
+static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+static pthread_key_t ctx_key;
+static pthread_once_t ctx_key_once = PTHREAD_ONCE_INIT;
+
+static void
+make_ctx_key(void) {
+    (void) pthread_key_create(&ctx_key, free);
+}
+#define CTX_STATIC
+#else
+#define CTX_STATIC static
+#endif /* HAVE_PTHREADS */
+
+typedef struct zt_log_ctx_s zt_log_ctx_ty;
+struct zt_log_ctx_s {
+    const char  * file;
+    int           line;
+    const char  * function;
+};
+
+
+static zt_log_ty        * log_default_ptr = NULL;
+static int                forced = 0;
+
+static zt_log_ctx_ty *
+zt_log_get_ctx(void) {
+    CTX_STATIC zt_log_ctx_ty    * log_ctx_ptr = NULL;
+
+    if (!log_ctx_ptr) {
+#ifdef HAVE_PTHREADS
+        (void) pthread_once(&ctx_key_once, make_ctx_key);
+        if ((log_ctx_ptr = pthread_getspecific(ctx_key)) == NULL) {
+#endif /* HAVE_PTHREADS */
+            if ((log_ctx_ptr = zt_calloc(zt_log_ctx_ty, 1)) == NULL) {
+                fprintf(stderr, "Could not allocate memory for log context\n");
+                exit(1);
+            }
+#ifdef HAVE_PTHREADS
+            pthread_setspecific(ctx_key, log_ctx_ptr);
+        }
+#endif /* HAVE_PTHREADS */
+    }
+    return log_ctx_ptr;
+}
+
+static zt_log_ty *
+zt_log_get_logger(void) {
+
+    if (!log_default_ptr) {
+#ifdef HAVE_PTHREADS
+        pthread_mutex_lock(&log_mutex);
+#endif
+        /* second check is just to avoid having to have a mutex lock
+         * around the default case of a logger being set
+         */
+        if (!log_default_ptr) {
+            if ((log_default_ptr = zt_log_stderr(ZT_LOG_WITH_LEVEL)) == NULL) {
+                fprintf(stderr, "Could not allocate stderr for logging\n");
+                exit(1);
+            }
+            forced = 1;
+            zt_atexit(log_atexit, log_default_ptr);
+        }
+#ifdef HAVE_PTHREADS
+    pthread_mutex_unlock(&log_mutex);
+#endif
+    }
+
+    return log_default_ptr;
+}
+
+static zt_log_ty *
+zt_log_set_logger(zt_log_ty * log) {
+    zt_log_ty   * last;
+
+#ifdef HAVE_PTHREADS
+    pthread_mutex_lock(&log_mutex);
+#endif
+
+    last = log_default_ptr;
+    log_default_ptr = log;
+
+#ifdef HAVE_PTHREADS
+    pthread_mutex_unlock(&log_mutex);
+#endif
+    return last;
+}
 
 /* this function expects the traditional "If you allocated free it, if
  * you didn't allocate it leave it the fsck alone" model */
 zt_log_ty *
 zt_log_logger(zt_log_ty *log)
 {
-    zt_log_ty           * last = NULL;
+    /* STATES:
+     * log == NULL AND default == NULL           : create a new logger
+     * log == NULL AND default == <logger>       : replace the current logger with log (NULL)
+     * log == <logger> AND default == NULL       : replace the default logger with log
+     * log == <logger> AND default == <logger>   : replace the default logger with log
+     */
 
-    if (!log) {
-        /* caller wants the current/default logger */
-        if (log_default_ptr == NULL) {
-            /* allocate a default logger */
-            if ((log_default_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL )) == NULL) {
-                /* don't try to use logging */
-                fprintf(stderr, "Could not allocate stderr for logging\n");
-                exit(1);
-            }
-            zt_atexit(log_atexit, log_default_ptr);
-        }
-        return log_default_ptr;
-    }
-    /* ELSE: they want to set the logger to something else */
-    last = log_default_ptr;
-    log_default_ptr = log;
-    return last;
-}
-
-zt_log_ty *
-zt_log_debug_logger(zt_log_ty *log)
-{
-    static int        forced = 0;
-
-    if (((!log) && (!log_debug_ptr))) {
-        log_debug_ptr = zt_log_stderr( ZT_LOG_WITH_LEVEL );
-        forced = 1;
+    /* if log is NULL and there is no default get one */
+    if (log == NULL && log_default_ptr == NULL) {
+        return zt_log_get_logger();
     }
 
-    if (log) {
-        if (forced) {
-            zt_log_close(log_debug_ptr), forced = 0;
-        }
-        log_debug_ptr = log;
-    }
-
-    return log_debug_ptr;
+    return zt_log_set_logger(log);
 }
 
 zt_log_level
@@ -88,8 +150,8 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 {
     zt_log_level olevel;
 
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+            return 0;
     }
 
     olevel = log->level;
@@ -100,9 +162,10 @@ zt_log_set_level(zt_log_ty *log, zt_log_level level)
 zt_log_level
 zt_log_get_level(zt_log_ty *log)
 {
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+            return 0;
     }
+
     return log->level;
 }
 
@@ -111,9 +174,10 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
 {
     unsigned int oopts;
 
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+            return 0;
     }
+
     oopts = log->opts;
     log->opts = opts;
     return oopts;
@@ -122,46 +186,54 @@ zt_log_set_opts(zt_log_ty *log, unsigned int opts)
 unsigned int
 zt_log_get_opts(zt_log_ty *log)
 {
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+            return 0;
     }
     return log->opts;
 }
 
 void
-zt_log_set_debug_info(zt_log_ty *log, const char *file, int line, const char *func)
+zt_log_set_debug_info(const char *file, int line, const char *func)
 {
-    if (!log) {
-        log = zt_log_logger(NULL);
+    zt_log_ctx_ty   * ctx;
+
+    if ((ctx = zt_log_get_ctx()) == NULL) {
+        return;
     }
 
-    log->file = (char *)file;
-    log->line = line;
-    log->function = (char *)func;
+    ctx->file = (char *)file;
+    ctx->line = line;
+    ctx->function = (char *)func;
 }
 
 void
-zt_log_get_debug_info(zt_log_ty *log, char **file, int *line, char **func)
+zt_log_get_debug_info(const char **file, int *line, const char **func)
 {
-    if (!log) {
-        log = zt_log_logger(NULL);
+    zt_log_ctx_ty   * ctx = NULL;
+
+    if ((ctx = zt_log_get_ctx()) == NULL) {
+        *file = NULL;
+        *line = 0;
+        *func = NULL;
     }
 
-    *file = log->file;
-    *line = log->line;
-    *func = log->function;
+    *file = ctx->file;
+    *line = ctx->line;
+    *func = ctx->function;
 }
 
 void
-zt_log_lprintf(zt_log_ty *log, zt_log_level level, char *fmt, ...)
+zt_log_lprintf(zt_log_ty *log, zt_log_level level, const char *fmt, ...)
 {
     va_list ap;
 
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+        zt_log_set_debug_info(NULL, -1, NULL);
+        return;
     }
 
     if (level > log->level) {
+        zt_log_set_debug_info(NULL, -1, NULL);
         return;
     }
     va_start(ap, fmt);
@@ -170,33 +242,44 @@ zt_log_lprintf(zt_log_ty *log, zt_log_level level, char *fmt, ...)
 }
 
 void
-zt_log_lvprintf(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
+zt_log_lvprintf(zt_log_ty *log, zt_log_level level, const char *fmt, va_list ap)
 {
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+        goto EXIT;
     }
 
     if (level > log->level) {
-        return;
+        goto EXIT;
     }
+
     if (log->vtbl->print) {
-        log->vtbl->print(log, level, fmt, ap);
+        zt_log_ctx_ty   * ctx = zt_log_get_ctx();
+        log->vtbl->print(log, level,
+                         ctx ? ctx->file : NULL,
+                         ctx ? ctx->line : 0,
+                         ctx ? ctx->function : NULL,
+                         fmt, ap);
     }
-    zt_log_set_debug_info(log, NULL, -1, NULL);
+
+EXIT:
+    /* debug info is only valid for a single call */
+    zt_log_set_debug_info(NULL, -1, NULL);
 }
 
 void
-zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, char *fmt, ...)
+zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, const char *fmt, ...)
 {
     va_list   ap;
     size_t    llen;
     char    * nfmt;
 
-    if (!log) {
-        log = zt_log_logger(NULL);
+    if (!log && ((log = zt_log_get_logger()) == NULL)) {
+        zt_log_set_debug_info(NULL, -1, NULL);
+        return;
     }
 
     if (level > log->level) {
+        zt_log_set_debug_info(NULL, -1, NULL);
         return;
     }
 
@@ -218,32 +301,6 @@ zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, char *fmt, ...)
 }
 
 void
-_zt_log_debug(char *fmt, ...)
-{
-    va_list      ap;
-    zt_log_level level = zt_log_debug;
-    zt_log_ty   *log = zt_log_debug_logger(NULL);
-
-    if (level > log->level) {
-        return;
-    }
-    va_start(ap, fmt);
-    zt_log_lvprintf(log, level, fmt, ap);
-    va_end(ap);
-}
-
-void
-_zt_log_vdebug(char *fmt, va_list ap)
-{
-    zt_log_level level = zt_log_debug;
-    zt_log_ty   *log = zt_log_debug_logger(NULL);
-
-    zt_log_lvprintf(log, level, fmt, ap);
-
-    zt_log_set_debug_info(log, NULL, -1, NULL);
-}
-
-void
 zt_log_close(zt_log_ty *log)
 {
     if (!log) {
@@ -251,11 +308,7 @@ zt_log_close(zt_log_ty *log)
     }
 
     if (log == log_default_ptr) {
-        log_default_ptr = NULL;
-    }
-
-    if (log == log_debug_ptr) {
-        log_debug_ptr = NULL;
+        zt_log_set_logger(NULL);
     }
 
     if (log->vtbl->destructor) {
