@@ -39,9 +39,6 @@ struct zt_log_ty {
     struct zt_log_vtbl_ty * vtbl;
     unsigned int            opts;
     zt_log_level            level;
-    char                  * file;
-    char                  * function;
-    int                     line;
 #ifdef WITH_THREADS
     pthread_mutex_t         mutex;
 #endif /* WITH_THREADS */
@@ -53,11 +50,11 @@ struct zt_log_vtbl_ty {
     size_t size;
     /* virtual function pointers */
     void (* destructor)(zt_log_ty *log);
-    void (* print)(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap);
+    void (* print)(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * func, const char *fmt, va_list ap);
 };
 
 zt_log_ty *zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts);
-char* zt_log_gen_fmt(zt_log_ty *log, char *fmt, zt_log_level level, unsigned int opts);
+char* zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts);
 
 #ifdef __cplusplus
 }
