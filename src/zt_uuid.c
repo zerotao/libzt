@@ -102,7 +102,7 @@ zt_uuid5(char * value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid) {
     }
     zt_sha1_update(&ctx, (uint8_t*)value, vlen);
     zt_sha1_finalize(&ctx, digest);
-    memcpy(uuid->data.bytes, digest, 16);
+    memcpy(uuid->data.bytes, digest, UUID_ALEN);
 
     /* set the version number */
     uuid->data.bytes[UUID_VERSION_OFFT]   = (uuid->data.bytes[UUID_VERSION_OFFT] & 0x0F) | (UUID_VER_NAMESPACE_SHA1 << 4);
@@ -119,7 +119,7 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
     int    i;
 
     if (flags == zt_uuid_std_fmt) {
-        zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
+        zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
 
         result = zt_calloc(char, UUID_STR_LEN + 1);
         i      = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
@@ -129,7 +129,7 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
                           &uuids_hex[16],
                           &uuids_hex[20]);
     } else if (flags == zt_uuid_short_fmt) {
-        zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
+        zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
 
         result = zt_calloc(char, UUID_SHORT_STR_LEN + 1);
         i      = snprintf(result, UUID_SHORT_STR_LEN + 1, "%8.8s%4.4s%4.4s%4.4s%12.12s",
@@ -139,7 +139,7 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
                           &uuids_hex[16],
                           &uuids_hex[20]);
     } else if (flags == zt_uuid_base62_fmt) {
-        result = zt_calloc(char, 22);
+        result = zt_calloc(char, UUID_BASE62_STR_LEN);
 
         u_int64_t v1 = 0;
         u_int64_t v2 = 0;
@@ -185,13 +185,13 @@ zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
                &uuid_hex[12],
                &uuid_hex[16],
                &uuid_hex[20]);
-        zt_hex_to_binary(uuid_hex, 32, uuid->data.bytes, 16);
+        zt_hex_to_binary(uuid_hex, UUID_SHORT_STR_LEN, uuid->data.bytes, UUID_ALEN);
     } else if (flags == zt_uuid_short_fmt) {
         if (strlen(uuidstr) != UUID_SHORT_STR_LEN) {
             return -1;
         }
         memcpy(uuid_hex, uuidstr, UUID_SHORT_STR_LEN);
-        zt_hex_to_binary(uuid_hex, 32, uuid->data.bytes, 16);
+        zt_hex_to_binary(uuid_hex, UUID_SHORT_STR_LEN, uuid->data.bytes, UUID_ALEN);
     } else if (flags == zt_uuid_base62_fmt) {
         u_int64_t v1 = 0;
         u_int64_t v2 = 0;
@@ -220,7 +220,7 @@ zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
 
 int
 zt_uuid_cmp(zt_uuid_t * uuid, zt_uuid_t * uuid2) {
-    return memcmp(uuid->data.bytes, uuid2->data.bytes, 16);
+    return memcmp(uuid->data.bytes, uuid2->data.bytes, UUID_ALEN);
 }
 
 #define VALID_CHARS "abcdefABCDEF0123456789"
