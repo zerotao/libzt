@@ -139,7 +139,7 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
                           &uuids_hex[16],
                           &uuids_hex[20]);
     } else if (flags == zt_uuid_base62_fmt) {
-        result = zt_calloc(char, UUID_BASE62_STR_LEN);
+        result = zt_calloc(char, UUID_BASE62_STR_LEN + 1);
 
         u_int64_t v1 = 0;
         u_int64_t v2 = 0;

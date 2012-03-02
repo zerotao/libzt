@@ -168,14 +168,20 @@ uuid_generic_tests(struct zt_unit_test * test, void * data UNUSED) {
 
     zt_uuid4(&uuid1);
 
-    zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_base62_fmt);
-    zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_base62_fmt);
-    zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_base62_fmt);
+    ZT_UNIT_ASSERT(test, zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_base62_fmt) == UUID_BASE62_STR_LEN);
+    ZT_UNIT_ASSERT(test, zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_base62_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_base62_fmt) == UUID_BASE62_STR_LEN);
 
     ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids1, zt_uuid_base62_fmt) == 0);
     ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids2, zt_uuid_base62_fmt) == 0);
     ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
     ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
+
+    zt_free(uuids1);
+    zt_free(uuids2);
+
+    uuids1 = 0;
+    uuids2 = 0;
 
     {
         int          i;
