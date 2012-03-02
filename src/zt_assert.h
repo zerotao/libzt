@@ -22,8 +22,8 @@ BEGIN_C_DECLS
  * Description: for an assertion
  * Notes: Don't call this directly, use assert instead
  */
-extern int _zt_log_assertion(const char *condition, const char *file,
-                              unsigned int line, const char *function, int _abort);
+extern void _zt_log_assertion(const char *condition, const char *file,
+                              unsigned int line, const char *function);
 
 /*!
  * Name: _zt_assert_fail
@@ -45,11 +45,11 @@ extern int _zt_log_abort(const char *condition, const char *file,
 # define zt_assert(c) ((void)0)
 # define zt_assert_nf(c) ((void)0)
 #else
-# define zt_assert(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 1)))
-# define zt_assert_nf(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 0)))
+# define zt_assert(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
+# define zt_assert_nf(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__)))
 #endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
 
-#define zt_assert_always(c) ((c) ? 1 : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__, 1)))
+#define zt_assert_always(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
 
 /*!
  * Name: zt_abort

@@ -24,9 +24,9 @@
 #include "zt_cstr.h"
 #include "zt_assert.h"
 
-int
+void
 _zt_log_assertion(const char *s, const char *file, unsigned int line,
-                  const char *func, int _abort)
+                  const char *func)
 {
     char bname[PATH_MAX];
 
@@ -41,11 +41,6 @@ _zt_log_assertion(const char *s, const char *file, unsigned int line,
     } else {
         zt_log_printf(zt_log_err, "Assertion Failed: \"%s\": %s[%d]", s, bname, line);
     }
-
-    if(_abort) {
-        abort();
-    }
-    return 0;
 }
 
 int
