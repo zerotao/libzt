@@ -215,6 +215,7 @@ zt_log_get_debug_info(const char **file, int *line, const char **func)
         *file = NULL;
         *line = 0;
         *func = NULL;
+        return;
     }
 
     *file = ctx->file;
