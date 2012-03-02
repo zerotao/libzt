@@ -96,8 +96,6 @@ _sha1_transform(uint32_t state[5], uint8_t buffer[64])
     state[2] += c;
     state[3] += d;
     state[4] += e;
-    /* Wipe variables */
-    a = b = c = d = e = 0;
 } /* _sha1_transform */
 
 void
@@ -143,7 +141,6 @@ void
 zt_sha1_finalize(zt_sha1_ctx *ctx, uint8_t digest[20])
 {
     uint32_t i;
-    uint32_t j;
     uint8_t  finalcount[8];
 
     for (i = 0; i < 8; i++) {
@@ -162,8 +159,6 @@ zt_sha1_finalize(zt_sha1_ctx *ctx, uint8_t digest[20])
                     ((ctx->state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
     }
 
-    /* Wipe variables */
-    i = j = 0;
     memset(ctx->buffer, 0, 64);
     memset(ctx->state, 0, 20);
     memset(ctx->count, 0, 8);
