@@ -52,6 +52,22 @@ extern int _zt_log_abort(const char *condition, const char *file,
 #define zt_assert_always(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
 
 /*!
+ * Name: zt_assert_return
+ * Description: if assertion fails print an assertion message and return
+ * Eample:
+ *     zt_assert_return(1==0)
+ */
+#define zt_assert_return(c) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__); return; }
+
+/*!
+ * Name: zt_assert_returnV
+ * Description: if assertion fails print an assertion and return the value 'v'
+ * Example:
+ *      zt_assert_returnV(1==0, NULL)
+ */
+#define zt_assert_returnV(c,v) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__); return v; }
+
+/*!
  * Name: zt_abort
  * Description: abort with an error message
  * Eample:
