@@ -57,13 +57,12 @@ main(int argc, char *argv[])
 {
     struct zt_unit       * unit;
     struct zt_unit_suite * suite1;
-    struct zt_unit_test  * test1;
     int                    result = 0;
 
     unit = zt_unit_init();
 
     suite1 = zt_unit_register_suite(unit, "unit test suite", NULL, NULL, NULL);
-    test1 = zt_unit_register_test(suite1, "unit test 1", test_fn_1);
+    zt_unit_register_test(suite1, "unit test 1", test_fn_1);
     zt_unit_register_test(suite1, "unit test 2", test_fn_2);
 
     /* register actual tests */
