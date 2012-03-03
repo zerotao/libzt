@@ -49,9 +49,10 @@ zt_progname(const char *name, int opts)
     return _progname;
 }
 
+
+#if defined(linux) || defined(__linux__) || (defined(sun) && defined(svr4)) || defined(BSD)
 static ssize_t
 _proc_get_path(char * result, size_t size) {
-#if !defined(WIN32)
     pid_t     pid;
     char      path[PATH_MAX + 1];
 
@@ -69,11 +70,8 @@ _proc_get_path(char * result, size_t size) {
     return -1;
 # endif /* defined linux */
     return readlink(path, result, size);
-#else /* WIN32*/
-    return (size_t)GetModuleFileName(NULL, result, size);
-#endif /* WIN32 */
-
 }
+#endif
 
 char *
 zt_os_progpath() {
@@ -91,14 +89,18 @@ zt_os_progpath() {
      * BSD w/ Procfs: readlink /proc/curproc/file
      * Windows:  GetModuleFileName() with hModule = NULL
      */
-
-    if(_proc_get_path(result, PATH_MAX) == -1) {
 #if defined(__APPLE__)
+    {
         uint32_t     size = PATH_MAX;
         _NSGetExecutablePath(result, &size);
-#endif /* __APPLE__ */
     }
-
+#elif defined(WIN32)
+    GetModuleFileName(NULL, result, size);
+#else
+    if (_proc_get_path(result, PATH_MAX) == -1) {
+        zt_log_printf(zt_log_err, "Could not get program path");
+    }
+#endif
     return result;
 }
 
