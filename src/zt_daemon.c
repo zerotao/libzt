@@ -145,9 +145,7 @@ zt_writepid(const char* pidF) {
             v = close(fd);
         }
 
-        if (!v) {
-            fd = -1;
-        } else {
+        if (v) {
             oVal = -1;
             zt_log_strerror(zt_log_err, errno, "Cannot close pid fd '%s'.", pidF);
         }
