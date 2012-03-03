@@ -218,7 +218,7 @@ zt_opt_bool_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def
                 break;
             default:
                 error(EINVAL, "'%s' is not a boolean expression", argv[argn]);
-                break;
+                return 0;
         }
     } else {
         if (strcasecmp(arg, "true") == 0 ||
@@ -229,6 +229,7 @@ zt_opt_bool_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def
             result = 0;
         } else {
             error(EINVAL, "'%s' is not a boolean expression", argv[argn]);
+            return 0;
         }
     }
 
