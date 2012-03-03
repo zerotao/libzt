@@ -90,7 +90,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     if (iter) {
         struct int_set *n = zt_rbt_data(iter, struct int_set, node);
         /* struct int_set *n2; */
-        iter = zt_rbt_remove(&br_root, iter);
+        zt_rbt_remove(&br_root, iter);
 
         ZT_UNIT_ASSERT(test, n->i == REMOVED);
 
@@ -117,7 +117,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
         struct int_set * x = zt_rbt_data(iter, struct int_set, node);
 
         ordered_dataset[x->i] = 0;
-        iter = zt_rbt_remove(&br_root, iter);
+        zt_rbt_remove(&br_root, iter);
         zt_free(x);
     }
 
