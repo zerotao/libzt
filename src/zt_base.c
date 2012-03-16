@@ -33,6 +33,38 @@ static zt_base_definition_t _base64_rfc = {
     zt_base_encode_with_padding
 };
 
+static zt_base_definition_t _base64_rfc_nopad = {
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789+/",
+    /* valid: alphanum, '+', '/'; allows CR,LF,'=',SP,TAB
+     * -1 (invalid) -2 (ignored)
+     */
+    { -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -2, -1, -1, -2, -1, -1,     /*  0-15 */
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,     /* 16-31 */
+      -2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,     /* 32-47 */
+      52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -2, -1, -1,     /* 48-63 */
+      -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,     /* 64-79 */
+      15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,     /* 80-95 */
+      -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,     /* 96-111 */
+      41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1,     /* 112-127 */
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    },
+    64,
+    3,
+    4,
+    6,
+    '=',
+    0
+};
+
 static zt_base_definition_t _base64_uri = {
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
@@ -65,6 +97,7 @@ static zt_base_definition_t _base64_uri = {
 
 
 zt_base_definition_t * zt_base64_rfc = &_base64_rfc;
+zt_base_definition_t * zt_base64_rfc_nopad = &_base64_rfc_nopad;
 zt_base_definition_t * zt_base64_uri = &_base64_uri;
 
 static zt_base_definition_t _base32_rfc = {
@@ -175,7 +208,7 @@ _valid_dictionary_p(zt_base_definition_t * def) {
 
 #define MAKE_MASK(x) ((1<<x)-1)
 int
-zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void **out, size_t *out_bytes) {
+zt_base_encode(zt_base_definition_t * def, const void * in, size_t in_bytes, void **out, size_t *out_bytes) {
     size_t                ocount;
     size_t                lcount;
     size_t                mod;
@@ -298,7 +331,7 @@ zt_base_encode(zt_base_definition_t * def, void * in, size_t in_bytes, void **ou
  * calloc'd and must be free()'d by the user.
 */
 int
-zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void ** out, size_t * out_bytes) {
+zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, void ** out, size_t * out_bytes) {
     const unsigned char * inp;
     unsigned char       * outp;
     int                   oval   = 0;

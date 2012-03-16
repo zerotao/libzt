@@ -25,6 +25,7 @@ typedef struct zt_base_definition {
 } zt_base_definition_t;
 
 extern zt_base_definition_t * zt_base64_rfc; /* rfc 3548/4648 definition */
+extern zt_base_definition_t * zt_base64_rfc_nopad; /* rfc 3548/4648 definition, but no padding */
 extern zt_base_definition_t * zt_base64_uri; /* rfc 3548/4648 URI safe definition */
 
 extern zt_base_definition_t * zt_base32_rfc; /* rfc 3548/4648 definition */
@@ -32,10 +33,13 @@ extern zt_base_definition_t * zt_base32_hex; /* rfc 4648 HEX definition */
 
 extern zt_base_definition_t * zt_base16_rfc; /* rfc 3548/4648 definition */
 int
-zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void **out, size_t *out_bytes);
+zt_base_encode(zt_base_definition_t *def, const void *in, size_t in_bytes, void **out, size_t *out_bytes);
 
 #define zt_base64_encode(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base64_rfc, in, in_bytes, out, out_bytes)
+
+#define zt_base64_encode_nopad(in, in_bytes, out, out_bytes) \
+    zt_base_encode(zt_base64_rfc_nopad, in, in_bytes, out, out_bytes)
 
 #define zt_base64_encode_uri(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base64_encode_uri, in, in_bytes, out, out_bytes)
@@ -49,7 +53,7 @@ zt_base_encode(zt_base_definition_t *def, void *in, size_t in_bytes, void **out,
 #define zt_base16_encode(in, in_bytes, out, out_bytes) \
     zt_base_encode(zt_base16_encode_rfc, in, in_bytes, out, out_bytes)
 
-int zt_base_decode(zt_base_definition_t * def, void * in, size_t in_bytes, void **out, size_t *out_bytes);
+int zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, void **out, size_t *out_bytes);
 
 #define zt_base64_decode(in, in_bytes, out, out_bytes) \
     zt_base_decode(zt_base64_rfc, in, in_bytes, out, out_bytes)
