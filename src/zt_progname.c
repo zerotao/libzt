@@ -36,7 +36,7 @@ static char _progname[PATH_MAX+1] = UNKNOWN;
 static char _progpath[PATH_MAX+1] = UNKNOWN;
 
 char *
-zt_progname(char *name, int opts)
+zt_progname(const char *name, int opts)
 {
     if (name && *name != '\0') {
         memset(_progname, '\0', PATH_MAX);
