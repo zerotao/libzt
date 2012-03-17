@@ -116,15 +116,18 @@ int
 zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
     size_t zero = 0;
     
+    /* tostr essentially treats **uuids as an 'out' param, so we always
+       want to be sure the pointer points to NULL so we alloc the
+       memory we want */
     if (uuids != NULL) {
         *uuids = NULL;
     }
     
-    return zt_uuid_tostr2(uuid, uuids, &zero, flags);
+    return zt_uuid_fillstr(uuid, uuids, &zero, flags);
 } /* zt_uuid_tostr */
 
 int
-zt_uuid_tostr2(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_flags_t flags) {
+zt_uuid_fillstr(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_flags_t flags) {
     char   uuids_hex[UUID_SHORT_STR_LEN];
     char * result = NULL;
     bool   myalloc = false;
@@ -217,7 +220,7 @@ zt_uuid_tostr2(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_fla
     
     *uuids = result;
     return i;
-} /* zt_uuid_tostr2 */
+} /* zt_uuid_fillstr */
 
 int
 zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
