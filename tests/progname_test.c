@@ -57,9 +57,10 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, strcmp(path, cwd) == 0);
 
     /* use the PATH env var to find the appname */
-    npath = zt_cstr_catv(getenv("PATH"), 0, -1,
-                         ENV_SEPERATOR, 0, -1,
-                         getenv("PWD"), 0, -1, NULL);
+    /* npath = zt_cstr_catv(getenv("PATH"), 0, -1,
+     *                    ENV_SEPERATOR, 0, -1,
+     *                    getenv("PWD"), 0, -1, NULL);
+     */
 
     /* path = zt_os_progpath(); */
 
