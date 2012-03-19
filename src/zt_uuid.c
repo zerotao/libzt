@@ -209,7 +209,7 @@ zt_uuid_fillstr(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_fl
         }
     } else {
         zt_log_printf(zt_log_err, "unknown uuid format");
-        i == -1; // allow to drop through
+        i = -1; // allow to drop through
     }
     if (i == -1) {
         if (myalloc) {

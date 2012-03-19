@@ -297,9 +297,9 @@ void
 zt_cfg_priv_destructor( zt_cfg_ty *cfg)
 {
     struct zt_cfg_block_ty * block = cfg->head;
-    struct zt_cfg_block_ty * blk_next = block;
-    struct zt_cfg_value_ty * value = block->head;
-    struct zt_cfg_value_ty * val_next = block->head;
+    struct zt_cfg_block_ty * blk_next = NULL;
+    struct zt_cfg_value_ty * value = NULL;
+    struct zt_cfg_value_ty * val_next = NULL;
 
 
     while (block) {

@@ -70,8 +70,10 @@ main(int argc UNUSED, char *argv[] UNUSED)
         elt3 = zt_mem_pool_group_alloc(group, sizeof(char) * 4097);
         zt_mem_pool_group_display(0, group, 0);
 
+        /* pools will be released during group_destory but can be released directly */
         zt_mem_pool_group_release(&elt);
         zt_mem_pool_group_release(&elt2);
+        zt_mem_pool_group_release(&elt3);
         zt_mem_pool_group_destroy(group);
     }
 
