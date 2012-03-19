@@ -5,26 +5,28 @@
 #include <ctype.h>
 #include <zt_base.h>
 
-#define test_encoding(_base, _data, _len, _result1, _result2)     \
-    do { unsigned char * cdata = (unsigned char *)_data;          \
-         char          * result = malloc(20);                     \
-         int             ret;                                     \
-         size_t          len;                                     \
-         void          **rptr = (void **)&result;                 \
-         memset(result, 0, 20);                                   \
-         len = 20;                                                \
-         ZT_BIT_UNSET(_base->flags, zt_base_encode_with_padding); \
-         ret = zt_base_encode(_base, cdata, _len, rptr, &len);  \
-         ZT_UNIT_ASSERT(test, !ret);                              \
-         ZT_UNIT_ASSERT(test, strcmp(result, _result1) == 0);     \
-         ZT_UNIT_ASSERT(test, strlen(result) == len);             \
-         ZT_BIT_SET(_base->flags, zt_base_encode_with_padding);   \
-                                                                  \
-         memset(result, 0, 20);                                   \
-         len = 20;                                                \
-         ret = zt_base_encode(_base, cdata, _len, rptr, &len);    \
-         ZT_UNIT_ASSERT(test, !ret);                              \
-         ZT_UNIT_ASSERT(test, strcmp(result, _result2) == 0);     \
+#define test_encoding(_base, _data, _len, _result1, _result2)                                   \
+    do { unsigned char * cdata = (unsigned char *)_data;                                        \
+         char          * result = malloc(20);                                                   \
+         int             ret;                                                                   \
+         size_t          len;                                                                   \
+         bool            bitisset = false;                                                      \
+         void          **rptr = (void **)&result;                                               \
+         memset(result, 0, 20);                                                                 \
+         len = 20;                                                                              \
+         bitisset = ZT_BIT_ISSET(_base->flags, zt_base_encode_with_padding);                    \
+         ZT_BIT_UNSET(_base->flags, zt_base_encode_with_padding);                               \
+         ret = zt_base_encode(_base, cdata, _len, rptr, &len);                                  \
+         ZT_UNIT_ASSERT(test, !ret);                                                            \
+         ZT_UNIT_ASSERT(test, strcmp(result, _result1) == 0);                                   \
+         ZT_UNIT_ASSERT(test, strlen(result) == len);                                           \
+         if (bitisset) ZT_BIT_SET(_base->flags, zt_base_encode_with_padding);                   \
+                                                                                                \
+         memset(result, 0, 20);                                                                 \
+         len = 20;                                                                              \
+         ret = zt_base_encode(_base, cdata, _len, rptr, &len);                                  \
+         ZT_UNIT_ASSERT(test, !ret);                                                            \
+         ZT_UNIT_ASSERT(test, strcmp(result, _result2) == 0);                                   \
          ZT_UNIT_ASSERT(test, strlen(result) == len); zt_free(result);} while (0)
 
 #define test_decoding(_base, _data, _len, _result1, _result2)                                  \
@@ -141,6 +143,14 @@ encoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     test_encoding(zt_base64_rfc, "fooba", 5, "Zm9vYmE", "Zm9vYmE=");
     test_encoding(zt_base64_rfc, "foobar", 6, "Zm9vYmFy", "Zm9vYmFy");
 
+    /* RFC4648 nopad test vectors */
+    test_encoding(zt_base64_rfc_nopad, "", 0, "", "");
+    test_encoding(zt_base64_rfc_nopad, "f", 1, "Zg", "Zg");
+    test_encoding(zt_base64_rfc_nopad, "fo", 2, "Zm8", "Zm8");
+    test_encoding(zt_base64_rfc_nopad, "foo", 3, "Zm9v", "Zm9v");
+    test_encoding(zt_base64_rfc_nopad, "foob", 4, "Zm9vYg", "Zm9vYg");
+    test_encoding(zt_base64_rfc_nopad, "fooba", 5, "Zm9vYmE", "Zm9vYmE");
+    test_encoding(zt_base64_rfc_nopad, "foobar", 6, "Zm9vYmFy", "Zm9vYmFy");
 
     /* base 32 tests */
 
@@ -229,7 +239,6 @@ decoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     test_decoding(zt_base64_rfc, "foob", 4, "Zm9vYg", "Zm9vYg==");
     test_decoding(zt_base64_rfc, "fooba", 5, "Zm9vYmE", "Zm9vYmE=");
     test_decoding(zt_base64_rfc, "foobar", 6, "Zm9vYmFy", "Zm9vYmFy");
-
 
     /* base 32 tests */
 

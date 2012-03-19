@@ -114,14 +114,69 @@ zt_uuid5(char * value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid) {
 
 int
 zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
+    size_t zero = 0;
+    
+    /* tostr essentially treats **uuids as an 'out' param, so we always
+       want to be sure the pointer points to NULL so we alloc the
+       memory we want */
+    if (uuids != NULL) {
+        *uuids = NULL;
+    }
+    
+    return zt_uuid_fillstr(uuid, uuids, &zero, flags);
+} /* zt_uuid_tostr */
+
+int
+zt_uuid_fillstr(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_flags_t flags) {
     char   uuids_hex[UUID_SHORT_STR_LEN];
     char * result = NULL;
+    bool   myalloc = false;
     int    i;
+    size_t sizerequired = 0;
+    char * uuidsp = uuids ? *(char **)uuids : NULL;
+    
+    if (flags == zt_uuid_std_fmt)
+        sizerequired = UUID_STR_LEN + 1;
+    else if (flags == zt_uuid_short_fmt)
+        sizerequired = UUID_SHORT_STR_LEN + 1;
+    else if (flags == zt_uuid_base62_fmt)
+        sizerequired = UUID_BASE62_STR_LEN + 1;
+    else
+    {
+        *uuids_size = 0;
+        return -2;
+    }
+
+    if (uuids == NULL)
+    {
+        // tell caller size of buffer needed
+        *uuids_size = sizerequired;
+        return 0;
+    }
+    
+    if (*uuids_size < sizerequired && *uuids_size != 0)
+    {
+        // too small.
+        *uuids_size = sizerequired;
+        return -2;
+    }
+
+    result = uuidsp;
+
+    if (uuidsp == NULL) {
+        /* dynamically allocate the buffer */
+        if (!(result = zt_calloc(char, sizerequired+1))) {
+            return -1;
+        }
+        
+        myalloc = true;
+                                               
+        *uuids_size = sizerequired;
+    }
 
     if (flags == zt_uuid_std_fmt) {
         zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
 
-        result = zt_calloc(char, UUID_STR_LEN + 1);
         i      = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
                           uuids_hex,
                           &uuids_hex[8],
@@ -131,7 +186,6 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
     } else if (flags == zt_uuid_short_fmt) {
         zt_binary_to_hex(uuid->data.bytes, 16, uuids_hex, 32);
 
-        result = zt_calloc(char, UUID_SHORT_STR_LEN + 1);
         i      = snprintf(result, UUID_SHORT_STR_LEN + 1, "%8.8s%4.4s%4.4s%4.4s%12.12s",
                           uuids_hex,
                           &uuids_hex[8],
@@ -139,8 +193,6 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
                           &uuids_hex[16],
                           &uuids_hex[20]);
     } else if (flags == zt_uuid_base62_fmt) {
-        result = zt_calloc(char, 22);
-
         u_int64_t v1 = 0;
         u_int64_t v2 = 0;
 
@@ -157,15 +209,18 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
         }
     } else {
         zt_log_printf(zt_log_err, "unknown uuid format");
-        return -1;
+        i == -1; // allow to drop through
     }
     if (i == -1) {
-        free(result);
-        result = NULL;
+        if (myalloc) {
+            zt_free(result);
+            result = NULL;
+        }
     }
+    
     *uuids = result;
     return i;
-} /* zt_uuid_tostr */
+} /* zt_uuid_fillstr */
 
 int
 zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
