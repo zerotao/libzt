@@ -9,7 +9,7 @@
 #include "zt.h"
 
 int
-zt_mkdir(char * path, mode_t mode, zt_mkdir_flags flags) {
+zt_mkdir(const char * path, mode_t mode, zt_mkdir_flags flags) {
     ssize_t     len;
     char        cpath[PATH_MAX + 1];
     ssize_t     offt;

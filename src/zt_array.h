@@ -3,7 +3,7 @@
 
 #include <stddef.h> /* size_t */
 
-#ifdef __cplusplus__
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -34,7 +34,7 @@ void *          zt_array_elem_copy(zt_array_t array, size_t offt, void *elem);
 extern void *   zt_array_get(zt_array_t array, size_t i); /* , void **elem); */
 extern void *   zt_array_put(zt_array_t array, size_t i, void *elem);
 
-#ifdef __cplusplus__
+#ifdef __cplusplus
 }
 #endif
 
