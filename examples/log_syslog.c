@@ -27,7 +27,6 @@ main(int argc, char **argv) {
     lsyslog = zt_log_syslog();
 
     logger = zt_log_logger(lsyslog);
-    zt_log_debug_logger(lsyslog);
     zt_log_set_level(lsyslog, zt_log_debug);
 
     zt_log_printf( zt_log_emerg, "*emergency* message" );
@@ -43,7 +42,7 @@ main(int argc, char **argv) {
 
     /* these need to be on the same line for the test to work */
     sprintf(position1, "(%s:%d)", __FILE__, __LINE__); ZT_LOG_XDEBUG( "LOG_DEBUG" );
-    sprintf(position2, "(%s:%d)", __FILE__, __LINE__); ZT_LOG_DEBUG_INFO(lsyslog), zt_log_lprintf(lsyslog, zt_log_debug, "lprintf with debugging");
+    sprintf(position2, "(%s:%d)", __FILE__, __LINE__); ZT_LOG_DEBUG_INFO(), zt_log_lprintf(lsyslog, zt_log_debug, "lprintf with debugging");
 
     zt_log_close(lsyslog);
     zt_log_logger(logger);

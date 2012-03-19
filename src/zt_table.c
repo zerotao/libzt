@@ -61,7 +61,7 @@ struct zt_table {
 #define ZT_DEFAULT_TABLE_POOL "zt.table.pool"
 
 zt_mem_pool *
-table_pool_init(long elts)
+zt_table_pool_init(long elts)
 {
     zt_mem_pool * table_mem_pool;
 
@@ -89,7 +89,7 @@ zt_table_init(char *name, zt_table_hash_func_cb func,
     table_mem_pool = zt_mem_pool_get(ZT_DEFAULT_TABLE_POOL);
 
     if (table_mem_pool == NULL) {
-        table_mem_pool = table_pool_init(2);
+        table_mem_pool = zt_table_pool_init(2);
     }
 
     if ( (table = (zt_table *)zt_mem_pool_alloc(table_mem_pool)) == NULL) {

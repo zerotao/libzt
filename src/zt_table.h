@@ -26,7 +26,7 @@ typedef struct zt_table_allocator zt_table_allocator;
 #define ZT_TABLE_SIZE_USE_HINT     1
 #define ZT_TABLE_ALLOW_DUP_KEYS    2
 
-zt_mem_pool * table_pool_init(long elts);
+zt_mem_pool * zt_table_pool_init(long elts);
 
 zt_table* zt_table_init(char *name, zt_table_hash_func_cb func,
                         zt_table_compare_cb cmp, size_t hint,

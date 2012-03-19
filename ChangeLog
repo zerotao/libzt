@@ -1,3 +1,121 @@
+v1.3.2
+=====================================
+2012-03-19  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_uuid.c: Fix for potential missed fallthru
+
+2012-03-04  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_tree.c: Add tree corruption detection  There are 2 cases where a
+  null dereference can fall thru the code and they are examples of tree
+  corruption.  Added checks, logs and abort for these cases.
+
+  * examples/CMakeLists.txt, examples/types.c: Remove types.c (not sure why I
+  ever checked it in)
+
+  * tests/progname_test.c: removed currently unused test code from
+  progname_test.c
+
+  * tests/gc_test.c: Remove currently unused variable from gc tests
+
+  * src/zt_gc.c: Remove dead code from zt_gc.c
+
+2012-03-03  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * tests/tree_test.c: Remove unread value from tree_test.c
+
+  * examples/mem_pools.c: Release alloced mem pool in example usage
+
+  * src/zt_cfg/cfg_private.c: Remove unnecessary initialization in zt_cfg
+  zt_cfg_destructor initialized 3 block values that are not ever used.
+
+  * examples/cpp_test.cpp: Remove unused value in cpp_test.cpp
+
+  * tests/unit_test.c: remove unused value in unit_test.c
+
+  * src/zt_opts.c: Fix fallthru case for boolean tests
+
+  * src/zt_progname.c: Cleanup code in zt_os_progpath
+
+  * src/zt_daemon.c: Remove unnecessary setting of fd
+
+  * src/zt_daemon.c: Fix formatting in zt_daemon.c
+
+2012-03-02  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_sha1.c: Remove unnecessary assignment and var in zt_sha1
+
+  * src/zt_cstr.c: Remove unnecessary assignment in zt_cstr_tok
+
+  * src/zt_daemon.c: Remove unnecessary nil variable
+
+  * src/zt_log.c: Fix NULL dereference in zt_log
+
+  * src/zt_assert.h, tests/assert_test.c: Add zt_assert_return and
+  zt_assert_returnV  These macros will log a message (assertion failed file,
+  line) and return from the function either void in the case of
+  zt_assert_return or a given value in the case of zt_assert_returnV
+
+2012-03-17  Joe Nardone <joe.nardone@mandiant.com>
+
+  * src/zt_uuid.c, src/zt_uuid.h: Fix method naming
+
+  * src/zt_progname.c, src/zt_progname.h, src/zt_uuid.c, src/zt_uuid.h,
+  tests/uuid_test.c: Fix buffer behavior, add const-ness to progname param
+
+2012-03-16  Joe Nardone <joe.nardone@mandiant.com>
+
+  * src/zt_base.c, src/zt_base.h, tests/base_test.c: Add base64 unpadded
+  encoding
+
+2012-03-02  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_uuid.c, tests/uuid_test.c: Fix uuid off by one bug
+
+2012-02-28  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_uuid.c: Fixed 'magic-number' usage
+
+2012-02-27  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * CMakeLists.txt, examples/log_syslog.c, src/zt_cfg.h, src/zt_log.c,
+  src/zt_log.h, src/zt_log/log_file.c, src/zt_log/log_private.c,
+  src/zt_log/log_private.h, src/zt_log/log_stderr.c, src/zt_log/log_syslog.c,
+  tests/log_test.c: Fix threaded race conditions in logging context  logging
+  had a number of race conditions (and still does under abnormal use cases).
+  The proper use cases should now be fixed.  Logging with a single shared
+  logger across threads should now work correctly as long as: 1. configuration
+  is done in the parent of all of the threads BEFORE any use. This includes use
+  of the default logger. 2. no changes are made to the logger outside of the
+  initial configuration.  It is still possible to do the above however the
+  output is non-deterministic during the change operation.  Each thread now
+  maintains it's own thread context (file, line number, and function) for
+  debugging purposes.  The debugging context around the config get/set
+  operation has been removed for the time being.  The specialized debug logger
+  has also been removed.
+
+  * src/zt_log.c: Fix release of current logger
+
+  * src/zt_log.c: Cleanup static log naming
+
+2012-02-21  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_table.c, src/zt_table.h: Fix prefix on table_pool_init
+
+2012-02-20  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_array.h: Fix C++ extern inclusion
+
+2012-02-16  Jason L. Shiffer <jshiffer@zerotao.org>
+
+  * src/zt_path.c, src/zt_path.h: Change zt_mkdir prototype to take const char
+  *
+
+
+v1.3.2
+=====================================
+
+
 2004-07-04  Jason L. Shiffer  <jshiffer@zerotao.org>
 
 	* tools/mkc: use getopts
@@ -5,17 +123,17 @@
 	undo some of the previous changes
 
 	* libzt/Makefile.am: added support for the new zt_event interface
-	
+
 	* libzt/zt_event/Makefile.am: build support
-	
+
 	* libzt/zt_event/zt_event_unix.c,
 	libzt/zt_event/zt_event_unix.h: added interface to unix io
 	events
-	
+
 	* libzt/zt_event/zt_event_signal.c,
 	libzt/zt_event/zt_event_signal.h: added interface to signal
 	events
-	
+
 	* libzt/zt_event/zt_event_timer.c,
 	libzt/zt_event/zt_event_timer.h: added interface to timer events
 
@@ -34,21 +152,21 @@
 
 2004-07-03  Jason L. Shiffer  <jshiffer@zerotao.org>
 
-	* tools/authors.xml: initial version of authors.xml for svn2log	
+	* tools/authors.xml: initial version of authors.xml for svn2log
 
 2004-07-02  Jason L. Shiffer <jshiffer@zerotao.org>
 
-	* libzt/t/cfg_test.c, libzt/zt_cfg/cfg_private.c:	
+	* libzt/t/cfg_test.c, libzt/zt_cfg/cfg_private.c:
 	I do not know how this lasted but the cfg_ini interface would
 	export strings to C in quotes such that: cfg.ini foo = 'this is
 	a test' was noly satisfied by !strcmp(s, "'this is a test'")
 	fix, quotes and double quotes are now striped
-    
 
-	* libzt/zt_cfg/cfg_lisp.c, libzt/zt_cfg/cfg_lisp.h: 
+
+	* libzt/zt_cfg/cfg_lisp.c, libzt/zt_cfg/cfg_lisp.h:
 	These are being moved into zlisp
 
-	* libzt/Makefile.am: Increased the library version of libzt    
+	* libzt/Makefile.am: Increased the library version of libzt
 
 2004-06-21 Jason L. Shiffer <jshiffer@zerotao.org>
 
@@ -57,25 +175,25 @@
 
 2004-06-20  Jason L. Shiffer <jshiffer@zerotao.org>
 
-	* libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the 
+	* libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the
 	argument changes.  Funny that it got checked in as it would not
 	even build.
-	
-	* trunk/aux, trunk, trunk/libzt/zt_cfg, trunk/tools, 
-	trunk/libzt/zt_log, trunk/libzt, trunk/doc, 
-	trunk/libzt/t, trunk/libzt/zt_adt, trunk/replace: 
+
+	* trunk/aux, trunk, trunk/libzt/zt_cfg, trunk/tools,
+	trunk/libzt/zt_log, trunk/libzt, trunk/doc,
+	trunk/libzt/t, trunk/libzt/zt_adt, trunk/replace:
 	Added svn:ignore properties to ignore:
 	Makefile
 	Makefile.in
 	any generated files
-    
 
-	* trunk/libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the 
+
+	* trunk/libzt/zt_mem.c: During reorg of the zt_list interface I missed one of the
 	argument changes.  Funny that it got checked in as it would not
 	even build.
-    
 
-	* trunk/libzt/Makefile.am, trunk/configure.ac: 
+
+	* trunk/libzt/Makefile.am, trunk/configure.ac:
 	Ticket #1
 	In the import I seem included the interim changes for zt_event.
 	These have been removed and the build should work again.
@@ -83,7 +201,7 @@
 2004-06-19  Jason L. Shiffer <jshiffer@zerotao.org>
 
 	* all: Importing in an attempt to clean up my tree
-	
+
 2003-06-10  Jason L. Shiffer  <jshiffer@zerotao.org>
 
 	* log_test.c: using the new LOG_NDEBUG et el.
