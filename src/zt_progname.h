@@ -19,7 +19,7 @@
 #define STRIP_DIR 1
 
 BEGIN_C_DECLS
-extern char *zt_progname(char *path, int flags);
+extern char *zt_progname(const char *path, int flags);
 extern char *zt_progpath(char *prog);
 extern char *zt_os_progpath(void);
 
