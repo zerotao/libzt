@@ -47,15 +47,14 @@ extern zt_log_level zt_log_get_level( zt_log_ty *log );
 extern unsigned int zt_log_set_opts( zt_log_ty *log, unsigned int opts );
 extern unsigned int zt_log_get_opts( zt_log_ty *log );
 
-extern void zt_log_set_debug_info( zt_log_ty *, const char *, int, const char * );
-extern void zt_log_get_debug_info( zt_log_ty *, char **, int *, char ** );
+extern void zt_log_set_debug_info( const char *, int, const char * );
+extern void zt_log_get_debug_info( const char **, int *, const char ** );
 
 extern zt_log_ty *zt_log_logger( zt_log_ty * );
-extern zt_log_ty *zt_log_debug_logger( zt_log_ty * );
 
-extern void zt_log_lprintf( zt_log_ty *, zt_log_level, char *, ... ) FORMAT((printf, 3, 4));
-extern void zt_log_lstrerror( zt_log_ty *, zt_log_level, int, char *, ... ) FORMAT((printf, 4, 5));
-extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, char *, va_list ) FORMAT((printf, 3, 0));
+extern void zt_log_lprintf( zt_log_ty *, zt_log_level, const char *, ... ) FORMAT((printf, 3, 4));
+extern void zt_log_lstrerror( zt_log_ty *, zt_log_level, int, const char *, ... ) FORMAT((printf, 4, 5));
+extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, const char *, va_list ) FORMAT((printf, 3, 0));
 
 /* zt_log_strerror(level, errnum, fmt, ...) */
 #define zt_log_strerror( level, errnum, ... ) \
@@ -69,17 +68,20 @@ extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, char *, va_list ) FORMAT
 #define zt_log_vprintf( level, fmt, ap ) \
     zt_log_lvprintf( NULL, level, fmt, ap )
 
-extern void _zt_log_debug( char *, ... ) FORMAT((printf, 1, 2));
-extern void _zt_log_vdebug( char *, va_list ) FORMAT((printf, 1, 0));
-
 extern void zt_log_close( zt_log_ty *log );
 
-#define ZT_LOG_DEBUG_INFO( log ) \
-    zt_log_set_debug_info( log, __FILE__, __LINE__, __FUNCTION__ )
+#define ZT_LOG_WITH_DEBUG(x) \
+    ZT_LOG_DEBUG_INFO(), x, ZT_LOG_DEBUG_RESET()
+
+#define ZT_LOG_DEBUG_RESET() \
+    zt_log_set_debug_info(NULL, 0, NULL)
+
+#define ZT_LOG_DEBUG_INFO( ) \
+    zt_log_set_debug_info( __FILE__, __LINE__, __FUNCTION__ )
 
 /* zt_log_dprintf(level, fmt, ...) */
 #define zt_log_dprintf( level, ... ) \
-    ZT_LOG_DEBUG_INFO( NULL ); zt_log_printf( level, __VA_ARGS__ )
+    ZT_LOG_DEBUG_INFO( ); zt_log_printf( level, __VA_ARGS__ )
 
 #define zt_log_dvprintf( level, fmt, ap ) \
     zt_log_vprintf( level, fmt, ap)
@@ -88,10 +90,10 @@ extern void zt_log_close( zt_log_ty *log );
 #ifdef DEBUG
 /* LOG_XDEBUG(fmt, ...) */
 #  define ZT_LOG_XDEBUG(... ) \
-    ZT_LOG_DEBUG_INFO( zt_log_debug_logger(NULL) ); _zt_log_debug( __VA_ARGS__ )
+    ZT_LOG_DEBUG_INFO( ); zt_log_lprintf( NULL, zt_log_debug, __VA_ARGS__);
 
 #  define LOG_XDEBUGV( fmt, ap ) \
-    ZT_LOG_DEBUG_INFO( zt_log_debug_logger(NULL) ); _zt_log_debug( fmt, ap )
+    ZT_LOG_DEBUG_INFO( ); zt_log_lvprintf( NULL, zt_log_debug, fmt, ap )
 #else /* ifdef DEBUG */
 /* LOG_XDEBUG(fmt, ...) */
 #  define ZT_LOG_XDEBUG(... )
@@ -102,10 +104,10 @@ extern void zt_log_close( zt_log_ty *log );
 #ifndef NDEBUG
 /* LOG_NDEBUG(fnt, ...) */
 #  define ZT_LOG_NDEBUG(... ) \
-    ZT_LOG_DEBUG_INFO( zt_log_debug_logger(NULL) ); _zt_log_debug( __VA_ARGS__ )
+    ZT_LOG_DEBUG_INFO( ); zt_log_lprintf( NULL, zt_log_debug, __VA_ARGS__ )
 
 #  define ZT_LOG_NDEBUGV( fmt, ap ) \
-    ZT_LOG_DEBUG_INFO( zt_log_debug_logger(NULL) ); _zt_log_debug( fmt, ap )
+    ZT_LOG_DEBUG_INFO( ); zt_log_lvprintf( NULL, zt_log_debug, fmt, ap )
 #else /* ifndef NDEBUG */
 /* LOG_NDEBUG(fmt, ...) */
 #  define ZT_LOG_NDEBUG(... )

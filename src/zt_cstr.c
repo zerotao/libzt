@@ -977,7 +977,7 @@ zt_cstr_tok(const char *str, const int delim, int keep_delim UNUSED)
         return NULL;
     }
 
-    cut_tok = str_copy = strdup(str);
+    str_copy = strdup(str);
 
     if (str[strlen(str) - 1] == delim) {
         str_copy[ strlen(str) - 1 ] = '\0';

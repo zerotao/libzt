@@ -64,16 +64,10 @@ zt_gc_protect(zt_gc_t *gc, void *value)
 void
 zt_gc_unprotect(zt_gc_t *gc UNUSED, void *value)
 {
-    zt_gc_collectable_t * mark;
+    zt_gc_collectable_t * mark = value;
+    zt_assert(value);
 
-    mark = (zt_gc_collectable_t    *)value;
-
-    /*
-     * zt_elist_remove(&mark->list);
-     * zt_elist_add_tail(gc->grey, &mark->list);
-     */
-
-    ZT_BIT_UNSET(((zt_gc_collectable_t *)value)->colour, protected);
+    ZT_BIT_UNSET(mark->colour, protected);
 }
 
 static void switch_white(zt_gc_t *gc)

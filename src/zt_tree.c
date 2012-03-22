@@ -148,7 +148,9 @@ zt_rbt_remove_colour(zt_rbt **head, zt_rbt_node *parent, zt_rbt_node *elm)
             if (zt_rbt_colour(tmp) == zt_rbt_red) {
                 zt_rbt_set_blackred(tmp, parent);
                 zt_rbt_rotate_left(head, parent, tmp);
-                tmp = zt_rbt_right(parent);
+                if ((tmp = zt_rbt_right(parent)) == NULL) {
+                    zt_log_dprintf(zt_log_err, "Tree corruption error"), abort();
+                }
             }
             if ((zt_rbt_left(tmp) == NULL ||
                  zt_rbt_colour(zt_rbt_left(tmp)) == zt_rbt_black) &&
@@ -183,7 +185,9 @@ zt_rbt_remove_colour(zt_rbt **head, zt_rbt_node *parent, zt_rbt_node *elm)
             if (zt_rbt_colour(tmp) == zt_rbt_red) {
                 zt_rbt_set_blackred(tmp, parent);
                 zt_rbt_rotate_right(head, parent, tmp);
-                tmp = zt_rbt_left(parent);
+                if ((tmp = zt_rbt_left(parent)) == NULL) {
+                    zt_log_dprintf(zt_log_err, "Tree corruption error"), abort();
+                }
             }
             if ((zt_rbt_left(tmp) == NULL ||
                  zt_rbt_colour(zt_rbt_left(tmp)) == zt_rbt_black) &&

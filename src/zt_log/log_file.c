@@ -44,13 +44,13 @@ static void destructor(zt_log_ty *log)
 }
 
 static void
-print(zt_log_ty *log, zt_log_level level, char *fmt, va_list ap)
+print(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * func, const char *fmt, va_list ap)
 {
     char           *nfmt = NULL;
 
     zt_log_file_ty *this = (zt_log_file_ty *)log;
 
-    nfmt = zt_log_gen_fmt(log, fmt, level, log->opts);
+    nfmt = zt_log_gen_fmt(log, fmt, file, line, func, level, log->opts);
 
 #ifdef WITH_THREADS
     pthread_mutex_lock(&log->mutex);

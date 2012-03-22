@@ -58,8 +58,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     zt_gc_t gc;
     atom  * root;
     int     i;
-
-    atom    * protected;
+/*     atom    * protected; */
 
 #define RSTART 1
 #define REND 100
@@ -92,7 +91,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
             a->type = INT;
             a->value.number = i;
             zt_gc_protect(&gc, a);
-            protected = a;
+            /* protected = a; */
         } else { /* if(i / 2 == 0 || last == NULL) { */
             a->type = INT;
             a->value.number = i;
