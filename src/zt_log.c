@@ -315,4 +315,8 @@ zt_log_close(zt_log_ty *log)
     if (log->vtbl->destructor) {
         log->vtbl->destructor(log);
     }
+    
+    if (zt_log_get_ctx() != NULL) {
+        free(zt_log_get_ctx());
+    }
 }
