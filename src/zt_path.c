@@ -8,6 +8,10 @@
 
 #include "zt.h"
 
+/* Create a directory, allowing for creation of intermediate directories as 
+ * needed. Will leave directory structure partially created if intermediate 
+ * directory creation fails. 
+ */
 int
 zt_mkdir(const char * path, mode_t mode, zt_mkdir_flags flags) {
     ssize_t     len;
@@ -51,7 +55,10 @@ AGAIN:
                 continue;
             }
 
-            mkdir(cpath, mode);
+            if (mkdir(cpath, mode) != 0) {
+                /* Cannot proceed, return error */
+                return -1;
+            }
         }
 
         goto AGAIN;
