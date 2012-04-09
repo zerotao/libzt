@@ -121,9 +121,9 @@ static zt_base_definition_t _base32_rfc = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     },
     32,
-    5,
-    8,
-    5,
+    5, /* in */
+    8, /* out */
+    5, /* bits */
     '=',
     zt_base_encode_with_padding
 };
@@ -206,6 +206,332 @@ _valid_dictionary_p(zt_base_definition_t * def) {
     return 1;
 }
 
+static int
+_encode64(zt_base_definition_t * def, const unsigned char * in, const size_t lcnt, const size_t mod, unsigned char * out) {
+    const char  * alphabet = def->alphabet;
+    const char    pad = def->pad;
+    size_t        i = 0;
+
+    for (i=0; i < lcnt; i++) {
+        const unsigned int b0 = *in++;
+        const unsigned int b1 = *in++;
+        const unsigned int b2 = *in++;
+
+        /*       b0        |       b1        |       b2
+         * 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0
+         * |_________| |___________| |___________| |_________|
+         */
+
+        *out++ = alphabet[ b0 >> 2 ];
+        *out++ = alphabet[ ((b0 & 0x03) << 4) | ((b1 & 0xF0) >> 4) ];
+        *out++ = alphabet[ ((b1 & 0x0F) << 2) | ((b2 & 0xC0) >> 6) ];
+        *out++ = alphabet[ b2 & 0x3F ];
+    }
+
+    if (mod > 0) {
+        const unsigned int b0 = *in++;
+        const unsigned int b1 = (mod > 1) ? *in++ : 0;
+        const unsigned int b2 = 0;
+
+        *out++ = alphabet[ b0 >> 2 ];
+        *out++ = alphabet[ ((b0 & 0x03) << 4) | ((b1 & 0xF0) >> 4) ];
+
+        if (mod > 1) {
+            *out++ = alphabet[ ((b1 & 0x0F) << 2) | ((b2 & 0xC0) >> 6) ];
+        }
+
+        if (ZT_BIT_ISSET(def->flags, zt_base_encode_with_padding)) {
+            for (i=0; i < (3 - mod); ++i) {
+                *out++ = pad;
+            }
+        }
+    }
+
+    return 0;
+}
+
+#define BUFSIZE_64 4
+static int
+_decode64(zt_base_definition_t * def, const unsigned char * in, const size_t bytes, unsigned char * out, size_t * out_bytes) {
+    size_t            i;
+    const char *      dictionary = def->dictionary;
+    unsigned int      buf[BUFSIZE_64];
+    size_t            cnt = 0;
+    size_t            obytes = 0;
+    int               result = 0;
+
+    for (i=0; i < bytes; i++) {
+        const int v = dictionary[*in++];
+
+        if (v >= 0) {
+            buf[cnt++] = v;
+
+            if (cnt == BUFSIZE_64) {
+                cnt = 0;
+
+                const unsigned int b0 = buf[0];
+                const unsigned int b1 = buf[1];
+                const unsigned int b2 = buf[2];
+                const unsigned int b3 = buf[3];
+
+                /*      b0     |      b1     |     b2      |     b4
+                 * 7 6 5 4 3 2 | 1 0 7 6 5 4 | 3 2 1 0 7 6 | 5 4 3 2 1 0
+                 * |_______________| |_______________| |_______________|
+                 */
+                *out++ = b0 << 2 | (b1 >> 4);
+                *out++ = (b1 & 0x0F) << 4 | (b2 >> 2);
+                *out++ = (b2 & 0x03) << 6 | b3;
+
+                obytes += 3;
+            }
+
+        } else if (v == -1) {
+            return -1;
+        }
+    }
+
+    if (cnt > 0) {
+        switch(cnt) {
+            case 1:
+                result = -1;
+                break;
+            case 2:
+                *out++ = buf[0] << 2 | (buf[1] >> 4);
+                break;
+            case 3:
+                *out++ = buf[0] << 2 | (buf[1] >> 4);
+                *out++ = (buf[1] & 0x0F) << 4 | (buf[2] >> 2);
+                break;
+        }
+
+        obytes += (cnt - 1);
+    }
+
+    *out_bytes = obytes;
+    return result;
+}
+
+static int
+_encode32(zt_base_definition_t * def, const unsigned char * in, const size_t lcnt, const size_t mod, unsigned char * out) {
+    const char  * alphabet = def->alphabet;
+    size_t        i = 0;
+
+    for (i=0; i < lcnt; i++) {
+        const unsigned int b0 = *in++;
+        const unsigned int b1 = *in++;
+        const unsigned int b2 = *in++;
+        const unsigned int b3 = *in++;
+        const unsigned int b4 = *in++;
+
+        /*       b0        |       b1        |       b2        |       b3        |       b4
+         * 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0 | 7 6 5 4 3 2 1 0
+         * |_______| |_________| |_______| |_________| |_________| |_______| |_________| |_______|
+         */
+
+        *out++ = alphabet[ b0 >> 3 ]; /* 5 bits out */
+        *out++ = alphabet[ ((b0 & 0x07) << 2) | ((b1 & 0xC0) >> 6) ];
+        *out++ = alphabet[ ((b1 & 0x3F) >> 1) ];
+        *out++ = alphabet[ ((b1 & 0x01) << 4) | ((b2 & 0xF0) >> 4) ];
+        *out++ = alphabet[ ((b2 & 0x0F) << 1) | ((b3 & 0x80) >> 7) ];
+        *out++ = alphabet[ ((b3 & 0x7C) >> 2) ];
+        *out++ = alphabet[ ((b3 & 0x03) << 3) | ((b4 & 0xE0) >> 5) ];
+        *out++ = alphabet[ b4 & 0x1F ];
+    }
+
+    if (mod > 0) {
+        const unsigned int b0 = *in++;
+        const unsigned int b1 = (mod > 1) ? *in++ : 0;
+        const unsigned int b2 = (mod > 2) ? *in++ : 0;
+        const unsigned int b3 = (mod > 3) ? *in++ : 0;
+        const unsigned int b4 = 0;
+        size_t             pad;
+
+        *out++ = alphabet[ b0 >> 3 ]; /* 5 bits out */
+        *out++ = alphabet[ ((b0 & 0x07) << 2) | ((b1 & 0xC0) >> 6) ];
+        pad = 6;
+
+        if (mod > 1) {
+            *out++ = alphabet[ ((b1 & 0x3F) >> 1) ];
+            *out++ = alphabet[ ((b1 & 0x01) << 4) | ((b2 & 0xF0) >> 4) ];
+            pad = 4;
+        }
+
+        if (mod > 2) {
+            *out++ = alphabet[ ((b2 & 0x0F) << 1) | ((b3 & 0x80) >> 7) ];
+            pad = 3;
+        }
+
+        if (mod > 3) {
+            *out++ = alphabet[ ((b3 & 0x7C) >> 2) ];
+            *out++ = alphabet[ ((b3 & 0x03) << 3) | ((b4 & 0xE0) >> 5) ];
+            pad = 1;
+        }
+        /* *out++ = alphabet[ b4 & 0x1F ]; */
+
+        if (ZT_BIT_ISSET(def->flags, zt_base_encode_with_padding)) {
+            for (i=0; i < pad; ++i) {
+                *out++ = def->pad;
+            }
+        }
+    }
+
+    return 0;
+}
+
+#define BUFSIZE_32 8
+static int
+_decode32(zt_base_definition_t * def, const unsigned char * in, const size_t bytes, unsigned char * out, size_t * out_bytes) {
+    size_t            i;
+    const char *      dictionary = def->dictionary;
+    unsigned int      buf[BUFSIZE_32];
+    size_t            cnt = 0;
+    size_t            obytes = 0;
+    int               result = 0;
+
+    for (i=0; i < bytes; i++) {
+        const int v = dictionary[*in++];
+
+        if (v >= 0) {
+            buf[cnt++] = v;
+
+            if (cnt == BUFSIZE_32) {
+                cnt = 0;
+
+                const unsigned int b0 = buf[0];
+                const unsigned int b1 = buf[1];
+                const unsigned int b2 = buf[2];
+                const unsigned int b3 = buf[3];
+                const unsigned int b4 = buf[4];
+                const unsigned int b5 = buf[5];
+                const unsigned int b6 = buf[6];
+                const unsigned int b7 = buf[7];
+
+                /*     b0    |    b1     |    b2     |    b3     |    b4     |    b5     |    b6     |    b7
+                 * 7 6 5 4 3 | 2 1 0 7 6 | 5 4 3 2 1 | 0 7 6 5 4 | 3 2 1 0 7 | 6 5 4 3 2 | 1 0 7 6 5 | 4 3 2 1 0
+                 * |_______________| |_________________| |_______________| |_________________| |_______________|
+                 */
+
+                *out++ = b0 << 3 | b1 >> 2;
+                *out++ = b1 << 6 | b2 << 1 | b3 >> 4;
+                *out++ = b3 << 4 | b4 >> 1;
+                *out++ = b4 << 7 | b5 << 2 | b6 >> 3;
+                *out++ = b6 << 5 | b7;
+
+                obytes += 5;
+            }
+
+        } else if (v == -1) {
+            return -1;
+        }
+    }
+
+    if (cnt > 0) {
+        switch(cnt) {
+            case 1:
+                result = -1;
+                break;
+            case 2:
+                *out++ = buf[0] << 3 | buf[1] >> 2;
+                obytes += 1;
+                break;
+            case 3:
+                result = -1;
+                break;
+            case 4:
+                *out++ = buf[0] << 3 | buf[1] >> 2;
+                *out++ = buf[1] << 6 | buf[2] << 1 | buf[3] >> 4;
+                obytes += 2;
+                break;
+            case 5:
+                *out++ = buf[0] << 3 | buf[1] >> 2;
+                *out++ = buf[1] << 6 | buf[2] << 1 | buf[3] >> 4;
+                *out++ = buf[3] << 4 | buf[4] >> 1;
+                obytes += 3;
+                break;
+            case 6:
+                return -1;
+                break;
+            case 7:
+                *out++ = buf[0] << 3 | buf[1] >> 2;
+                *out++ = buf[1] << 6 | buf[2] << 1 | buf[3] >> 4;
+                *out++ = buf[3] << 4 | buf[4] >> 1;
+                *out++ = buf[4] << 7 | buf[5] << 2 | buf[6] >> 3;
+                obytes += 4;
+                break;
+            default:
+                result = -1;
+                break;
+        }
+    }
+
+    *out_bytes = obytes;
+    return result;
+}
+
+static int
+_encode16(zt_base_definition_t * def, const unsigned char * in, const size_t lcnt, const size_t mod, unsigned char * out) {
+    const char  * alphabet = def->alphabet;
+    size_t        i = 0;
+
+    for (i=0; i < lcnt; i++) {
+        const unsigned int b0 = *in++;
+
+        /*  IN: 1 * 8 bits (8 bits)
+         * OUT: 8 * 4 bits (8 bits)
+         */
+
+        /*       b0
+         * 7 6 5 4 3 2 1 0
+         * |_____| |_____|
+         */
+
+        *out++ = alphabet[ b0 >> 4 ];
+        *out++ = alphabet[ b0 & 0x0F ];
+    }
+
+    return 0;
+}
+
+#define BUFSIZE_16 2
+static int
+_decode16(zt_base_definition_t * def, const unsigned char * in, const size_t bytes, unsigned char * out, size_t * out_bytes) {
+    size_t            i;
+    const char *      dictionary = def->dictionary;
+    unsigned int      buf[BUFSIZE_16];
+    size_t            cnt = 0;
+    size_t            obytes = 0;
+    int               result = 0;
+
+    for (i=0; i < bytes; i++) {
+        const int v = dictionary[*in++];
+
+        if (v >= 0) {
+            buf[cnt++] = v;
+
+            if (cnt == BUFSIZE_16) {
+                cnt = 0;
+
+                const unsigned int b0 = buf[0];
+                const unsigned int b1 = buf[1];
+
+                /*    b0   |   b1
+                 * 7 6 5 4 | 3 2 1 0
+                 * |_______________|
+                 */
+                *out++ = b0 << 4 | b1;
+
+                obytes += 1;
+            }
+
+        } else if (v == -1) {
+            return -1;
+        }
+    }
+
+    *out_bytes = obytes;
+    return result;
+}
+
 #define MAKE_MASK(x) ((1<<x)-1)
 int
 zt_base_encode(zt_base_definition_t * def, const void * in, size_t in_bytes, void **out, size_t *out_bytes) {
@@ -264,80 +590,32 @@ zt_base_encode(zt_base_definition_t * def, const void * in, size_t in_bytes, voi
     }
 
     /* perform encoding */
-    {
-        _bits_t               bits;
-        uint8_t               mask = MAKE_MASK(def->obits);
-        size_t                i;
-        const char *          alphabet = def->alphabet;
-        uint8_t               igroups = def->igroups;
-        uint8_t               ogroups = def->ogroups;
-        uint8_t               obits = def->obits;
-
-        for (i=0; i < lcount; i++) {
-
-            bits = *inp++;
-            switch(igroups) {
-                case 8:  bits = bits << 8 | *inp++;
-                case 7:  bits = bits << 8 | *inp++;
-                case 6:  bits = bits << 8 | *inp++;
-                case 5:  bits = bits << 8 | *inp++;
-                case 4:  bits = bits << 8 | *inp++;
-                case 3:  bits = bits << 8 | *inp++;
-                case 2:  bits = bits << 8 | *inp++;
-                         break;
-                case 1: /* there is no spoon */
-                         break;
-                default: /* error */
-                         break;
-            }
-
-            switch(ogroups) {
-                case 8: outp[7] = alphabet[bits & mask], bits >>= obits;
-                case 7: outp[6] = alphabet[bits & mask], bits >>= obits;
-                case 6: outp[5] = alphabet[bits & mask], bits >>= obits;
-                case 5: outp[4] = alphabet[bits & mask], bits >>= obits;
-                case 4: outp[3] = alphabet[bits & mask], bits >>= obits;
-                case 3: outp[2] = alphabet[bits & mask], bits >>= obits;
-                case 2: outp[1] = alphabet[bits & mask], bits >>= obits;
-                case 1: outp[0] = alphabet[bits & mask];
-                        break;
-            }
-            outp += ogroups;
-        }
-
-        if (mod > 0) {
-            bits = inp[0];
-            for(i=1; i < igroups; i++) {
-                bits = bits << 8 | ((mod > i) ? inp[i] : 0);
-            }
-            for (i=ogroups; i > 0; i--) {
-                if (mod >= i-1) {
-                    outp[i-1] = alphabet[ bits & mask ];
-                } else {
-                    if (ZT_BIT_ISSET(def->flags, zt_base_encode_with_padding)) {
-                        outp[i-1] = def->pad;
-                    }
-                }
-                bits >>= obits;
-            }
-        }
+    switch(def->base) {
+        case 64:
+            return _encode64(def, inp, lcount, in_bytes % def->igroups, outp);
+            break;
+        case 32:
+            return _encode32(def, inp, lcount, in_bytes % def->igroups, outp);
+            break;
+        case 16:
+            return _encode16(def, inp, lcount, in_bytes % def->igroups, outp);
+            break;
+        default:
+            break;
     }
-    return 0;
+
+    return -1;
 }
 
 /*
  * decodes the encoded data from void * in and writes the output to
  * the void ** out pointer. If *out is NULL and *out_bytes is 0, *out is
  * calloc'd and must be free()'d by the user.
-*/
+ */
 int
 zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, void ** out, size_t * out_bytes) {
     const unsigned char * inp;
     unsigned char       * outp;
-    int                   oval   = 0;
-    /* size_t                used   = 0; */
-    /* size_t                avail  = 0; */
-    /* bool                  heaped = false; */
     size_t                lcount = 0;
     size_t                ocount = 0;
     size_t                mod = 0;
@@ -365,6 +643,7 @@ zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, voi
             break;
         }
     }
+
     lcount = (in_bytes-i) / def->ogroups; /* number of whole input groups */
     mod = ((in_bytes-i) % def->ogroups); /* partial inputs */
     ocount = (lcount * def->igroups) + mod; /* total output bytes */
@@ -391,80 +670,20 @@ zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, voi
         *out_bytes = ocount;
     }
 
-    {
-        /* perform decoding */
-        size_t        i;
-        _bits_t       bits;
-        const char  * dictionary = def->dictionary;
-        uint8_t       obits = def->obits;
-        uint8_t       ogroups = def->ogroups;
-        uint8_t       igroups = def->igroups;
-        uint8_t       ibits = (obits * ogroups) / igroups;
-        uint8_t       mask = MAKE_MASK(ibits);
-        size_t        bytes = 0;
-        uint8_t       fault_on_error = !ZT_BIT_ISSET(def->flags, zt_base_ignore_non_encoded_data);
-
-        for (i=0; i < lcount; i++) {
-
-            /* bits = dictionary[*inp++]; */
-            /* for(i=1; i < ogroups; i++) { */
-                /* bits = bits << obits | dictionary[*inp++]; */
-            /* } */
-
-            ssize_t  v;
-            v = dictionary[*inp++]; if (v >= 0) { bits = v; } else if(fault_on_error) { return -1; }
-            switch(ogroups) {
-                case 8: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 7: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 6: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 5: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 4: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 3: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                case 2: { v = dictionary[*inp++]; if (v >= 0) { bits = bits << obits | v; } else if(fault_on_error) { return -1; } }
-                        break;
-                case 1: /* there is no spoon */
-                        break;
-            }
-
-            switch(igroups) {
-                case 8: outp[7] = bits & mask, bits >>= ibits;
-                case 7: outp[6] = bits & mask, bits >>= ibits;
-                case 6: outp[5] = bits & mask, bits >>= ibits;
-                case 5: outp[4] = bits & mask, bits >>= ibits;
-                case 4: outp[3] = bits & mask, bits >>= ibits;
-                case 3: outp[2] = bits & mask, bits >>= ibits;
-                case 2: outp[1] = bits & mask, bits >>= ibits;
-                case 1: outp[0] = bits & mask;
-                        break;
-            }
-            outp += igroups;
-            bytes += igroups;
-            /* *out_bytes += igroups; */
-        }
-
-
-        /* now handle partials */
-        if (mod > 0) {
-            bits = dictionary[*inp++];
-            for(i=1; i < ogroups; i++) {
-                bits = bits << obits | ((mod > i) ? dictionary[*inp++] : 0);
-            }
-
-            for(i=igroups; i > 0; i--) {
-                if (mod >= i-1) {
-                    if (bits & mask) {
-                        outp[i-1] = bits & mask;
-                        bytes += 1;
-                    }
-                } else {
-                    outp[i-1] = 0;
-                }
-                bits >>= ibits;
-            }
-        }
-        *out_bytes = bytes;
+    switch(def->base) {
+        case 64:
+            return _decode64(def, inp, in_bytes, outp, out_bytes);
+            break;
+        case 32:
+            return _decode32(def, inp, in_bytes, outp, out_bytes);
+            break;
+        case 16:
+            return _decode16(def, inp, in_bytes, outp, out_bytes);
+            break;
+        default:
+            break;
     }
 
-    return oval;
+    return -1;
 } /* zt_base_decode */
 
