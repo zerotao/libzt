@@ -112,114 +112,187 @@ zt_uuid5(char * value, size_t vlen, zt_uuid_ns type, zt_uuid_t * uuid) {
     return 0;
 }
 
-int
-zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
-    size_t zero = 0;
+/*
+ *  _flagToSize
+ *
+ *  Internal function returning the minimun necessary buffersize for each of the valid formats.
+ *  Returns zero on unknown format.
+ */
 
-    /* tostr essentially treats **uuids as an 'out' param, so we always
-       want to be sure the pointer points to NULL so we alloc the
-       memory we want */
-    if (uuids != NULL) {
-        *uuids = NULL;
+size_t
+_flagToSize(zt_uuid_flags_t flags) {
+    size_t oSz = 0;
+
+    switch (flags) {
+        case zt_uuid_std_fmt:
+            oSz = UUID_STR_LEN + 1;
+            break;
+        case zt_uuid_short_fmt:
+            oSz = UUID_SHORT_STR_LEN + 1;
+            break;
+        case zt_uuid_base62_fmt:
+            oSz = UUID_BASE62_STR_LEN + 1;
+            break;
+        default:
+            zt_assert(false);
+            break;
     }
 
-    return zt_uuid_fillstr(uuid, uuids, &zero, flags);
-} /* zt_uuid_tostr */
+    return oSz;
+}
 
-int
-zt_uuid_fillstr(zt_uuid_t * uuid, char ** uuids, size_t * uuids_size, zt_uuid_flags_t flags) {
-    char   uuids_hex[UUID_SHORT_STR_LEN];
-    char * result = NULL;
-    bool   myalloc = false;
-    int    i;
-    size_t sizerequired = 0;
-    char * uuidsp = uuids ? *(char **)uuids : NULL;
+/*
+ *  _zt_uuid_fillstr
+ *
+ *  Internal function that formats and copies into 'uuids' a represent of the 'uuid' as specified by 'flags'.
+ *
+ *  Input:
+ *      uuid - [Required] A pointer to a valid zt_uuid_t structure.
+ *      uuids - [Required] A pointer to a character buffer in which to copy the string.
+ *      uuids_size - [Required]  Pointer to a size_t containing the number of bytes allocated
+ *          in 'uuids'.
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *
+ *  Output:
+ *      - Upon successful return, the function will return the number of characters copied into
+ *          the param 'uuids', not including the terminating NULL byte.
+ *      - A return value < 0 indicates an error.
+ *
+ */
 
-    if (flags == zt_uuid_std_fmt)
-        sizerequired = UUID_STR_LEN + 1;
-    else if (flags == zt_uuid_short_fmt)
-        sizerequired = UUID_SHORT_STR_LEN + 1;
-    else if (flags == zt_uuid_base62_fmt)
-        sizerequired = UUID_BASE62_STR_LEN + 1;
-    else
-    {
-        *uuids_size = 0;
-        return -2;
-    }
 
-    if (uuids == NULL)
-    {
-        // tell caller size of buffer needed
-        *uuids_size = sizerequired;
-        return 0;
-    }
 
-    if (*uuids_size < sizerequired && *uuids_size != 0)
-    {
-        // too small.
-        *uuids_size = sizerequired;
-        return -2;
-    }
+ssize_t
+_zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_t flags) {
+    int oLen = 0;
 
-    result = uuidsp;
+    if (flags == zt_uuid_base62_fmt) {
+        zt_assert(uuids_size <= UUID_BASE62_STR_LEN + 1);
 
-    if (uuidsp == NULL) {
-        /* dynamically allocate the buffer */
-        if (!(result = zt_calloc(char, sizerequired+1))) {
-            return -1;
-        }
-
-        myalloc = true;
-
-        *uuids_size = sizerequired;
-    }
-
-    if (flags == zt_uuid_std_fmt) {
-        zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
-
-        i      = snprintf(result, UUID_STR_LEN + 1, "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s",
-                          uuids_hex,
-                          &uuids_hex[8],
-                          &uuids_hex[12],
-                          &uuids_hex[16],
-                          &uuids_hex[20]);
-    } else if (flags == zt_uuid_short_fmt) {
-        zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
-
-        i      = snprintf(result, UUID_SHORT_STR_LEN + 1, "%8.8s%4.4s%4.4s%4.4s%12.12s",
-                          uuids_hex,
-                          &uuids_hex[8],
-                          &uuids_hex[12],
-                          &uuids_hex[16],
-                          &uuids_hex[20]);
-    } else if (flags == zt_uuid_base62_fmt) {
         u_int64_t v1 = 0;
         u_int64_t v2 = 0;
 
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             const int shift = (7 - i) * 8;
             v1 |= ((u_int64_t)uuid->data.bytes[i] << shift);
             v2 |= ((u_int64_t)uuid->data.bytes[i + 8] << shift);
         }
 
-        if (base62_encode_int64(v1, result, _UUID_BASE62_SEGMENT) >= 0) {
-            if (base62_encode_int64(v2, result + _UUID_BASE62_SEGMENT, _UUID_BASE62_SEGMENT) >= 0) {
-                i = UUID_BASE62_STR_LEN;
-            }
+        int ok1 = base62_encode_int64(v1, uuids, _UUID_BASE62_SEGMENT);
+        int ok2 = base62_encode_int64(v2, uuids + _UUID_BASE62_SEGMENT, _UUID_BASE62_SEGMENT);
+        if (ok1 >= 0 && ok2 >= 0) {
+            oLen        = UUID_BASE62_STR_LEN;
+            uuids[oLen] = 0;
+        } else {
+            oLen = -1;
         }
     } else {
-        zt_log_printf(zt_log_err, "unknown uuid format");
-        i = -1; // allow to drop through
-    }
-    if (i == -1) {
-        if (myalloc) {
-            zt_free(result);
-            result = NULL;
-        }
+        zt_assert(flags == zt_uuid_std_fmt || flags == zt_uuid_short_fmt);
+
+        char        uuids_hex[UUID_SHORT_STR_LEN];
+        const char* fmt = (flags == zt_uuid_std_fmt) ? "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s" : "%8.8s%4.4s%4.4s%4.4s%12.12s";
+
+        zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
+
+        oLen = snprintf(uuids, uuids_size, fmt,
+                        uuids_hex,
+                        &uuids_hex[8],
+                        &uuids_hex[12],
+                        &uuids_hex[16],
+                        &uuids_hex[20]);
+
+        zt_assert(flags != zt_uuid_std_fmt || oLen == UUID_STR_LEN);
+        zt_assert(flags != zt_uuid_short_fmt || oLen == UUID_SHORT_STR_LEN);
     }
 
-    *uuids = result;
-    return i;
+    return oLen;
+} /* _zt_uuid_fillstr */
+
+/*
+ *  zt_uuid_tostr
+ *
+ *  Allocates and returns a string in 'uuids' representing 'uuid' as specified by 'flags'.
+ *
+ *  Input:
+ *      uuid -  [Required] A pointer to a valid zt_uuid_t structure.
+ *      uuids - [Required] A pointer to a character buffer in which to copy the string.
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *
+ *  Output:
+ *
+ *      - Upon successful return, '*uuids' will contain a pointer to a string containting a ASCII
+ *          representation of 'uuid'.  The function will return the number of characters copied into
+ *          '*uuids'.  The caller is responsible for deallocating the string with zt_free.
+ *      - A return value < 0 indicates an error.
+ *
+ */
+
+ssize_t
+zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
+    ssize_t oVal;
+    size_t  sz = 0;
+
+    if (!uuid || !uuids) {
+        return -1;
+    }
+
+    *uuids = NULL;
+
+    sz     = _flagToSize(flags);
+    if (!sz) {
+        return -1;
+    }
+
+    *uuids = zt_calloc(char, sz);
+    if (!*uuids) {
+        return -1;
+    }
+
+    oVal   = _zt_uuid_fillstr(uuid, *uuids, sz, flags);
+    if (oVal < 0) {
+        zt_free(*uuids);
+        *uuids = NULL;
+    }
+
+    return oVal;
+} /* zt_uuid_tostr */
+
+/*
+ *  zt_uuid_fillstr
+ *
+ *  Formats and copies into 'uuids' a represent of the 'uuid' as specified by 'flags'.
+ *
+ *  Input:
+ *      uuid - [Optional] A pointer to a valid zt_uuid_t structure.
+ *      uuids - [Optional] A pointer to a character buffer in which to copy the string.
+ *      uuids_size - [Required]  Pointer to a size_t containing the number of bytes allocated
+ *          in 'uuids'.
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *
+ *  Output:
+ *      - Upon successful return, the function will return the number of characters copied into
+ *          the param 'uuids', not including the terminating NULL byte.
+ *      - A return value < 0 indicates an error.
+ *      - If either 'uuid' or 'uuids' is NULL, the function will set *uuids_size to the
+ *          mininum of bytes required in 'uuids' given the param 'flags'.  Will return 0.
+ *      - If the buffer size passed in '*uuids_size' is inadequate, the function will set
+ *          '*uuids_size' to the mininum of bytes required in 'uuids' and return 0.
+ */
+
+ssize_t
+zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t* uuids_size, zt_uuid_flags_t flags) {
+    size_t sizerequired = _flagToSize(flags);
+
+    if (!sizerequired || !uuids_size) {
+        return -1; /* Bad input */
+    }
+    /* User has asked how much data to allocate, or an inadequate string was passed in */
+    if (!uuid || !uuids || *uuids_size < sizerequired) {
+        *uuids_size = sizerequired;
+        return 0;
+    }
+
+    return _zt_uuid_fillstr(uuid, uuids, *uuids_size, flags);
 } /* zt_uuid_fillstr */
 
 int
@@ -406,4 +479,3 @@ base62_decode_int64(const char * in, size_t ilen, u_int64_t * out) {
     *out = v;
     return 0;
 }
-
