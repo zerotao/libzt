@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(libzt)
-set(PROJECT_VERSION 1.3.2)
+set(PROJECT_VERSION 1.3.3)
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -122,4 +122,4 @@ add_subdirectory(tools)
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(tests)
-add_subdirectory(doc)
+add_subdirectory(docs)
