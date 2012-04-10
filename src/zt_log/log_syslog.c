@@ -27,9 +27,11 @@ static void destructor(zt_log_ty *log)
     return;
 }
 
-static void print(zt_log_ty *log UNUSED, zt_log_level level, const char * file UNUSED, int line UNUSED, const char * function UNUSED, const char *fmt, va_list ap)
+static void print(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * function, const char *fmt, va_list ap)
 {
+    char *nfmt = NULL;
     int syslog_level = 0;
+    unsigned int level_flag = 0;
 
     switch (level) {
         case zt_log_emerg:
@@ -61,7 +63,13 @@ static void print(zt_log_ty *log UNUSED, zt_log_level level, const char * file U
             break;
     } /* switch */
 
-    vsyslog(syslog_level, fmt, ap);
+    /* honor level flag if it is set in the logger opts. for the rest of the 
+     * zt flags, defer to syslog settings */
+    level_flag = (log->opts & ZT_LOG_WITH_LEVEL) ? ZT_LOG_WITH_LEVEL : 0;
+    nfmt = zt_log_gen_fmt(log, fmt, file, line, function, level, level_flag);
+    vsyslog(syslog_level, nfmt, ap);
+    
+    zt_free(nfmt);
 }
 
 /* component data */
