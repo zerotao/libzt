@@ -87,7 +87,7 @@ uuid5_tests(struct zt_unit_test * test, void * data UNUSED) {
     int          x;
     int          fail_ver     = 0;
     int volatile fail_variant = 0;
-    int          s = 0;
+    ssize_t      s = 0;
 
     for (i = 0; i < (int)sizeof_array(tdata); i++) {
         zt_uuid5(tdata[i], strlen(tdata[i]), UUID_NS_OID, &uuid);
@@ -185,8 +185,8 @@ uuid_generic_tests(struct zt_unit_test * test, void * data UNUSED) {
     uuids2 = 0;
 
     {
-        int          i;
-        char       * cmp[] = {
+        int    i;
+        char * cmp[] = {
             "611e34722c264145a936a854984ea10c", "8kXjP4L7XohewIBQdYqnog",
             "e8a29b34d94a43288a380d795da3a277", "jYjjP0AIK5qbRJEaJQtHvh",
             "e40c0b36c5af463e8286a94686634e03", "jzT7BxJwiLAbcMN0MZJKi7",
@@ -318,4 +318,3 @@ register_uuid_suite(struct zt_unit * unit) {
     zt_unit_register_test(suite, "uuid_generic", uuid_generic_tests);
     return 0;
 }
-
