@@ -20,18 +20,18 @@
 #include "log_syslog.h"
 
 #if HAVE_SYSLOG
-static void destructor(zt_log_ty *log)
-{
+static void
+destructor(zt_log_ty * log) {
     closelog();
     zt_free(log);
     return;
 }
 
-static void print(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * function, const char *fmt, va_list ap)
-{
-    char *nfmt = NULL;
-    int syslog_level = 0;
-    unsigned int level_flag = 0;
+static void
+print(zt_log_ty * log, zt_log_level level, const char * file, int line, const char * function, const char * fmt, va_list ap) {
+    char       * nfmt         = NULL;
+    int          syslog_level = 0;
+    unsigned int level_flag   = 0;
 
     switch (level) {
         case zt_log_emerg:
@@ -63,14 +63,14 @@ static void print(zt_log_ty *log, zt_log_level level, const char * file, int lin
             break;
     } /* switch */
 
-    /* honor level flag if it is set in the logger opts. for the rest of the 
+    /* honor level flag if it is set in the logger opts. for the rest of the
      * zt flags, defer to syslog settings */
     level_flag = (log->opts & ZT_LOG_WITH_LEVEL) ? ZT_LOG_WITH_LEVEL : 0;
-    nfmt = zt_log_gen_fmt(log, fmt, file, line, function, level, level_flag);
+    nfmt       = zt_log_gen_fmt(log, fmt, file, line, function, level, level_flag);
     vsyslog(syslog_level, nfmt, ap);
-    
+
     zt_free(nfmt);
-}
+} /* print */
 
 /* component data */
 static zt_log_vtbl_ty vtbl = {
@@ -81,24 +81,22 @@ static zt_log_vtbl_ty vtbl = {
 #endif /* HAVE_SYSLOG */
 
 zt_log_ty *
-zt_log_syslog(void)
-{
+zt_log_syslog(void) {
     return zt_log_syslog2(ZT_LOG_WITH_PID, LOG_USER);
 }
 
 zt_log_ty *
-zt_log_syslog2(int opt, int facility)
-{
+zt_log_syslog2(int opt, int facility) {
 #if HAVE_SYSLOG
-    char *name = zt_progname(0, 0);
-    int   sysopts = 0;
+    char * name    = zt_progname(0, 0);
+    int    sysopts = 0;
 
     if (opt & ZT_LOG_WITH_PID) {
         sysopts |= LOG_PID;
     }
     openlog(name ? name : "Set name with progname call", sysopts, facility);
     return zt_log_new(&vtbl, 0);
-#else
+#else /* if HAVE_SYSLOG */
     zt_log_ty * logger = zt_log_stderr(ZT_LOG_EMU_SYSLOG);
 
     zt_log_printf(zt_log_crit, "Syslog not supported on this platform: falling back to zt_log_stderr");

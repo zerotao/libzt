@@ -17,8 +17,8 @@
 #include "../zt_internal.h"
 #include "log_private.h"
 
-static void destructor(zt_log_ty *log)
-{
+static void
+destructor(zt_log_ty * log) {
 #ifdef WITH_THREADS
     pthread_mutex_destroy(&log->mutex);
 #endif /* WITH_THREADS */
@@ -27,9 +27,9 @@ static void destructor(zt_log_ty *log)
     return;
 }
 
-static void print(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * function, const char *fmt, va_list ap)
-{
-    char *nfmt = zt_log_gen_fmt( log, fmt, file, line, function, level, log->opts);
+static void
+print(zt_log_ty * log, zt_log_level level, const char * file, int line, const char * function, const char * fmt, va_list ap) {
+    char * nfmt = zt_log_gen_fmt( log, fmt, file, line, function, level, log->opts);
 
 #ifdef WITH_THREADS
     pthread_mutex_lock(&log->mutex);
@@ -51,9 +51,8 @@ static zt_log_vtbl_ty vtbl = {
 };
 
 zt_log_ty *
-zt_log_stderr(unsigned int opts)
-{
-    zt_log_ty   * log;
+zt_log_stderr(unsigned int opts) {
+    zt_log_ty * log;
 
     log = zt_log_new(&vtbl, opts);
 

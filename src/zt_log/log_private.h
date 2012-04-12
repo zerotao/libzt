@@ -29,7 +29,7 @@ extern "C" {
 typedef struct zt_log_level_desc_ty zt_log_level_desc_ty;
 struct zt_log_level_desc_ty {
     zt_log_level level;
-    char        *desc;
+    char       * desc;
 };
 extern zt_log_level_desc_ty zt_log_level_desc[];
 
@@ -40,21 +40,23 @@ struct zt_log_ty {
     unsigned int            opts;
     zt_log_level            level;
 #ifdef WITH_THREADS
-    pthread_mutex_t         mutex;
-#endif /* WITH_THREADS */
-    /* rest of opts */
+    pthread_mutex_t mutex;
+#endif /*
+        * WITH_THREADS
+        * rest of opts
+        */
 };
 
-typedef struct zt_log_vtbl_ty zt_log_vtbl_ty;
+typedef struct zt_log_vtbl_ty       zt_log_vtbl_ty;
 struct zt_log_vtbl_ty {
     size_t size;
     /* virtual function pointers */
-    void (* destructor)(zt_log_ty *log);
-    void (* print)(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * func, const char *fmt, va_list ap);
+    void (* destructor)(zt_log_ty * log);
+    void (* print)(zt_log_ty * log, zt_log_level level, const char * file, int line, const char * func, const char * fmt, va_list ap);
 };
 
-zt_log_ty *zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts);
-char* zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts);
+zt_log_ty * zt_log_new(zt_log_vtbl_ty * vptr, unsigned int opts);
+char      * zt_log_gen_fmt(zt_log_ty * log, const char * fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts);
 
 #ifdef __cplusplus
 }
