@@ -25,8 +25,8 @@ static const char base62_alphabet[63] = \
     "0123456789"
     "abcdefghijklmnopqrstuvwxyz"
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static int base62_encode_int64(u_int64_t in, char * out, size_t olen);
-static int base62_decode_int64(const char * in, size_t ilen, u_int64_t * out);
+static int base62_encode_int64(uint64_t in, char * out, size_t olen);
+static int base62_decode_int64(const char * in, size_t ilen, uint64_t * out);
 
 void       srandomdev(void);
 #ifndef HAVE_SRANDOMDEV
@@ -167,19 +167,22 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
     int oLen = 0;
 
     if (flags == zt_uuid_base62_fmt) {
+		uint64_t v1  = 0;
+        uint64_t v2  = 0;
+		int      i   = 0;
+		int      ok1 = 0;
+		int      ok2 = 0;
+
         zt_assert(uuids_size <= UUID_BASE62_STR_LEN + 1);
 
-        u_int64_t v1 = 0;
-        u_int64_t v2 = 0;
-
-        for (int i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) {
             const int shift = (7 - i) * 8;
-            v1 |= ((u_int64_t)uuid->data.bytes[i] << shift);
-            v2 |= ((u_int64_t)uuid->data.bytes[i + 8] << shift);
+            v1 |= ((uint64_t)uuid->data.bytes[i] << shift);
+            v2 |= ((uint64_t)uuid->data.bytes[i + 8] << shift);
         }
 
-        int ok1 = base62_encode_int64(v1, uuids, _UUID_BASE62_SEGMENT);
-        int ok2 = base62_encode_int64(v2, uuids + _UUID_BASE62_SEGMENT, _UUID_BASE62_SEGMENT);
+        ok1 = base62_encode_int64(v1, uuids, _UUID_BASE62_SEGMENT);
+        ok2 = base62_encode_int64(v2, uuids + _UUID_BASE62_SEGMENT, _UUID_BASE62_SEGMENT);
         if (ok1 >= 0 && ok2 >= 0) {
             oLen        = UUID_BASE62_STR_LEN;
             uuids[oLen] = 0;
@@ -187,10 +190,12 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
             oLen = -1;
         }
     } else {
+		char         uuids_hex[UUID_SHORT_STR_LEN];
+		const char * fmt = NULL;
+
         zt_assert(flags == zt_uuid_std_fmt || flags == zt_uuid_short_fmt);
 
-        char        uuids_hex[UUID_SHORT_STR_LEN];
-        const char* fmt = (flags == zt_uuid_std_fmt) ? "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s" : "%8.8s%4.4s%4.4s%4.4s%12.12s";
+        fmt = (flags == zt_uuid_std_fmt) ? "%8.8s-%4.4s-%4.4s-%4.4s-%12.12s" : "%8.8s%4.4s%4.4s%4.4s%12.12s";
 
         zt_binary_to_hex(uuid->data.bytes, UUID_ALEN, uuids_hex, UUID_SHORT_STR_LEN);
 
@@ -321,8 +326,8 @@ zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
         memcpy(uuid_hex, uuidstr, UUID_SHORT_STR_LEN);
         zt_hex_to_binary(uuid_hex, UUID_SHORT_STR_LEN, uuid->data.bytes, UUID_ALEN);
     } else if (flags == zt_uuid_base62_fmt) {
-        u_int64_t v1 = 0;
-        u_int64_t v2 = 0;
+        uint64_t v1 = 0;
+        uint64_t v2 = 0;
         int       i;
 
         if (base62_decode_int64(uuidstr, _UUID_BASE62_SEGMENT, &v1) != 0) {
@@ -421,7 +426,7 @@ zt_uuid_isvalid(char * uuid, zt_uuid_flags_t flags) {
 } /* zt_uuid_isvalid */
 
 static int
-base62_encode_int64(u_int64_t in, char * out, size_t olen) {
+base62_encode_int64(uint64_t in, char * out, size_t olen) {
     unsigned int i   = _UUID_BASE62_SEGMENT;
     int          ret = 0;
 
@@ -449,8 +454,8 @@ base62_encode_int64(u_int64_t in, char * out, size_t olen) {
 }
 
 static int
-base62_decode_int64(const char * in, size_t ilen, u_int64_t * out) {
-    u_int64_t    v    = 0;
+base62_decode_int64(const char * in, size_t ilen, uint64_t * out) {
+    uint64_t    v    = 0;
     const size_t tlen = (ilen > _UUID_BASE62_SEGMENT) ? _UUID_BASE62_SEGMENT : ilen;
     size_t       i;
 
@@ -473,7 +478,7 @@ base62_decode_int64(const char * in, size_t ilen, u_int64_t * out) {
             return -1; /* invalid character */
         }
 
-        v += n * powl(62, tlen - i - 1);
+        v += n * (uint64_t)(powl(62, tlen - i - 1));
     }
 
     *out = v;

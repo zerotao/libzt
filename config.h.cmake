@@ -4,6 +4,7 @@
 #cmakedefine LIBZT_COVERAGE_TESTING /* undefined */
 #cmakedefine PTHREAD_CREATE_JOINABLE /* undefined */
 #cmakedefine01 HOST_BIGENDIAN
+#cmakedefine HAVE_SYSLOG 1
 
 /********************* types *********************/
 #cmakedefine HAVE_UINT64_T

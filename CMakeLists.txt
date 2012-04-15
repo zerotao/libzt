@@ -63,7 +63,7 @@ check_def_function_exists( openlog HAVE_OPENLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
 
 if(HAVE_VSYSLOG AND HAVE_OPENLOG)
-    add_definitions(-DHAVE_SYSLOG)
+	set(HAVE_SYSLOG 1)
 endif()
 
 include(CheckDefSymbolExists)
