@@ -104,22 +104,18 @@ if (WIN32)
         set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/install" CACHE PATH "Windows install prefix" FORCE)
     endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_INSTALL_PREFIX})
-    set(LIBRARY_OUTPUT_PATH ${CMAKE_INSTALL_PREFIX})
-
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/x64)
     endif()
 
-    install(FILES ${ZT_INSTALL_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX})
-    install(FILES ${log_HDRS} DESTINATION ${CMAKE_INSTALL_PREFIX}/zt_log)
-    install(FILES ${cfg_HDRS} DESTINATION ${CMAKE_INSTALL_PREFIX}/zt_cfg)
-else (WIN32)
-    install(TARGETS ${ZT_INSTALL_TARGETS}
-            ARCHIVE DESTINATION lib
-            LIBRARY DESTINATION lib)
-
-    install(FILES ${ZT_INSTALL_HEADERS} DESTINATION include/libzt)
-    install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
-    install(FILES ${cfg_HDRS} DESTINATION include/libzt/zt_cfg)
 endif(WIN32)
+
+install(TARGETS ${ZT_INSTALL_TARGETS}
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib)
+
+install(FILES ${ZT_INSTALL_HEADERS} DESTINATION include/libzt)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h DESTINATION include/libzt)
+install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
+install(FILES ${cfg_HDRS} DESTINATION include/libzt/zt_cfg)
+
