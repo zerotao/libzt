@@ -250,14 +250,6 @@ decoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     test_decoding(zt_base64_rfc, "foob\r\nar", 7, "Zm9vYmFy", "Zm9vYmFy");
     test_decoding(zt_base64_rfc, "fooba\r\nr", 7, "Zm9vYmFy", "Zm9vYmFy");
     test_decoding(zt_base64_rfc, "foobar\r\n", 7, "Zm9vYmFy", "Zm9vYmFy");
-#else
-	test_decoding(zt_base64_rfc, "\nfoobar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "f\noobar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "fo\nobar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foo\nbar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foob\nar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "fooba\nr", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foobar\n", 7, "Zm9vYmFy", "Zm9vYmFy");
 #endif
 
 
