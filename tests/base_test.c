@@ -56,9 +56,10 @@ encoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     #define OLEN sizeof(result)
     size_t len  = OLEN;
     int    ret;
+	void ** rptr = 0;
 
     memset(result, 0, 20);
-    void **rptr = (void **)&result;
+    rptr = (void **)&result;
     /* base 64 tests */
 
     /* check bad param, no out_len */
@@ -241,13 +242,24 @@ decoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
     test_decoding(zt_base64_rfc, "fooba", 5, "Zm9vYmE", "Zm9vYmE=");
     test_decoding(zt_base64_rfc, "foobar", 6, "Zm9vYmFy", "Zm9vYmFy");
 
-    test_decoding(zt_base64_rfc, "\foobar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "f\oobar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "fo\obar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foo\bar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foob\ar", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "fooba\r", 7, "Zm9vYmFy", "Zm9vYmFy");
-    test_decoding(zt_base64_rfc, "foobar\", 7, "Zm9vYmFy", "Zm9vYmFy");
+#ifdef WIN32
+    test_decoding(zt_base64_rfc, "\r\nfoobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "f\r\noobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "fo\r\nobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foo\r\nbar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foob\r\nar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "fooba\r\nr", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foobar\r\n", 7, "Zm9vYmFy", "Zm9vYmFy");
+#else
+	test_decoding(zt_base64_rfc, "\nfoobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "f\noobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "fo\nobar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foo\nbar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foob\nar", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "fooba\nr", 7, "Zm9vYmFy", "Zm9vYmFy");
+    test_decoding(zt_base64_rfc, "foobar\n", 7, "Zm9vYmFy", "Zm9vYmFy");
+#endif
+
 
     /* base 32 tests */
 
