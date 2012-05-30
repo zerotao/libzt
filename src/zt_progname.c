@@ -95,7 +95,10 @@ zt_os_progpath() {
         _NSGetExecutablePath(result, &size);
     }
 #elif defined(WIN32)
-    GetModuleFileName(NULL, result, size);
+	{
+		DWORD size = PATH_MAX;
+		GetModuleFileName(NULL, result, size);
+	}
 #else
     if (_proc_get_path(result, PATH_MAX) == -1) {
         zt_log_printf(zt_log_err, "Could not get program path");

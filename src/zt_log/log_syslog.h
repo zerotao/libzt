@@ -21,8 +21,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern zt_log_ty *zt_log_syslog(void);
-extern zt_log_ty *zt_log_syslog2(int opt, int facility);
+extern zt_log_ty * zt_log_syslog(void);
+extern zt_log_ty * zt_log_syslog2(int opt, int facility);
 
 #ifdef __cplusplus
 }

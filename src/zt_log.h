@@ -39,22 +39,22 @@ enum zt_log_level {
 };
 typedef enum zt_log_level zt_log_level;
 
-typedef struct zt_log_ty zt_log_ty;
+typedef struct zt_log_ty  zt_log_ty;
 
-extern zt_log_level zt_log_set_level( zt_log_ty *log, zt_log_level level );
-extern zt_log_level zt_log_get_level( zt_log_ty *log );
+extern zt_log_level zt_log_set_level( zt_log_ty * log, zt_log_level level );
+extern zt_log_level zt_log_get_level( zt_log_ty * log );
 
-extern unsigned int zt_log_set_opts( zt_log_ty *log, unsigned int opts );
-extern unsigned int zt_log_get_opts( zt_log_ty *log );
+extern unsigned int zt_log_set_opts( zt_log_ty * log, unsigned int opts );
+extern unsigned int zt_log_get_opts( zt_log_ty * log );
 
-extern void zt_log_set_debug_info( const char *, int, const char * );
-extern void zt_log_get_debug_info( const char **, int *, const char ** );
+extern void         zt_log_set_debug_info( const char *, int, const char * );
+extern void         zt_log_get_debug_info( const char **, int *, const char ** );
 
-extern zt_log_ty *zt_log_logger( zt_log_ty * );
+extern zt_log_ty  * zt_log_logger( zt_log_ty * );
 
-extern void zt_log_lprintf( zt_log_ty *, zt_log_level, const char *, ... ) FORMAT((printf, 3, 4));
-extern void zt_log_lstrerror( zt_log_ty *, zt_log_level, int, const char *, ... ) FORMAT((printf, 4, 5));
-extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, const char *, va_list ) FORMAT((printf, 3, 0));
+extern void         zt_log_lprintf( zt_log_ty *, zt_log_level, const char *, ... ) FORMAT((printf, 3, 4));
+extern void         zt_log_lstrerror( zt_log_ty *, zt_log_level, int, const char *, ... ) FORMAT((printf, 4, 5));
+extern void         zt_log_lvprintf( zt_log_ty *, zt_log_level, const char *, va_list ) FORMAT((printf, 3, 0));
 
 /* zt_log_strerror(level, errnum, fmt, ...) */
 #define zt_log_strerror( level, errnum, ... ) \
@@ -68,7 +68,7 @@ extern void zt_log_lvprintf( zt_log_ty *, zt_log_level, const char *, va_list ) 
 #define zt_log_vprintf( level, fmt, ap ) \
     zt_log_lvprintf( NULL, level, fmt, ap )
 
-extern void zt_log_close( zt_log_ty *log );
+extern void zt_log_close( zt_log_ty * log );
 
 #define ZT_LOG_WITH_DEBUG(x) \
     ZT_LOG_DEBUG_INFO(), x, ZT_LOG_DEBUG_RESET()

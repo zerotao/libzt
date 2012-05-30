@@ -14,8 +14,10 @@ target_link_libraries(abort zt)
 add_executable(hexdump hexdump.c)
 target_link_libraries(hexdump zt)
 
-add_executable(log_syslog log_syslog.c)
-target_link_libraries(log_syslog zt)
+if (NOT WIN32)
+    add_executable(log_syslog log_syslog.c)
+    target_link_libraries(log_syslog zt)
+endif()
 
 add_executable(base64_speed base64_speed.c)
 target_link_libraries(base64_speed zt)

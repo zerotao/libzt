@@ -21,12 +21,12 @@
 typedef struct zt_log_file_ty zt_log_file_ty;
 struct zt_log_file_ty {
     zt_log_ty inherited;
-    FILE     *file;
+    FILE    * file;
 };
 
-static void destructor(zt_log_ty *log)
-{
-    zt_log_file_ty *this = (zt_log_file_ty *)log;
+static void
+destructor(zt_log_ty * log) {
+    zt_log_file_ty * this = (zt_log_file_ty*)log;
 
 #ifdef WITH_THREADS
     pthread_mutex_lock(&log->mutex);
@@ -44,11 +44,10 @@ static void destructor(zt_log_ty *log)
 }
 
 static void
-print(zt_log_ty *log, zt_log_level level, const char * file, int line, const char * func, const char *fmt, va_list ap)
-{
-    char           *nfmt = NULL;
+print(zt_log_ty * log, zt_log_level level, const char * file, int line, const char * func, const char * fmt, va_list ap) {
+    char           * nfmt = NULL;
 
-    zt_log_file_ty *this = (zt_log_file_ty *)log;
+    zt_log_file_ty * this = (zt_log_file_ty*)log;
 
     nfmt = zt_log_gen_fmt(log, fmt, file, line, func, level, log->opts);
 
@@ -73,13 +72,12 @@ static zt_log_vtbl_ty vtbl = {
 };
 
 zt_log_ty *
-zt_log_file(char *file, int fopts, int lopts)
-{
-    zt_log_file_ty *this;
-    zt_log_ty      *result;
+zt_log_file(char * file, int fopts, int lopts) {
+    zt_log_file_ty * this;
+    zt_log_ty      * result;
 
     result = zt_log_new(&vtbl, lopts);
-    this = (zt_log_file_ty *)result;
+    this   = (zt_log_file_ty*)result;
 
     if (fopts == ZT_LOG_FILE_APPEND) {
         this->file = fopen(file, "a");

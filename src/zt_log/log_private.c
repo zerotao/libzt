@@ -47,34 +47,32 @@ zt_log_level_desc_ty zt_log_level_desc[] = {
 };
 
 zt_log_ty *
-zt_log_new(zt_log_vtbl_ty *vptr, unsigned int opts)
-{
-    zt_log_ty *result;
+zt_log_new(zt_log_vtbl_ty * vptr, unsigned int opts) {
+    zt_log_ty * result;
 
-    result = zt_callocs(vptr->size, 1);
+    result        = zt_callocs(vptr->size, 1);
     if (!result) {
         fprintf(stderr, "Unable to calloc memory for log vtable\n");
         exit(1);
     }
-    result->vtbl = vptr;
-    result->opts = opts;
+    result->vtbl  = vptr;
+    result->opts  = opts;
     result->level = zt_log_max;
 
     return result;
 }
 
 char*
-zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts)
-{
-    size_t    len = 0;
-    char    * buff = NULL;
+zt_log_gen_fmt(zt_log_ty * log, const char * fmt, const char * file, int line, const char * function, zt_log_level level, unsigned int opts) {
+    size_t len  = 0;
+    char * buff = NULL;
 
-    len = strlen(fmt) + 4;    /* format + seperator + "\n" + null */
-    buff = (char *)zt_calloc(char, len); /* mem_calloc(len, sizeof(char)); */
+    len  = strlen(fmt) + 4;   /* format + seperator + "\n" + null */
+    buff = (char*)zt_calloc(char, len);  /* mem_calloc(len, sizeof(char)); */
 
     if (opts & ZT_LOG_WITH_DATE) {
-        char      sbuf[255];
-        time_t    tt = time(NULL);
+        char   sbuf[255];
+        time_t tt = time(NULL);
 
         len += strftime(sbuf, 254, "%b %d %H:%M:%S ", localtime(&tt));
 
@@ -83,13 +81,13 @@ zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, con
     }
 
     if (opts & ZT_LOG_WITH_SYSNAME) {
-        char      sbuf[255];
-        char    * t = NULL;
+        char   sbuf[255];
+        char * t = NULL;
 
-        if(gethostname(sbuf, 254) == -1) {
+        if (gethostname(sbuf, 254) == -1) {
             sprintf(sbuf, "*hostname*");
         }
-        t = strchr(sbuf, '.');
+        t    = strchr(sbuf, '.');
         if (t) {
             *t = '\0';
         }
@@ -108,8 +106,8 @@ zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, con
     }
 
     if (opts & ZT_LOG_WITH_PID) {
-        char      sbuf[10 + 3];   /* pid + [] + null */
-        pid_t     pid = getpid();
+        char  sbuf[10 + 3];       /* pid + [] + null */
+        pid_t pid = getpid();
 
         sprintf(sbuf, "[%u]", pid);
         len += strlen(sbuf);
@@ -132,16 +130,16 @@ zt_log_gen_fmt(zt_log_ty *log, const char *fmt, const char * file, int line, con
     }
     strcat(buff, fmt);
     if (((file) && (line > -1) && (function))) {
-        char    * nbuff = NULL;
-        size_t    nlen = 13;  /* ': in  at (:)' + null */
+        char * nbuff = NULL;
+        size_t nlen  = 13;    /* ': in  at (:)' + null */
 
         nlen += strlen(file);
         nlen += strlen(function);
         nlen += 10;    /* length of a int to str */
         nbuff = zt_calloc(char, nlen); /* mem_calloc(nlen, sizeof(char)); */
         sprintf(nbuff, ": in %s at (%s:%d)", function, file, line);
-        len += nlen;
-        buff = zt_realloc(char, buff, len);
+        len  += nlen;
+        buff  = zt_realloc(char, buff, len);
         strcat(buff, nbuff);
         zt_free(nbuff);
     }

@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <zt.h>
 
+#define kBufSz 4096
+
 static void
 test_base64_speed(void) {
-    srand(11);
-
-    const size_t kBufSz = 4096;
+    
     unsigned char iBuf[kBufSz];
     const size_t n = kBufSz;
     size_t       i;
@@ -15,12 +15,15 @@ test_base64_speed(void) {
     const long long kIterations = 2621440;
     const long long nGigs = (kIterations * kBufSz) / (1024 * 1024 * 1024);
 
+	srand(11);
+
     for (i=0; i<n; ++i) {
         iBuf[i] = rand() % 256;
     }
 
     {
         time_t s = time(NULL);
+		time_t e;
         int    i;
 
         for (i = 0; i < kIterations; ++i) {
@@ -31,21 +34,22 @@ test_base64_speed(void) {
             zt_base64_encode((void *)iBuf, n, (void **)&voidsux, &oBufSz);
         }
 
-        time_t e = time(NULL);
+        e = time(NULL);
         printf("zt64 Encoding :        %lld gigs in %ld seconds.\n", nGigs, (e - s));
     }
 
     {
         char oBuf[kBufSz * 2];
         size_t oBufSz = kBufSz * 2;
+		time_t s, e;
+		int    i;
 
         char** voidsux = (char**)&oBuf;
         void **rptr = (void **)&voidsux;
 
         zt_base64_encode((void*)iBuf, n, rptr, &oBufSz);
 
-        time_t s = time(NULL);
-        int i;
+        s = time(NULL);
         for (i=0; i < kIterations; ++i)
         {
             size_t tBufSz = kBufSz * 2;
@@ -53,7 +57,7 @@ test_base64_speed(void) {
             char** voidsux = (char**)&iBuf;
             zt_base64_decode(oBuf, oBufSz, (void**)&voidsux, &tBufSz);
         }
-        time_t e = time(NULL);
+        e = time(NULL);
         printf("zt64 Decoding:          %lld gigs in %ld seconds.\n", nGigs, (e - s));
     }
 }

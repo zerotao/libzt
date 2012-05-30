@@ -267,12 +267,12 @@ _decode64(zt_base_definition_t * def, const unsigned char * in, const size_t byt
             buf[cnt++] = v;
 
             if (cnt == BUFSIZE_64) {
-                cnt = 0;
-
-                const unsigned int b0 = buf[0];
+				const unsigned int b0 = buf[0];
                 const unsigned int b1 = buf[1];
                 const unsigned int b2 = buf[2];
                 const unsigned int b3 = buf[3];
+
+                cnt = 0;
 
                 /*      b0     |      b1     |     b2      |     b4
                  * 7 6 5 4 3 2 | 1 0 7 6 5 4 | 3 2 1 0 7 6 | 5 4 3 2 1 0
@@ -395,8 +395,6 @@ _decode32(zt_base_definition_t * def, const unsigned char * in, const size_t byt
             buf[cnt++] = v;
 
             if (cnt == BUFSIZE_32) {
-                cnt = 0;
-
                 const unsigned int b0 = buf[0];
                 const unsigned int b1 = buf[1];
                 const unsigned int b2 = buf[2];
@@ -405,6 +403,8 @@ _decode32(zt_base_definition_t * def, const unsigned char * in, const size_t byt
                 const unsigned int b5 = buf[5];
                 const unsigned int b6 = buf[6];
                 const unsigned int b7 = buf[7];
+
+				cnt = 0;
 
                 /*     b0    |    b1     |    b2     |    b3     |    b4     |    b5     |    b6     |    b7
                  * 7 6 5 4 3 | 2 1 0 7 6 | 5 4 3 2 1 | 0 7 6 5 4 | 3 2 1 0 7 | 6 5 4 3 2 | 1 0 7 6 5 | 4 3 2 1 0
@@ -509,10 +509,10 @@ _decode16(zt_base_definition_t * def, const unsigned char * in, const size_t byt
             buf[cnt++] = v;
 
             if (cnt == BUFSIZE_16) {
-                cnt = 0;
-
-                const unsigned int b0 = buf[0];
+				const unsigned int b0 = buf[0];
                 const unsigned int b1 = buf[1];
+
+                cnt = 0;   
 
                 /*    b0   |   b1
                  * 7 6 5 4 | 3 2 1 0
@@ -619,6 +619,7 @@ zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, voi
     size_t                lcount = 0;
     size_t                ocount = 0;
     size_t                mod = 0;
+	ssize_t               i;
 
     if (!_valid_dictionary_p(def)) {
         return -1;
@@ -635,7 +636,6 @@ zt_base_decode(zt_base_definition_t * def, const void * in, size_t in_bytes, voi
 
     inp  = (unsigned char *)in;
 
-    ssize_t i;
     /* strip any follow on pad chars */
     for (i=in_bytes-1; i > 0; i--) {
         if (inp[i] != def->pad) {

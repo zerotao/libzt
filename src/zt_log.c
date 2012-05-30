@@ -27,56 +27,57 @@
 
 static void
 log_atexit(void * data) {
-    zt_log_ty   * logp = data;
+    zt_log_ty * logp = data;
 
-    if(logp) {
+    if (logp) {
         zt_log_close(logp);
     }
 }
 
 /* #undef HAVE_PTHREADS */
 #ifdef HAVE_PTHREADS
-static pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t log_mutex    = PTHREAD_MUTEX_INITIALIZER;
 
-static pthread_key_t ctx_key;
-static pthread_once_t ctx_key_once = PTHREAD_ONCE_INIT;
+static pthread_key_t   ctx_key;
+static pthread_once_t  ctx_key_once = PTHREAD_ONCE_INIT;
 
 static void
 make_ctx_key(void) {
-    (void) pthread_key_create(&ctx_key, free);
+    (void)pthread_key_create(&ctx_key, free);
 }
+
 #define CTX_STATIC
-#else
+#else /* ifdef HAVE_PTHREADS */
 #define CTX_STATIC static
 #endif /* HAVE_PTHREADS */
 
 typedef struct zt_log_ctx_s zt_log_ctx_ty;
 struct zt_log_ctx_s {
-    const char  * file;
-    int           line;
-    const char  * function;
+    const char * file;
+    int          line;
+    const char * function;
 };
 
 
-static zt_log_ty        * log_default_ptr = NULL;
-static int                forced = 0;
+static zt_log_ty * log_default_ptr = NULL;
+static int         forced          = 0;
 
 static zt_log_ctx_ty *
 zt_log_get_ctx(void) {
-    CTX_STATIC zt_log_ctx_ty    * log_ctx_ptr = NULL;
+    CTX_STATIC zt_log_ctx_ty * log_ctx_ptr = NULL;
 
     if (!log_ctx_ptr) {
 #ifdef HAVE_PTHREADS
-        (void) pthread_once(&ctx_key_once, make_ctx_key);
+        (void)pthread_once(&ctx_key_once, make_ctx_key);
         if ((log_ctx_ptr = pthread_getspecific(ctx_key)) == NULL) {
 #endif /* HAVE_PTHREADS */
-            if ((log_ctx_ptr = zt_calloc(zt_log_ctx_ty, 1)) == NULL) {
-                fprintf(stderr, "Could not allocate memory for log context\n");
-                exit(1);
-            }
-#ifdef HAVE_PTHREADS
-            pthread_setspecific(ctx_key, log_ctx_ptr);
+        if ((log_ctx_ptr = zt_calloc(zt_log_ctx_ty, 1)) == NULL) {
+            fprintf(stderr, "Could not allocate memory for log context\n");
+            exit(1);
         }
+#ifdef HAVE_PTHREADS
+        pthread_setspecific(ctx_key, log_ctx_ptr);
+    }
 #endif /* HAVE_PTHREADS */
     }
     return log_ctx_ptr;
@@ -84,7 +85,6 @@ zt_log_get_ctx(void) {
 
 static zt_log_ty *
 zt_log_get_logger(void) {
-
     if (!log_default_ptr) {
 #ifdef HAVE_PTHREADS
         pthread_mutex_lock(&log_mutex);
@@ -101,7 +101,7 @@ zt_log_get_logger(void) {
             zt_atexit(log_atexit, log_default_ptr);
         }
 #ifdef HAVE_PTHREADS
-    pthread_mutex_unlock(&log_mutex);
+        pthread_mutex_unlock(&log_mutex);
 #endif
     }
 
@@ -128,8 +128,7 @@ zt_log_set_logger(zt_log_ty * log) {
 /* this function expects the traditional "If you allocated free it, if
  * you didn't allocate it leave it the fsck alone" model */
 zt_log_ty *
-zt_log_logger(zt_log_ty *log)
-{
+zt_log_logger(zt_log_ty * log) {
     /* STATES:
      * log == NULL AND default == NULL           : create a new logger
      * log == NULL AND default == <logger>       : replace the current logger with log (NULL)
@@ -146,69 +145,63 @@ zt_log_logger(zt_log_ty *log)
 }
 
 zt_log_level
-zt_log_set_level(zt_log_ty *log, zt_log_level level)
-{
+zt_log_set_level(zt_log_ty * log, zt_log_level level) {
     zt_log_level olevel;
 
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
-            return 0;
+        return 0;
     }
 
-    olevel = log->level;
+    olevel     = log->level;
     log->level = level;
     return olevel;
 }
 
 zt_log_level
-zt_log_get_level(zt_log_ty *log)
-{
+zt_log_get_level(zt_log_ty * log) {
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
-            return 0;
+        return 0;
     }
 
     return log->level;
 }
 
 unsigned int
-zt_log_set_opts(zt_log_ty *log, unsigned int opts)
-{
+zt_log_set_opts(zt_log_ty * log, unsigned int opts) {
     unsigned int oopts;
 
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
-            return 0;
+        return 0;
     }
 
-    oopts = log->opts;
+    oopts     = log->opts;
     log->opts = opts;
     return oopts;
 }
 
 unsigned int
-zt_log_get_opts(zt_log_ty *log)
-{
+zt_log_get_opts(zt_log_ty * log) {
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
-            return 0;
+        return 0;
     }
     return log->opts;
 }
 
 void
-zt_log_set_debug_info(const char *file, int line, const char *func)
-{
+zt_log_set_debug_info(const char * file, int line, const char * func) {
     zt_log_ctx_ty   * ctx;
 
     if ((ctx = zt_log_get_ctx()) == NULL) {
         return;
     }
 
-    ctx->file = (char *)file;
-    ctx->line = line;
-    ctx->function = (char *)func;
+    ctx->file     = (char*)file;
+    ctx->line     = line;
+    ctx->function = (char*)func;
 }
 
 void
-zt_log_get_debug_info(const char **file, int *line, const char **func)
-{
+zt_log_get_debug_info(const char ** file, int * line, const char ** func) {
     zt_log_ctx_ty   * ctx = NULL;
 
     if ((ctx = zt_log_get_ctx()) == NULL) {
@@ -224,8 +217,7 @@ zt_log_get_debug_info(const char **file, int *line, const char **func)
 }
 
 void
-zt_log_lprintf(zt_log_ty *log, zt_log_level level, const char *fmt, ...)
-{
+zt_log_lprintf(zt_log_ty * log, zt_log_level level, const char * fmt, ...) {
     va_list ap;
 
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
@@ -243,8 +235,7 @@ zt_log_lprintf(zt_log_ty *log, zt_log_level level, const char *fmt, ...)
 }
 
 void
-zt_log_lvprintf(zt_log_ty *log, zt_log_level level, const char *fmt, va_list ap)
-{
+zt_log_lvprintf(zt_log_ty * log, zt_log_level level, const char * fmt, va_list ap) {
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
         goto EXIT;
     }
@@ -268,10 +259,9 @@ EXIT:
 }
 
 void
-zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, const char *fmt, ...)
-{
-    va_list   ap;
-    size_t    llen;
+zt_log_lstrerror(zt_log_ty * log, zt_log_level level, int errnum, const char * fmt, ...) {
+    va_list ap;
+    size_t llen;
     char    * nfmt;
 
     if (!log && ((log = zt_log_get_logger()) == NULL)) {
@@ -284,12 +274,12 @@ zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, const char *fmt
         return;
     }
 
-    llen = strlen(fmt);
+    llen           = strlen(fmt);
 
 
-    nfmt = (char *)malloc(llen + 256);
+    nfmt           = (char*)malloc(llen + 256);
     memcpy(nfmt, fmt, llen);
-    nfmt[llen] = ':';
+    nfmt[llen]     = ':';
     nfmt[llen + 1] = ' ';
 
     strerror_r(errnum, nfmt + (llen + 2), 255 - 2);
@@ -302,8 +292,7 @@ zt_log_lstrerror(zt_log_ty *log, zt_log_level level, int errnum, const char *fmt
 }
 
 void
-zt_log_close(zt_log_ty *log)
-{
+zt_log_close(zt_log_ty * log) {
     if (!log) {
         return;
     }
@@ -314,9 +303,5 @@ zt_log_close(zt_log_ty *log)
 
     if (log->vtbl->destructor) {
         log->vtbl->destructor(log);
-    }
-    
-    if (zt_log_get_ctx() != NULL) {
-        free(zt_log_get_ctx());
     }
 }
