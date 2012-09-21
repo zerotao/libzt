@@ -62,8 +62,8 @@ zt_opt_verror_default(int code, char * fmt, va_list ap) {
     char * msg = NULL;
 
     if (!code && !fmt) {
-        fprintf(stderr, "Invalid call to %s: must set code or format\n", __FUNCTION__);
-        return EINVAL;
+        /* no code or format equates to calling exit */
+        return -1;
     }
 
     msg = zt_opt_verror_str(code, fmt, ap);
@@ -298,6 +298,8 @@ zt_opt_help_stdout(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * 
         }
     }
 
+    error(0, NULL);
+
     return 0;
 }
 
@@ -362,10 +364,11 @@ _zt_opt_error_wrapper(int code, char * fmt, ...) {
 
     va_start(ap, fmt);
     ret = zt_opt_verror_default(code, fmt, ap);
+    va_end(ap);
+
     if (ret != 0) {
         exit(ret);
     }
-    va_end(ap);
 
     return ret;
 }
@@ -407,19 +410,19 @@ AGAIN:
                     /* long opt */
                     (args[x].lopt != ZT_OPT_NLO && strlen(args[x].lopt) == len &&
                      strncmp(p, args[x].lopt, len) == 0)) {
-                    int ret = 0;
+                    int consumed = 0;
 
                     found = 1;
-                    if ((ret = args[x].cb(i, x, argc, argv, args, error)) < 0) {
+                    if ((consumed = args[x].cb(i, x, argc, argv, args, error)) < 0) {
                         /* error */
-                        return ret;
+                        return consumed;
                     }
 
                     if (!combined_opt) {
-                        i += ret;
+                        i += consumed;
                     }
 
-                    if(!ret && !long_opt && *(++p)) {
+                    if(!consumed && !long_opt && *(++p)) {
                         /* if we did not consume extra args AND
                          * we are a short option AND
                          * there are more short options to consume
