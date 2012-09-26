@@ -132,14 +132,14 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
     INLINE static ltype ZT_CONC3(zt_, sltype, _mul) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
-        cvtype _tmp = 0;                                     \
+        zt_assert_enable(cvtype _tmp = 0);                   \
         if ((rhs == 0) || (lhs == 0)) {                      \
             return 0;                                        \
         }                                                    \
         if ((rhs == 1) || (lhs == 1)) {                      \
             return rhs * lhs;                                \
         }                                                    \
-        _tmp = (cvtype)lhs * (cvtype)rhs;                    \
+        zt_assert_enable(_tmp = (cvtype)lhs * (cvtype)rhs); \
         zt_assert((_tmp >= ZT_CONC(sutype, _MIN)) &&            \
                 (_tmp <= ZT_CONC(sutype, _MAX)));               \
         return (lhs * rhs);                                  \
