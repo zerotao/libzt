@@ -54,8 +54,17 @@ local_error(int code, char * fmt, ...) {
      * instead we will fail explicitly if
      * we get any.
      */
+    int     ret;
+    va_list ap;
 
-    /* ZT_UNIT_ASSERT(test, 0 == 1); */
+    va_start(ap, fmt);
+    ret = zt_opt_verror_default(code, fmt, ap);
+    va_end(ap);
+
+    if(ret != 0) {
+        exit(ret);
+    }
+
     return 0;
 }
 

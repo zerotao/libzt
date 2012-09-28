@@ -44,9 +44,11 @@ extern int _zt_log_abort(const char *condition, const char *file,
 #if defined(NDEBUG) || defined(NO_ASSERT)
 # define zt_assert(c) ((void)0)
 # define zt_assert_nf(c) ((void)0)
+# define zt_assert_enable(c) ((void)0)
 #else
 # define zt_assert(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
 # define zt_assert_nf(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__)))
+# define zt_assert_enable(c) c
 #endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
 
 #define zt_assert_always(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
