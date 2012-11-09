@@ -58,10 +58,12 @@ int strerror_r(int errnum, char *buf, size_t buflen)
     return strerror_s(buf, buflen, errnum);
 }
 
+#ifndef HAVE_WIN_GETPID
 unsigned long getpid(void)
 {
     return GetCurrentProcessId();
 }
+#endif /* HAVE_WIN_GETPID */
 
 long sysconf(int name)
 {

@@ -9,6 +9,12 @@
 #include <tchar.h>
 #include <io.h>
 
+#include <zt_config.h>
+
+#ifdef HAVE_PROCESS_H
+#include <process.h>
+#endif
+
 #ifndef __cplusplus
   typedef int bool;
   #define true 1
@@ -34,8 +40,12 @@ char *strtok_r(char *str, const char *delim, char **saveptr);
 int strerror_r(int errnum, char *buf, size_t buflen);
 
 /* process functions */
+
 typedef unsigned long pid_t;
+
+#ifndef HAVE_WIN_GETPID
 pid_t getpid(void);
+#endif /* ifndef HAVE_WIN_GETPID */
 
 /* system functions */
 #define _SC_PAGESIZE -1
