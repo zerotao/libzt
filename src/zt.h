@@ -1,6 +1,8 @@
 #ifndef _ZT_H_
 #define _ZT_H_
 
+#include <zt_config.h>
+
 #ifndef WIN32
 # include <stdbool.h>
 #else

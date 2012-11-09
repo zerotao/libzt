@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include "zt_config.h"
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_STRING_H

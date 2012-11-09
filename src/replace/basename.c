@@ -29,7 +29,7 @@
 
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include <zt_config.h>
 #endif
 
 #if defined(HAVE_STRING_H)

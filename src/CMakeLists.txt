@@ -115,7 +115,7 @@ install(TARGETS ${ZT_INSTALL_TARGETS}
         LIBRARY DESTINATION lib)
 
 install(FILES ${ZT_INSTALL_HEADERS} DESTINATION include/libzt)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h DESTINATION include/libzt)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zt_config.h DESTINATION include/libzt)
 install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
 install(FILES ${cfg_HDRS} DESTINATION include/libzt/zt_cfg)
 

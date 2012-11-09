@@ -25,4 +25,7 @@
 /********************* services *********************/
 #cmakedefine WITH_DMALLOC
 
+/********************* headers **********************/
+#cmakedefine HAVE_PROCESS_H
+
 #endif /* __ZT_CONFIG_H__ */

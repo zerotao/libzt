@@ -33,6 +33,7 @@ check_def_include_files( memory.h HAVE_MEMORY_H )
 check_def_include_files( stdbool.h HAVE_STDBOOL_H )
 check_def_include_files( stdint.h HAVE_STDINT_H )
 check_def_include_files( stdlib.h HAVE_STDLIB_H )
+check_def_include_files( stdint.h HAVE_STDINT_H )
 check_def_include_files( strings.h HAVE_STRINGS_H )
 check_def_include_files( string.h HAVE_STRING_H )
 check_def_include_files( syslog.h HAVE_SYSLOG_H )
@@ -43,6 +44,9 @@ check_def_include_files( unistd.h HAVE_UNISTD_H )
 check_def_include_files( libgen.h HAVE_LIBGEN_H )
 check_def_include_files( ctype.h HAVE_CTYPE_H )
 check_def_include_files( errno.h HAVE_ERRNO_H )
+
+# windows specific headers
+CHECK_INCLUDE_FILES(process.h HAVE_PROCESS_H)
 
 ################## Check for System Functions ##################
 include(CheckFunctionExists)
@@ -115,7 +119,7 @@ if(WIN32)
                         ${CMAKE_INSTALL_PREFIX})
 endif(WIN32)
 
-configure_file(config.h.cmake src/config.h)
+configure_file(config.h.cmake src/zt_config.h)
 
 # subdirectories
 add_subdirectory(tools)
