@@ -15,7 +15,7 @@
 #include "zt_internal.h"
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <zt_config.h>
 #endif
 
 #ifdef HAVE_STRING_H

@@ -1,6 +1,6 @@
 
 #ifdef HAVE_CONFIG_H
-# include <config.h> /* for zt_int.h */
+# include <zt_config.h> /* for zt_int.h */
 #endif /* HAVE_CONFIG_H */
 
 #define ZT_WITH_UNIT

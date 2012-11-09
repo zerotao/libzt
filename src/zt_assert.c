@@ -13,7 +13,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include <zt_config.h>
 #endif
 
 #include <stdlib.h>

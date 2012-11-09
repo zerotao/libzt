@@ -12,7 +12,7 @@
 #define _LOG_INTERFACE_H_
 
 #include <zt_log.h>
-#include "config.h"
+#include "zt_config.h"
 
 #include <zt_log/log_stderr.h>
 #include <zt_log/log_file.h>
