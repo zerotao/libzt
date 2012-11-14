@@ -44,9 +44,6 @@ check_def_include_files( libgen.h HAVE_LIBGEN_H )
 check_def_include_files( ctype.h HAVE_CTYPE_H )
 check_def_include_files( errno.h HAVE_ERRNO_H )
 
-# windows specific headers
-CHECK_INCLUDE_FILES(process.h HAVE_PROCESS_H)
-
 ################## Check for System Functions ##################
 include(CheckFunctionExists)
 # usage: CHECK_FUNCTION_EXISTS(function variable)
@@ -74,7 +71,6 @@ check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
 check_def_symbol_exists( asprintf stdio.h HAVE_ASPRINTF )
 check_def_symbol_exists( vasprintf stdio.h HAVE_VASPRINTF )
 check_def_symbol_exists( va_copy stdarg.h HAVE_VA_COPY )
-check_def_symbol_exists( getpid process.h HAVE_WIN_GETPID )
 
 ################## Check for System Symbols ##################
 include(CheckSymbolExists)
