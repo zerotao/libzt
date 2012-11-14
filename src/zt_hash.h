@@ -15,6 +15,8 @@
 #ifndef _ZT_HASH_H_
 #define _ZT_HASH_H_
 
+#include <zt_stdint.h>
+
 #ifdef __cplusplus
     extern "C" {
 #endif

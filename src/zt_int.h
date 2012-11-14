@@ -2,7 +2,6 @@
 #define __zt_int_h__
 
 #include <limits.h>
-#include <stdint.h>
 
 #include <zt.h>
 

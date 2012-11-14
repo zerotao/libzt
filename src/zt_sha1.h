@@ -1,9 +1,8 @@
 #ifndef __ZT_SHA1_H__
 #define __ZT_SHA1_H__
 
-#include <stdint.h>
-
 #include <zt.h>
+#include <zt_stdint.h>
 
 BEGIN_C_DECLS
 

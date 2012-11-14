@@ -1,9 +1,8 @@
 #ifndef _ZT_ADT_BSTREAM_H_
 #define _ZT_ADT_BSTREAM_H_
 
-#include <stdint.h>
-
 #include <zt.h>
+#include <zt_stdint.h>
 
 BEGIN_C_DECLS
 typedef struct zt_bstream *zt_bstream_t;

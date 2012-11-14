@@ -1,9 +1,8 @@
 #ifndef _ZT_UUID_H_
 #define _ZT_UUID_H_
 
-#include <stdint.h>
-
 #include <zt.h>
+#include <zt_stdint.h>
 BEGIN_C_DECLS
 
 #define UUID_STR_LEN        36
