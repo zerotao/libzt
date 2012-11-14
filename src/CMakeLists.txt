@@ -13,7 +13,7 @@ set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/zt_replace.h zt_assert.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_ez_mempool.h zt_ipv4_tbl.h
                 zt_atexit.h zt_daemon.h zt_threads.h zt_opts.h zt_path.h
-                zt_base.h zt_buf.h)
+                zt_base.h zt_buf.h zt_stdint.h)
 
 set(adt_SRCS zt_array.c zt_bstream.c zt_hash.c zt_llist.c
              zt_ptr_array.c zt_set.c zt_table.c zt_tree.c)

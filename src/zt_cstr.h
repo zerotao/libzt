@@ -14,10 +14,10 @@
 #ifndef _ZT_STRINGS_H_
 #define _ZT_STRINGS_H_
 
-#include <stdint.h>
 #include <stdarg.h>
 
 #include <zt.h>
+#include <zt_stdint.h>
 
 BEGIN_C_DECLS
 

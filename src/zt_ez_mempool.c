@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
 
 #include "zt.h"
+#include "zt_stdint.h"
 #include "zt_internal.h"
 
 static void
