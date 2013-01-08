@@ -44,3 +44,7 @@ tags
 *.ilk
 *.pdb
 *.suo
+examples/base64_speed
+examples/hexdump
+examples/log_syslog
+src/zt_config.h
