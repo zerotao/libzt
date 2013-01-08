@@ -32,17 +32,17 @@ def stat_suite(suite):
             ss.assertions += asserts
             if asserts == 0:
                 ss.empty_tests.append(name)
-            
+
             ss.tests += 1
             if values['result'] == 'success':
                 ss.successes += 1
             else:
                 ss.failures += 1
 
-    ss.errors = suite.get('Errors', [])    
+    ss.errors = suite.get('Errors', [])
     return ss #tests, assertions, failures, successes, errors, empty_tests
-    
-    
+
+
 def stat_ut(fd):
     stats = []
 
@@ -72,7 +72,7 @@ def print_stat(stats):
     empty_tests = []
 
     for suite in stats:
-        #st, sa, sf, ss, er, et 
+        #st, sa, sf, ss, er, et
         tests += suite.tests
         assertions += suite.assertions
         successes += suite.successes
@@ -103,7 +103,7 @@ Global Stats:
 if __name__ == '__main__':
     import optparse
     import sys
-    from StringIO import StringIO 
+    from StringIO import StringIO
 
     parser = optparse.OptionParser(usage="usage: %prog [options] prog [-- prog_args]")
 
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     input = StringIO()
     for line in stdout:
         print line,
-        input.write(line)    
+        input.write(line)
 
     stdin.close()
     stdout.close()
