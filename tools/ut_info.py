@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import types
-import yaml
 import os
 
 class SuiteStat(object):
@@ -47,6 +46,7 @@ def stat_ut(fd):
     stats = []
 
     try:
+        import yaml
         tests = yaml.load_all(fd)
 
         for suite in tests:
@@ -56,7 +56,7 @@ def stat_ut(fd):
                     stats.append(sstats)
 
     except Exception, e:
-        print "Error parsing Unit Test input: %s" % e
+        print "Stats unavailable: %s" % e
         return
 
     print_stat(stats)
