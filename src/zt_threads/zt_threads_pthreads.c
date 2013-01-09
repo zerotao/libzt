@@ -114,7 +114,7 @@ zt_threads_pthreads_cond_wait(zt_threads_cond *_cond, zt_threads_mutex *_lock, s
 
         /* timeradd(tvp, uvp, vvp) timeradd((tvp), (uvp), (vvp)) */
         gettimeofday(&now, NULL);
-        zt_add_time(&now, tv, &abstime);
+        zt_add_time(&abstime, &now, tv);
         ts.tv_sec  = abstime.tv_sec;
         ts.tv_nsec = abstime.tv_usec * 1000;
 
