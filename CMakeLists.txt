@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(libzt)
-set(PROJECT_VERSION 1.6.5)
+set(PROJECT_VERSION 1.6.6)
 
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 

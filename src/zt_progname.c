@@ -59,7 +59,7 @@ _proc_get_path(char * result, size_t size) {
     pid = getpid();
 
     /* FIXME: switch to "supported" definitions ie if defined(PROC_PID_PATH) ... */
-# if defined(linux)
+# if defined(linux) || defined(__linux__)
     /* check proc */
     snprintf(path, PATH_MAX, "/proc/%d/exe", pid);
 # elif defined(sun) && defined(svr4)
