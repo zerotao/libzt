@@ -181,6 +181,18 @@ uuid_generic_tests(struct zt_unit_test * test, void * data UNUSED) {
     zt_free(uuids1);
     zt_free(uuids2);
 
+    ZT_UNIT_ASSERT(test, zt_uuid_tostr(&uuid1, &uuids1, zt_uuid_base62_hashable_fmt) == UUID_BASE62_STR_LEN);
+    ZT_UNIT_ASSERT(test, zt_uuid_fromstr(uuids1, &uuid2, zt_uuid_base62_hashable_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_tostr(&uuid2, &uuids2, zt_uuid_base62_hashable_fmt) == UUID_BASE62_STR_LEN);
+
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids1, zt_uuid_base62_hashable_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_isvalid(uuids2, zt_uuid_base62_hashable_fmt) == 0);
+    ZT_UNIT_ASSERT(test, zt_uuid_cmp(&uuid1, &uuid2) == 0);
+    ZT_UNIT_ASSERT(test, strcmp(uuids1, uuids2) == 0);
+
+    zt_free(uuids1);
+    zt_free(uuids2);
+
     uuids1 = 0;
     uuids2 = 0;
 
@@ -300,6 +312,129 @@ uuid_generic_tests(struct zt_unit_test * test, void * data UNUSED) {
             ZT_UNIT_ASSERT(test, strcmp(uuids, cmp[i + 1]) == 0);
 
             zt_uuid_fromstr(cmp[i + 1], &uuid, zt_uuid_base62_fmt);
+            zt_uuid_tostr(&uuid, &uuids, zt_uuid_short_fmt);
+            ZT_UNIT_ASSERT(test, strcmp(uuids, cmp[i]) == 0);
+
+            i += 2;
+        }
+    }
+
+    {
+        int    i;
+        char * cmp[] = {
+            "611e34722c264145a936a854984ea10c", "hoX7L4PjXk8ewIBQdYqnog",
+            "e8a29b34d94a43288a380d795da3a277", "q5KIA0PjjYjbRJEaJQtHvh",
+            "e40c0b36c5af463e8286a94686634e03", "ALiwJxB7TzjbcMN0MZJKi7",
+            "52a317170ad841448835a8351f276c75", "4UYChlegS57bH2vEIrFZxr",
+            "d026bd1056a74e60a0c8a63249d34e70", "ooWe6TO2ZRhdNQAWnbBswo",
+            "6bff38471eb54d1597d30513f358aa12", "HFxhIQZDRg9d29K97UR0EG",
+            "a99a8f28e4fb466a868d3346ee670e32", "oHI1MsLoNyebydjKIgtGZI",
+            "d2b65062269f4971a2474c1833d58454", "37htEnxbC5idVNTae6gRyA",
+            "52c58a378b7d446c8b2326613a68266c", "gwBr4LIFA67bWCIZbkTcMQ",
+            "64c87715d65b435a970bc96348d5824b", "4FAjVjVSsE8cY0TSeKY0RR",
+            "9b0b8a189a91422a8e38d14eedaea12f", "OIwwntcGijdcd2Jp0FlKV1",
+            "a469246fd76d49048cd60d257490e17f", "4m1Rd6nz97ec5FnI171pOT",
+            "2d15d864ad9e4457bd6330709814112c", "1ZY2fGwgZR3gg6vB5xN4qE",
+            "cb53926dd43646038c6dbb3e74ee2116", "bgU7trEIishc3uTE0IpQ3k",
+            "b8323d6dd2fa4e04a25630488be98d4f", "itlVk3AhtOfdW75oKalObB",
+            "f899b876c49d4c60bebe12244a5f432e", "kUtjqgXfillgnjH5HCCkOO",
+            "501b714d8ae2480585c7691ab4e3e862", "DFuXVyalpS6bu6kQLkept8",
+            "603e6c5f1cd3427ebdb86b2efb49f677", "y0Hi86sPig8ghSnNPv7YyP",
+            "b664a528cbf14c7da8f897275acec917", "vnbOjyjdSEfevqAXbGlVk3",
+            "a25fb601f5ce454c8e5eab17cf748e66", "uPndm2vmjWdcdPwJcp9QHA",
+            "a26d5a248bc24b07a8899f126dc1ec11", "Zt9wK6OWAWdet7xrd9PIEp",
+            "5ff9110bf4f64a51a1af0e28182c4f78", "rV8x14VpRe8dSDCNutXOKk",
+            "c6f1495644064f70a315dd47bf8b024d", "sQFJUIOUX4he06bCLYYzrT",
+            "08a4bb5061d44f6b89eb457b58bf2c1e", "T26uBOOy0K0bQ8FduZp1xk",
+            "ebb628718eb24f158da315014bf59450", "Vialg27BGekc9VHmJgZYg8",
+            "ab85e2130a5c412f863f8b4861ea873c", "fOLppadN0JebwBcRlHKhJO",
+            "d54dbe2c2f384370bcb8515478ad742e", "6PIkOzXrpjigcyed18zVEi",
+            "2407c93c8a174d6b87220315c6742361", "H0uhPL6VM53bBj9X22Hqpz",
+            "16dad873afab4227b336107375d3ea7e", "z8Dvd7kFEX1fnW5DJqGqxE",
+            "a3a2fd7814e64e1b8dff39776a94474f", "zKLbNRu723ecbQu6OxwHq7",
+            "58ec5d0b3015473fa9204a1c6190195c", "fQOorTVRkD7ewfM0OYnGEY",
+            "92e9062b320b4017b94f467a7da02f1c", "xPhvT1iZZBcfUoJPNCTqJ6",
+            "c1bd3f2dc6f24b7b8995c46c6c432241", "Brbir2NHgDgbOmr3DPPjFf",
+            "d04edd2a0fd54f358d2daa7da69c9b57", "lcmKxgXLOShc7ukytvlQur",
+            "3e0d732589e64b519e4a100662143c62", "b3XuLzmRik5dAzm6B06hqy",
+            "14fef83d656c431ba8895f432ad8d131", "ZNc4NDBbLN1et7dw117ew1",
+            "1518b6425bbf4f369fabbc30b8bab33b", "GOYa548niO1dHViny5kIdR",
+            "70a58e512dab4627a24ffb0ac891ec5c", "dZPDISXaCF9dVZ5cYzIscQ",
+            "5dc00d674b6f4527a9220639efa91412", "B7EohVQR138ewi0FNjcUOC",
+            "7e7ad53ee3714c33ad4a442e3f38156c", "BP5cQewrfRaeSpZdtxVYcI",
+            "a964a82e36e0481bab7b372d7ab38559", "V1dINstUFxeeIN2zMyQmMx",
+            "45b5585078a9412aa050213184c2cb75", "E3ARANvt3Z5dLle4MSOfe5",
+            "0290dd7c3e9a4137a6d60758168ed63a", "XABwjGNNEd0ek3ZsQjSQJ4",
+            "a30645520f60471b8066a86cb81efb14", "vU1JZkg5MZdb1tu0P3Ss28",
+            "6a1fd751df11451db1d9ae50dac46523", "5kM0aBiET69fgGY7rAkI1R",
+            "0cbd5b4593284a5ba35652006a7d692c", "reZbEc7pO51e1rhrNsscck",
+            "df97ef02cc78483999277e3e5d12c541", "TBV7Mj5lbcjd9eFr1Sts53",
+            "afeaa46cc671426c9c4ada2d594f4d1b", "s6VRmcLMo6fdpWkb3DNoyT",
+            "fc51cb0747c6415b9302d37442072458", "nMDfmf2D5FlcCxfzXWw7UI",
+            "bf6ff305f352442586c9ef4dc1ffd002", "XBtY2Kw01rgbztC7VNXMqu",
+            "31ed255daca04725978da73dd4f36a2f", "z7Oz8V7VKh4d0IjPtv5meb",
+            "bb005f4117f44f2a8d12664426203613", "WuDULDj4p3gc6VbcE5UbR1",
+            "f705b547feeb441580e59b3603c3100d", "RkambD7qTclb478IGNHPbv",
+            "9114bf70a33b4e36ad407a3970acae73", "YLKyJhZigsceSdmOnBZiSf",
+            "70b44670c76748778dbe73351f9feb5c", "530FYor9VF9cauYPqoKPoM",
+            "8dd9ba6469094e63b8ee38788a2b866c", "3QgVpy694bcfSnCsJWk6gk",
+            "b0cf5f3e4bf14b6d8c32aa44703f5344", "ZejUgcDE9bfc2gKBqaU1GQ",
+            "3e44001392fc4912b13f24476f312670", "wvyD2Ysbrl5fdtK8zAWr3W",
+            "3e9d913809cd4b048425911ffa9df079", "ogRzZgmEin5blpFw5GBhZn",
+            "20c11b2fd1374763a0be260d17c7d076", "nuyCbOfJlO2dND3Ey9Kage",
+            "cf230c7920a342439b8ae1036038cb69", "jActxBngAMhdlWQaCG458B",
+            "c4deb07a88ca4b3d91e4795d3493f76a", "X1LreClTVTgcwA65WXRm4i",
+            "4f3254359ea34d129332e347dd0b0f1a", "2g0Ax6UOyN6cDxd3wjmuAG",
+            "08ad3b76cc204c40a7379506b87c9b34", "a3b8hGfwbK0em5KHmFmit6",
+            "1712282d336a4f4ba8bcee7856562840", "BV4BFffYNY1eubGxVv24lq",
+            "c566d95d5afb424085874e3003046b16", "oUqmsriqLWgbsLH48gPt78",
+            "63c8de4409ad4f4fbda15b108389fa73", "lH0EPhCn9z8ghoEqJCM1fd",
+            "dae4d6331d60421d9b50cb6aa908e32c", "L7jMzGamaNidkJXC80VRFO",
+            "3e034561b6da4c6e8a41ae1602e2f55b", "QjsOQqNJ5k5bRW3FvEBmUX",
+            "3ea5082cdb254874b675ed468ed75c61", "8QTR6EZgsn5fFeuBsXvnPP",
+            "79c9150789a7400eabe36b7b8176517d", "mQYMX6ccgsaeKXnoQYZB8x",
+            "55c8ec4ed21a4102baf3ec316dda147c", "QZ6GubH6Dm7g391g2Lyug4",
+            "0585404d62af4b2a83303d3ccaeb192b", "C4jG1i5Unt0bgjp0EVMJVp",
+            "bcaaee6a88b84b6c8def84411f73cd2f", "8QfE7tgYgcgcbweC7QZyYD",
+            "92656b3ccb914051a3fcc7236c4a4270", "tGUj8cnkgzce4TS2onbi2k",
+            "e8f1626f3e4d430e9653251d26f5a750", "GE5ipvoSWZjcUaRRJFBEK4",
+            "f427407d20944333a8d79d2c32cd4829", "vYV9JBDACXkeuK5dnCJIvv",
+            "fbb9fb275e4c4b7380a4a50a7483112f", "hdzOW32VVBlb2LotRgbqDd",
+            "e8f35b022b884106b6f9622c3dbc4851", "ULf6YNVpZZjfHXXE3xrlDP",
+            "fda2120830ed4f5eaa965d4d02285355", "Cul0i2X85MleE210zqasXH",
+            "929c2b096dc74a098c136d004f471a74", "R2c7iimUoAcc1CtIbXd588",
+            "f67f26769a034241aebae72388e59132", "XnNKMHcX5alf05dx4v4706",
+            "6595d21311b74f47b42fd4224d873503", "JFJPpexCJI8ft84LlykZXB",
+            "4f0443560a83493fb47cdd53432c8353", "rcl1XkXqBM6fuJo4G1FUgb",
+            "2a17cd739c534b00b6f9cb7c25d1c81b", "avrN5SoI3C3fHYuwDBeXOj",
+            "fb9f0674369e41079a54da4ae3936276", "JVFdvDvanBldfvarPUt7dY",
+            "6226830d904e4d77a050ab475fc99515", "3Kcckgj3sq8dLlVbMhaQpT",
+            "c03b8d55cbe64815a2f1e86a52d8b85e", "vDpQen3ufvgdZlPHqwIoqi",
+            "38aea31e2e05466ba11fd3522e2eca14", "7S8a6zAvIR4dPEYKx0Cue8",
+            "c808482d10da4a76b6135c472d9e1a41", "aCekMFjALahfDbqpf1kE7v",
+            "21916a3eab43406abb2550447195ad14", "Kkn7UkVgGS2g4aGXWTYaR6",
+            "b5c6292aefa14d18b4c13068e0ddf61d", "swj8Hs0UzBffw9t6FLbSAl",
+            "8bf5a8182abb4c6485afbf398695af0c", "E8Lislk601cbtBPtfbiL1i",
+            "61596e6c9f034a04a9291203c37ff179", "6zh88mFFbm8ewr5QF6o1XH",
+            "2f52d77b8a794d4aa249870fef8d6451", "E7GhHLSWT34dVQLqKe07cJ",
+            "5560c65f843a407a82661d308d0e6a7e", "CGodthmQsk7bc6PAhuoRFY",
+            "b33fc665e3854002bc3c34137b480e13", "MpThTuNB8ofg9Ye1ETbHW3",
+            "f35fab797250405aa9e6285415f11538", "SYBTACtitTkeAmRaN3uHa0",
+            "1d94c044240c49188686c34cd35aea6e", "0gC0gFttsx2by51dY3Fmou",
+            "13aea6303a484434b338e10c9ea34f49", "KBa5zZeCLG1fnZICJ6pOBj",
+            NULL,                               NULL,
+        };
+
+        i = 0;
+        while (cmp[i] != NULL) {
+            zt_uuid_t uuid;
+            char    * uuids = NULL;
+
+            zt_uuid_fromstr(cmp[i], &uuid, zt_uuid_short_fmt);
+            zt_uuid_tostr(&uuid, &uuids, zt_uuid_base62_hashable_fmt);
+            ZT_UNIT_ASSERT(test, strcmp(uuids, cmp[i + 1]) == 0);
+
+            zt_uuid_fromstr(cmp[i + 1], &uuid, zt_uuid_base62_hashable_fmt);
             zt_uuid_tostr(&uuid, &uuids, zt_uuid_short_fmt);
             ZT_UNIT_ASSERT(test, strcmp(uuids, cmp[i]) == 0);
 
