@@ -167,11 +167,11 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
     int oLen = 0;
 
     if (flags == zt_uuid_base62_fmt) {
-		uint64_t v1  = 0;
+        uint64_t v1  = 0;
         uint64_t v2  = 0;
-		int      i   = 0;
-		int      ok1 = 0;
-		int      ok2 = 0;
+        int      i   = 0;
+        int      ok1 = 0;
+        int      ok2 = 0;
 
         zt_assert(uuids_size <= UUID_BASE62_STR_LEN + 1);
 
@@ -190,8 +190,8 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
             oLen = -1;
         }
     } else {
-		char         uuids_hex[UUID_SHORT_STR_LEN];
-		const char * fmt = NULL;
+        char         uuids_hex[UUID_SHORT_STR_LEN];
+        const char * fmt = NULL;
 
         zt_assert(flags == zt_uuid_std_fmt || flags == zt_uuid_short_fmt);
 
