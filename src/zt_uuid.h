@@ -16,6 +16,7 @@ enum zt_uuid_flags {
     zt_uuid_std_fmt = 0,
     zt_uuid_short_fmt,
     zt_uuid_base62_fmt,
+    zt_uuid_base62_hashable_fmt
 };
 typedef enum zt_uuid_flags zt_uuid_flags_t;
 
