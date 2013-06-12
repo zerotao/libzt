@@ -130,6 +130,8 @@ _flagToSize(zt_uuid_flags_t flags) {
         case zt_uuid_short_fmt:
             oSz = UUID_SHORT_STR_LEN + 1;
             break;
+        case zt_uuid_base62_hashable_fmt:
+            /* FALLTHRU */
         case zt_uuid_base62_fmt:
             oSz = UUID_BASE62_STR_LEN + 1;
             break;
@@ -151,7 +153,7 @@ _flagToSize(zt_uuid_flags_t flags) {
  *      uuids - [Required] A pointer to a character buffer in which to copy the string.
  *      uuids_size - [Required]  Pointer to a size_t containing the number of bytes allocated
  *          in 'uuids'.
- *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_base62_hashable_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
  *
  *  Output:
  *      - Upon successful return, the function will return the number of characters copied into
@@ -166,13 +168,15 @@ ssize_t
 _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_t flags) {
     int oLen = 0;
 
-    if (flags == zt_uuid_base62_fmt) {
+    if ((flags == zt_uuid_base62_fmt) || (flags == zt_uuid_base62_hashable_fmt)) {
         uint64_t v1  = 0;
         uint64_t v2  = 0;
+        int      x   = 0;
         int      i   = 0;
         int      ok1 = 0;
         int      ok2 = 0;
 
+        /* extract the 2 64 bit numbers in the uuid */
         zt_assert(uuids_size <= UUID_BASE62_STR_LEN + 1);
 
         for (i = 0; i < 8; i++) {
@@ -181,8 +185,21 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
             v2 |= ((uint64_t)uuid->data.bytes[i + 8] << shift);
         }
 
-        ok1 = base62_encode_int64(v1, uuids, _UUID_BASE62_SEGMENT);
+
+        if (flags == zt_uuid_base62_hashable_fmt) {
+            char     t_uuids[_UUID_BASE62_SEGMENT];
+
+            ok1 = base62_encode_int64(v1, t_uuids, _UUID_BASE62_SEGMENT);
+            /*  reverse the first _UUID_BASE62_SEGMENT bytes to move the less truncated bits forward */
+            for (x=0, i = _UUID_BASE62_SEGMENT-1; i >= 0; i--, x++) {
+                uuids[x] = t_uuids[i];
+            }
+        } else {
+            ok1 = base62_encode_int64(v1, uuids, _UUID_BASE62_SEGMENT);
+        }
+
         ok2 = base62_encode_int64(v2, uuids + _UUID_BASE62_SEGMENT, _UUID_BASE62_SEGMENT);
+
         if (ok1 >= 0 && ok2 >= 0) {
             oLen        = UUID_BASE62_STR_LEN;
             uuids[oLen] = 0;
@@ -221,7 +238,7 @@ _zt_uuid_fillstr(zt_uuid_t* uuid, char* uuids, size_t uuids_size, zt_uuid_flags_
  *  Input:
  *      uuid -  [Required] A pointer to a valid zt_uuid_t structure.
  *      uuids - [Required] A pointer to a character buffer in which to copy the string.
- *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_base62_hashable_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
  *
  *  Output:
  *
@@ -272,7 +289,7 @@ zt_uuid_tostr(zt_uuid_t * uuid, char ** uuids, zt_uuid_flags_t flags) {
  *      uuids - [Optional] A pointer to a character buffer in which to copy the string.
  *      uuids_size - [Required]  Pointer to a size_t containing the number of bytes allocated
  *          in 'uuids'.
- *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
+ *      flags - [Required] One of [zt_uuid_base62_fmt, zt_uuid_base62_hashable_fmt, zt_uuid_std_fmt, zt_uuid_short_fmt]
  *
  *  Output:
  *      - Upon successful return, the function will return the number of characters copied into
@@ -325,14 +342,29 @@ zt_uuid_fromstr(char * uuidstr, zt_uuid_t * uuid, zt_uuid_flags_t flags) {
         }
         memcpy(uuid_hex, uuidstr, UUID_SHORT_STR_LEN);
         zt_hex_to_binary(uuid_hex, UUID_SHORT_STR_LEN, uuid->data.bytes, UUID_ALEN);
-    } else if (flags == zt_uuid_base62_fmt) {
+    } else if ((flags == zt_uuid_base62_fmt) || (flags == zt_uuid_base62_hashable_fmt)) {
         uint64_t v1 = 0;
         uint64_t v2 = 0;
         int       i;
+        int       x;
+        int       ok1;
 
-        if (base62_decode_int64(uuidstr, _UUID_BASE62_SEGMENT, &v1) != 0) {
+        /*  reverse the first _UUID_BASE62_SEGMENT bytes to move the less truncated bits forward */
+        if (flags == zt_uuid_base62_hashable_fmt) {
+            char      t_uuidstr[_UUID_BASE62_SEGMENT];
+
+            for (x = 0, i = _UUID_BASE62_SEGMENT-1; i >= 0; i--, x++) {
+                t_uuidstr[x] = uuidstr[i];
+            }
+            ok1 = base62_decode_int64(t_uuidstr, _UUID_BASE62_SEGMENT, &v1);
+        } else {
+            ok1 = base62_decode_int64(uuidstr, _UUID_BASE62_SEGMENT, &v1);
+        }
+
+        if (ok1 != 0) {
             return -1;
         }
+
         if (base62_decode_int64(uuidstr + _UUID_BASE62_SEGMENT, UUID_BASE62_STR_LEN, &v2) != 0) {
             return -1;
         }
@@ -380,6 +412,8 @@ zt_uuid_isvalid(char * uuid, zt_uuid_flags_t flags) {
                 return -1;
             }
             break;
+        case zt_uuid_base62_hashable_fmt:
+            /* FALLTHRU */
         case zt_uuid_base62_fmt:
             if (len != UUID_BASE62_STR_LEN) {
                 return -1;
@@ -411,7 +445,7 @@ zt_uuid_isvalid(char * uuid, zt_uuid_flags_t flags) {
                     }
                     break;
             }
-        } else if (flags == zt_uuid_base62_fmt) {
+        } else if ((flags == zt_uuid_base62_fmt) || (flags == zt_uuid_base62_hashable_fmt)) {
             if (strchr(base62_alphabet, uuid[i]) == NULL) {
                 return -1;
             }
