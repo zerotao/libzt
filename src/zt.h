@@ -178,6 +178,7 @@ extern char *zt_strdup_p (const char *string);
 
 #include <zt_macros.h>
 #include <zt_path.h>
+#include <zt_random.h>
 
 #ifdef ZT_WITH_GC
 #include <zt_gc.h>
