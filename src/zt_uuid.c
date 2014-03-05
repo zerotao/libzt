@@ -18,7 +18,6 @@ zt_uuid_t  NAMESPACE_URL = { { { 0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1,
 zt_uuid_t  NAMESPACE_OID = { { { 0x6b, 0xa7, 0xb8, 0x12, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 } } };
 zt_uuid_t  NAMESPACE_X500 = { { { 0x6b, 0xa7, 0xb8, 0x14, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8 } } };
 
-static int rand_initialized           = 0;
 
 #define _UUID_BASE62_SEGMENT UUID_BASE62_STR_LEN / 2
 static const char base62_alphabet[63] = \
@@ -28,46 +27,23 @@ static const char base62_alphabet[63] = \
 static int base62_encode_int64(uint64_t in, char * out, size_t olen);
 static int base62_decode_int64(const char * in, size_t ilen, uint64_t * out);
 
-void       srandomdev(void);
-#ifndef HAVE_SRANDOMDEV
-#include <fcntl.h>
-#include <time.h>
-void
-srandomdev(void) {
-    int      fd;
-    uint32_t rand_data;
-
-    fd = open("/dev/urandom", O_RDONLY);
-
-    if (fd < 0 || read(fd, &rand_data,
-                       sizeof(uint32_t)) != sizeof(uint32_t)) {
-        /* this is a shitty situation.... */
-        rand_data = (uint32_t)time(NULL);
-    }
-
-    if (fd >= 0) {
-        close(fd);
-    }
-
-    srandom(rand_data);
-}
-
-#endif /* ifndef HAVE_SRANDOMDEV */
-
 int
 zt_uuid4(zt_uuid_t * uuid) {
-    long v;
+    long                      v;
+    static zt_random_state    state;
+    static int                rand_initialized  = 0;
 
     zt_assert(uuid);
+
     if (rand_initialized == 0) {
-        srandomdev();
+        zt_random_srandom(&state, time(NULL));
         rand_initialized = 1;
     }
 
-    v = random(), memcpy(&uuid->data.bytes, &v, 4);
-    v = random(), memcpy(&uuid->data.bytes[4], &v, 4);
-    v = random(), memcpy(&uuid->data.bytes[8], &v, 4);
-    v = random(), memcpy(&uuid->data.bytes[12], &v, 4);
+    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes, &v, 4);
+    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[4], &v, 4);
+    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[8], &v, 4);
+    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[12], &v, 4);
 
     /* set the version number */
     uuid->data.bytes[UUID_VERSION_OFFT]   = (uuid->data.bytes[UUID_VERSION_OFFT] & 0x0F) | (UUID_VER_PSEUDORANDOM << 4);
