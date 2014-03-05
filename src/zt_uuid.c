@@ -29,7 +29,7 @@ static int base62_decode_int64(const char * in, size_t ilen, uint64_t * out);
 
 int
 zt_uuid4(zt_uuid_t * uuid) {
-    long                      v;
+    uint32_t                  v;
     static zt_random_state    state;
     static int                rand_initialized  = 0;
 
