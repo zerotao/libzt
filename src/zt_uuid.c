@@ -27,23 +27,60 @@ static const char base62_alphabet[63] = \
 static int base62_encode_int64(uint64_t in, char * out, size_t olen);
 static int base62_decode_int64(const char * in, size_t ilen, uint64_t * out);
 
+#ifdef HAVE_PTHREADS
+#include <pthread.h>
+static pthread_key_t   ctx_key;
+static pthread_once_t  ctx_key_once = PTHREAD_ONCE_INIT;
+
+static void
+make_ctx_key(void) {
+    (void)pthread_key_create(&ctx_key, free);
+}
+#  define CTX_STATIC
+#else /* HAVE_PTHREADS */
+#  define CTX_STATIC static
+#endif /* not HAVE_PTHREADS */
+
+zt_random_state *
+zt_uuid4_get_ctx(void) {
+    CTX_STATIC zt_random_state * state = NULL;
+
+    if (!state) {
+#ifdef HAVE_PTHREADS
+        (void)pthread_once(&ctx_key_once, make_ctx_key);
+        if((state = pthread_getspecific(ctx_key)) == NULL) {
+#endif /* HAVE_PTHREADS */
+            if((state = zt_calloc(zt_random_state, 1)) == NULL) {
+                zt_log_printf(zt_log_err, "Could not allocate memory for uuid4 context");
+                exit(1);
+            }
+#ifdef HAVE_PTHREADS
+        pthread_setspecific(ctx_key, state);
+        }
+#endif /* HAVE_PTHREADS */
+    }
+    return state;
+}
+
 int
 zt_uuid4(zt_uuid_t * uuid) {
-    long                      v;
-    static zt_random_state    state;
+    uint32_t                  v;
+    static zt_random_state  * state;
     static int                rand_initialized  = 0;
 
     zt_assert(uuid);
 
+    state = zt_uuid4_get_ctx();
+
     if (rand_initialized == 0) {
-        zt_random_srandom(&state, time(NULL));
+        zt_random_srandom(state, time(NULL));
         rand_initialized = 1;
     }
 
-    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes, &v, 4);
-    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[4], &v, 4);
-    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[8], &v, 4);
-    v = zt_random_uint32(&state), memcpy(&uuid->data.bytes[12], &v, 4);
+    v = zt_random_uint32(state), memcpy(&uuid->data.bytes, &v, 4);
+    v = zt_random_uint32(state), memcpy(&uuid->data.bytes[4], &v, 4);
+    v = zt_random_uint32(state), memcpy(&uuid->data.bytes[8], &v, 4);
+    v = zt_random_uint32(state), memcpy(&uuid->data.bytes[12], &v, 4);
 
     /* set the version number */
     uuid->data.bytes[UUID_VERSION_OFFT]   = (uuid->data.bytes[UUID_VERSION_OFFT] & 0x0F) | (UUID_VER_PSEUDORANDOM << 4);
