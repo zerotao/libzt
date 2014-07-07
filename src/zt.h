@@ -63,7 +63,7 @@ do {							 \
 
 #if C99_INLINE || __GNUC_GNU_INLINE__
 # define INLINE     inline
-# define HAS_ININE  1
+# define HAS_INLINE  1
 #else
 # define INLINE                                            /* no inline */
 #endif
