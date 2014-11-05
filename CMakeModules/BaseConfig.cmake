@@ -1,12 +1,12 @@
 IF(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
-  # SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      # "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      # FORCE)
+    # set(CMAKE_BUILD_TYPE Debug)
+  SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-if(CMAKE_COMPILER_IS_GNUCC)
-    SET(RSN_BASE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wno-unused-parameter")
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    SET(RSN_BASE_C_FLAGS "-std=c99 -pedantic -Wall -Wextra -Wstrict-prototypes -Wno-unused-parameter -Werror -Wno-newline-eof")
     SET(RSN_BASE_CXX_FLAGS "-Wall")
 
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${RSN_BASE_C_FLAGS} -DLUA_USE_MKSTEMP")
@@ -39,4 +39,4 @@ if(CMAKE_COMPILER_IS_GNUCC)
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG -g3")
     ENDIF(${CMAKE_BUILD_TYPE} STREQUAL Debug)
 
-endif(CMAKE_COMPILER_IS_GNUCC)
+endif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_CLANG)
