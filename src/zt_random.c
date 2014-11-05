@@ -31,16 +31,16 @@ zt_random_initstate(zt_random_state * state, uint32_t seed[], size_t len) {
      * slight change for C++, 2004/2/26
      */
 
-    int   i = 1;
-    int   j = 0;
-    int   k = (RECURRENCE > len ? RECURRENCE : len);
+    size_t   i = 1;
+    size_t   j = 0;
+    size_t   k = (RECURRENCE > len ? RECURRENCE : len);
 
     register uint32_t * mt = state->mt;
 
     zt_random_srandom(state, 19650218UL);
 
     for(; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL)) + seed[j] + j; /* non linear */
+        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL)) + seed[j] + (uint32_t)j; /* non linear */
         mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
 
         i++;
@@ -55,7 +55,7 @@ zt_random_initstate(zt_random_state * state, uint32_t seed[], size_t len) {
     }
 
     for (k=RECURRENCE-1; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL)) - i; /* non linear */
+        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL)) - (uint32_t)i; /* non linear */
         mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
 
         i++;
@@ -98,7 +98,7 @@ zt_random_uint32(zt_random_state * state) {
 
     if (state->initialized != INITIALIZED) {
         zt_log_printf(zt_log_alert, "zt_random_uint32 called without initialization, seeding with time(NULL)");
-        zt_random_srandom(state, time(NULL));
+        zt_random_srandom(state, (uint32_t)time(NULL));
     }
 
     if (state->mti >= RECURRENCE) { /* generate RECURRENCE words at one time */

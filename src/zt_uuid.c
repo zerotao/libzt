@@ -73,7 +73,7 @@ zt_uuid4(zt_uuid_t * uuid) {
     state = zt_uuid4_get_ctx();
 
     if (rand_initialized == 0) {
-        zt_random_srandom(state, time(NULL));
+        zt_random_srandom(state, (uint32_t)time(NULL));
         rand_initialized = 1;
     }
 
