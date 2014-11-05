@@ -26,3 +26,6 @@ if(HAVE_PTHREADS)
 add_executable(threads threads.c test.h)
 target_link_libraries(threads zt)
 endif(HAVE_PTHREADS)
+
+add_executable(opts opts.c)
+target_link_libraries(opts zt)

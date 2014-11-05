@@ -19,7 +19,7 @@ BEGIN_C_DECLS
 
 #define ZT_OPT_NSO -1
 #define ZT_OPT_NLO NULL
-#define ZT_OPT_END() 0, NULL, NULL, NULL, NULL
+#define ZT_OPT_END() 0, NULL, NULL, NULL, NULL, NULL
 
 typedef int (*zt_opt_error)(int code, char * fmt, ...);
 typedef struct zt_opt_def zt_opt_def_t;
@@ -27,6 +27,7 @@ typedef int (*zt_opt_callback)(int argn, int defn, int * argc, char ** argv, zt_
 struct zt_opt_def {
     char            sopt;
     char          * lopt;
+    char          * arg;
     zt_opt_callback cb;
     void          * cb_data;
     char          * help;

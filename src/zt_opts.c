@@ -265,16 +265,19 @@ static int
 _zt_opt_help_stdout_printer(zt_opt_def_t * def) {
     char   sopt = def->sopt;
     char * lopt = def->lopt;
+    char * arg  = def->arg;
 
     if (sopt != ZT_OPT_NSO || lopt != ZT_OPT_NLO) {
         int depth = 0;
 
-        depth = printf("   %c%c%c %s%s",
+        depth = printf("   %c%c%c %s%s %s",
                        sopt != ZT_OPT_NSO ? '-' : ' ',
                        sopt != ZT_OPT_NSO ? sopt : ' ',
                        sopt != ZT_OPT_NSO && lopt != ZT_OPT_NLO ? ',' : ' ',
                        lopt != ZT_OPT_NLO ? "--" : "  ",
-                       lopt != ZT_OPT_NLO ? lopt : "");
+                       lopt != ZT_OPT_NLO ? lopt : "",
+                       arg != NULL ? arg : ""
+                       );
 
         printf(BLANK "%s\n", INDENT_TO(25, 1, depth), def->help);
     } else {
