@@ -279,7 +279,50 @@ _zt_opt_help_stdout_printer(zt_opt_def_t * def) {
                        arg != NULL ? arg : ""
                        );
 
-        printf(BLANK "%s\n", INDENT_TO(25, 1, depth), def->help);
+        size_t len = strlen(def->help);
+
+/*
+ * target a total width of < 80 columns
+ * later we may look at getting the current width of the sreen
+ */
+#define BASE_INDENT 30
+#define BASE_WIDTH (80 - BASE_INDENT)
+
+        if (len > BASE_WIDTH) {
+            size_t offt = 0;
+            while (offt < len) {
+                size_t width = BASE_WIDTH;
+
+                if (offt != 0) {
+                    /* indent every line other then the first, as it is already indented */
+                    printf(BLANK, depth, " ");
+                }
+
+                /* ignore leading whitespace */
+                while(def->help[offt] == ' ' && offt < len) {
+                    offt++;
+                }
+
+                size_t sublen = len - offt;
+
+                if (width > sublen) {
+                    // if we have reached the length of the remaining string then
+                    // use all of it.
+                    width = sublen;
+                } else {
+                    // try to break between words
+                    while(def->help[offt+width] != ' ') {
+                        width--;
+                    }
+                }
+
+                printf(BLANK "%.*s" NL, INDENT_TO(BASE_INDENT, 5, depth), (int)width, &def->help[offt]);
+                offt+=width;
+            }
+
+        } else {
+            printf(BLANK "%s" NL, INDENT_TO(BASE_INDENT, 5, depth), def->help);
+        }
     } else {
         return -1;
     }
