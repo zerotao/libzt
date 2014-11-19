@@ -74,6 +74,7 @@ configure_file(replace/zt_replace.h.in ${PROJECT_BINARY_DIR}/src/libzt/zt_replac
 
 ################ library definitions ################
 add_library(zt ${zt_REPLACE_SRCS} ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
+target_link_libraries(zt ${CMAKE_THREAD_LIBS_INIT})
 
 add_library(zt_gc ${zt_gc_SRCS})
 target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
