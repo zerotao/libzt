@@ -37,9 +37,9 @@
 #endif
 
 #ifdef WIN32
-# include <zt_win32.h>
+# include <libzt/zt_win32.h>
 #else
-# include <zt_unix.h>
+# include <libzt/zt_unix.h>
 #endif
 
 #if WITH_DMALLOC
@@ -133,7 +133,7 @@
 # define NEVER(X)       (X)
 #endif /* if defined(LIBZT_COVERAGE_TESTING) */
 
-#include <zt_macros.h>
+#include <libzt/zt_macros.h>
 
 
 #if defined(WIN32)
@@ -147,5 +147,5 @@
 # define PRIsize_t "zu"
 #endif
 
-#include <zt_replace.h>
+#include <libzt/zt_replace.h>
 #endif /*_ZT_INTERNAL_H_*/

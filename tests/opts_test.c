@@ -10,7 +10,7 @@
  * Description: tests for the options interface
  */
 #ifdef HAVE_CONFIG_H
-# include "zt_config.h"
+# include <libzt/zt_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_STRING_H
@@ -19,7 +19,7 @@
 
 #define ZT_WITH_UNIT
 #include <zt.h>
-#include <zt_opts.h>
+#include <libzt/zt_opts.h>
 
 long   long_integer  = 0;
 long   long_integer2 = 0;

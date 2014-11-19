@@ -10,7 +10,7 @@
 #include <io.h>
 #include <process.h>
 
-#include <zt_config.h>
+#include <libzt/zt_config.h>
 
 #ifndef __cplusplus
   typedef int bool;

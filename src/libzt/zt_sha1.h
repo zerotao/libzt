@@ -2,7 +2,7 @@
 #define __ZT_SHA1_H__
 
 #include <zt.h>
-#include <zt_stdint.h>
+#include <libzt/zt_stdint.h>
 
 BEGIN_C_DECLS
 

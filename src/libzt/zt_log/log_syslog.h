@@ -15,7 +15,7 @@
 #ifndef _LOG_SYSLOG_H_
 #define _LOG_SYSLOG_H_
 
-#include <zt_log.h>
+#include <libzt/zt_log.h>
 
 #ifdef __cplusplus
 extern "C" {

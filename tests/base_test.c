@@ -4,7 +4,7 @@
 #include <time.h>
 #include <string.h>
 #include <ctype.h>
-#include <zt_base.h>
+#include <libzt/zt_base.h>
 
 #define test_encoding(_base, _data, _len, _result1, _result2)                                   \
     do { unsigned char * cdata = (unsigned char *)_data;                                        \

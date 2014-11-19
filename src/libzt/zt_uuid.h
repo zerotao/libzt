@@ -2,7 +2,7 @@
 #define _ZT_UUID_H_
 
 #include <zt.h>
-#include <zt_stdint.h>
+#include <libzt/zt_stdint.h>
 BEGIN_C_DECLS
 
 #define UUID_STR_LEN        36

@@ -11,6 +11,6 @@
 #ifndef _CFG_INTERFACE_H_
 #define _CFG_INTERFACE_H_
 
-#include <zt_cfg.h>
-#include <zt_cfg/cfg_ini.h>
+#include <libzt/zt_cfg.h>
+#include <libzt/zt_cfg/cfg_ini.h>
 #endif  /* _CFG_INTERFACE_H_ */

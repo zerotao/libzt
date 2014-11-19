@@ -11,7 +11,7 @@
 #ifndef _CFG_INI_H_
 #define _CFG_INI_H_
 
-#include <zt_cfg.h>
+#include <libzt/zt_cfg.h>
 
 #ifdef __cplusplus
 extern "C" {

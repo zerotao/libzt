@@ -16,7 +16,7 @@
 #define _LOG_PRIVATE_H_
 
 #include <stdlib.h>
-#include <zt_log.h>
+#include <libzt/zt_log.h>
 
 #ifdef WITH_THREADS
 #include <pthread.h>

@@ -7,7 +7,7 @@
 #include <sys/time.h>
 
 #include <zt.h>
-#include <zt_threads.h>
+#include <libzt/zt_threads.h>
 
 zt_threads_mutex *
 zt_threads_pthreads_lock_alloc(int locktype UNUSED) {

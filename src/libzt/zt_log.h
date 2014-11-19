@@ -115,6 +115,6 @@ extern void zt_log_close( zt_log_ty * log );
 #endif /* ifndef NDEBUG */
 
 END_C_DECLS
-#include <zt_log/log_interface.h>
+#include <libzt/zt_log/log_interface.h>
 
 #endif  /* _ZT_LOG_H_ */

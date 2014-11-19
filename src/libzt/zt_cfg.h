@@ -68,6 +68,6 @@ int zt_cfg_set( zt_cfg_ty *, char *, char *, void *, zt_cfg_type );
     zt_cfg_set( cfg, block, name, addr, zt_cfg_string)
 
 END_C_DECLS
-#include <zt_cfg/cfg_interface.h>
+#include <libzt/zt_cfg/cfg_interface.h>
 
 #endif  /* _ZT_CFG_H_ */

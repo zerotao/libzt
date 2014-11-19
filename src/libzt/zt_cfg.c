@@ -11,7 +11,7 @@
  *
  */
 #ifdef HAVE_CONFIG_H
-#include <zt_config.h>
+#include <libzt/zt_config.h>
 #endif
 
 #include "zt.h"

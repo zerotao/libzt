@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <zt_stdint.h>
+#include <libzt/zt_stdint.h>
 
 #define ZT_WITH_UNIT
 #include <zt.h>

@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #include <zt.h>
-#include <zt_threads.h>
+#include <libzt/zt_threads.h>
 
 static void * _zt_threadpool_iput_loop(void *args);
 static void * _zt_threadpool_oput_loop(void *args);

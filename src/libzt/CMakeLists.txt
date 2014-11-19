@@ -8,7 +8,7 @@ set(zt_LIB_SRCS zt_assert.c zt_cfg.c zt_format.c
                 zt_threads/zt_threads_pthreads.c zt_opts.c zt_path.c
                 zt_base.c zt_buf.c zt_random.c)
 
-set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/zt_replace.h zt_assert.h zt_cfg.h
+set(zt_LIB_HDRS zt_internal.h ${PROJECT_BINARY_DIR}/src/libzt/zt_replace.h zt_assert.h zt_cfg.h
                 zt_format.h zt_log.h zt_mem.h zt_progname.h
                 zt_cstr.h zt_time.h zt_macros.h zt_int.h zt_sha1.h
                 zt_uuid.h zt_ez_mempool.h zt_ipv4_tbl.h
@@ -70,10 +70,10 @@ if (NOT HAVE_ASPRINTF)
     LIST(APPEND zt_REPLACE_SRCS replace/asprintf.c)
 endif(NOT HAVE_ASPRINTF)
 
-configure_file(replace/zt_replace.h.in ${PROJECT_BINARY_DIR}/src/zt_replace.h)
+configure_file(replace/zt_replace.h.in ${PROJECT_BINARY_DIR}/src/libzt/zt_replace.h)
 
 ################ library definitions ################
-add_library(zt ${zt_REPLACE_SRCS} ${zt_LIB_SRCS} zt.h ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
+add_library(zt ${zt_REPLACE_SRCS} ${zt_LIB_SRCS} ${zt_LIB_HDRS} ${adt_SRCS} ${adt_HDRS} ${log_SRCS} ${log_HDRS} ${cfg_SRCS} ${cfg_HDRS})
 
 add_library(zt_gc ${zt_gc_SRCS})
 target_link_libraries(zt_gc zt) # needed to resolve undefined symbols in shared libs
@@ -115,7 +115,6 @@ install(TARGETS ${ZT_INSTALL_TARGETS}
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
 
-install(FILES zt.h DESTINATION include)
 install(FILES ${ZT_INSTALL_HEADERS} DESTINATION include/libzt)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/zt_config.h DESTINATION include/libzt)
 install(FILES ${log_HDRS} DESTINATION include/libzt/zt_log)
