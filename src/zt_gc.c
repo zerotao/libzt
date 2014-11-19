@@ -297,7 +297,7 @@ zt_gc_free_white(zt_gc_t *gc)
 {
     zt_elist_t          * elt = NULL;
     zt_elist_t          * dont_use = NULL;
-    zt_gc_collectable_t * mark;
+    /* zt_gc_collectable_t * mark; */
 
     if (zt_elist_empty(gc->white)) {
         return;
@@ -317,8 +317,8 @@ zt_gc_free_white(zt_gc_t *gc)
             zt_assert(elt != gc->black);
         }
 
-        mark = zt_elist_data(elt, zt_gc_collectable_t, list);
-        zt_assert(!is_protected(mark));
+        /* mark = zt_elist_data(elt, zt_gc_collectable_t, list); */
+        /* zt_assert(!is_protected(mark)); */
         /* printf("Releasing: %p\n", (void *)elt); */
 
 

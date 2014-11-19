@@ -61,6 +61,7 @@ check_def_function_exists( strdup HAVE_STRDUP )
 check_def_function_exists( vsyslog HAVE_VSYSLOG )
 check_def_function_exists( openlog HAVE_OPENLOG )
 check_def_function_exists( getopt_long HAVE_GETOPT_LONG )
+check_def_function_exists( srandomdev HAVE_SRANDOMDEV )
 
 if(HAVE_VSYSLOG AND HAVE_OPENLOG)
 	set(HAVE_SYSLOG 1)
