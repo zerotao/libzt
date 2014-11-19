@@ -18,6 +18,10 @@
 # include <string.h>
 #endif
 
+#ifdef HAVE_PTHREADS
+# include <pthread.h>
+#endif
+
 #include "zt.h"
 #include "zt_internal.h"
 
