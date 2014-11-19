@@ -105,9 +105,11 @@ if(HAVE_LONG_DOUBLE)
 endif(HAVE_LONG_DOUBLE)
 
 add_definitions(-DHAVE_CONFIG_H)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/src
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/adt
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/libzt
+                    ${CMAKE_CURRENT_SOURCE_DIR}/src/libzt/adt
+                    ${CMAKE_CURRENT_BINARY_DIR}/src
+                    ${CMAKE_CURRENT_BINARY_DIR}/src/libzt
                     ${CMAKE_CURRENT_SOURCE_DIR}/compat)
 
 if(WIN32)
@@ -116,7 +118,7 @@ if(WIN32)
                         ${CMAKE_INSTALL_PREFIX})
 endif(WIN32)
 
-configure_file(config.h.cmake src/zt_config.h)
+configure_file(config.h.cmake src/libzt/zt_config.h)
 
 # subdirectories
 add_subdirectory(tools)

@@ -1,13 +1,13 @@
 #ifndef _ZT_H_
 #define _ZT_H_
 
-#include <zt_config.h>
+#include <libzt/zt_config.h>
 
 #ifndef WIN32
 # include <stdbool.h>
 #else
 # define _GNU_SOURCE
-#include <zt_win32.h>
+#include <libzt/zt_win32.h>
 #endif /* WIN32 */
 
 #include <stdio.h>
@@ -134,58 +134,58 @@ extern char *zt_strdup_p (const char *string);
 }
 #endif /* __cplusplus */
 
-#include <zt_assert.h>
-#include <zt_atexit.h>
-#include <zt_buf.h>
+#include <libzt/zt_assert.h>
+#include <libzt/zt_atexit.h>
+#include <libzt/zt_buf.h>
 
 #ifndef WIN32
-# include <zt_daemon.h>
-# include <zt_opts.h>
+# include <libzt/zt_daemon.h>
+# include <libzt/zt_opts.h>
 #endif
 
-#include <zt_progname.h>
-#include <zt_log.h>
-#include <zt_time.h>
-#include <zt_uuid.h>
-#include <zt_cfg.h>
-#include <zt_sha1.h>
-#include <zt_mem.h>
-#include <zt_format.h>
-#include <zt_int.h>
-#include <zt_base.h>
+#include <libzt/zt_progname.h>
+#include <libzt/zt_log.h>
+#include <libzt/zt_time.h>
+#include <libzt/zt_uuid.h>
+#include <libzt/zt_cfg.h>
+#include <libzt/zt_sha1.h>
+#include <libzt/zt_mem.h>
+#include <libzt/zt_format.h>
+#include <libzt/zt_int.h>
+#include <libzt/zt_base.h>
 
 #ifdef WITH_THREADS
-#include <zt_threads.h>
+#include <libzt/zt_threads.h>
 #endif
 
 #ifndef ZT_WITHOUT_ADT
-# include <zt_array.h>
-# include <zt_list.h>
-# include <zt_queue.h>
-# include <zt_table.h>
-# include <zt_bstream.h>
-# include <zt_llist.h>
-# include <zt_set.h>
-# include <zt_tree.h>
-# include <zt_hash.h>
-# include <zt_ptr_array.h>
-# include <zt_stack.h>
+# include <libzt/zt_array.h>
+# include <libzt/zt_list.h>
+# include <libzt/zt_queue.h>
+# include <libzt/zt_table.h>
+# include <libzt/zt_bstream.h>
+# include <libzt/zt_llist.h>
+# include <libzt/zt_set.h>
+# include <libzt/zt_tree.h>
+# include <libzt/zt_hash.h>
+# include <libzt/zt_ptr_array.h>
+# include <libzt/zt_stack.h>
 #endif /* ZT_WITHOUT_ADT */
 
-#include <zt_cstr.h> /* uses ptr_array.h */
-#include <zt_ez_mempool.h> /* needs zt_table.h */
-#include <zt_ipv4_tbl.h> /* needs zt_table.h */
+#include <libzt/zt_cstr.h> /* uses ptr_array.h */
+#include <libzt/zt_ez_mempool.h> /* needs zt_table.h */
+#include <libzt/zt_ipv4_tbl.h> /* needs zt_table.h */
 
-#include <zt_macros.h>
-#include <zt_path.h>
-#include <zt_random.h>
+#include <libzt/zt_macros.h>
+#include <libzt/zt_path.h>
+#include <libzt/zt_random.h>
 
 #ifdef ZT_WITH_GC
-#include <zt_gc.h>
+#include <libzt/zt_gc.h>
 #endif /* ZT_WITH_GC */
 
 #ifdef ZT_WITH_UNIT
-#include <zt_unit.h>
+#include <libzt/zt_unit.h>
 #endif /* ZT_WITH_UNIT */
 
 #endif /* _ZT_H_ */
