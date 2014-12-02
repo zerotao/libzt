@@ -261,6 +261,40 @@ zt_opt_string(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, 
     return args_consumed;
 }
 
+int
+zt_opt_string_array(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error) {
+    int    args_consumed = 0;
+    char * arg           = zt_opt_get_value(argn, defn, argv, def, &args_consumed, error);
+
+    if (arg) {
+        char ** cur_array = *(char***)def[defn].cb_data;
+        char ** new_array = 0;
+        int     size      = 1;
+        int     offt      = 0;
+
+        if (cur_array != NULL) {
+            int i = 0;
+            while (cur_array[i++] != NULL) {
+                ;
+            }
+            size = i;
+            offt = i - 1;
+        }
+
+        if ((new_array = zt_realloc(char *, cur_array, size + 1)) == NULL) {
+            zt_log_printf(zt_log_crit, "could not allocate memory for array");
+            exit(1);
+        }
+
+        new_array[offt]             = strdup(arg);
+        new_array[offt + 1]         = NULL;
+
+        *(char***)def[defn].cb_data = new_array;
+    }
+
+    return args_consumed;
+}
+
 static int
 _zt_opt_help_stdout_printer(zt_opt_def_t * def) {
     char   sopt = def->sopt;

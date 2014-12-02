@@ -45,6 +45,7 @@ int    zt_opt_long(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * 
 int    zt_opt_flag_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
 int    zt_opt_bool_int(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
 int    zt_opt_string(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
+int    zt_opt_string_array(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
 
 int    zt_opt_help_stdout(int argn, int defn, int * argc, char ** argv, zt_opt_def_t * def, zt_opt_error error);
 int    zt_opt_usage(const char * name, const char * help, zt_opt_def_t * opts);
