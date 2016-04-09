@@ -14,6 +14,9 @@ target_link_libraries(abort zt)
 add_executable(hexdump hexdump.c)
 target_link_libraries(hexdump zt)
 
+add_executable(gc gc.c)
+target_link_libraries(gc zt zt_gc)
+
 if (NOT WIN32)
     add_executable(log_syslog log_syslog.c)
     target_link_libraries(log_syslog zt)
