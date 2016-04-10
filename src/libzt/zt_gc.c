@@ -262,7 +262,7 @@ zt_gc_register(zt_gc_t *gc, void *v)
      */
     zt_elist_add_tail(gc->grey, &mark->list);
 
-    if (++gc->current_allocs < gc->allocs_before_scan) {
+    if (++gc->current_allocs >= gc->allocs_before_scan) {
         zt_gc_collect(gc, 0);
     }
 }

@@ -2,7 +2,7 @@
 #define ZT_WITH_GC
 #include <zt.h>
 
-#undef DEBUG_GC
+#define DEBUG_GC 0
 
 #define INT  1
 #define ATOM 2
@@ -19,22 +19,18 @@ struct atom {
 
 static int ints_marked = 0;
 static int atoms_marked = 0;
-static int atoms_freed = 0;
+static int objects_freed = 0;
 
 static void mark_atom(zt_gc_t *gc, void *pdata UNUSED, void *v)
 {
     atom *a = (atom *)v;
 
-
-
     if (a->type == INT) {
-        /* printf("Marking Int: %p\n", (void *)a); */
         ints_marked++;
     } else {
-        /* printf("Marking Atom: %p %p\n", (void *)a, (void *)a->value.atom); */
         atoms_marked++;
         if (a->value.atom != NULL) {
-            zt_gc_mark_value(gc, a->value.atom);
+            zt_gc_mark(gc, a->value.atom);
         }
     }
     return;
@@ -45,9 +41,7 @@ release_atom(zt_gc_t *gc UNUSED, void *pdata UNUSED, void **v)
 {
     atom **a = (atom **)v;
 
-    /* printf("release %p\n", *v); */
-
-    atoms_freed++;
+    objects_freed++;
     free(*a);
     *a = NULL;
 }
@@ -55,116 +49,151 @@ release_atom(zt_gc_t *gc UNUSED, void *pdata UNUSED, void **v)
 static void
 basic_tests(struct zt_unit_test *test, void *data UNUSED)
 {
-    zt_gc_t gc;
-    atom  * root;
-    int     i;
-/*     atom    * protected; */
+    zt_gc_t * gc;
+    atom    * root;
+    int       i;
+    atom    * protected;
 
 #define RSTART 1
-#define REND 100
-#define MARKS_PER 100
-#define ALLOCS_PER 1
+#define REND 10
+#define MARKS_PER_SCAN 10
+#define ALLOCS_BEFORE_SCAN 1
 
+    gc = zt_gc_init(NULL, mark_atom, release_atom, MARKS_PER_SCAN, ALLOCS_BEFORE_SCAN);
 
     root = zt_calloc(atom, 1);
-
+    zt_gc_prepare(gc, root);
     root->type = ATOM;
     root->value.atom = NULL;
+    zt_gc_protect(gc, root);
 
-    zt_gc_init(&gc, NULL, mark_atom, release_atom, MARKS_PER, ALLOCS_PER);
-    zt_gc_register_root(&gc, root);
 
-    /* zt_gc_print_heap(&gc); */
+    /* allocate REND atoms the first is assigned to the root object
+     * the second is treated as a protected object
+     * the rest are free floating and will thus get reaped quickly
+     */
     for (i = RSTART; i <= REND; i++) {
         atom * a = zt_calloc(atom, 1);
+        zt_gc_prepare(gc, a);
 
         /* you can register a value immediatly but it must be setup
-         * before you allocate another
+         * and reachable thru a root object (or protected directly) before you
+         * register another otherwise it can be reaped.
          */
-        zt_gc_register_value(&gc, a);
+        zt_gc_register(gc, a);
 
         if (i == RSTART ) {
             a->type = INT;
             a->value.number = i;
-            root->value.atom = a;
+            root->value.atom = a; /* assign the first one to the root object so it can be "found" */
         } else if (i == RSTART + 1) {
             a->type = INT;
             a->value.number = i;
-            zt_gc_protect(&gc, a);
-            /* protected = a; */
-        } else { /* if(i / 2 == 0 || last == NULL) { */
+            zt_gc_protect(gc, a); /* protect the second one so that it is found directly */
+            protected = a;        /* so we can reference it later */
+        } else {
             a->type = INT;
             a->value.number = i;
-            /* last = a; */
-            /* protecting a value makes certain that it will be
-             * checked each scan
-             */
-            /* zt_gc_protect(&gc, a); */
-        } /* else {
-           *     a->type = ATOM;
-           *     a->value.atom = last;
-           *     /\* unprotecting a value leaves it available to be GC'd *\/
-           *     zt_gc_unprotect(&gc, last);
-           *     last = NULL;
-           * } */
+            /* let the rest be reapable */
+        }
     }
 
-    {
-        int mark_base = REND;
-        int free_base = (REND - 3) - 1;                    /* - 3 for root, root->value.a, protected - 1 for last object added*/
-        int int_seen_base = ((REND * 3) - 6);              /* root->value.a, protected, last_object need to be subtracted out */
+    /* zt_gc_print_heap(gc); */
 
-        /* for the last object placed on the scan queue */
+    {
+        /* we have registered REND + 1 objects: 1 root and REND numbers
+         * after every registration we are performing a full gc (because
+         * there are fewer objects then ALLOCS_BEFORE_SCAN) so we will have
+         * marked every object once (when they are first registered) and
+         * will have marked the root, root->value.a and protected objects
+         * once per allocation.
+         */
+        int atoms_mark_base  = (REND * 2);
+        int ints_marked_base = (REND * 2) - 3;
+        int objects_freed_base = (REND - 3);     /* root->value.a, protected, last object added */
+
 #if DEBUG_GC
-        printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
-        printf("First seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("First ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
 #endif
-        ZT_UNIT_ASSERT(test, ints_marked == int_seen_base);
-        ZT_UNIT_ASSERT(test, atoms_marked == mark_base);
-        ZT_UNIT_ASSERT(test, atoms_freed == free_base);
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
 
         /* second pass */
-        zt_gc_scan(&gc, 1);
+        zt_gc_collect(gc, true);
 
-        int_seen_base += 3;                                /* root->value.a + protected + last_alloc */
-        mark_base += 1;                                    /* root->value.a */
-        free_base += 1;
+        ints_marked_base += 2;                                /* root->value.a + protected + last_alloc */
+        atoms_mark_base += 1;                                 /* root->value.a */
+        objects_freed_base += 1;
 #if DEBUG_GC
-        printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
-        printf("Second seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("Second ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
 #endif
-        ZT_UNIT_ASSERT(test, ints_marked == int_seen_base);
-        ZT_UNIT_ASSERT(test, atoms_marked == mark_base);
-        ZT_UNIT_ASSERT(test, atoms_freed == free_base);
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
+
+        /* root->value.atom will now be released */
+        root->value.atom = NULL;
 
         /* third pass */
-        zt_gc_scan(&gc, 1);
+        zt_gc_collect(gc, 1);
 
-        int_seen_base += 2;                                /* protected + root->value.a */
-        mark_base += 1;                                    /* root->value.a */
-        free_base += 1;
+        ints_marked_base += 1;                                /* protected */
+        atoms_mark_base += 1;                                 /* root */
+        objects_freed_base += 1;                              /* root->value.a */
 #if DEBUG_GC
-        printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
-        printf("Third seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("Third ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
 #endif
-        ZT_UNIT_ASSERT(test, ints_marked == int_seen_base);
-        ZT_UNIT_ASSERT(test, atoms_marked == mark_base);
-        ZT_UNIT_ASSERT(test, atoms_freed == free_base);
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
+
+        zt_gc_unprotect(gc, protected); /* unprotected values will take 2 passes to be released */
+
+        /* fourth  pass */
+        zt_gc_collect(gc, 1);
+
+        ints_marked_base += 1;                                /* protected */
+        atoms_mark_base += 1;                                 /* root */
+        objects_freed_base += 0;                              /* protected */
+#if DEBUG_GC
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("Fourth ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
+#endif
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
+
+        /* fifth  pass */
+        zt_gc_collect(gc, 1);
+
+        ints_marked_base += 0;                                /* protected */
+        atoms_mark_base += 1;                                 /* root */
+        objects_freed_base += 1;                              /* protected */
+#if DEBUG_GC
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("Fifth ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
+#endif
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
 
         /* final */
-        zt_gc_destroy(&gc);
-        /* printf("Destory %d %d %d\n", ints_marked, atoms_marked, atoms_freed); */
+        zt_gc_destroy(gc);
 
-        int_seen_base += 2;
-        mark_base += 1;                                    /* root->value.a */
-        free_base += 3;                                    /* root, root->value.a, protected */
+        ints_marked_base += 0;                                   /* */
+        atoms_mark_base += 1;                                    /* root */
+        objects_freed_base += 1;                                 /* root */
 #if DEBUG_GC
-        printf("Base seen: %d mark: %d free: %d\n", int_seen_base, mark_base, free_base);
-        printf("Final seen: %d mark: %d free: %d\n", ints_marked, atoms_marked, atoms_freed);
+        printf("Base  ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked_base, atoms_mark_base, objects_freed_base);
+        printf("Final ints_marked: %d atoms_marked: %d objects_freed: %d\n", ints_marked, atoms_marked, objects_freed);
 #endif
-        ZT_UNIT_ASSERT(test, ints_marked == int_seen_base);
-        ZT_UNIT_ASSERT(test, atoms_marked == mark_base);
-        ZT_UNIT_ASSERT(test, atoms_freed == free_base);
+        ZT_UNIT_ASSERT(test, ints_marked == ints_marked_base);
+        ZT_UNIT_ASSERT(test, atoms_marked == atoms_mark_base);
+        ZT_UNIT_ASSERT(test, objects_freed == objects_freed_base);
     }
 } /* basic_tests */
 
