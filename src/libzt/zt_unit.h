@@ -20,8 +20,14 @@ typedef void (*zt_unit_test_fn)(struct zt_unit_test *test, void *data);
 
 struct zt_unit {
     zt_elist_t   suites;
+
+    unsigned int suite_count;
+    unsigned int tests;
     unsigned int successes;
     unsigned int failures;
+    unsigned int assertions;
+    unsigned int exceptions;
+    unsigned int empty;
 };
 
 struct zt_unit_suite {
@@ -34,6 +40,9 @@ struct zt_unit_suite {
     void              * data;
     int                 succeeded;
     int                 failed;
+    int                 exceptions;
+    int                 assertions;
+    int                 empty;
 };
 
 struct zt_unit_test {
@@ -148,6 +157,9 @@ zt_unit_test_add_exception(struct zt_unit_test *test);
 
 void
 zt_unit_test_add_assertion(struct zt_unit_test *test);
+
+void
+zt_unit_test_global_stats(struct zt_unit *unit);
 
 END_C_DECLS
 #endif    /* _ZT_UNIT_H_ */

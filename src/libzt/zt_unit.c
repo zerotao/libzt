@@ -44,8 +44,15 @@ zt_unit_init(void)
     struct zt_unit * unit = zt_calloc(struct zt_unit, 1);
 
     zt_elist_reset(&unit->suites);
-    unit->failures = 0;
+
+    unit->suite_count = 0;
+    unit->tests = 0;
     unit->successes = 0;
+    unit->failures = 0;
+    unit->assertions = 0;
+    unit->exceptions = 0;
+    unit->empty = 0;
+
     return unit;
 }
 
@@ -89,6 +96,9 @@ zt_unit_register_suite_(struct zt_unit     * unit,
     suite->data = data;
     suite->succeeded = 0;
     suite->failed = 0;
+    suite->assertions = 0;
+    suite->exceptions = 0;
+    suite->empty = 0;
 
     zt_elist_reset(&suite->tests);
     zt_elist_add_tail(&unit->suites, &suite->suite);
@@ -174,6 +184,7 @@ zt_unit_run(struct zt_unit    * unit)
             result = -1;
         }
     }
+    zt_unit_test_global_stats(unit);
     return result;
 }
 
@@ -186,14 +197,14 @@ zt_unit_run_suite(struct zt_unit    * unit,
     struct zt_unit_test * unit_test;
     int                   result;
 
-    /* int      len; */
+    unit->suite_count++;
 
-    suite->failed = 0;
-    suite->succeeded = 0;
     printf("---\n%s:\n", suite->name);
     yaml_dict("Tests", 2);
 
     zt_elist_for_each(&suite->tests, tmp) {
+        unit->tests++;
+
         unit_test = zt_elist_data(tmp, struct zt_unit_test, test);
         result = zt_unit_run_test(unit, suite, unit_test);
         if (result != TRUE) {
@@ -203,6 +214,14 @@ zt_unit_run_suite(struct zt_unit    * unit,
             unit->successes += 1;
             suite->succeeded += 1;
         }
+        if (unit_test->assertions == 0 && unit_test->exceptions == 0) {
+          suite->empty++;
+          unit->empty++;
+        }
+        suite->assertions += unit_test->assertions;
+        suite->exceptions += unit_test->exceptions;
+        unit->assertions += unit_test->assertions;
+        unit->exceptions += unit_test->exceptions;
     }
 
     if (suite->failed != 0) {
@@ -410,6 +429,40 @@ zt_unit_list(struct zt_unit *unit)
     }
 }
 
+void
+zt_unit_test_global_stats(struct zt_unit *unit) {
+  zt_elist_t            * tmp;
+  zt_elist_t           * tmp2;
+
+  printf("\n---\n");
+
+  yaml_dict("Global Stats", 0);
+  yaml_value("suites", 2, "%d", unit->suite_count);
+  yaml_value("tests", 2, "%d", unit->tests);
+  yaml_value("successes", 2, "%d", unit->successes);
+  yaml_value("exceptions", 2, "%d", unit->exceptions);
+  yaml_value("assertions", 2, "%d", unit->assertions);
+  yaml_value("failures", 2, "%d", unit->failures);
+
+  if (unit->empty > 0) {
+    struct zt_unit_suite * unit_suite;
+    struct zt_unit_test  * unit_test;
+
+    yaml_dict("empty tests", 2);
+
+    zt_elist_for_each(&unit->suites, tmp) {
+      unit_suite = zt_elist_data(tmp, struct zt_unit_suite, suite);
+      if (unit_suite->empty > 0) {
+        zt_elist_for_each(&unit_suite->tests, tmp2) {
+          unit_test = zt_elist_data(tmp2, struct zt_unit_test, test);
+          if (unit_test->assertions == 0 && unit_test->exceptions == 0) {
+            yaml_list_elt(unit_test->name, "%s", 4);
+          }
+        }
+      }
+    }
+  }
+}
 
 int
 zt_unit_main(struct zt_unit    * unit,

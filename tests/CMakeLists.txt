@@ -15,8 +15,13 @@ target_link_libraries(unit_test zt_unit zt_gc zt)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cfg_test.ini
                ${CMAKE_CURRENT_BINARY_DIR}/cfg_test.ini COPYONLY)
 
-add_custom_target(test
-                  COMMAND python ${PROJECT_SOURCE_DIR}/tools/ut_info.py ${CMAKE_CURRENT_BINARY_DIR}/unit_test
+add_test(NAME unit-test
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+         COMMAND ${CMAKE_CURRENT_BINARY_DIR}/unit_test)
+
+
+add_custom_target(check
+                  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/unit_test
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                   DEPENDS unit_test)
 

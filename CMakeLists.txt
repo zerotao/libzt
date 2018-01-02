@@ -121,6 +121,7 @@ endif(WIN32)
 configure_file(config.h.cmake src/libzt/zt_config.h)
 
 # subdirectories
+enable_testing()
 add_subdirectory(tools)
 add_subdirectory(src)
 add_subdirectory(examples)
