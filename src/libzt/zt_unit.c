@@ -306,7 +306,7 @@ char **str_split(char *str, char * delim, int *elts)
     while ((p1 = strpbrk(p1, delim)) != NULL) {
         ++p1;
         argc += 1;
-        if (p1 == '\0') {
+        if (*p1 == '\0') {
             break;
         }
     }

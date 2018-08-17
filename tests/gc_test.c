@@ -62,6 +62,7 @@ basic_tests(struct zt_unit_test *test, void *data UNUSED)
     gc = zt_gc_init(NULL, mark_atom, release_atom, MARKS_PER_SCAN, ALLOCS_BEFORE_SCAN);
 
     root = zt_calloc(atom, 1);
+    protected = zt_calloc(atom, 1);
     zt_gc_prepare(gc, root);
     root->type = ATOM;
     root->value.atom = NULL;

@@ -24,6 +24,11 @@
 #define ZT_LOG_WITH_PID      16
 #define ZT_LOG_EMU_SYSLOG    (ZT_LOG_WITH_DATE | ZT_LOG_WITH_SYSNAME | ZT_LOG_WITH_PROGNAME | ZT_LOG_WITH_PID)
 
+#if (!defined(__STRICT_ANSI__) || __STRICT_ANSI__ == 0)
+# define ZT_LOG_FUNCTION __FUNCTION__
+#else
+# define ZT_LOG_FUNCTION ""
+#endif
 BEGIN_C_DECLS
 
 enum zt_log_level {
@@ -77,7 +82,7 @@ extern void zt_log_close( zt_log_ty * log );
     zt_log_set_debug_info(NULL, 0, NULL)
 
 #define ZT_LOG_DEBUG_INFO( ) \
-    zt_log_set_debug_info( __FILE__, __LINE__, __FUNCTION__ )
+    zt_log_set_debug_info( __FILE__, __LINE__, ZT_LOG_FUNCTION )
 
 /* zt_log_dprintf(level, fmt, ...) */
 #define zt_log_dprintf( level, ... ) \

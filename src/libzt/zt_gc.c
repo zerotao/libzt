@@ -278,8 +278,8 @@ zt_gc_free_white(zt_gc_t *gc)
     }
 
     zt_elist_for_each_safe(gc->white, elt, dont_use) {
-        zt_gc_collectable_t * mark;
-        mark = zt_elist_data(elt, zt_gc_collectable_t, list);
+        /* zt_gc_collectable_t * mark; */
+        /* mark = zt_elist_data(elt, zt_gc_collectable_t, list); */
 
 #if DEBUG_SCAN
         zt_assert(!is_protected(mark));

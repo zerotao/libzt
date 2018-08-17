@@ -45,12 +45,13 @@ zt_opt_verror_str(int code, char * fmt, va_list ap) {
     char * msg          = NULL;
     char * user_message = NULL;
     char * final        = NULL;
+    int    len          = 0;
 
-    asprintf(&msg, "error: { code: %d, string: \"%s", code, code ? strerror(code) : "");
+    len = asprintf(&msg, "error: { code: %d, string: \"%s", code, code ? strerror(code) : "");
     if (fmt) {
-        vasprintf(&user_message, fmt, ap);
+        len += vasprintf(&user_message, fmt, ap);
     }
-    asprintf(&final, "%s: %s\" }", msg, user_message);
+    len += asprintf(&final, "%s: %s\" }", msg, user_message);
 
     zt_free(user_message);
     zt_free(msg);

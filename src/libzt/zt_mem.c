@@ -675,7 +675,7 @@ zt_mem_page_destroy(zt_mem_page *page)
     size_t       size;
 
     if (page->num_free_elts < page->parent_pool->elts_per_page) {
-        printf("error: %s called when elements are still in use!\n", __FUNCTION__);
+        printf("error: %s called when elements are still in use!\n", ZT_LOG_FUNCTION);
         return 1;
     }
 

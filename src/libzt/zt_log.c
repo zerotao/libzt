@@ -286,7 +286,9 @@ zt_log_lstrerror(zt_log_ty * log, zt_log_level level, int errnum, const char * f
     nfmt[llen]     = ':';
     nfmt[llen + 1] = ' ';
 
-    strerror_r(errnum, nfmt + (llen + 2), 255 - 2);
+    if (strerror_r(errnum, nfmt + (llen + 2), 255 - 2) != 0) {
+      zt_log_lprintf(log, zt_log_crit, "Could not capture error string");
+    }
 
     va_start(ap, fmt);
     zt_log_lvprintf(log, level, nfmt, ap);

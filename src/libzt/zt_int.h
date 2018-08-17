@@ -33,7 +33,7 @@ BEGIN_C_DECLS
 #define ZT_INT_SAME_SIGN(u, v) (!(((u) ^ (v)) < 0))
 
 #define ZT_INT_UNSIGNED_ADD(ltype, sltype, sutype)           \
-    static INLINE ltype ZT_CONC3(zt_, sltype, _add) (ltype lhs, \
+    static INLINE ltype UNUSED ZT_CONC3(zt_, sltype, _add) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         zt_assert(rhs <= (ZT_CONC(sutype, _MAX) - lhs));         \
@@ -46,7 +46,7 @@ ZT_INT_UNSIGNED_ADD(unsigned int, uint, UINT)
 ZT_INT_UNSIGNED_ADD(unsigned long, ulong, ULONG)
 
 #define ZT_INT_SIGNED_ADD(ltype, sltype, sutype)             \
-    static INLINE ltype ZT_CONC3(zt_, sltype, _add) (ltype lhs, \
+    static INLINE ltype UNUSED ZT_CONC3(zt_, sltype, _add) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
     if (ZT_INT_SAME_SIGN(lhs, rhs)) {                        \
@@ -71,7 +71,7 @@ ZT_INT_SIGNED_ADD(signed long, long, LONG)
 /**************************************************************/
 
 #define ZT_INT_UNSIGNED_SUB(ltype, sltype, sutype)           \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _sub) (ltype lhs, \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _sub) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         zt_assert(lhs > rhs);                                \
@@ -84,7 +84,7 @@ ZT_INT_UNSIGNED_SUB(unsigned int, uint, UINT)
 ZT_INT_UNSIGNED_SUB(unsigned long, ulong, ULONG)
 
 #define ZT_INT_SIGNED_SUB(ltype, sltype, sutype)             \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _sub) (ltype lhs, \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _sub) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         if (!ZT_INT_SAME_SIGN(lhs, rhs))                     \
@@ -109,7 +109,7 @@ ZT_INT_SIGNED_SUB(signed long, long, LONG)
 
 /* A > MAX / B */
 #define ZT_INT_UNSIGNED_MUL(ltype, sltype, sutype, cvtype)   \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _mul) (ltype lhs, \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _mul) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         cvtype _tmp = (cvtype)lhs * (cvtype)rhs;             \
@@ -128,7 +128,7 @@ ZT_INT_UNSIGNED_MUL(unsigned long, ulong, ULONG, unsigned long long)
 #endif
 
 #define ZT_INT_SIGNED_MUL(ltype, sltype, sutype, cvtype)     \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _mul) (ltype lhs, \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _mul) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         zt_assert_enable(cvtype _tmp = 0);                   \
@@ -159,7 +159,7 @@ ZT_INT_SIGNED_MUL(signed long, long, LONG, signed long long)
 
 
 #define ZT_INT_UNSIGNED_DIV(ltype, sltype, sutype, cvtype)   \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _div) (ltype lhs, \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _div) (ltype lhs, \
                                                   ltype rhs) \
     {                                                        \
         zt_assert(rhs != 0);                                 \
@@ -178,7 +178,7 @@ ZT_INT_UNSIGNED_DIV(unsigned long, ulong, ULONG, unsigned long long)
 #endif
 
 #define ZT_INT_SIGNED_DIV(ltype, sltype, sutype, cvtype)      \
-    INLINE static ltype ZT_CONC3(zt_, sltype, _div) (ltype lhs,  \
+    INLINE static ltype UNUSED ZT_CONC3(zt_, sltype, _div) (ltype lhs,  \
                                                   ltype rhs)  \
     {                                                         \
         cvtype _tmp;                                          \

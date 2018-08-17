@@ -136,7 +136,7 @@ log_1(void * p) {
     const char * func2;
     int          line2;
 
-    ZT_LOG_DEBUG_INFO(), file1 = __FILE__, line1 = __LINE__, func1 = __FUNCTION__;
+    ZT_LOG_DEBUG_INFO(), file1 = __FILE__, line1 = __LINE__, func1 = ZT_LOG_FUNCTION;
     zt_log_get_debug_info( &file2, &line2, &func2);
     zt_log_printf(zt_log_err, "test1");
 
@@ -159,7 +159,7 @@ log_2(void * p) {
     const char * func2;
     int          line2;
 
-    ZT_LOG_DEBUG_INFO(), file1 = __FILE__, line1 = __LINE__, func1 = __FUNCTION__;
+    ZT_LOG_DEBUG_INFO(), file1 = __FILE__, line1 = __LINE__, func1 = ZT_LOG_FUNCTION;
     pthread_join(*pt, NULL);
     zt_log_get_debug_info(&file2, &line2, &func2);
     zt_log_printf(zt_log_err, "test2");

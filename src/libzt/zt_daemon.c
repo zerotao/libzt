@@ -90,8 +90,14 @@ zt_daemonize( char *root, mode_t mask, int options UNUSED)
             fd = open("/dev/null", O_RDWR);    /* stdin */
 
             /* we don't care about the results as we have no open pids at this point */
-            (void)dup(fd); /* stdout */
-            (void)dup(fd); /* stderr */
+            if(dup(fd) == -1) { /* stdout */
+              zt_log_printf(zt_log_crit, "Could not send stdout to /dev/null");
+            }
+
+            if(dup(fd) == -1) { /* stderr */
+              zt_log_printf(zt_log_crit, "Could not send stderr to /dev/null");
+            }
+
         } else {                                           /* second parent */
             sleep(1);
             exit(0);

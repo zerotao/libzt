@@ -46,12 +46,12 @@ extern int _zt_log_abort(const char *condition, const char *file,
 # define zt_assert_nf(c) ((void)0)
 # define zt_assert_enable(c) ((void)0)
 #else
-# define zt_assert(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
-# define zt_assert_nf(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__)))
+# define zt_assert(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, ZT_LOG_FUNCTION), abort()))
+# define zt_assert_nf(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, ZT_LOG_FUNCTION)))
 # define zt_assert_enable(c) c
 #endif /* if defined(NDEBUG) || defined(NO_ASSERT) */
 
-#define zt_assert_always(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__), abort()))
+#define zt_assert_always(c) ((c) ? ((void)0) : (_zt_log_assertion(# c, __FILE__, __LINE__, ZT_LOG_FUNCTION), abort()))
 
 /*!
  * Name: zt_assert_return
@@ -59,7 +59,7 @@ extern int _zt_log_abort(const char *condition, const char *file,
  * Eample:
  *     zt_assert_return(1==0)
  */
-#define zt_assert_return(c) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__); return; }
+#define zt_assert_return(c) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, ZT_LOG_FUNCTION); return; }
 
 /*!
  * Name: zt_assert_returnV
@@ -67,7 +67,7 @@ extern int _zt_log_abort(const char *condition, const char *file,
  * Example:
  *      zt_assert_returnV(1==0, NULL)
  */
-#define zt_assert_returnV(c,v) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, __FUNCTION__); return v; }
+#define zt_assert_returnV(c,v) if(!(c)) { _zt_log_assertion(# c, __FILE__, __LINE__, ZT_LOG_FUNCTION); return v; }
 
 /*!
  * Name: zt_abort
@@ -77,7 +77,7 @@ extern int _zt_log_abort(const char *condition, const char *file,
  *      zt_abort("Error while reading");
  */
 
-#define zt_abort(msg) (_zt_log_abort(msg, __FILE__, __LINE__, __FUNCTION__), abort())
+#define zt_abort(msg) (_zt_log_abort(msg, __FILE__, __LINE__, ZT_LOG_FUNCTION), abort())
 
 END_C_DECLS
 #endif /*_ZT_ASSERT_H_*/
