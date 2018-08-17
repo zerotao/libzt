@@ -10,7 +10,7 @@
  * Description:
  */
 #ifdef HAVE_CONFIG_H
-# include "zt_config.h"
+# include <libzt/zt_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_STRING_H

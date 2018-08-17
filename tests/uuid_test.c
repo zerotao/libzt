@@ -10,7 +10,7 @@
  * Description:
  */
 #ifdef HAVE_CONFIG_H
-# include "zt_config.h"
+# include <libzt/zt_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_STRING_H
@@ -93,10 +93,12 @@ uuid5_tests(struct zt_unit_test * test, void * data UNUSED) {
         zt_uuid5(tdata[i], strlen(tdata[i]), UUID_NS_OID, &uuid);
 
         s = zt_uuid_tostr(&uuid, &uuid_s, zt_uuid_std_fmt);
+        ZT_UNIT_ASSERT(test, s == 36);
         ZT_UNIT_ASSERT(test, memcmp(uuid_s, rdata[i], 36) == 0);
         zt_free(uuid_s);
 
         s = zt_uuid_tostr(&uuid, &uuid_s, zt_uuid_short_fmt);
+        ZT_UNIT_ASSERT(test, s == 32);
         ZT_UNIT_ASSERT(test, memcmp(uuid_s, rdatas[i], 32) == 0);
         zt_free(uuid_s);
     }

@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include <zt.h>
-#include <zt_internal.h>
+#include <libzt/zt_internal.h>
 
 struct pool_test {
     int one;

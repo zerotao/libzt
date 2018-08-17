@@ -37,6 +37,7 @@ CMakeCache.txt
 tags
 *.deps
 *.libs
+.*.sw*
 
 # windows cruft
 *.exe
@@ -48,3 +49,12 @@ examples/base64_speed
 examples/hexdump
 examples/log_syslog
 src/zt_config.h
+
+CTestTestfile.cmake
+.build/
+Testing/
+examples/gc
+examples/opts
+src/libzt/zt_config.h
+src/libzt/zt_replace.h
+tests/Testing/

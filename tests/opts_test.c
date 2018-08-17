@@ -10,7 +10,7 @@
  * Description: tests for the options interface
  */
 #ifdef HAVE_CONFIG_H
-# include "zt_config.h"
+# include <libzt/zt_config.h>
 #endif /* HAVE_CONFIG_H */
 
 #ifdef HAVE_STRING_H
@@ -19,7 +19,7 @@
 
 #define ZT_WITH_UNIT
 #include <zt.h>
-#include <zt_opts.h>
+#include <libzt/zt_opts.h>
 
 long   long_integer  = 0;
 long   long_integer2 = 0;
@@ -78,14 +78,14 @@ basic_opts_tests(struct zt_unit_test * test, void * data UNUSED) {
     char            * err;
 
     struct zt_opt_def options[] = {
-        { 'h',        "help",     zt_opt_help_stdout, "[options]",    "This help text"     },
-        { 'b',        "bool",     zt_opt_bool_int,    &bool_type,     "boolean_test"       },
-        { ZT_OPT_NSO, "string",   zt_opt_string,      &str,           TEST_LONG_STRING     },
-        { 'f',        "func",     local_func,         &local_data,    "generic func test"  },
-        { 'l',        "long",     zt_opt_long,        &long_integer,  "long integer test"  },
-        { 'L',        "long2",    zt_opt_long,        &long_integer2, "long integer2 test" },
-        { ZT_OPT_NSO, "flag",     zt_opt_flag_int,    &flag,          "flag test"          },
-        { 'q',        ZT_OPT_NLO, zt_opt_flag_int,    &flag2,         "flag2 test"         },
+        { 'h',        "help",     NULL, zt_opt_help_stdout, "[options]",    "This help text"     },
+        { 'b',        "bool",     NULL, zt_opt_bool_int,    &bool_type,     "boolean_test"       },
+        { ZT_OPT_NSO, "string",   NULL, zt_opt_string,      &str,           TEST_LONG_STRING     },
+        { 'f',        "func",     NULL, local_func,         &local_data,    "generic func test"  },
+        { 'l',        "long",     NULL, zt_opt_long,        &long_integer,  "long integer test"  },
+        { 'L',        "long2",    NULL, zt_opt_long,        &long_integer2, "long integer2 test" },
+        { ZT_OPT_NSO, "flag",     NULL, zt_opt_flag_int,    &flag,          "flag test"          },
+        { 'q',        ZT_OPT_NLO, NULL, zt_opt_flag_int,    &flag2,         "flag2 test"         },
         { ZT_OPT_END() }
     };
 

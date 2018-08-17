@@ -1,9 +1,10 @@
 #define ZT_WITH_UNIT
 #include <zt.h>
 
+#include <time.h>
 #include <string.h>
 #include <ctype.h>
-#include <zt_base.h>
+#include <libzt/zt_base.h>
 
 #define test_encoding(_base, _data, _len, _result1, _result2)                                   \
     do { unsigned char * cdata = (unsigned char *)_data;                                        \
@@ -292,7 +293,12 @@ decoding_tests(struct zt_unit_test * test, void * _data UNUSED) {
         char    * enc = NULL;
         size_t    elen = 0;
 
+#if HAVE_SRANDOMDEV
         srandomdev();
+#else
+        srandom(time(NULL));
+#endif
+
         while((len = random() % 1024) < 20);
 
         in = zt_calloc(char, len);
