@@ -4,6 +4,7 @@
 #include <setjmp.h>
 #include <zt.h>
 #include <libzt/zt_list.h>
+#include <string.h>
 
 BEGIN_C_DECLS
 
@@ -67,12 +68,16 @@ class zt_unit_exceptT {};
     longjmp(test->env, 1)
 #endif /* __cplusplus */
 
-#define ZT_UNIT_ASSERT(test, expr)                          \
+#define ZT_UNIT_ASSERT(test, expr, doc...)                          \
     do {                                                    \
         if((expr)) {                                        \
             zt_unit_test_add_assertion(test);               \
         } else {                                            \
-            if(zt_unit_printf(&test->error, "%s %s:%d", #expr, __FILE__, __LINE__) == 0)  { \
+          const char * msg = #expr;                         \
+          if (strlen(#doc"") > 0) {                         \
+            msg = #doc;                                     \
+          }                                                 \
+            if(zt_unit_printf(&test->error, "%s : %s:%d", msg, __FILE__, __LINE__) == 0)  { \
                 test->error = NULL;                         \
             }                                               \
             ZT_UNIT_EXIT(test);                             \

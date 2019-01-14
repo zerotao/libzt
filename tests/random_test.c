@@ -21,6 +21,7 @@ random_test(struct zt_unit_test * test, void * _data UNUSED) {
     uint32_t          seed[4] = {0x123, 0x234, 0x345, 0x456};
     zt_random_state   state;
 
+    // test that for this given seed we produce the following sequences
     uint32_t          uint_tests[] = {
         1067595299, 955945823, 477289528, 4107218783, 4228976476, 3344332714, 3355579695, 227628506, 810200273, 2591290167,
         2560260675, 3242736208, 646746669, 1479517882, 4245472273, 1143372638, 3863670494, 3221021970, 1773610557, 1138697238,
@@ -126,10 +127,15 @@ random_test(struct zt_unit_test * test, void * _data UNUSED) {
 
     zt_random_initstate(&state, seed, sizeof_array(seed));
 
+    int failures = 0;
     for(int i=0; i < 1000; i++) {
-        ZT_UNIT_ASSERT(test, uint_tests[i] == zt_random_uint32(&state));
+      if (uint_tests[i] != zt_random_uint32(&state)) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_random_uint32);
 
+    // test that for this given seed we produce the following sequences
     float float_tests[] = {
         0.76275443, 0.99000644, 0.98670464, 0.10143112, 0.27933125, 0.69867227, 0.94218740, 0.03427201, 0.78842173, 0.28180608,
         0.92179002, 0.20785655, 0.54534773, 0.69644020, 0.38107718, 0.23978165, 0.65286910, 0.07514568, 0.22765211, 0.94872929,
@@ -234,9 +240,13 @@ random_test(struct zt_unit_test * test, void * _data UNUSED) {
     };
 
 #define EPSILON 0.00001
+    failures = 0;
     for(int i = 0; i < 1000; i++) {
-        ZT_UNIT_ASSERT(test, (float_tests[i] - zt_random_float(&state)) < EPSILON);
+      if ((float_tests[i] - zt_random_float(&state)) >= EPSILON) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_random_float);
 }
 
 int

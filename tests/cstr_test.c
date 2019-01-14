@@ -222,18 +222,31 @@ static void
 intlen_test(struct zt_unit_test *test, void *data UNUSED)
 {
     int       volatile i;
+    int       failures = 0;
 
     for (i = 0; i < 10; i++) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 1);
+      if (zt_cstr_int_display_len(i) != 1) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 1);
 
+    failures = 0;
     for (i = 10; i < 100; i++) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 2);
+      if (zt_cstr_int_display_len(i) != 2) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 2);
 
+
+    failures = 0;
     for (i = 100; i < 1000; i++) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 3);
+      if (zt_cstr_int_display_len(i) != 3) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 3);
 
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(1000) == 4);
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(9999) == 4);
@@ -244,17 +257,30 @@ intlen_test(struct zt_unit_test *test, void *data UNUSED)
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(1000000) == 7);
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(9999999) == 7);
 
+    failures = 0;
     for (i = -1; i > -10; i--) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 2);
-    }
+      if (zt_cstr_int_display_len(i) != 2) {
+        failures++;
+      }
 
+    }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 2);
+
+    failures = 0;
     for (i = -10; i > -100; i--) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 3);
+      if (zt_cstr_int_display_len(i) != 3) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 3);
 
+    failures = 0;
     for (i = -100; i > -1000; i--) {
-        ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(i) == 4);
+      if (zt_cstr_int_display_len(i) != 44) {
+        failures++;
+      }
     }
+    ZT_UNIT_ASSERT(test, failures == 0, zt_cstr_int_display_len == 4);
 
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-1000) == 5);
     ZT_UNIT_ASSERT(test, zt_cstr_int_display_len(-9999) == 5);
